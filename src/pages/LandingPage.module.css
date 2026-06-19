@@ -2049,20 +2049,26 @@
   max-width: 880px;
 }
 
-.heroPromise {
+.heroChecklist .heroPromise {
   display: grid;
   align-content: start;
   gap: 7px;
+  padding: 16px;
   min-height: 118px;
-  border-width: 3px;
+  border: 3px solid var(--nb-stroke);
   border-radius: 22px;
   background:
     radial-gradient(circle at 94% 10%, color-mix(in srgb, var(--tone-main, var(--nb-mint)) 20%, transparent), transparent 42%),
     var(--nb-paper-2);
   box-shadow: 5px 5px 0 rgba(16, 16, 16, 0.12);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--nb-ink);
+  font-weight: 650;
+  text-align: left;
 }
 
-.heroPromise strong {
+.heroChecklist .heroPromise strong {
   color: var(--tone-main, var(--nb-ink));
   font-family: var(--font-mono);
   font-size: 12px;
@@ -2071,7 +2077,7 @@
   text-transform: uppercase;
 }
 
-.heroPromise small {
+.heroChecklist .heroPromise small {
   color: var(--nb-ink);
   font-family: var(--font-brutal);
   font-size: 21px;
@@ -2265,7 +2271,7 @@
     grid-template-columns: 1fr;
   }
 
-  .heroPromise {
+  .heroChecklist .heroPromise {
     min-height: 0;
     border-width: 3px;
     padding: 14px;

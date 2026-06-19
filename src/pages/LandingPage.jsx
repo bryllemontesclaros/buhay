@@ -500,11 +500,11 @@ export default function LandingPage() {
 
               <div className={styles.heroChecklist} aria-label="What Buhay helps keep clear">
                 {SPACE_PROMISES.map(promise => (
-                  <span key={promise.label} className={`${styles.heroPromise} ${toneClass(promise.tone)}`}>
+                  <div key={promise.label} className={`${styles.heroPromise} ${toneClass(promise.tone)}`}>
                     <strong>{promise.label}</strong>
                     <small>{promise.meta}</small>
                     {promise.promise}
-                  </span>
+                  </div>
                 ))}
               </div>
             </div>
