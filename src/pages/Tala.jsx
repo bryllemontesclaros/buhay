@@ -350,6 +350,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
   const [trackView, setTrackView] = useState(() => getTalaTrackViewForTab(activeTab))
   const [focusView, setFocusView] = useState(() => getTalaFocusViewForTab(activeTab))
   const [pendingQuickAction, setPendingQuickAction] = useState(null)
+  const [panicHide, setPanicHide] = useState(false)
   const settingsKey = JSON.stringify(profile?.talaSettings || {})
   const journalQuickActionRef = useRef(null)
   const journalTitleInputRef = useRef(null)
@@ -908,6 +909,14 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <h3>Log today&apos;s check-in.</h3>
               <p className={tStyles.sectionHint}>Save one honest snapshot of mood, energy, stress, priority, gratitude, and reflection. Tracking only, not diagnosis.</p>
             </div>
+            <button
+              type="button"
+              className={`${tStyles.panicHideBtn} ${panicHide ? tStyles.panicHideBtnActive : ''}`}
+              onClick={() => setPanicHide(current => !current)}
+              title="Blur writing canvas for public privacy"
+            >
+              {panicHide ? '👁️ Show' : '🔒 Hide'}
+            </button>
           </div>
           <div className={tStyles.formGrid}>
             <label>
@@ -922,11 +931,11 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
             <label>
               <span>Top priority</span>
-              <input value={todayForm.priority} placeholder="One thing that matters today" onChange={event => setTodayForm(current => ({ ...current, priority: event.target.value }))} />
+              <input className={panicHide ? tStyles.blurActive : ''} value={todayForm.priority} placeholder="One thing that matters today" onChange={event => setTodayForm(current => ({ ...current, priority: event.target.value }))} />
             </label>
             <label className={tStyles.full}>
               <span>Reflection</span>
-              <textarea value={todayForm.reflection} placeholder="What should future you remember about today?" onChange={event => setTodayForm(current => ({ ...current, reflection: event.target.value }))} />
+              <textarea className={panicHide ? tStyles.blurActive : ''} value={todayForm.reflection} placeholder="What should future you remember about today?" onChange={event => setTodayForm(current => ({ ...current, reflection: event.target.value }))} />
             </label>
           </div>
           <details className={tStyles.advancedBox}>
@@ -955,7 +964,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
               <label>
                 <span>Gratitude</span>
-                <input value={todayForm.gratitude} placeholder="Something small but real" onChange={event => setTodayForm(current => ({ ...current, gratitude: event.target.value }))} />
+                <input className={panicHide ? tStyles.blurActive : ''} value={todayForm.gratitude} placeholder="Something small but real" onChange={event => setTodayForm(current => ({ ...current, gratitude: event.target.value }))} />
               </label>
             </div>
           </details>
@@ -1011,6 +1020,14 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <h3>One honest line is enough.</h3>
               <p className={tStyles.sectionHint}>Start with the entry first. Prompts, mood, tags, and privacy stay one step deeper so Tala does not make you perform.</p>
             </div>
+            <button
+              type="button"
+              className={`${tStyles.panicHideBtn} ${panicHide ? tStyles.panicHideBtnActive : ''}`}
+              onClick={() => setPanicHide(current => !current)}
+              title="Blur writing canvas for public privacy"
+            >
+              {panicHide ? '👁️ Show Text' : '🔒 Panic Hide'}
+            </button>
           </div>
           <div className={tStyles.formGrid}>
             <label>
@@ -1019,11 +1036,11 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
             <label className={tStyles.full}>
               <span>Title</span>
-              <input ref={journalTitleInputRef} value={journalForm.title} placeholder="What is this entry about?" onChange={event => setJournalForm(current => ({ ...current, title: event.target.value }))} />
+              <input ref={journalTitleInputRef} className={panicHide ? tStyles.blurActive : ''} value={journalForm.title} placeholder="What is this entry about?" onChange={event => setJournalForm(current => ({ ...current, title: event.target.value }))} />
             </label>
             <label className={tStyles.full}>
               <span>Entry</span>
-              <textarea value={journalForm.body} placeholder="Write without performing. Tala can hold it." onChange={event => setJournalForm(current => ({ ...current, body: event.target.value }))} />
+              <textarea className={panicHide ? tStyles.blurActive : ''} value={journalForm.body} placeholder="Write without performing. Tala can hold it." onChange={event => setJournalForm(current => ({ ...current, body: event.target.value }))} />
             </label>
           </div>
           <details className={tStyles.advancedBox}>
@@ -1106,12 +1123,26 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <span>Date</span>
               <input type="date" value={moodForm.date} onChange={event => setMoodForm(current => ({ ...current, date: event.target.value }))} />
             </label>
-            <label>
+            <div ref={moodSelectRef} className={tStyles.moodSelectionContainer} tabIndex={-1}>
               <span>Mood</span>
-              <select ref={moodSelectRef} value={moodForm.mood} onChange={event => setMoodForm(current => ({ ...current, mood: event.target.value }))}>
-                {MOOD_OPTIONS.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </label>
+              <div className={tStyles.moodBtnGrid}>
+                {MOOD_OPTIONS.map(option => {
+                  const emojiMap = { Great: '😄', Good: '🙂', Okay: '😐', Low: '😕', Heavy: '😭' }
+                  const selected = moodForm.mood === option
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`${tStyles.moodSelectBtn} ${tStyles[`moodBtn_${option}`]} ${selected ? tStyles.moodSelectBtnActive : ''}`}
+                      onClick={() => setMoodForm(current => ({ ...current, mood: option }))}
+                    >
+                      <span className={tStyles.moodEmoji}>{emojiMap[option] || '😐'}</span>
+                      <span className={tStyles.moodText}>{option}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
             <label>
               <span>Energy</span>
               <select value={moodForm.energy} onChange={event => setMoodForm(current => ({ ...current, energy: event.target.value }))}>
@@ -1330,7 +1361,12 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <div className={tStyles.calendarDots}>
                     {!!day.checkins.length && <span title="Check-in" className={tStyles.dotCheckin} />}
                     {!!day.journal.length && <span title="Journal" className={tStyles.dotJournal} />}
-                    {!!day.moods.length && <span title="Mood" className={tStyles.dotMood} />}
+                    {!!day.moods.length && (
+                      <span
+                        title={`Mood: ${day.moods[0]?.mood || 'Logged'}`}
+                        className={`${tStyles.dotMood} ${day.moods[0]?.mood ? tStyles[`dotMood_${day.moods[0].mood}`] : ''}`}
+                      />
+                    )}
                     {!!day.tasks.length && <span title="Task" className={tStyles.dotTask} />}
                     {!!day.goals.length && <span title="Goal" className={tStyles.dotGoal} />}
                   </div>

@@ -2133,3 +2133,160 @@
     white-space: normal;
   }
 }
+
+/* Phase 5 styling enhancements */
+
+/* Privacy Blur "Panic Hide" styles */
+.blurActive {
+  filter: blur(12px) !important;
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.18s ease-in-out;
+}
+
+.panicHideBtn {
+  min-height: 34px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 80%, transparent);
+  color: var(--text2);
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.panicHideBtn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent) 15%, var(--glass-1));
+  color: var(--accent);
+}
+
+.panicHideBtnActive {
+  background: var(--red-glow, rgba(239, 68, 68, 0.2));
+  color: var(--red, #ef4444);
+  border-color: var(--red);
+}
+
+.panicHideBtnActive:hover {
+  background: var(--red);
+  color: #fff;
+}
+
+/* Mood selection grid */
+.moodSelectionContainer {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+}
+
+.moodSelectionContainer span {
+  display: block;
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.moodBtnGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.moodSelectBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 72px;
+  padding: 8px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.moodSelectBtn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.moodEmoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.moodText {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text3);
+}
+
+/* Active mood selection glows */
+.moodSelectBtnActive {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--glass-1) 50%, var(--surface2) 50%);
+}
+
+.moodSelectBtnActive .moodText {
+  color: var(--text);
+}
+
+/* HSL colors for each mood glow */
+.moodBtn_Great.moodSelectBtnActive {
+  border-color: #10b981;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+}
+.moodBtn_Good.moodSelectBtnActive {
+  border-color: #3b82f6;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+}
+.moodBtn_Okay.moodSelectBtnActive {
+  border-color: #eab308;
+  box-shadow: 0 0 14px rgba(234, 179, 8, 0.35);
+}
+.moodBtn_Low.moodSelectBtnActive {
+  border-color: #f97316;
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.35);
+}
+.moodBtn_Heavy.moodSelectBtnActive {
+  border-color: #ef4444;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+}
+
+/* Dynamic Calendar Mood Dot overrides */
+.dotMood_Great {
+  background: #10b981 !important;
+}
+.dotMood_Good {
+  background: #3b82f6 !important;
+}
+.dotMood_Okay {
+  background: #eab308 !important;
+}
+.dotMood_Low {
+  background: #f97316 !important;
+}
+.dotMood_Heavy {
+  background: #ef4444 !important;
+}
+
+/* Dynamic mobile height adjustments to adapt to mobile keyboards */
+@media (max-width: 640px) {
+  .quickEntryPanel textarea:focus {
+    min-height: 180px;
+    height: 38svh;
+  }
+  
+  .moodBtnGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  .moodSelectBtn:last-child {
+    grid-column: span 2;
+  }
+}
+
