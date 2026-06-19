@@ -1806,6 +1806,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     restDuration: 0,
     startedAt: null,
     warmupDone: false,
+    focusMode: false,
   })
   const [gymSessionNow, setGymSessionNow] = useState(Date.now())
   const [pendingQuickAction, setPendingQuickAction] = useState(null)
@@ -1955,6 +1956,31 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [gymSessionMode.open])
+
+  // Trigger audio/haptic feedback when rest timer completes
+  const prevRestRemainingRef = useRef(0)
+  useEffect(() => {
+    if (prevRestRemainingRef.current > 0 && activeGymRestRemaining === 0 && gymSessionMode.open) {
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200])
+      }
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const oscillator = audioCtx.createOscillator()
+        const gainNode = audioCtx.createGain()
+        oscillator.connect(gainNode)
+        gainNode.connect(audioCtx.destination)
+        oscillator.type = 'sine'
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime)
+        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime)
+        oscillator.start()
+        oscillator.stop(audioCtx.currentTime + 0.15)
+      } catch (e) {
+        console.warn('Web Audio beep failed:', e)
+      }
+    }
+    prevRestRemainingRef.current = activeGymRestRemaining
+  }, [activeGymRestRemaining, gymSessionMode.open])
 
   const insights = useMemo(() => {
     const weekStart = dateDaysAgo(6)
@@ -2489,15 +2515,27 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           return (
             <div key={row.rowId} className={lStyles.exerciseRow}>
               <div className={lStyles.exerciseRowTop}>
-                <label className={lStyles.exerciseName}>
-                  <span>Exercise {index + 1}</span>
-                  <input
-                    list="lakas-exercise-library"
-                    value={row.name}
-                    placeholder="Bench press, Squat, Treadmill"
-                    onChange={event => updateExerciseRow(formSetter, row.rowId, 'name', event.target.value)}
-                  />
-                </label>
+                <div className={lStyles.exerciseNameWrapper}>
+                  <label className={lStyles.exerciseName}>
+                    <span>Exercise {index + 1}</span>
+                    <input
+                      list="lakas-exercise-library"
+                      value={row.name}
+                      placeholder="Bench press, Squat, Treadmill"
+                      onChange={event => updateExerciseRow(formSetter, row.rowId, 'name', event.target.value)}
+                    />
+                  </label>
+                  {row.name && !savedExerciseLibrary.some(entry => normalizeExerciseKey(entry.name) === normalizeExerciseKey(row.name)) && (
+                    <button
+                      type="button"
+                      className={lStyles.inlineAddLibBtn}
+                      onClick={() => handleInlineAddExercise(row.name)}
+                      title="Add this exercise to your global library"
+                    >
+                      + Add to Library
+                    </button>
+                  )}
+                </div>
                 <button
                   type="button"
                   className={lStyles.ghostBtn}
@@ -2910,6 +2948,40 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     notifyApp({ title: 'Exercise removed', message: 'The pending library entry was removed.', tone: 'success' })
   }
 
+  async function handleInlineAddExercise(name) {
+    const cleanName = String(name || '').trim()
+    if (!cleanName) return
+
+    const key = normalizeExerciseKey(cleanName)
+    const exists = savedExerciseLibrary.some(entry => normalizeExerciseKey(entry.name) === key)
+    if (exists) return
+
+    const newEntry = {
+      name: cleanName,
+      category: 'Strength',
+      primaryMuscle: 'Full body',
+      secondaryMuscles: [],
+    }
+
+    const updatedLibrary = sanitizeExerciseLibrary([
+      ...normalizeRows(settingsForm.exerciseLibrary),
+      newEntry,
+    ])
+
+    const nextSettings = sanitizeLakasSettings({
+      ...settingsForm,
+      exerciseLibrary: updatedLibrary,
+    })
+
+    try {
+      await fsSetProfile(user.uid, { lakasSettings: nextSettings })
+      setSettingsForm(nextSettings)
+      notifyApp({ title: 'Added to library', message: `"${cleanName}" has been added to your exercise library.`, tone: 'success' })
+    } catch (e) {
+      notifyApp({ title: 'Failed to add', message: 'Could not update your exercise library.', tone: 'error' })
+    }
+  }
+
   async function handleSaveLakasSettings() {
     setSavingSettings(true)
     try {
@@ -3302,14 +3374,23 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const gymSessionOverlay = gymSessionMode.open ? (
     <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
       <div className={lStyles.gymModeBackdrop} onClick={closeGymSessionMode} aria-hidden="true" />
-      <section className={lStyles.gymModeSheet}>
+      <section className={`${lStyles.gymModeSheet} ${gymSessionMode.focusMode ? lStyles.gymModeSheetFocus : ''}`}>
         <div className={lStyles.gymModeHeader}>
           <div>
             <div className={lStyles.gymModeEyebrow}>Gym session mode</div>
             <h3 id="gym-session-title">{activeGymTemplate.name}</h3>
             <p>{activeGymSession.label} · {activeGymCompletedCount}/{activeGymExercises.length} exercises done · {activeGymPlanMinutes} min plan</p>
           </div>
-          <button type="button" className={lStyles.gymModeClose} onClick={closeGymSessionMode} aria-label="Close gym session mode">Close</button>
+          <div className={lStyles.gymModeHeaderActions}>
+            <button
+              type="button"
+              className={`${lStyles.focusModeBtn} ${gymSessionMode.focusMode ? lStyles.focusModeBtnActive : ''}`}
+              onClick={() => setGymSessionMode(current => ({ ...current, focusMode: !current.focusMode }))}
+            >
+              {gymSessionMode.focusMode ? 'Standard View' : 'Focus View'}
+            </button>
+            <button type="button" className={lStyles.gymModeClose} onClick={closeGymSessionMode} aria-label="Close gym session mode">Close</button>
+          </div>
         </div>
 
         <div className={lStyles.gymModeBody}>
@@ -3331,16 +3412,28 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             )}
             {activeGymRestRemaining > 0 && (
               <div className={lStyles.gymModeRestCard} role="timer" aria-live="polite">
-                <div>
-                  <span>Rest timer</span>
-                  <strong>{formatDurationClock(activeGymRestRemaining)}</strong>
-                </div>
-                <div className={lStyles.gymModeRestMeter} aria-hidden="true">
-                  <i
-                    style={{
-                      width: `${Math.max(4, Math.min(100, (activeGymRestRemaining / Math.max(1, gymSessionMode.restDuration || activeGymRestRemaining)) * 100))}%`,
-                    }}
-                  />
+                <div className={lStyles.gymModeRestCircleContainer}>
+                  <svg className={lStyles.gymModeRestCircleSvg} viewBox="0 0 100 100">
+                    <circle
+                      className={lStyles.gymModeRestCircleBg}
+                      cx="50"
+                      cy="50"
+                      r="44"
+                    />
+                    <circle
+                      className={lStyles.gymModeRestCircleProgress}
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      style={{
+                        strokeDashoffset: 276.46 - (276.46 * (activeGymRestRemaining / Math.max(1, gymSessionMode.restDuration || activeGymRestRemaining))),
+                      }}
+                    />
+                  </svg>
+                  <div className={lStyles.gymModeRestTimeDisplay}>
+                    <span>Resting</span>
+                    <strong>{formatDurationClock(activeGymRestRemaining)}</strong>
+                  </div>
                 </div>
                 <button type="button" className={lStyles.ghostBtn} onClick={skipGymRest}>Skip rest</button>
               </div>

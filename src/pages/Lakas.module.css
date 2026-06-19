@@ -4968,3 +4968,173 @@
     grid-column: auto;
   }
 }
+
+/* Focus Mode & Visual Rest Ring overrides */
+.focusModeBtn {
+  min-height: 42px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent-glow) 34%, var(--surface2) 66%);
+  color: var(--accent);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.focusModeBtn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent-glow) 50%, var(--surface2) 50%);
+}
+
+.focusModeBtnActive {
+  background: var(--accent);
+  color: var(--space-fitness-ink, #101010);
+  border-color: var(--accent);
+}
+
+.focusModeBtnActive:hover {
+  background: color-mix(in srgb, var(--accent) 85%, white 15%);
+}
+
+.gymModeHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Focus mode hides standard elements and centers the workspace */
+.gymModeSheetFocus .gymModeProgress,
+.gymModeSheetFocus .gymModePrepCard,
+.gymModeSheetFocus .gymModeExerciseStrip,
+.gymModeSheetFocus .gymModeSupport,
+.gymModeSheetFocus .gymModeNextCard,
+.gymModeSheetFocus .gymModeHeader p {
+  display: none !important;
+}
+
+.gymModeSheetFocus .gymModeBody {
+  grid-template-columns: 1fr !important;
+}
+
+.gymModeSheetFocus .gymModeCurrentCard {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Circular Rest Countdown Timer Styles */
+.gymModeRestCircleContainer {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gymModeRestCircleSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gymModeRestCircleBg {
+  fill: none;
+  stroke: var(--surface3);
+  stroke-width: 6;
+}
+
+.gymModeRestCircleProgress {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 276.46;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.gymModeRestTimeDisplay {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.gymModeRestTimeDisplay span {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.gymModeRestTimeDisplay strong {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+/* Style update for Rest Card layout when containing the circle */
+.gymModeRestCard {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-top: 16px !important;
+  padding: 20px !important;
+  border-radius: 24px !important;
+}
+
+/* Inline Add Exercise Pill Button Styles */
+.exerciseNameWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.inlineAddLibBtn {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  margin-top: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent-glow) 20%, transparent);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.inlineAddLibBtn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent-glow) 40%, transparent);
+}
+
+/* Dynamic Hover Micro-animations on progress charts */
+.barSlot {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.barSlot:hover {
+  transform: translateY(-3px);
+}
+
+.barSlot:hover .barFill {
+  filter: brightness(1.15);
+  box-shadow: 0 0 10px rgba(var(--accent), 0.35);
+}
+
+.barFill {
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+}
+
