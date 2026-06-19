@@ -571,31 +571,31 @@ export default function LandingPage() {
                   <span>Sign-in, privacy, backup, restore, and export stay shared so the spaces can stay focused.</span>
                 </div>
               </div>
-
-              <div className={styles.heroDeviceRail} aria-label="Buhay spaces overview">
-                {HERO_SPACES.map(space => {
-                  return (
-                    <article key={space.label} className={`${styles.heroRailCard} ${toneClass(space.tone)}`}>
-                      <div className={styles.heroRailMeta}>
-                        <div>
-                          <span className={styles.heroSpaceLabel}>{space.label}</span>
-                          <strong>{space.title}</strong>
-                        </div>
-                        <small>
-                          {space.tone === 'takda' && 'Money'}
-                          {space.tone === 'lakas' && 'Fitness'}
-                          {space.tone === 'tala' && 'Reflection'}
-                        </small>
-                      </div>
-                      <div className={styles.heroRailDevice}>
-                        {renderMockup(space.tone)}
-                      </div>
-                      <p className={styles.heroRailCopy}>{space.desc}</p>
-                    </article>
-                  )
-                })}
-              </div>
             </div>
+          </div>
+
+          <div className={styles.heroDeviceRail} aria-label="Buhay spaces overview">
+            {HERO_SPACES.map(space => {
+              return (
+                <article key={space.label} className={`${styles.heroRailCard} ${toneClass(space.tone)}`}>
+                  <div className={styles.heroRailMeta}>
+                    <div>
+                      <span className={styles.heroSpaceLabel}>{space.label}</span>
+                      <strong>{space.title}</strong>
+                    </div>
+                    <small>
+                      {space.tone === 'takda' && 'Money'}
+                      {space.tone === 'lakas' && 'Fitness'}
+                      {space.tone === 'tala' && 'Reflection'}
+                    </small>
+                  </div>
+                  <div className={styles.heroRailDevice}>
+                    {renderMockup(space.tone)}
+                  </div>
+                  <p className={styles.heroRailCopy}>{space.desc}</p>
+                </article>
+              )
+            })}
           </div>
         </header>
 
