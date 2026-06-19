@@ -553,7 +553,7 @@ export default function LandingPage() {
                 <article className={`${styles.heroSpotlight} ${styles.heroSpaceCard} ${toneClass(activeHeroSpace.tone)}`}>
                   <div className={styles.heroSpotlightTop}>
                     <div>
-                      <span className={styles.heroSpaceLabel}>{activeHeroSpace.label}</span>
+                      <span className={styles.heroSpaceLabel}>{activeHeroSpace.label}</span>{' '}
                       <span className={styles.heroSpaceTitle}>{activeHeroSpace.title}</span>
                     </div>
                     <span className={styles.heroSpotlightBadge}>{startFocus.replace('-', ' ')}</span>
