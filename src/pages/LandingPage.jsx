@@ -136,6 +136,207 @@ const SPACE_PROMISES = [
   },
 ]
 
+// --- CSS Mockup Sub-components & Helpers ---
+
+function TakdaMockup() {
+  return (
+    <div className={styles.mockupFrame}>
+      <div className={styles.mockupHeader}>
+        <div className={styles.mockupDots}>
+          <span className={styles.dotRed}></span>
+          <span className={styles.dotYellow}></span>
+          <span className={styles.dotGreen}></span>
+        </div>
+        <div className={styles.mockupUrl}>buhay.app/takda</div>
+      </div>
+      <div className={styles.mockupContent}>
+        <div className={styles.mockCard}>
+          <div className={styles.mockCardLabel}>Wallet Balance</div>
+          <div className={styles.mockBalance}>₱45,210.50</div>
+        </div>
+        <div className={styles.mockBudget}>
+          <div className={styles.mockBudgetHeader}>
+            <span>Limit status</span>
+            <span>₱12.5k / ₱20k</span>
+          </div>
+          <div className={styles.mockProgressBar}>
+            <div className={styles.mockProgressFill} style={{ width: '62.5%' }}></div>
+          </div>
+        </div>
+        <div className={styles.mockTransactions}>
+          <div className={styles.mockTxItem}>
+            <span>🛒</span>
+            <span className={styles.txName}>Groceries</span>
+            <span className={styles.txAmount}>-₱2,350</span>
+          </div>
+          <div className={styles.mockTxItem}>
+            <span>⚡</span>
+            <span className={styles.txName}>Power Bill</span>
+            <span className={styles.txAmount}>-₱3,100</span>
+          </div>
+          <div className={styles.mockTxItem}>
+            <span>💰</span>
+            <span className={styles.txName}>Salary</span>
+            <span className={styles.txAmountPositive}>+₱45k</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function LakasMockup() {
+  const [seconds, setSeconds] = useState(105) // 01:45
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(s => (s > 0 ? s - 1 : 120))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const min = Math.floor(seconds / 60)
+  const sec = seconds % 60
+  const timeStr = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`
+  const percent = (seconds / 120) * 100
+  const radius = 22
+  const circumference = 2 * Math.PI * radius
+  const strokeDashoffset = circumference - (percent / 100) * circumference
+
+  return (
+    <div className={styles.mockupFrame}>
+      <div className={styles.mockupHeader}>
+        <div className={styles.mockupDots}>
+          <span className={styles.dotRed}></span>
+          <span className={styles.dotYellow}></span>
+          <span className={styles.dotGreen}></span>
+        </div>
+        <div className={styles.mockupUrl}>buhay.app/lakas</div>
+      </div>
+      <div className={styles.mockupContent}>
+        <div className={styles.mockCard}>
+          <div className={styles.mockCardLabel}>Lakas · Chest & Arms</div>
+          <div className={styles.mockWorkoutTitle}>Rest Focus Mode</div>
+        </div>
+        
+        <div className={styles.mockTimerGrid}>
+          <div className={styles.mockTimerRing}>
+            <svg width="56" height="56" viewBox="0 0 56 56" className={styles.mockRingSvg}>
+              <circle cx="28" cy="28" r={radius} className={styles.mockRingBg} />
+              <circle 
+                cx="28" 
+                cy="28" 
+                r={radius} 
+                className={styles.mockRingFill} 
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+              />
+            </svg>
+            <div className={styles.mockTimerText}>{timeStr}</div>
+          </div>
+          
+          <div className={styles.mockSets}>
+            <div className={styles.mockSetItemDone}>✓ Set 1: 100kg × 5</div>
+            <div className={styles.mockSetItemDone}>✓ Set 2: 100kg × 5</div>
+            <div className={styles.mockSetItemActive}>⚡ Set 3: 100kg × 5</div>
+          </div>
+        </div>
+
+        <div className={styles.mockMuscleMap}>
+          <div className={styles.mockSilhouette}>
+            <svg viewBox="0 0 100 120" className={styles.silhouetteSvg} width="32" height="38">
+              <path d="M50 15 C55 15, 58 10, 58 5 C58 0, 42 0, 42 5 C42 10, 45 15, 50 15 Z" fill="rgba(255,255,255,0.25)" />
+              <path d="M30 35 L70 35 L66 65 L34 65 Z" fill="rgba(255,255,255,0.16)" />
+              <path d="M35 37 Q50 48 65 37" fill="none" stroke="#69d4b2" strokeWidth="6" strokeLinecap="round" />
+              <circle cx="30" cy="35" r="4" fill="#dfbd78" />
+              <circle cx="70" cy="35" r="4" fill="#dfbd78" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TalaMockup() {
+  return (
+    <div className={styles.mockupFrame}>
+      <div className={styles.mockupHeader}>
+        <div className={styles.mockupDots}>
+          <span className={styles.dotRed}></span>
+          <span className={styles.dotYellow}></span>
+          <span className={styles.dotGreen}></span>
+        </div>
+        <div className={styles.mockupUrl}>buhay.app/tala</div>
+      </div>
+      <div className={styles.mockupContent}>
+        <div className={styles.mockCard}>
+          <div className={styles.mockPanicBar}>
+            <span className={styles.mockCardLabel}>Tala Reflections</span>
+            <span className={styles.mockPanicBtn}>🔒 Blured active</span>
+          </div>
+        </div>
+        
+        <div className={styles.mockTextareaBlur}>
+          Today was intense but productive. Completed chest workout and balanced the grocery budget...
+        </div>
+
+        <div className={styles.mockMoodGrid}>
+          <span className={styles.mockMoodBtnSelected}>😄 Great</span>
+          <span className={styles.mockMoodBtn}>😐 Okay</span>
+          <span className={styles.mockMoodBtn}>😭 Heavy</span>
+        </div>
+
+        <div className={styles.mockCalendarDots}>
+          <span className={styles.mockCalDay}>1 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
+          <span className={styles.mockCalDay}>2 <span className={`${styles.calDot} ${styles.calDotOkay}`}></span></span>
+          <span className={styles.mockCalDay}>3 <span className={`${styles.calDot} ${styles.calDotHeavy}`}></span></span>
+          <span className={styles.mockCalDay}>4 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
+          <span className={styles.mockCalDay}>5 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function renderMockup(tone) {
+  if (tone === 'takda') return <TakdaMockup />
+  if (tone === 'lakas') return <LakasMockup />
+  if (tone === 'tala') return <TalaMockup />
+  return <TakdaMockup />
+}
+
+function useScrollVisible(threshold = 0.1) {
+  const [ref, setRef] = useState(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!ref) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+        observer.unobserve(ref)
+      }
+    }, { threshold })
+    observer.observe(ref)
+    return () => observer.disconnect()
+  }, [ref, threshold])
+
+  return [setRef, isVisible]
+}
+
+function ScrollReveal({ children, className = '' }) {
+  const [setRef, isVisible] = useScrollVisible(0.12)
+  return (
+    <div
+      ref={setRef}
+      className={`${className} ${styles.fadeUp} ${isVisible ? styles.visible : ''}`}
+    >
+      {children}
+    </div>
+  )
+}
+
 
 const FAQ_ITEMS = [
   {
@@ -373,7 +574,6 @@ export default function LandingPage() {
 
               <div className={styles.heroDeviceRail} aria-label="Buhay spaces overview">
                 {HERO_SPACES.map(space => {
-                  const image = space.tone === 'takda' ? takdaLandingShot : space.tone === 'lakas' ? lakasLandingShot : talaLandingShot
                   return (
                     <article key={space.label} className={`${styles.heroRailCard} ${toneClass(space.tone)}`}>
                       <div className={styles.heroRailMeta}>
@@ -388,8 +588,7 @@ export default function LandingPage() {
                         </small>
                       </div>
                       <div className={styles.heroRailDevice}>
-                        <div className={styles.heroDeviceHeader}>{space.label}</div>
-                        <img className={styles.heroDeviceImage} src={image} alt="" loading="lazy" decoding="async" width="900" height="1600" />
+                        {renderMockup(space.tone)}
                       </div>
                       <p className={styles.heroRailCopy}>{space.desc}</p>
                     </article>
@@ -401,17 +600,16 @@ export default function LandingPage() {
         </header>
 
         <section className={styles.section} id="how-it-works">
-          <div className={styles.sectionHead}>
+          <ScrollReveal className={styles.sectionHead}>
             <div className={styles.kicker}>How it works</div>
             <h2 className={styles.sectionTitle}>Choose a space. Do one real thing.</h2>
             <p className={styles.sectionLead}>The app should feel obvious: pick the space you need, finish the update, then let Buhay keep the record organized.</p>
-          </div>
+          </ScrollReveal>
 
           <div className={`${styles.beatsGrid} ${styles.flowGrid}`}>
             {FLOW_BEATS.map((beat, idx) => {
-              const img = FLOW_BEAT_IMAGES[idx] || takdaLandingShot
               return (
-                <article key={beat.title} className={`${styles.beatCard} ${toneClass(beat.tone)}`}>
+                <ScrollReveal key={beat.title} className={`${styles.beatCard} ${toneClass(beat.tone)}`}>
                   <div className={styles.beatNum}>{idx + 1}</div>
                   <div className={styles.beatSignal}>0{idx + 1} / signal</div>
                   <div className={styles.beatTitle}>{beat.title}</div>
@@ -422,27 +620,24 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <div className={styles.device} aria-hidden="true">
-                    <div className={styles.deviceTop}>
-                      <div className={styles.deviceNotch} />
-                    </div>
-                    <img className={styles.deviceImg} src={img} alt="" loading="lazy" decoding="async" width="900" height="1600" />
+                    {renderMockup(beat.tone)}
                   </div>
-                </article>
+                </ScrollReveal>
               )
             })}
           </div>
         </section>
 
         <section className={styles.section} id="spaces">
-          <div className={styles.sectionHead}>
+          <ScrollReveal className={styles.sectionHead}>
             <div className={styles.kicker}>Spaces</div>
             <h2 className={styles.sectionTitle}>Each space stays focused on one job.</h2>
             <p className={styles.sectionLead}>The account layer stays in the background. What you see first is the one thing each space is actually for.</p>
-          </div>
+          </ScrollReveal>
 
           <div className={styles.spacesGrid}>
             {SPACE_FEATURES.map(feature => (
-              <article
+              <ScrollReveal
                 key={feature.title}
                 className={`${styles.spaceCard} ${styles[`spaceCard${feature.tone.charAt(0).toUpperCase()}${feature.tone.slice(1)}`] || ''} ${toneClass(feature.tone)}`}
               >
@@ -502,41 +697,41 @@ export default function LandingPage() {
                     <a className={styles.spaceInlineLink} href="#privacy">See the shared account layer</a>
                   )}
                 </div>
-              </article>
+              </ScrollReveal>
             ))}
           </div>
         </section>
 
         <section className={styles.section} id="privacy">
-          <div className={styles.sectionHead}>
+          <ScrollReveal className={styles.sectionHead}>
             <div className={styles.kicker}>Privacy and trust</div>
             <h2 className={styles.sectionTitle}>Free, private, and honest about limits.</h2>
             <p className={styles.sectionLead}>Buhay is free to use right now, and it stays clear about your data, your controls, and what the product does not replace.</p>
-          </div>
+          </ScrollReveal>
           <div className={`${styles.beatsGrid} ${styles.trustGrid}`}>
             {TRUST_POINTS.map((point, idx) => (
-              <article key={point.title} className={styles.beatCard}>
+              <ScrollReveal key={point.title} className={styles.beatCard}>
                 <div className={styles.beatNum}>{idx + 1}</div>
                 <div className={styles.beatTitle}>{point.title}</div>
                 <p className={styles.beatDesc}>{point.desc}</p>
-              </article>
+              </ScrollReveal>
             ))}
           </div>
         </section>
 
         <section className={styles.section} id="faq">
-          <div className={styles.sectionHead}>
+          <ScrollReveal className={styles.sectionHead}>
             <div className={styles.kicker}>FAQ</div>
             <h2 className={styles.sectionTitle}>Quick answers.</h2>
             <p className={styles.sectionLead}>The practical questions people ask before trusting a new app with real life records.</p>
-          </div>
+          </ScrollReveal>
           <div className={`${styles.beatsGrid} ${styles.faqGrid}`}>
             {FAQ_ITEMS.map((item, idx) => (
-              <article key={item.question} className={styles.beatCard}>
+              <ScrollReveal key={item.question} className={styles.beatCard}>
                 <div className={styles.beatNum}>{idx + 1}</div>
                 <div className={styles.beatTitle}>{item.question}</div>
                 <p className={styles.beatDesc}>{item.answer}</p>
-              </article>
+              </ScrollReveal>
             ))}
           </div>
         </section>

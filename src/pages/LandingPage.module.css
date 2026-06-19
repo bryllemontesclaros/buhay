@@ -11,17 +11,19 @@
 .page::before {
   content: '';
   position: fixed;
-  inset: 0;
+  inset: -120px;
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(circle at 12% 22%, var(--nb-ambient-hot), transparent 38%),
-    radial-gradient(circle at 88% 18%, var(--nb-ambient-cool), transparent 44%),
-    radial-gradient(circle at 50% 110%, var(--nb-ambient-mint), transparent 44%),
-    radial-gradient(circle at 22% 78%, var(--nb-ambient-sun), transparent 44%),
+    radial-gradient(circle at 20% 30%, var(--nb-ambient-hot), transparent 45%),
+    radial-gradient(circle at 80% 20%, var(--nb-ambient-cool), transparent 50%),
+    radial-gradient(circle at 35% 80%, var(--nb-ambient-mint), transparent 48%),
+    radial-gradient(circle at 80% 80%, var(--nb-ambient-sun), transparent 45%),
     radial-gradient(circle, var(--nb-ambient-dot) 1px, transparent 1px);
-  background-size: auto, auto, auto, auto, 28px 28px;
-  animation: ambientShift 22s ease-in-out infinite alternate;
+  background-size: 140% 140%, 140% 140%, 140% 140%, 140% 140%, 28px 28px;
+  animation: meshDrift 28s ease-in-out infinite alternate;
+  filter: blur(12px);
+  opacity: 0.95;
 }
 
 .page::after {
@@ -2509,4 +2511,382 @@
   .heroTitle {
     font-size: clamp(46px, 14vw, 60px);
   }
+}
+
+/* Dynamic Drifting Mesh Backdrop Keyframes */
+@keyframes meshDrift {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 100%, 100% 0%, center;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    background-position: 30% 20%, 70% 80%, 20% 90%, 80% 10%, center;
+    transform: scale(1.05) rotate(1.5deg);
+  }
+  100% {
+    background-position: 100% 100%, 0% 0%, 100% 0%, 0% 100%, center;
+    transform: scale(1.08) rotate(-1deg);
+  }
+}
+
+/* Mockup Browser Frames & Details */
+.mockupFrame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: rgba(12, 22, 34, 0.91);
+  border: 3px solid var(--nb-stroke);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), var(--nb-shadow-sm);
+  overflow: hidden;
+  text-align: left;
+  color: var(--text);
+  font-family: var(--font-ui);
+  container-type: inline-size;
+}
+
+.mockupHeader {
+  display: flex;
+  align-items: center;
+  background: rgba(16, 24, 35, 0.96);
+  border-bottom: 2px solid var(--nb-stroke);
+  padding: 8px 12px;
+  gap: 12px;
+}
+
+.mockupDots {
+  display: flex;
+  gap: 5px;
+}
+
+.dotRed, .dotYellow, .dotGreen {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dotRed { background: #f1909d; }
+.dotYellow { background: #dfbd78; }
+.dotGreen { background: #69d4b2; }
+
+.mockupUrl {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--nb-stroke-soft);
+  border-radius: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  padding: 2px 8px;
+  text-align: center;
+}
+
+.mockupContent {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.02), transparent);
+}
+
+.mockCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--nb-stroke);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.15);
+}
+
+.mockCardLabel {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.mockBalance {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.mockBudget {
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid var(--nb-stroke-soft);
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 11px;
+}
+
+.mockBudgetHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text2);
+}
+
+.mockProgressBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--nb-stroke-soft);
+}
+
+.mockProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #258a6b, #69d4b2);
+  border-radius: 99px;
+}
+
+.mockTransactions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mockTxItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1.5px solid var(--nb-stroke-soft);
+}
+
+.txName {
+  flex: 1;
+  margin-left: 6px;
+  color: var(--text2);
+}
+
+.txAmount {
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.txAmountPositive {
+  font-family: var(--font-mono);
+  color: #69d4b2;
+  font-weight: 700;
+}
+
+/* Lakas Fitness Mock Details */
+.mockWorkoutTitle {
+  font-family: var(--font-brutal);
+  font-size: 14px;
+  font-weight: 900;
+  color: #69d4b2;
+  margin-top: 2px;
+}
+
+.mockTimerGrid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid var(--nb-stroke-soft);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.mockTimerRing {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+}
+
+.mockRingSvg {
+  transform: rotate(-90deg);
+}
+
+.mockRingBg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 4;
+}
+
+.mockRingFill {
+  fill: none;
+  stroke: #7eb7f8;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.mockTimerText {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mockSets {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10px;
+}
+
+.mockSetItemDone {
+  color: var(--text3);
+  text-decoration: line-through;
+}
+
+.mockSetItemActive {
+  color: #dfbd78;
+  font-weight: 700;
+}
+
+.mockMuscleMap {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.mockSilhouette {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid var(--nb-stroke-soft);
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+
+.silhouetteSvg {
+  display: block;
+}
+
+/* Tala Reflection Mock Details */
+.mockPanicBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mockPanicBtn {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  background: rgba(241, 144, 157, 0.15);
+  border: 1px solid var(--red);
+  color: var(--red);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.mockTextareaBlur {
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid var(--nb-stroke-soft);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.4;
+  filter: blur(4.5px);
+  user-select: none;
+}
+
+.mockMoodGrid {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mockMoodBtn, .mockMoodBtnSelected {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 99px;
+  border: 1.5px solid var(--nb-stroke-soft);
+  color: var(--text2);
+}
+
+.mockMoodBtnSelected {
+  background: rgba(105, 212, 178, 0.12);
+  border-color: #69d4b2;
+  color: #69d4b2;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(105, 212, 178, 0.2);
+}
+
+.mockCalendarDots {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  padding: 6px;
+  border: 1.5px solid var(--nb-stroke-soft);
+}
+
+.mockCalDay {
+  font-size: 9px;
+  color: var(--text3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.calDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.calDotGreat { background: #69d4b2; }
+.calDotOkay { background: #dfbd78; }
+.calDotHeavy { background: #f1909d; }
+
+/* Container Queries for Mockup Responsive Scaling */
+@container (max-width: 140px) {
+  .mockupUrl {
+    display: none !important;
+  }
+  .mockBudget, .mockTransactions, .mockTimerGrid, .mockMuscleMap, .mockTextareaBlur, .mockMoodGrid, .mockCalendarDots {
+    display: none !important;
+  }
+  .mockupContent {
+    padding: 6px !important;
+    justify-content: center;
+    align-items: center;
+    gap: 4px !important;
+  }
+  .mockCard {
+    padding: 6px !important;
+    width: 100%;
+    text-align: center;
+  }
+  .mockCardLabel {
+    font-size: 8px !important;
+  }
+  .mockBalance {
+    font-size: 11px !important;
+  }
+  .mockWorkoutTitle {
+    font-size: 10px !important;
+  }
+}
+
+/* Scroll Reveal animation classes */
+.fadeUp {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fadeUp.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
