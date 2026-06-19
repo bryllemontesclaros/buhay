@@ -2609,3 +2609,153 @@
     font-size: 11px;
   }
 }
+
+/* Final mobile navigation model: top chooses space, bottom chooses page. */
+@media (max-width: 768px) {
+  .topBar,
+  :global(.neo) .topBar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100vw - 20px);
+    margin: 8px 10px 0;
+    padding: 12px;
+    overflow: visible;
+  }
+
+  .topBarLeft,
+  :global(.neo) .topBarLeft {
+    display: contents;
+    min-width: 0;
+  }
+
+  .topBarTitleBlock,
+  :global(.neo) .topBarTitleBlock {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .topBarHeadingRow,
+  :global(.neo) .topBarHeadingRow {
+    display: block;
+    min-width: 0;
+  }
+
+  .topBarLogo,
+  :global(.neo) .topBarLogo {
+    max-width: calc(100vw - 170px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(30px, 10vw, 44px);
+    line-height: 0.95;
+  }
+
+  .topBarContextPill,
+  :global(.neo) .topBarContextPill {
+    display: none;
+  }
+
+  .topBarRight,
+  :global(.neo) .topBarRight {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    display: flex;
+    gap: 8px;
+    min-width: max-content;
+  }
+
+  .topBarStatusMain,
+  :global(.neo) .topBarStatusMain {
+    display: none;
+  }
+
+  .topBarStatus,
+  .themeBtn,
+  :global(.neo) .topBarStatus,
+  :global(.neo) .themeBtn {
+    min-width: 42px;
+    min-height: 42px;
+  }
+
+  .mobileSpaceSwitch,
+  :global(.neo) .mobileSpaceSwitch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
+    overflow: visible;
+    padding-top: 0;
+  }
+
+  .mobileSpaceButton,
+  :global(.neo) .mobileSpaceButton {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bottomNav,
+  :global(.neo) .bottomNav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .bottomNavItem,
+  :global(.neo) .bottomNavItem {
+    min-width: 0;
+  }
+
+  .bottomNavLabel,
+  :global(.neo) .bottomNavLabel {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 390px) {
+  .topBarLogo,
+  :global(.neo) .topBarLogo {
+    max-width: calc(100vw - 148px);
+    font-size: clamp(26px, 9vw, 34px);
+  }
+
+  .topBarStatus,
+  .themeBtn,
+  :global(.neo) .topBarStatus,
+  :global(.neo) .themeBtn {
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  .mobileSpaceSwitch,
+  :global(.neo) .mobileSpaceSwitch {
+    gap: 6px;
+  }
+
+  .mobileSpaceButton,
+  :global(.neo) .mobileSpaceButton {
+    min-height: 38px;
+    padding-inline: 4px;
+    font-size: 11px;
+  }
+
+  .bottomNavLabel,
+  :global(.neo) .bottomNavLabel {
+    font-size: 9px;
+  }
+}

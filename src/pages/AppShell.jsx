@@ -357,7 +357,7 @@ const APP_SPACES = [
 ]
 
 const DEFAULT_SPACE_PAGES = {
-  takda: 'dashboard',
+  takda: 'calendar',
   lakas: 'workout',
   tala: 'journal',
 }
@@ -993,8 +993,7 @@ export default function AppShell({ user }) {
   }, [user])
 
   const nav = [
-    { id: 'dashboard', label: 'Overview', iconKey: 'home', section: 'Start' },
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: null },
+    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
     { id: 'portfolio', label: 'Portfolio', iconKey: 'portfolio', section: null },
     { id: 'history', label: 'History', iconKey: 'history', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
@@ -1018,7 +1017,7 @@ export default function AppShell({ user }) {
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const takdaMoreNav = [
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Review' },
+    { id: 'dashboard', label: 'Overview', iconKey: 'home', section: 'Review' },
     { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: 'Review' },
@@ -1068,10 +1067,10 @@ export default function AppShell({ user }) {
     ? selectedFinanceTool.label
     : currentNavItem?.label || activeSpaceConfig.label
   const financeBottomNav = [
-    { id: 'dashboard', label: 'Overview', iconKey: 'home', space: 'takda' },
+    { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
     { id: 'portfolio', label: 'Portfolio', iconKey: 'portfolio', space: 'takda' },
-    { id: 'history', label: 'History', iconKey: 'history', space: 'takda' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', space: 'takda' },
+    { id: 'history', label: 'History', iconKey: 'history', space: 'takda' },
   ]
   const lakasBottomNav = [
     { id: 'workout', label: 'Workout', iconKey: 'workouts', space: 'lakas' },
