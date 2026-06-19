@@ -1,0 +1,232 @@
+.toastWrap {
+  position: fixed;
+  top: calc(18px + env(safe-area-inset-top));
+  right: 18px;
+  z-index: 5000;
+  pointer-events: none;
+}
+
+.toast {
+  --feedback-tone: var(--blue);
+  width: min(360px, calc(100vw - 32px));
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 13px 13px 15px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--feedback-tone) 28%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--feedback-tone) 14%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  pointer-events: auto;
+  animation: feedbackIn var(--motion-duration-slow) var(--motion-ease-out) both;
+}
+
+.toneSuccess { --feedback-tone: var(--accent); }
+.toneWarning { --feedback-tone: var(--amber); }
+.toneDanger { --feedback-tone: var(--red); }
+.toneError { --feedback-tone: var(--red); }
+
+.toastCopy {
+  min-width: 0;
+  flex: 1;
+}
+
+.toastTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.toastMessage {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text2);
+}
+
+.toastClose {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  color: var(--text3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toastClose:hover {
+  color: var(--text);
+}
+
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 16, 0.44);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  animation: overlayIn var(--motion-duration) var(--motion-ease-out) both;
+}
+
+.confirmSheet {
+  --feedback-tone: var(--accent);
+  position: relative;
+  width: min(420px, 100%);
+  padding: 18px;
+  border-radius: 30px;
+  border: 1px solid color-mix(in srgb, var(--feedback-tone) 28%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--feedback-tone) 14%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-strong);
+  backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  animation: sheetIn var(--motion-duration-slow) var(--motion-ease-out) both;
+}
+
+.confirmSheet.toneDanger {
+  --feedback-tone: var(--red);
+}
+
+.confirmSheet.toneWarning {
+  --feedback-tone: var(--amber);
+}
+
+.confirmHandle {
+  display: none;
+}
+
+.confirmBadge {
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  color: var(--feedback-tone);
+  background: color-mix(in srgb, var(--feedback-tone) 14%, var(--glass-1));
+  border: 1px solid color-mix(in srgb, var(--feedback-tone) 24%, var(--glass-border));
+}
+
+.confirmTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.confirmMessage {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.confirmActions {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cancelBtn,
+.confirmBtn {
+  min-height: 48px;
+  border-radius: 16px;
+  padding: 11px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    border-color var(--motion-duration-fast) ease,
+    background var(--motion-duration-fast) ease,
+    color var(--motion-duration-fast) ease;
+}
+
+.cancelBtn {
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  color: var(--text2);
+}
+
+.confirmBtn {
+  border: 1px solid color-mix(in srgb, var(--feedback-tone) 38%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--feedback-tone) 84%, white 16%), color-mix(in srgb, var(--feedback-tone) 90%, black 10%));
+  color: #08110d;
+  box-shadow: 0 16px 28px color-mix(in srgb, var(--feedback-tone) 18%, transparent);
+}
+
+.cancelBtn:hover,
+.confirmBtn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .toastWrap {
+    top: auto;
+    right: 12px;
+    left: 12px;
+    bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .toast {
+    width: 100%;
+    border-radius: 22px;
+  }
+
+  .confirmOverlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .confirmSheet {
+    width: 100%;
+    border-radius: 30px 30px 0 0;
+    padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .confirmHandle {
+    display: block;
+    width: 42px;
+    height: 5px;
+    margin: 2px auto 14px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text3) 45%, transparent);
+  }
+
+  .confirmActions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes feedbackIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheetIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

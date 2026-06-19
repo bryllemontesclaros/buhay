@@ -1,0 +1,757 @@
+.savingsPage {
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.heroSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
+  gap: 8px;
+  margin-bottom: 0.85rem;
+}
+
+.heroCopy,
+.heroAside,
+.summaryCard,
+.composerCard,
+.goalCard,
+.emptyCard {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.heroCopy {
+  padding: 1.15rem 1.1rem;
+}
+
+.pageEyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  max-width: 12ch;
+}
+
+.pageSub {
+  margin-top: 10px;
+  max-width: 48ch;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.heroAside {
+  padding: 1rem 1.05rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.heroAsideLabel,
+.summaryLabel,
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.heroAsideLabel,
+.summaryLabel {
+  color: var(--text3);
+}
+
+.heroAsideValue {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 0.98;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.heroAsideTrack {
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface3);
+}
+
+.heroAsideFill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, white 38%));
+  transition: width 0.45s ease;
+}
+
+.heroAsideMeta {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 0.85rem;
+}
+
+.summaryCard {
+  padding: 0.95rem 1rem;
+}
+
+.quickContributionCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 1rem 1.05rem;
+  margin-bottom: 0.85rem;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 28%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.quickContributionCopy {
+  min-width: 0;
+}
+
+.quickContributionTitle {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.quickContributionMeta {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.quickContributionActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickContributionInput {
+  min-width: min(220px, 44vw);
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  color: var(--text);
+  font-size: 16px;
+  font-family: var(--font-body);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.quickContributionInput:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.summaryValue {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.summaryValueAccent {
+  color: var(--accent);
+}
+
+.summaryValueBlue {
+  color: var(--blue);
+}
+
+.summaryMeta {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.composerCard {
+  padding: 1rem 1.05rem;
+  margin-bottom: 0.85rem;
+}
+
+.sectionHeader {
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.sectionSub {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text2);
+}
+
+.composerGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.advancedBox {
+  margin-top: 10px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  overflow: hidden;
+}
+
+.advancedSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.advancedSummary::-webkit-details-marker {
+  display: none;
+}
+
+.advancedSummary::after {
+  content: '+';
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface2) 78%, white 22%);
+  color: var(--text3);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.advancedBox[open] .advancedSummary::after {
+  content: '-';
+}
+
+.advancedSummary small {
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.advancedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+
+.fieldLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text2);
+}
+
+.fieldNote {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.fieldInput,
+.dateFieldDisplay {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  color: var(--text);
+  font-size: 16px;
+  font-family: var(--font-body);
+  line-height: 1.2;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.dateFieldWrap {
+  position: relative;
+}
+
+.dateFieldWrap:focus-within .dateFieldDisplay {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.dateFieldDisplay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 46px;
+  pointer-events: none;
+}
+
+.dateFieldDisplay::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Crect x='2.25' y='3.25' width='11.5' height='10.5' rx='2' stroke='%236d7196' stroke-width='1.5'/%3E%3Cpath d='M5 1.75V4.25' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M11 1.75V4.25' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M2.25 6.25H13.75' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.dateFieldPlaceholder {
+  color: var(--text3);
+}
+
+.dateFieldNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  color: transparent;
+}
+
+.dateFieldNative::-webkit-date-and-time-value {
+  opacity: 0;
+}
+
+.dateFieldNative::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.composerFooter {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.composerHint {
+  max-width: 52ch;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--glass-border));
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  color: #07110d;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+  transition: border-color 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.primaryButton:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.gamificationWrap {
+  margin-bottom: 0.85rem;
+}
+
+.goalList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.goalCard {
+  padding: 1rem 1.05rem;
+}
+
+.goalCardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.goalCopy {
+  flex: 1;
+  min-width: 0;
+}
+
+.goalNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.goalName {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.goalDateChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  background: color-mix(in srgb, var(--surface2) 88%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.goalValueRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.goalSaved {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.goalTarget {
+  color: var(--text2);
+}
+
+.goalActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.goalPct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.goalDelete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.goalDelete:hover {
+  border-color: color-mix(in srgb, var(--red) 24%, var(--border));
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 7%, transparent);
+}
+
+.goalTrack {
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--glass-2) 44%, var(--surface3));
+}
+
+.goalTrackFill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), color-mix(in srgb, var(--blue) 62%, white 38%));
+  transition: width 0.45s ease;
+}
+
+.goalTrackFillComplete {
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, white 38%));
+}
+
+.goalMetaRow {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.goalRemaining {
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.goalState {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+.contributionRow {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contributionInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  color: var(--text);
+  font-size: 16px;
+  font-family: var(--font-body);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.contributionInput:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.contributionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.contributionBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.emptyCard {
+  padding: 1.05rem;
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.emptyBody {
+  max-width: 48ch;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text3);
+}
+
+@media (max-width: 980px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+  }
+
+  .quickContributionCard {
+    grid-template-columns: 1fr;
+  }
+
+  .quickContributionActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .quickContributionInput {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .composerGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .summaryGrid,
+  .composerGrid,
+  .advancedGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroCopy,
+  .heroAside,
+  .summaryCard,
+  .composerCard,
+  .goalCard,
+  .emptyCard {
+    border-radius: 16px;
+    padding: 0.95rem;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .heroAsideValue,
+  .summaryValue,
+  .goalName,
+  .emptyTitle {
+    font-size: 20px;
+  }
+
+  .composerFooter,
+  .goalCardTop,
+  .contributionRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .goalActions {
+    justify-content: space-between;
+  }
+
+  .primaryButton,
+  .contributionBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .goalMetaRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

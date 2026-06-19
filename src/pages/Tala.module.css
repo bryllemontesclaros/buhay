@@ -1,0 +1,2135 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  /* Match Takda spacing so switching spaces does not "jump" the layout rhythm. */
+  gap: var(--layout-section-gap);
+}
+
+.workspaceBoard {
+  display: grid;
+  gap: var(--layout-card-gap);
+  padding: var(--layout-surface-pad);
+  border-radius: 30px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background:
+    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 34%),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--purple) 14%, transparent), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-soft);
+}
+
+:global(.neo) .workspaceBoard {
+  background: var(--nb-paper-2);
+  border: 4px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow);
+}
+
+:global(.neo) .workspaceBoardTala::before {
+  display: none;
+}
+
+:global(.neo) .boardBadge {
+  border: 3px solid var(--nb-stroke);
+  background: var(--nb-accent-2);
+  color: var(--nb-ribbon-ink);
+  box-shadow: 0 6px 0 rgba(16, 16, 16, 0.14);
+  font-family: var(--nb-font-mono);
+}
+
+:global(.neo) .boardSignature,
+:global(.neo) .boardStreamText {
+  color: var(--nb-ink);
+}
+
+:global(.neo) .boardStream {
+  background: var(--nb-paper-2);
+  border: 4px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow);
+}
+
+:global(.neo) .boardStreamLabel {
+  color: var(--nb-ink-2);
+  font-family: var(--nb-font-mono);
+}
+
+.workspaceBoardTala {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--purple) 16%, transparent), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.workspaceBoardTala::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 22%, transparent 84%, color-mix(in srgb, var(--glass-highlight) 10%, transparent)),
+    radial-gradient(circle at 82% 0%, color-mix(in srgb, white 14%, transparent), transparent 22%);
+}
+
+.workspaceBoardSwitcher {
+}
+
+.workspaceBoardStatic {
+}
+
+.boardCompanionBar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.05fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.boardIdentity,
+.boardStream,
+.boardTrustPills {
+  min-width: 0;
+}
+
+.boardBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent-glow) 72%, var(--glass-1) 28%);
+  color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
+  font-size: var(--type-overline);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.boardSignature {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: var(--type-body);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.boardStream {
+  display: grid;
+  gap: 4px;
+  padding: 11px 12px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--purple) 12%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+}
+
+.boardStreamLabel {
+  color: var(--text3);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.boardStreamText {
+  color: var(--text);
+  font-size: var(--type-body-sm);
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.boardStreamCursor {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white 18%), color-mix(in srgb, var(--accent) 62%, var(--purple) 38%));
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  animation: talaHaloPulse 2.8s ease-in-out infinite;
+}
+
+.boardTrustPills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.boardTrustPills span {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  color: var(--text2);
+  font-size: var(--type-caption);
+  font-weight: 850;
+}
+
+.hero,
+.panel,
+.statCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+:global(.neo) .hero,
+:global(.neo) .panel,
+:global(.neo) .statCard {
+  background: var(--nb-paper-2);
+  border: 4px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:global(.neo) .hero::before,
+:global(.neo) .panel::before,
+:global(.neo) .statCard::before {
+  display: none;
+}
+
+:global(.neo) .title {
+  font-family: var(--nb-font-display);
+  color: var(--nb-ink);
+}
+
+:global(.neo) .sub {
+  color: var(--nb-ink-2);
+}
+
+:global(.neo) .heroCard,
+:global(.neo) .viewSwitchCard,
+:global(.neo) .quickWinCard,
+:global(.neo) .quickEntryPanel,
+:global(.neo) .advancedBox,
+:global(.neo) .settingsSaveNotice,
+:global(.neo) .focusCard,
+:global(.neo) .chartCard,
+:global(.neo) .entryCard,
+:global(.neo) .rowCard,
+:global(.neo) .goalCard,
+:global(.neo) .calmPlanCard,
+:global(.neo) .journalPromptRow,
+:global(.neo) .selectedDayPanel,
+:global(.neo) .boardTodayCard,
+:global(.neo) .storyCard {
+  background: var(--nb-paper-2);
+  border: 3px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:global(.neo) .journalPromptRow {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.hero::before,
+.panel::before,
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  opacity: 0.8;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: 14px;
+  align-items: stretch;
+  padding: 17px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 34%),
+    radial-gradient(circle at 88% 22%, color-mix(in srgb, var(--purple) 12%, transparent), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.eyebrow,
+.sectionKicker {
+  position: relative;
+  z-index: 1;
+  color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.title {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--type-display-page);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.sub {
+  position: relative;
+  z-index: 1;
+  max-width: var(--layout-copy-measure);
+  margin-top: 9px;
+  color: var(--text2);
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+
+.heroCard {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 148px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 20%, transparent), transparent 45%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+}
+
+.heroCardLabel,
+.statCard span {
+  color: var(--text3);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.heroCardValue {
+  margin-top: 6px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--type-display-md);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.heroCardMeta {
+  margin-top: 8px;
+  color: var(--text2);
+  font-size: var(--type-support);
+  line-height: 1.45;
+}
+
+.heroCompanion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+}
+
+.heroCompanionAvatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, white 44%, transparent), transparent 28%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 56%, var(--purple) 44%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 44%, transparent), 0 14px 24px rgba(16, 8, 25, 0.18);
+}
+
+.heroCompanionAvatar span {
+  position: absolute;
+  inset: 14px 12px 12px;
+  border-radius: 999px 999px 12px 12px;
+  background: color-mix(in srgb, #130d1e 82%, transparent);
+}
+
+.heroCompanionCopy strong,
+.heroCompanionCopy p {
+  display: block;
+}
+
+.heroCompanionCopy strong {
+  color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
+  font-size: var(--type-overline);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heroCompanionCopy p {
+  margin-top: 6px;
+  color: var(--text2);
+  font-size: var(--type-support);
+  line-height: 1.5;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.statCard {
+  border-radius: 20px;
+  padding: 12px;
+}
+
+.statCard strong,
+.statCard small {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.statCard strong {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: clamp(var(--type-title-xl), 2.1vw, var(--type-heading-md));
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.statCard small {
+  margin-top: 6px;
+  color: var(--text3);
+  font-size: var(--type-support);
+}
+
+.quickWins {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.viewSwitchCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  box-shadow: var(--glass-shadow-soft);
+  padding: 14px;
+}
+
+.viewSwitchCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+}
+
+.viewSwitchHeader,
+.viewSwitch {
+  position: relative;
+  z-index: 1;
+}
+
+.viewSwitchHeader {
+  margin-bottom: 10px;
+}
+
+.viewSwitchHeader h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--type-title-md);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.viewSwitch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.viewSwitchButton {
+  min-height: 72px;
+  padding: 11px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  color: var(--text2);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.viewSwitchButton strong,
+.viewSwitchButton span {
+  display: block;
+}
+
+.viewSwitchButton strong {
+  color: var(--text);
+  font-size: var(--type-body-sm);
+  line-height: 1.2;
+}
+
+.viewSwitchButton span {
+  margin-top: 5px;
+  color: var(--text3);
+  font-size: var(--type-caption);
+  line-height: 1.35;
+}
+
+.viewSwitchButton:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+}
+
+.viewSwitchButtonActive {
+  border-color: color-mix(in srgb, var(--accent) 54%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 44%),
+    color-mix(in srgb, var(--accent) 12%, var(--glass-1));
+}
+
+.viewSwitchCompact {
+  padding: 12px 14px;
+  border-radius: 20px;
+}
+
+.viewSwitchCompact .viewSwitchHeader {
+  margin-bottom: 8px;
+}
+
+.viewSwitchCompact .viewSwitchHeader h3 {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.viewSwitchCompact .sectionHint {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.viewSwitchCompact .viewSwitchButton {
+  min-height: 60px;
+  padding: 10px 11px;
+}
+
+.viewSwitchCompact .viewSwitchButton strong {
+  font-size: 13px;
+}
+
+.viewSwitchCompact .viewSwitchButton span {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.quickWinCard {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 12px 13px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 11%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.quickWinCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+}
+
+.quickWinIndex,
+.quickWinCard span:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+.quickWinIndex {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--space-reflection-ink);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent) 74%, var(--purple) 26%));
+  font-size: var(--type-support);
+  font-weight: 900;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+}
+
+.quickWinCard span:last-child {
+  color: var(--text2);
+  font-size: var(--type-support);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@keyframes talaHaloPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+.grid,
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.panel {
+  border-radius: 28px;
+  padding: 16px;
+}
+
+.quickEntryPanel {
+  scroll-margin-top: 92px;
+}
+
+.sectionHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.sectionHeader h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.sectionHint {
+  max-width: var(--layout-copy-measure);
+  margin: 8px 0 0;
+  color: var(--text3);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.formGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.settingsWorkspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.settingsColumn {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.formGrid label,
+.advancedGrid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGrid label span,
+.advancedGrid label span {
+  color: var(--text3);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.formGrid input,
+.formGrid select,
+.formGrid textarea,
+.advancedGrid input,
+.advancedGrid select,
+.advancedGrid textarea,
+.goalUpdate input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  color: var(--text);
+  padding: 10px 12px;
+  outline: none;
+  font-size: var(--type-title-sm);
+  font-family: var(--font-body);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent);
+}
+
+.formGrid select option {
+  background: var(--surface-solid-2);
+  color: var(--text);
+}
+
+.formGrid textarea,
+.advancedGrid textarea {
+  min-height: 138px;
+  resize: vertical;
+}
+
+.advancedBox {
+  position: relative;
+  z-index: 1;
+  margin-top: 10px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  overflow: hidden;
+}
+
+.advancedSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--text2);
+  font-size: var(--type-body-sm);
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.advancedSummary::-webkit-details-marker {
+  display: none;
+}
+
+.advancedSummary::after {
+  content: '+';
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface2) 78%, white 22%);
+  color: var(--text3);
+  font-family: var(--font-mono);
+  font-size: var(--type-title-sm);
+  line-height: 1;
+}
+
+.advancedBox[open] .advancedSummary::after {
+  content: '-';
+}
+
+.advancedSummary small {
+  color: var(--text3);
+  font-size: var(--type-caption);
+  font-weight: 650;
+}
+
+.advancedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 12px 12px;
+}
+
+.settingsSaveNotice {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+}
+
+.settingsSaveNotice strong,
+.settingsActionCopy strong {
+  display: block;
+  color: var(--text);
+  font-size: var(--type-body);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.settingsSaveNotice span,
+.settingsActionCopy span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text3);
+  font-size: var(--type-support);
+  line-height: 1.5;
+}
+
+.settingsStack {
+  display: grid;
+  gap: 12px;
+}
+
+.settingsActionBlock {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+}
+
+.settingsActionCopy {
+  display: grid;
+  gap: 2px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.primaryBtn,
+.secondaryBtn,
+.ghostBtn,
+.monthControls button,
+.rowCard button,
+.entryCard button,
+.goalTop button,
+.goalUpdate button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  font-family: var(--font-body);
+  font-size: var(--type-body-sm);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.primaryBtn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 18px;
+  color: var(--space-reflection-ink);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 72%, var(--purple) 28%));
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
+  white-space: nowrap;
+}
+
+:global(.neo) .primaryBtn,
+:global(.neo) .secondaryBtn,
+:global(.neo) .ghostBtn,
+:global(.neo) .monthControls button,
+:global(.neo) .rowCard button,
+:global(.neo) .entryCard button,
+:global(.neo) .goalTop button,
+:global(.neo) .goalUpdate button {
+  border: 3px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow-sm);
+  background: var(--nb-paper-2);
+  color: var(--nb-ink);
+}
+
+:global(.neo) .primaryBtn {
+  background: var(--nb-accent-2);
+  color: var(--nb-ribbon-ink);
+}
+
+:global(.neo) .secondaryBtn {
+  border-style: dashed;
+}
+
+:global(.neo) .primaryBtn:hover,
+:global(.neo) .primaryBtn:focus-visible,
+:global(.neo) .secondaryBtn:hover,
+:global(.neo) .ghostBtn:hover,
+:global(.neo) .monthControls button:hover,
+:global(.neo) .rowCard button:hover,
+:global(.neo) .entryCard button:hover,
+:global(.neo) .goalTop button:hover,
+:global(.neo) .goalUpdate button:hover {
+  border-color: var(--nb-stroke);
+}
+
+.primaryBtn:disabled,
+.ghostBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.secondaryBtn,
+.ghostBtn,
+.monthControls button,
+.rowCard button,
+.entryCard button,
+.goalTop button,
+.goalUpdate button {
+  color: var(--text2);
+  background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  padding: 8px 11px;
+}
+
+.secondaryBtn {
+  width: 100%;
+  border-style: dashed;
+}
+
+.settingsSaveNotice .primaryBtn {
+  margin-top: 0;
+  width: auto;
+  justify-self: start;
+}
+
+.primaryBtn:hover,
+.primaryBtn:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
+  color: #fbfbff;
+}
+
+.secondaryBtn:hover,
+.ghostBtn:hover,
+.monthControls button:hover,
+.rowCard button:hover,
+.entryCard button:hover,
+.goalTop button:hover,
+.goalUpdate button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+  color: var(--text);
+}
+
+.focusCard,
+.chartCard,
+.entryCard,
+.rowCard,
+.goalCard,
+.empty {
+  position: relative;
+  z-index: 1;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+}
+
+.focusCard {
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.focusCard span,
+.chartTitle {
+  display: block;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.focusCard strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+.calmPlanCard {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 44%),
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--purple) 10%, transparent), transparent 38%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+}
+
+.calmPlanTop span,
+.calmPlanSteps span,
+.calmBoundaryGrid span {
+  display: block;
+}
+
+.calmPlanTop span {
+  color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.calmPlanTop strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.calmPlanTop p {
+  margin: 8px 0 0;
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.calmPlanSteps,
+.calmBoundaryGrid,
+.journalPromptRow {
+  display: grid;
+  gap: 8px;
+}
+
+.calmPlanSteps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.calmPlanSteps span,
+.calmBoundaryGrid span {
+  min-height: 34px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 850;
+  text-align: center;
+}
+
+.calmBoundaryGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.calmBoundaryGrid span {
+  color: var(--text3);
+  background: color-mix(in srgb, var(--surface3) 54%, transparent);
+}
+
+.journalPromptRow {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 14px;
+  gap: 10px;
+}
+
+.journalPromptChip {
+  min-height: 74px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  color: var(--text2);
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.journalPromptChip strong,
+.journalPromptChip span {
+  display: block;
+}
+
+.journalPromptChip strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.journalPromptChip span {
+  margin-top: 5px;
+  color: var(--text3);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.journalPromptChip:hover {
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+  transform: translateY(-1px);
+}
+
+.routineList {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rowCard,
+.entryCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.entryCard {
+  align-items: flex-start;
+}
+
+.rowCard div,
+.entryCard div,
+.goalCard div {
+  min-width: 0;
+}
+
+.rowCard strong,
+.entryCard strong,
+.goalCard strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.rowCard span,
+.rowCard small,
+.entryCard span,
+.entryCard small,
+.goalCard span,
+.goalCard small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.entryCard p {
+  margin: 8px 0 0;
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.rowActions,
+.settingsActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.settingsActions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+
+.rowDone {
+  opacity: 0.68;
+}
+
+.rowDone strong {
+  text-decoration: line-through;
+}
+
+.moodDot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--text3);
+}
+
+.great {
+  background: var(--accent);
+}
+
+.good {
+  background: color-mix(in srgb, var(--accent) 70%, var(--amber) 30%);
+}
+
+.okay {
+  background: var(--amber);
+}
+
+.low {
+  background: color-mix(in srgb, var(--blue) 75%, var(--amber) 25%);
+}
+
+.heavy {
+  background: color-mix(in srgb, var(--red) 80%, var(--amber) 20%);
+}
+
+.barChart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+  align-items: end;
+  height: 132px;
+  margin-top: 12px;
+}
+
+.barSlot {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 7px;
+  text-align: center;
+}
+
+.barTrack {
+  display: flex;
+  height: 100%;
+  min-height: 78px;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface3) 70%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+}
+
+.barFill {
+  width: 100%;
+  min-height: 5px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white 18%), color-mix(in srgb, var(--purple) 60%, var(--accent) 40%));
+}
+
+.barSlot span,
+.chartMeta {
+  color: var(--text3);
+  font-size: 11px;
+}
+
+.chartMeta {
+  margin-top: 10px;
+}
+
+.goalCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.goalTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.track {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface3) 76%, transparent);
+}
+
+.track div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 86%, white 14%), var(--purple));
+}
+
+.goalUpdate {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.monthControls {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  min-width: min(100%, 290px);
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 72%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+}
+
+.monthLabelWrap {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.monthLabelEyebrow {
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.monthControls strong {
+  color: var(--text);
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.monthControls button {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 14px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.calendarGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.calendarHead {
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.calendarDay {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  min-height: 58px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 9px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 46%, transparent);
+  background: color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+
+.calendarDay:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+}
+
+.calendarDay strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.calendarEmpty {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.calendarToday {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 48%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+}
+
+.calendarSelected {
+  border-color: color-mix(in srgb, var(--accent) 68%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 24%, transparent), transparent 48%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--glass-1)), color-mix(in srgb, var(--surface2) 88%, transparent 12%));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
+    0 14px 28px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.calendarDots,
+.legendRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.calendarDots span,
+.legendRow i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.dotCheckin {
+  background: var(--accent);
+}
+
+.dotJournal {
+  background: var(--purple);
+}
+
+.dotMood {
+  background: var(--blue);
+}
+
+.dotTask {
+  background: color-mix(in srgb, var(--accent) 72%, white 28%);
+}
+
+.dotGoal {
+  background: color-mix(in srgb, var(--red) 70%, var(--purple) 30%);
+}
+
+.legendRow {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  gap: 8px;
+}
+
+.legendRow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.selectedDayPanel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent),
+    0 18px 36px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.selectedDayHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.selectedDayHeader h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.selectedDayGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.selectedDayMetric {
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
+}
+
+.selectedDayMetric span,
+.selectedDayItem span {
+  display: block;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.selectedDayMetric strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.selectedDayList {
+  display: grid;
+  gap: 8px;
+}
+
+.selectedDayItem {
+  padding: 11px 12px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 50%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 66%, var(--surface2) 34%);
+}
+
+.selectedDayItem strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.selectedDayItem small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tagCloud {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tagCloud span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  color: var(--text2);
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.empty {
+  position: relative;
+  z-index: 1;
+  color: var(--text3);
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, transparent);
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 70%, transparent);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 980px) {
+  .workspaceBoard {
+    padding: 10px;
+  }
+
+  .boardCompanionBar {
+    grid-template-columns: 1fr;
+  }
+
+  .boardTrustPills {
+    justify-content: flex-start;
+  }
+
+  .hero,
+  .grid,
+  .settingsWorkspace,
+  .statsGrid,
+  .chartGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    gap: 14px;
+  }
+
+  .workspaceBoard {
+    padding: 14px;
+    border-radius: 26px;
+  }
+
+  .boardTodayCard,
+  .boardTrustPills,
+  .statsGrid,
+  .quickWins {
+    display: none;
+  }
+
+  .hero,
+  .panel,
+  .statCard {
+    border-radius: 24px;
+  }
+
+  .hero {
+    padding: 16px;
+  }
+
+  .selectedDayHeader {
+    flex-direction: column;
+  }
+
+  .selectedDayHeader .ghostBtn {
+    width: 100%;
+  }
+
+  .selectedDayGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroCard {
+    display: none;
+  }
+
+  .heroCompanion {
+    grid-template-columns: 1fr;
+  }
+
+  .quickWins,
+  .calmPlanSteps,
+  .calmBoundaryGrid,
+  .viewSwitch,
+  .formGrid,
+  .advancedGrid,
+  .journalPromptRow,
+  .settingsActions {
+    grid-template-columns: 1fr;
+  }
+
+  .settingsSaveNotice {
+    grid-template-columns: 1fr;
+  }
+
+  .settingsSaveNotice .primaryBtn {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .settingsColumn {
+    gap: 12px;
+  }
+
+  .settingsActionBlock {
+    padding: 13px;
+  }
+
+  .viewSwitchCard {
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .viewSwitchCompact {
+    padding: 12px;
+  }
+
+  .viewSwitchCompact .sectionHint {
+    display: none;
+  }
+
+  .sectionHeader,
+  .rowCard,
+  .entryCard,
+  .goalTop {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rowActions {
+    width: 100%;
+  }
+
+  .rowActions button,
+  .rowCard button,
+  .entryCard button,
+  .goalTop button {
+    width: 100%;
+  }
+
+  .monthControls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .monthLabelEyebrow {
+    font-size: 9px;
+  }
+
+  .calendarGrid {
+    gap: 5px;
+  }
+
+  .calendarDay {
+    min-height: 48px;
+    padding: 7px;
+    border-radius: 14px;
+  }
+}
+
+/* Phase 4 polish: journal-first Tala */
+.quickEntryPanel .sectionHeader {
+  margin-bottom: 4px;
+}
+
+.quickEntryPanel .formGrid {
+  margin-top: 8px;
+}
+
+.quickEntryPanel .advancedBox {
+  margin-top: 10px;
+}
+
+.quickEntryPanel textarea {
+  min-height: 150px;
+}
+
+.quickEntryPanel .primaryBtn {
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .quickEntryPanel {
+    padding: 18px;
+  }
+
+  .quickEntryPanel .sectionHeader h3 {
+    font-size: clamp(30px, 9vw, 42px);
+    line-height: 0.98;
+    max-width: 10ch;
+  }
+
+  .quickEntryPanel .sectionHint {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .quickEntryPanel textarea {
+    min-height: 170px;
+  }
+
+  .quickEntryPanel .journalPromptChip {
+    min-height: 70px;
+  }
+}
+
+/* Visible redesign overrides */
+.workspaceBoard {
+  gap: 14px;
+  padding: 16px;
+  border-radius: 34px;
+}
+
+.boardOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(260px, 0.96fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.boardLead,
+.boardTodayCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+}
+
+.boardLead {
+  display: grid;
+  gap: 10px;
+  padding: 1.1rem 1.15rem;
+}
+
+.boardLeadText {
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.58;
+  max-width: 52ch;
+}
+
+.boardTodayCard {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 1.1rem;
+}
+
+.boardTodayLabel {
+  color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.boardTodayValue {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.boardTodayMeta {
+  color: var(--text2);
+  font-size: 12px;
+  line-height: 1.58;
+}
+
+.boardTrustPills {
+  justify-content: flex-start;
+}
+
+.hero {
+  grid-template-columns: minmax(0, 1.08fr) minmax(240px, 0.92fr);
+  gap: 16px;
+  padding: 18px;
+  border-radius: 30px;
+}
+
+.heroCard,
+.viewSwitchCard,
+.panel,
+.statCard {
+  border-radius: 24px;
+}
+
+:global(.neo) .panel,
+:global(.neo) .statCard,
+:global(.neo) .viewSwitchCard {
+  border-width: 3px;
+  box-shadow: var(--nb-shadow-sm);
+}
+
+:global(.neo) .focusCard,
+:global(.neo) .chartCard,
+:global(.neo) .entryCard,
+:global(.neo) .rowCard,
+:global(.neo) .goalCard,
+:global(.neo) .calmPlanCard,
+:global(.neo) .selectedDayPanel,
+:global(.neo) .storyCard {
+  border-width: 2px;
+  box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.1);
+}
+
+@media (max-width: 900px) {
+  .boardOverview,
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase 8 adaptation */
+.storyRibbon {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.storyCard {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 5px;
+  min-height: 88px;
+  padding: 12px 13px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 44%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface2) 26%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+}
+
+.storyCard span,
+.storyCard strong,
+.storyCard small {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.storyCard span {
+  color: var(--text3);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.storyCard strong {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.storyCard small {
+  color: var(--text2);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.hero {
+  grid-template-columns: minmax(0, 1.14fr) minmax(240px, 0.86fr);
+}
+
+.journalPromptRow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.journalPromptChip {
+  min-height: 118px;
+}
+
+@media (max-width: 900px) {
+  .storyRibbon {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .workspaceBoardStatic {
+    display: none;
+  }
+
+  .workspaceBoardSwitcher {
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .workspaceBoardSwitcher::before {
+    display: none;
+  }
+
+  .workspaceBoardSwitcher .boardOverview,
+  .workspaceBoardSwitcher .hero {
+    display: none;
+  }
+
+  .workspaceBoardSwitcher .viewSwitchCard {
+    padding: 12px;
+  }
+
+  .workspaceBoardSwitcher .viewSwitchHeader .sectionHint,
+  .selectedDayHeader .sectionHint,
+  .legendRow {
+    display: none;
+  }
+
+  .workspaceBoardSwitcher .viewSwitch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workspaceBoardSwitcher .viewSwitchButton:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .selectedDayPanel {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .selectedDayGrid {
+    display: none;
+  }
+
+  .selectedDayList {
+    gap: 6px;
+  }
+
+  .settingsWorkspace {
+    gap: 10px;
+  }
+
+  .settingsColumn,
+  .settingsStack {
+    gap: 10px;
+  }
+
+  .settingsSaveNotice {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .settingsActionBlock {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .settingsActionBlock .secondaryBtn,
+  .settingsActionBlock .ghostBtn {
+    width: 100%;
+  }
+
+  .settingsActionCopy span,
+  .settingsSaveNotice span {
+    line-height: 1.4;
+  }
+
+  .advancedSummary small {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .page,
+  .workspaceBoard,
+  .hero,
+  .panel,
+  .viewSwitchCard,
+  .settingsWorkspace,
+  .settingsColumn,
+  .settingsStack,
+  .selectedDayPanel,
+  .selectedDayGrid {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .page {
+    overflow-x: hidden;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+
+  .panel,
+  .viewSwitchCard,
+  .selectedDayPanel {
+    padding: 16px;
+  }
+
+  .journalPromptRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .journalPromptChip {
+    min-height: 82px;
+  }
+
+  .sectionHeader,
+  .settingsSaveNotice,
+  .rowActions,
+  .selectedDayHeader {
+    align-items: stretch;
+  }
+
+  .primaryBtn,
+  .secondaryBtn,
+  .ghostBtn {
+    min-height: 46px;
+    white-space: normal;
+  }
+}

@@ -1,0 +1,456 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 340;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  color: var(--text, #10203b);
+  background: rgba(6, 10, 18, 0.16);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(6, 10, 18, 0.38);
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 28%),
+    rgba(6, 10, 18, 0.34);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  animation: commandBackdropIn var(--motion-duration) var(--motion-ease-out) both;
+}
+
+.sheet {
+  position: relative;
+  z-index: 2;
+  width: min(640px, calc(100vw - 28px));
+  max-height: min(760px, calc(100dvh - 32px));
+  overflow: auto;
+  border-radius: 34px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 76%, var(--border));
+  color: var(--text, #10203b);
+  background-color: var(--surface-solid, #ffffff);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--blue) 12%, transparent), transparent 34%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 38%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-strong);
+  backdrop-filter: blur(var(--glass-blur-xl)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(165%);
+  padding: 16px;
+  animation: commandSheetIn var(--motion-duration-slow) var(--motion-ease-out) both;
+}
+
+.sheet * {
+  box-sizing: border-box;
+}
+
+.handle {
+  width: 44px;
+  height: 4px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border2) 86%, transparent);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 4px 14px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.title {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(30px, 6vw, 44px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  max-width: 430px;
+  margin: 9px 0 0;
+  color: var(--text2);
+  font-size: var(--type-body-sm);
+  line-height: 1.45;
+}
+
+.closeBtn {
+  width: var(--control-h-icon);
+  height: var(--control-h-icon);
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: var(--type-title-xl);
+  line-height: 1;
+  transition: transform 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.closeBtn:hover {
+  transform: scale(1.05);
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--glass-highlight) 38%, var(--glass-border));
+}
+
+.commandForm {
+  padding: 6px 4px 0;
+}
+
+.inputLabel,
+.examplesLabel {
+  display: block;
+  color: var(--text3);
+  font-size: var(--type-overline);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0 0 8px 2px;
+}
+
+.inputWrap {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 44%, transparent);
+}
+
+.inputIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, var(--glass-1));
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--type-support);
+  font-weight: 800;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.input::placeholder {
+  color: var(--text3);
+  font-weight: 500;
+}
+
+.parseBtn,
+.primaryBtn,
+.secondaryBtn {
+  min-height: var(--control-h-chip);
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  font-family: var(--font-body);
+  font-size: var(--type-body-sm);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.parseBtn,
+.primaryBtn {
+  color: #07120e;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.parseBtn {
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.secondaryBtn {
+  color: var(--text2);
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  padding: 0 14px;
+}
+
+.parseBtn:hover,
+.primaryBtn:hover,
+.secondaryBtn:hover {
+  transform: translateY(-1px);
+}
+
+.parseBtn:disabled,
+.primaryBtn:disabled,
+.secondaryBtn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.examples {
+  padding: 18px 4px 4px;
+}
+
+.exampleGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exampleChip {
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  color: var(--text2);
+  border-radius: 999px;
+  padding: 9px 12px;
+  font-size: var(--type-support);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.exampleChip:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent-glow) 70%, var(--glass-1) 30%);
+}
+
+.resultCard {
+  margin: 16px 4px 0;
+  border-radius: 26px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 68%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 9%, transparent), transparent 46%),
+    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent);
+  padding: 14px;
+}
+
+.statusClarify {
+  border-color: color-mix(in srgb, var(--amber) 42%, var(--glass-border));
+}
+
+.statusError {
+  border-color: color-mix(in srgb, var(--red) 44%, var(--glass-border));
+}
+
+.statusSuccess {
+  border-color: color-mix(in srgb, var(--accent) 44%, var(--glass-border));
+}
+
+.resultTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.resultLabel {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.resultMessage {
+  margin-top: 5px;
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: var(--text2);
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.riskmedium {
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-color: color-mix(in srgb, var(--amber) 30%, var(--glass-border));
+}
+
+.riskhigh {
+  color: var(--red);
+  background: var(--red-dim);
+  border-color: color-mix(in srgb, var(--red) 30%, var(--glass-border));
+}
+
+.previewRows {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.previewRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface2) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 42%, transparent);
+}
+
+.previewRow span {
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.previewRow strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 850;
+  text-align: right;
+}
+
+.missingRow {
+  margin-top: 12px;
+  color: var(--amber);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 4px 2px;
+  flex-wrap: wrap;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  padding: 0 16px;
+}
+
+.footerNote {
+  color: var(--text3);
+  font-size: 11px;
+  line-height: 1.45;
+  padding: 10px 6px 0;
+  text-align: center;
+}
+
+@keyframes commandBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes commandSheetIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .layer {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .sheet {
+    width: min(100%, calc(100vw - 16px));
+    max-height: calc(100dvh - env(safe-area-inset-top) - 8px);
+    border-radius: 30px 30px 0 0;
+    padding: 12px;
+  }
+
+  .header {
+    padding: 2px 2px 12px;
+  }
+
+  .inputWrap {
+    grid-template-columns: auto 1fr;
+  }
+
+  .parseBtn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .resultTop {
+    flex-direction: column;
+  }
+
+  .badges {
+    justify-content: flex-start;
+  }
+
+  .previewRow {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .previewRow strong {
+    text-align: left;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,97 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 560;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 14px;
+}
+
+@media (min-width: 640px) {
+  .overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.modal {
+  width: min(760px, 100%);
+  /* Keep portaled panels above the mobile bottom nav. */
+  max-height: calc(100dvh - 22px - var(--app-mobile-bottom-offset));
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%),
+      color-mix(in srgb, var(--surface) 92%, transparent 8%)
+    );
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  box-shadow: var(--glass-shadow-strong);
+  backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+}
+
+@media (min-width: 640px) {
+  .modal {
+    border-radius: var(--radius-lg);
+    max-height: min(84vh, 760px);
+    padding: 18px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.headerCopy {
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--type-title-xl);
+  line-height: 1.1;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: var(--text3);
+  font-size: var(--type-support);
+  line-height: 1.4;
+}
+
+.close {
+  min-width: 44px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 70%, var(--surface) 30%);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: color-mix(in srgb, var(--glass-1) 60%, var(--surface) 40%);
+}
+
+.body {
+  display: grid;
+  gap: 12px;
+}

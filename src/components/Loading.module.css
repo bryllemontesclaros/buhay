@@ -1,0 +1,25 @@
+.spinnerWrap { display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1rem; text-align: center; gap: 8px; }
+.emptyIcon { font-size: 40px; margin-bottom: 4px; }
+.emptyTitle { font-size: 15px; font-weight: 600; color: var(--text2); }
+.emptySub { font-size: var(--type-body-sm); color: var(--text3); max-width: 260px; line-height: 1.5; }
+.emptyAction {
+  margin-top: 8px;
+  min-height: var(--control-h-primary);
+  padding: 0 20px;
+  background: var(--accent);
+  color: #0a0a0f;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--type-body-sm);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.pageLoader { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; background: var(--bg); z-index: 999; }
+.loaderLogo { font-family: var(--font-display); font-size: var(--type-display-sm); color: var(--accent); letter-spacing: -1px; }
+.loaderMessage { max-width: 320px; padding: 0 1rem; text-align: center; font-size: var(--type-body-sm); line-height: 1.6; color: var(--text2); }

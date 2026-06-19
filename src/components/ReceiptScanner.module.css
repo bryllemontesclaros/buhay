@@ -1,0 +1,588 @@
+.wrap { display: flex; flex-direction: column; gap: 0; }
+.embedded { gap: 12px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 1rem; }
+.title { font-family: var(--font-display); font-size: var(--type-title-xl); color: var(--text); }
+.closeBtn { background: none; border: none; color: var(--text3); font-size: var(--type-title-xl); cursor: pointer; min-width: var(--control-h-icon); min-height: var(--control-h-icon); }
+
+.modeRow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.modeBtn {
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  color: var(--text2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  font-family: var(--font-body);
+  min-height: var(--control-h-primary);
+  transition: all 0.15s ease;
+}
+.modeBtnActive { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+.idleStack { display: grid; gap: 12px; }
+.uploadArea {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  align-items: stretch;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-glow) 42%, transparent), transparent 48%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+.uploadVisual { min-width: 0; }
+.guideCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%), color-mix(in srgb, var(--surface) 92%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+}
+.guidePill {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+.guideScreen {
+  position: relative;
+  min-height: 260px;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  background:
+    linear-gradient(180deg, rgba(9, 16, 22, 0.88), rgba(18, 24, 32, 0.72)),
+    radial-gradient(circle at top, color-mix(in srgb, var(--accent) 18%, transparent), transparent 58%);
+}
+.guideGlow {
+  position: absolute;
+  inset: auto -18% -10% -18%;
+  height: 42%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 28%, transparent), transparent 65%);
+  opacity: 0.7;
+}
+.guideFrame {
+  position: absolute;
+  inset: 12% 10%;
+  border-radius: 28px;
+  box-shadow: 0 0 0 999px rgba(8, 12, 18, 0.46);
+  border: 1.5px solid rgba(255, 255, 255, 0.34);
+}
+.guideFrame::before,
+.guideFrame::after,
+.cameraGuideFrame::before,
+.cameraGuideFrame::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  bottom: 16px;
+  left: 16px;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.92);
+  border-left: 3px solid rgba(255, 255, 255, 0.92);
+  border-radius: 0 0 0 10px;
+}
+.guideFrame::after,
+.cameraGuideFrame::after {
+  left: auto;
+  right: 16px;
+  border-left: none;
+  border-right: 3px solid rgba(255, 255, 255, 0.92);
+  border-radius: 0 0 10px 0;
+}
+.guideCorners,
+.cameraGuideCorners {
+  position: absolute;
+  inset: 0;
+}
+.guideCorners::before,
+.guideCorners::after,
+.cameraGuideCorners::before,
+.cameraGuideCorners::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-top: 3px solid rgba(255, 255, 255, 0.92);
+  border-left: 3px solid rgba(255, 255, 255, 0.92);
+  top: 16px;
+  left: 16px;
+  border-radius: 10px 0 0 0;
+}
+.guideCorners::after,
+.cameraGuideCorners::after {
+  left: auto;
+  right: 16px;
+  border-left: none;
+  border-right: 3px solid rgba(255, 255, 255, 0.92);
+  border-radius: 0 10px 0 0;
+}
+.guideReceipt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 38%;
+  height: 62%;
+  transform: translate(-50%, -50%) rotate(-5deg);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 252, 0.94));
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.22),
+    inset 0 -26px 0 rgba(72, 78, 88, 0.05);
+}
+.guideReceipt::before,
+.guideReceipt::after {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  height: 2px;
+  background: rgba(86, 96, 112, 0.18);
+}
+.guideReceipt::before { top: 24%; box-shadow: 0 16px 0 rgba(86, 96, 112, 0.18), 0 32px 0 rgba(86, 96, 112, 0.18), 0 48px 0 rgba(86, 96, 112, 0.18); }
+.guideReceipt::after { bottom: 18%; box-shadow: 0 -14px 0 rgba(86, 96, 112, 0.14); }
+.guideCaption {
+  font-size: var(--type-support);
+  line-height: 1.55;
+  color: var(--text3);
+}
+.uploadBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+.uploadIcon { font-size: 40px; }
+.uploadTitle { font-size: 15px; font-weight: 600; color: var(--text); }
+.uploadSub { font-size: var(--type-body-sm); color: var(--text3); line-height: 1.5; }
+.privacyCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--blue-dim) 24%, transparent), transparent 48%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%), color-mix(in srgb, var(--surface) 92%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+}
+.privacyTitle {
+  font-size: var(--type-support);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+.privacyText {
+  margin-top: 3px;
+  font-size: var(--type-caption);
+  line-height: 1.45;
+  color: var(--text3);
+}
+.switchBtn {
+  width: 50px;
+  min-width: 50px;
+  height: 30px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+  background: color-mix(in srgb, var(--surface2) 88%, transparent);
+  cursor: pointer;
+  transition:
+    background var(--motion-duration-fast) ease,
+    border-color var(--motion-duration-fast) ease,
+    opacity var(--motion-duration-fast) ease;
+}
+.switchBtn span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text3) 60%, var(--glass-highlight));
+  box-shadow: 0 4px 10px rgba(8, 12, 18, 0.18);
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    background var(--motion-duration-fast) ease;
+}
+.switchBtnOn {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface2));
+}
+.switchBtnOn span {
+  transform: translateX(20px);
+  background: var(--accent);
+}
+.switchBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.tipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tipPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, white 12%);
+  color: var(--text2);
+  font-size: var(--type-caption);
+  font-weight: 700;
+}
+
+.loadingArea { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.loadingText { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text2); }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.errorArea { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.errorMsg { font-size: 13px; color: var(--red); background: var(--red-dim); padding: 10px 14px; border-radius: var(--radius-sm); width: 100%; text-align: center; }
+
+.preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); }
+
+.resultArea { display: flex; flex-direction: column; gap: 12px; }
+.resultTitle { font-size: 15px; font-weight: 700; color: var(--text); }
+.noticeMsg { font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid; width: 100%; text-align: left; line-height: 1.5; }
+.noticeWarn { color: var(--amber); background: var(--amber-dim); border-color: var(--amber); }
+.noticeInfo { color: var(--blue); background: var(--blue-dim); border-color: var(--blue); }
+.resultNote { font-size: 12px; color: var(--text3); line-height: 1.5; }
+.captureMeta {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface2));
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cameraStage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--blue-dim) 28%, transparent), transparent 52%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.cameraTopRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inlineBtn {
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+}
+
+.cameraViewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  background:
+    linear-gradient(180deg, rgba(9, 16, 22, 0.9), rgba(17, 25, 34, 0.72)),
+    radial-gradient(circle at top, rgba(36, 202, 126, 0.14), transparent 54%);
+}
+
+.cameraVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cameraOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+  pointer-events: none;
+}
+
+.cameraOverlayTop,
+.cameraOverlayBottom {
+  align-self: center;
+  max-width: min(92%, 420px);
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(8, 12, 18, 0.58);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.96);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.cameraGuideFrame {
+  position: relative;
+  flex: 1;
+  margin: 18px auto;
+  width: min(82%, 460px);
+  min-height: 55%;
+  border-radius: 28px;
+  box-shadow: 0 0 0 999px rgba(8, 12, 18, 0.42);
+  border: 1.5px solid rgba(255, 255, 255, 0.34);
+}
+
+.cameraStateCard {
+  position: absolute;
+  inset: auto 18px 18px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(8, 12, 18, 0.76);
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.cameraStateTitle {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.cameraStateText {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.cameraActionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.formField { display: flex; flex-direction: column; gap: 4px; }
+.formField span { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: 0.3px; }
+.formFieldControl,
+.formField input, .formField select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  font-family: var(--font-body);
+  min-height: 42px;
+  line-height: 1.2;
+}
+.formField input:focus, .formField select:focus, .formFieldControl:focus { border-color: var(--accent); }
+.formField select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 5.25L7 9.25L11 5.25' stroke='%236d7196' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+.formField input[type='number'],
+.formFieldControl[type='number'] {
+  -moz-appearance: textfield;
+}
+.formField input[type='number']::-webkit-outer-spin-button,
+.formField input[type='number']::-webkit-inner-spin-button,
+.formFieldControl[type='number']::-webkit-outer-spin-button,
+.formFieldControl[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.fullWidth { grid-column: 1 / -1; }
+.dateFieldWrap { position: relative; }
+.dateFieldWrap:focus-within .dateFieldDisplay { border-color: var(--accent); }
+.dateFieldDisplay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 44px;
+  pointer-events: none;
+}
+.dateFieldDisplay::after {
+  content: '▾';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text2);
+}
+.dateFieldNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  color: transparent;
+}
+.dateFieldNative::-webkit-date-and-time-value { opacity: 0; }
+.dateFieldNative::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.detailSection { display: flex; flex-direction: column; gap: 8px; }
+.detailToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+.detailToggle:hover { border-color: var(--accent); color: var(--text); }
+.detailMeta {
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-glow);
+  border: 1px solid rgba(34, 216, 122, 0.28);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.transferNote {
+  padding: 10px 12px;
+  background: var(--amber-dim);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.btnRow { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.btnCamera, .btnUpload {
+  flex: 1;
+  padding: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-body);
+  min-height: 48px;
+}
+.btnRetry {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 48px;
+}
+.btnUse {
+  flex: 2;
+  padding: 12px;
+  background: var(--accent);
+  color: #0a0a0f;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  min-height: 48px;
+}
+.btnUse:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+  .modeRow { grid-template-columns: 1fr; }
+  .formGrid { grid-template-columns: 1fr; }
+  .uploadArea { grid-template-columns: 1fr; padding: 0.9rem; }
+  .guideScreen { min-height: 220px; }
+  .cameraStage { padding: 0.9rem; }
+  .cameraViewport { aspect-ratio: 3 / 4.25; border-radius: 24px; }
+  .cameraOverlay { padding: 14px; }
+  .cameraGuideFrame { width: 86%; min-height: 52%; border-radius: 22px; }
+  .cameraStateCard { inset: auto 12px 12px 12px; border-radius: 16px; }
+  .btnRow,
+  .cameraActionRow { flex-direction: column; }
+  .btnCamera, .btnUpload, .btnRetry, .btnUse { width: 100%; }
+}

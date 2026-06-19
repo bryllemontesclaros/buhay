@@ -1,0 +1,530 @@
+.budgetPage {
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.heroSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
+  gap: 8px;
+  margin-bottom: 0.7rem;
+}
+
+.heroCopy,
+.heroAside,
+.summaryCard,
+.monthBar,
+.surfaceCard,
+.composerCard,
+.budgetCard,
+.emptyCard {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.heroCopy {
+  padding: 0.95rem 1rem;
+}
+
+.pageEyebrow,
+.heroAsideLabel,
+.summaryLabel,
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.pageEyebrow {
+  margin-bottom: 10px;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  max-width: 13ch;
+}
+
+.pageSub {
+  margin-top: 8px;
+  max-width: 48ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+}
+
+.heroAside {
+  padding: 0.9rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.heroAsideValue {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.heroAsideTrack {
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface3);
+}
+
+.heroAsideFill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  transition: width 0.45s ease;
+}
+
+.heroAsideMeta {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 0.7rem;
+}
+
+.summaryCard {
+  padding: 0.85rem 0.9rem;
+}
+
+.summaryValue {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.summaryValueAccent {
+  color: var(--accent);
+}
+
+.summaryValueBlue {
+  color: var(--blue);
+}
+
+.summaryValueRed {
+  color: var(--red);
+}
+
+.summaryMeta {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.gamificationWrap {
+  margin-bottom: 0.85rem;
+}
+
+.monthBar {
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.navBtn {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  color: var(--text2);
+  border-radius: 999px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 15px;
+  min-width: 34px;
+  min-height: 34px;
+}
+
+.navBtn:hover {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+  color: var(--text);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 42%, var(--surface2) 58%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.monthLabel {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--text);
+  min-width: 180px;
+  text-align: center;
+}
+
+.surfaceCard,
+.composerCard,
+.budgetCard {
+  padding: 1rem 1.05rem;
+  margin-bottom: 0.85rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sectionMeta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.sectionCopy {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text2);
+}
+
+.usageMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.usageTrack {
+  height: 10px;
+  background: var(--surface3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.usageFill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.4s ease;
+}
+
+.usageNote {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.composerGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr auto;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+.fieldInput {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  color: var(--text);
+  font-size: 16px;
+  font-family: var(--font-body);
+  line-height: 1.2;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+select.fieldInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 42px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 5.25L7 9.25L11 5.25' stroke='%236d7196' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.primaryButton,
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.primaryButton {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  color: #07110d;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.primaryButton:hover {
+  opacity: 0.88;
+}
+
+.budgetCard {
+  overflow: hidden;
+}
+
+.alertBanner {
+  margin: -1rem -1.05rem 1rem;
+  padding: 8px 1rem;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.budgetHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.budgetHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.budgetCat {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.budgetSpent,
+.budgetLimit,
+.budgetRemaining,
+.unbudgetedValue {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.budgetLimit {
+  color: var(--text3);
+}
+
+.deleteBtn {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  background: transparent;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.deleteBtn:hover {
+  border-color: color-mix(in srgb, var(--red) 24%, var(--border));
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+}
+
+.budgetTrack {
+  height: 8px;
+  background: var(--surface3);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 8px;
+}
+
+.budgetFill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.4s ease;
+}
+
+.budgetMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.budgetRemaining {
+  font-weight: 700;
+}
+
+.unbudgetedRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+}
+
+.unbudgetedRow:last-child {
+  border-bottom: none;
+}
+
+.unbudgetedCat {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.unbudgetedValue {
+  color: var(--red);
+}
+
+.emptyCard {
+  padding: 1.05rem;
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.emptyBody {
+  max-width: 48ch;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text3);
+}
+
+@media (max-width: 980px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .composerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryGrid {
+    display: flex;
+    margin-inline: -0.85rem;
+    padding-inline: 0.85rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .summaryGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .summaryCard {
+    min-width: min(230px, 72vw);
+    scroll-snap-align: start;
+  }
+
+  .heroCopy,
+  .heroAside,
+  .summaryCard,
+  .monthBar,
+  .surfaceCard,
+  .composerCard,
+  .budgetCard,
+  .emptyCard {
+    border-radius: 16px;
+    padding: 0.95rem;
+  }
+
+  .pageTitle,
+  .heroAsideValue,
+  .summaryValue,
+  .budgetCat,
+  .emptyTitle {
+    font-size: 24px;
+  }
+
+  .monthBar,
+  .budgetHeader,
+  .budgetMeta,
+  .usageMetaRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .monthLabel {
+    min-width: 0;
+  }
+
+  .budgetHeaderRight {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .deleteBtn {
+    width: 100%;
+  }
+
+  .unbudgetedRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,556 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  color-scheme: dark;
+
+  --bg: #071018;
+  --bg-deep: #03070d;
+  --surface: rgba(12, 22, 34, 0.82);
+  --surface2: rgba(18, 31, 47, 0.76);
+  --surface3: rgba(25, 42, 62, 0.7);
+  --surface-solid: #0d1926;
+  --surface-solid-2: #132335;
+  --surface-solid-3: #1b3047;
+
+  --border: rgba(204, 219, 236, 0.13);
+  --border2: rgba(218, 230, 242, 0.22);
+  --glass-1: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.08);
+  --glass-3: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.22);
+  --glass-shadow-soft: 0 14px 36px rgba(3, 10, 18, 0.18);
+  --glass-shadow: 0 28px 72px rgba(2, 8, 16, 0.28);
+  --glass-shadow-strong: 0 42px 120px rgba(1, 6, 14, 0.34);
+  --glass-blur-sm: 8px;
+  --glass-blur-md: 14px;
+  --glass-blur-lg: 22px;
+  --glass-blur-xl: 32px;
+
+  --text: #f6f4ef;
+  --text2: rgba(232, 238, 244, 0.78);
+  --text3: rgba(189, 202, 217, 0.52);
+
+  --accent: #69d4b2;
+  --accent-dim: #258a6b;
+  --accent-glow: rgba(105, 212, 178, 0.16);
+  --peach: #d6a06a;
+  --peach-dim: rgba(214, 160, 106, 0.14);
+  --iris: #9ca5ff;
+  --iris-dim: rgba(156, 165, 255, 0.14);
+  --rose: #d492b8;
+  --rose-dim: rgba(212, 146, 184, 0.12);
+  --red: #f1909d;
+  --red-dim: rgba(241, 144, 157, 0.13);
+  --amber: #dfbd78;
+  --amber-dim: rgba(223, 189, 120, 0.12);
+  --blue: #7eb7f8;
+  --blue-dim: rgba(126, 183, 248, 0.14);
+  --purple: #b8afff;
+  --purple-dim: rgba(184, 175, 255, 0.14);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 56px;
+  --space-10: 72px;
+  --page-max: 1320px;
+  --page-max-tight: 1160px;
+  --section-space: clamp(24px, 4vw, 48px);
+  --grid-gap: 20px;
+  --grid-gap-tight: 12px;
+
+  --radius: 20px;
+  --radius-sm: 16px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+  --bento-radius: 24px;
+  --bento-radius-lg: 34px;
+  --bento-radius-xl: 44px;
+  --bento-gap: 16px;
+  --bento-gap-lg: 22px;
+  --bento-surface: rgba(12, 22, 34, 0.88);
+  --bento-surface-soft: rgba(20, 34, 50, 0.76);
+  --bento-border: rgba(211, 223, 238, 0.16);
+  --trust-ok: #69d4b2;
+  --trust-warn: #dfbd78;
+  --trust-risk: #f1909d;
+  --trust-info: #7eb7f8;
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration-fast: 0.16s;
+  --motion-duration: 0.22s;
+  --motion-duration-slow: 0.34s;
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --font-display: 'Fraunces', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-brutal: 'Fredoka', system-ui, sans-serif;
+  --font-editorial: 'Fraunces', serif;
+  --font-ui: 'Plus Jakarta Sans', sans-serif;
+
+  --type-overline: 10px;
+  --type-caption: 11px;
+  --type-support: 12px;
+  --type-body-sm: 13px;
+  --type-body: 14px;
+  --type-body-lg: 15px;
+  --type-title-sm: 16px;
+  --type-title-md: 18px;
+  --type-title-xl: 20px;
+  --type-title-lg: 22px;
+  --type-heading-xs: 24px;
+  --type-heading-md: 26px;
+  --type-heading-sm: 28px;
+  --type-lead: clamp(15px, 2vw, 18px);
+  --type-display-sm: clamp(26px, 3vw, 38px);
+  --type-display-card: clamp(28px, 4vw, 42px);
+  --type-display-page: clamp(30px, 4vw, 44px);
+  --type-display-md: clamp(34px, 5vw, 56px);
+  --type-display-lg: clamp(42px, 7vw, 78px);
+  --type-editorial-kicker: 12px;
+  --type-reading: clamp(15px, 1.5vw, 17px);
+  --type-reading-wide: clamp(17px, 1.8vw, 20px);
+
+  /* Control sizing tiers (desktop + mobile). */
+  --control-h-chip: 32px;
+  --control-h-icon: 44px;
+  --control-h-secondary: 42px;
+  --control-h-primary: 48px;
+
+  /* Shared layout rhythm. */
+  --layout-page-pad-x: clamp(18px, 3vw, 34px);
+  --layout-page-pad-y: clamp(24px, 3vw, 38px);
+  --layout-page-pad-y-lg: clamp(30px, 4vw, 48px);
+  --layout-section-gap: clamp(20px, 2.5vw, 28px);
+  --layout-section-gap-tight: clamp(14px, 2vw, 20px);
+  --layout-card-gap: 12px;
+  --layout-card-gap-tight: 8px;
+  --layout-surface-pad: clamp(16px, 2vw, 20px);
+  --layout-surface-pad-lg: clamp(20px, 2.6vw, 28px);
+  --layout-surface-pad-xl: clamp(24px, 3vw, 36px);
+  --layout-copy-measure: 62ch;
+  --layout-copy-measure-wide: 72ch;
+  --layout-action-gap: 10px;
+  --layout-hero-gap: clamp(18px, 2.4vw, 26px);
+  --layout-imperfect-tilt-sm: -0.7deg;
+  --layout-imperfect-tilt-md: 0.9deg;
+
+  /* Subtle tactile texture. Keep low-contrast so functional UI stays readable. */
+  --texture-paper-dot: rgba(255, 255, 255, 0.045);
+  --texture-paper-line: rgba(255, 255, 255, 0.025);
+  --texture-paper-shadow: rgba(8, 12, 18, 0.08);
+
+  /* Used by portaled sheets/modals so they don't hide behind the mobile bottom nav. */
+  --app-mobile-bottom-offset: 0px;
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 52%, white);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --app-mobile-bottom-offset: calc(72px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Neo-brutal “playful modern minimal” skin.
+   Applied per-page by adding className="neo" to the top-level wrapper. */
+.neo {
+  --nb-paper: #fcf6ea;
+  --nb-paper-2: #fffbf3;
+  --nb-ink: #101010;
+  --nb-ink-2: rgba(16, 16, 16, 0.82); /* Increased for WCAG AA standard text contrast */
+  --nb-ink-3: rgba(16, 16, 16, 0.62); /* Increased from 0.46 for readable body contrast */
+  --nb-stroke: #101010;
+  --nb-stroke-soft: rgba(16, 16, 16, 0.22);
+  --nb-shadow: 0 10px 0 rgba(16, 16, 16, 0.14);
+  --nb-shadow-sm: 0 6px 0 rgba(16, 16, 16, 0.12);
+  --nb-radius: 28px;
+  --nb-radius-sm: 20px;
+  --nb-radius-lg: 36px;
+  --nb-gap: 18px;
+
+  --nb-accent: #ff6858;
+  --nb-accent-2: #4e6bf5;
+  --nb-sun: #f2d06d;
+  --nb-mint: #4ac9ad;
+  --nb-surface-card: var(--nb-paper-2);
+  --nb-surface-card-strong: #ffffff;
+  --nb-accent-ink: #101010;
+  --nb-ribbon-ink: #ffffff;
+  --nb-device-shell: #111111;
+  --nb-device-top: #101010;
+  --nb-device-notch: rgba(255, 255, 255, 0.12);
+  --nb-ambient-hot: rgba(255, 104, 88, 0.16);
+  --nb-ambient-cool: rgba(78, 107, 245, 0.14);
+  --nb-ambient-mint: rgba(74, 201, 173, 0.16);
+  --nb-ambient-sun: rgba(242, 208, 109, 0.16);
+  --nb-ambient-dot: rgba(16, 16, 16, 0.04);
+  --nb-texture-dot: rgba(16, 16, 16, 0.04);
+  --nb-texture-line: rgba(16, 16, 16, 0.022);
+  --nb-paper-fiber: rgba(255, 255, 255, 0.5);
+  --overlay-scrim: rgba(8, 12, 18, 0.42);
+  --overlay-scrim-strong: rgba(8, 12, 18, 0.62);
+  --space-finance: #127b63;
+  --space-finance-dim: rgba(26, 143, 114, 0.14);
+  --space-finance-ink: #08110d;
+  --space-fitness: #d56413;
+  --space-fitness-dim: rgba(234, 88, 12, 0.14);
+  --space-fitness-ink: #06120d;
+  --space-reflection: #5f62e8;
+  --space-reflection-dim: rgba(99, 102, 241, 0.14);
+  --space-reflection-ink: #fbfbff;
+
+  --nb-font-display: var(--font-brutal);
+  --nb-font-body: var(--font-body);
+  --nb-font-mono: var(--font-mono);
+
+  /* Map shared tokens so components that still use --text/--text2/--text3
+     automatically match the neo palette. */
+  --text: var(--nb-ink);
+  --text2: var(--nb-ink-2);
+  --text3: var(--nb-ink-3);
+
+  /* Map shared surfaces/borders so legacy "glass" components don't lose contrast in neo pages. */
+  --bg: var(--nb-paper);
+  --bg-deep: var(--nb-paper);
+  --surface: rgba(255, 255, 255, 0.94);
+  --surface2: rgba(255, 255, 255, 0.98);
+  --surface3: rgba(255, 255, 255, 0.88);
+  --surface-solid: #ffffff;
+  --surface-solid-2: #ffffff;
+  --surface-solid-3: #ffffff;
+
+  --border: var(--nb-stroke-soft);
+  --border2: rgba(16, 16, 16, 0.28);
+  --glass-border: rgba(16, 16, 16, 0.26);
+  --glass-highlight: rgba(255, 255, 255, 0.72);
+  --glass-1: rgba(255, 255, 255, 0.74);
+  --glass-2: rgba(255, 255, 255, 0.86);
+  --glass-3: rgba(255, 255, 255, 0.94);
+  --glass-shadow-soft: 0 10px 0 rgba(16, 16, 16, 0.12);
+  --glass-shadow: 0 14px 0 rgba(16, 16, 16, 0.14);
+  --glass-shadow-strong: 0 18px 0 rgba(16, 16, 16, 0.16);
+  --glass-blur-sm: 0px;
+  --glass-blur-md: 0px;
+  --glass-blur-lg: 0px;
+  --glass-blur-xl: 0px;
+}
+
+.neo {
+  color-scheme: light;
+  background: var(--nb-paper);
+  color: var(--nb-ink);
+}
+
+/* Neo dark variant: keep the same layout + stroke language, just invert the palette. */
+[data-theme="dark"] .neo {
+  color-scheme: dark;
+
+  --nb-paper: #0b0f14;
+  --nb-paper-2: #101823;
+  --nb-ink: #f6f4ef;
+  --nb-ink-2: rgba(246, 244, 239, 0.85); /* Increased from 0.76 for better text readability */
+  --nb-ink-3: rgba(246, 244, 239, 0.65); /* Increased from 0.5 for accessible body text */
+  --nb-stroke: rgba(246, 244, 239, 0.94);
+  --nb-stroke-soft: rgba(246, 244, 239, 0.22);
+  --nb-shadow: 0 12px 0 rgba(0, 0, 0, 0.36);
+  --nb-shadow-sm: 0 8px 0 rgba(0, 0, 0, 0.42);
+
+  --nb-accent: #ff6b61;
+  --nb-accent-2: #6f86ff;
+  --nb-sun: #f3d27a;
+  --nb-mint: #56dbc0;
+  --nb-surface-card: var(--nb-paper-2);
+  --nb-surface-card-strong: color-mix(in srgb, var(--nb-paper-2) 92%, white 8%);
+  --nb-accent-ink: #08110d;
+  --nb-ribbon-ink: var(--nb-ink);
+  --nb-device-shell: #0d1117;
+  --nb-device-top: #0a0e14;
+  --nb-device-notch: rgba(246, 244, 239, 0.14);
+  --nb-ambient-hot: rgba(255, 107, 97, 0.16);
+  --nb-ambient-cool: rgba(111, 134, 255, 0.14);
+  --nb-ambient-mint: rgba(86, 219, 192, 0.12);
+  --nb-ambient-sun: rgba(243, 210, 122, 0.14);
+  --nb-ambient-dot: rgba(246, 244, 239, 0.05);
+  --nb-texture-dot: rgba(246, 244, 239, 0.045);
+  --nb-texture-line: rgba(246, 244, 239, 0.02);
+  --nb-paper-fiber: rgba(246, 244, 239, 0.12);
+  --overlay-scrim: rgba(8, 12, 18, 0.46);
+  --overlay-scrim-strong: rgba(8, 12, 18, 0.7);
+  --space-finance: #56dbc0;
+  --space-finance-dim: rgba(86, 219, 192, 0.16);
+  --space-finance-ink: #08110d;
+  --space-fitness: #fb923c;
+  --space-fitness-dim: rgba(251, 146, 60, 0.18);
+  --space-fitness-ink: #06120d;
+  --space-reflection: #8b8cff;
+  --space-reflection-dim: rgba(139, 140, 255, 0.18);
+  --space-reflection-ink: #fbfbff;
+
+  /* Remap shared tokens to the dark neo palette. */
+  --text: var(--nb-ink);
+  --text2: var(--nb-ink-2);
+  --text3: var(--nb-ink-3);
+
+  --bg: var(--nb-paper);
+  --bg-deep: #070b10;
+  --surface: rgba(16, 24, 35, 0.92);
+  --surface2: rgba(16, 24, 35, 0.98);
+  --surface3: rgba(18, 28, 42, 0.88);
+  --surface-solid: #0f1722;
+  --surface-solid-2: #0f1722;
+  --surface-solid-3: #101a28;
+
+  --border: var(--nb-stroke-soft);
+  --border2: rgba(246, 244, 239, 0.26);
+  --glass-border: rgba(246, 244, 239, 0.22);
+  --glass-highlight: rgba(255, 255, 255, 0.16);
+  --glass-1: rgba(255, 255, 255, 0.06);
+  --glass-2: rgba(255, 255, 255, 0.1);
+  --glass-3: rgba(255, 255, 255, 0.14);
+  --glass-shadow-soft: 0 12px 0 rgba(0, 0, 0, 0.32);
+  --glass-shadow: 0 16px 0 rgba(0, 0, 0, 0.34);
+  --glass-shadow-strong: 0 22px 0 rgba(0, 0, 0, 0.38);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f4f0e8;
+  --bg-deep: #ebe3d7;
+  --surface: rgba(255, 251, 245, 0.86);
+  --surface2: rgba(251, 247, 241, 0.8);
+  --surface3: rgba(244, 238, 229, 0.78);
+  --surface-solid: #fffdf9;
+  --surface-solid-2: #f8f2e9;
+  --surface-solid-3: #efe6d9;
+
+  --border: rgba(120, 134, 150, 0.16);
+  --border2: rgba(120, 134, 150, 0.26);
+  --glass-1: rgba(255, 255, 255, 0.62);
+  --glass-2: rgba(255, 255, 255, 0.76);
+  --glass-3: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-highlight: rgba(255, 255, 255, 0.94);
+  --glass-shadow-soft: 0 16px 34px rgba(90, 93, 102, 0.08);
+  --glass-shadow: 0 26px 56px rgba(90, 93, 102, 0.12);
+  --glass-shadow-strong: 0 36px 82px rgba(90, 93, 102, 0.15);
+
+  --text: #192532;
+  --text2: rgba(25, 37, 50, 0.74);
+  --text3: rgba(62, 78, 96, 0.46);
+
+  --accent: #1a8f72;
+  --accent-dim: #106850;
+  --accent-glow: rgba(26, 143, 114, 0.12);
+  --red: #d66c7e;
+  --red-dim: rgba(214, 108, 126, 0.12);
+  --amber: #b9893b;
+  --amber-dim: rgba(185, 137, 59, 0.12);
+  --blue: #4e8de0;
+  --blue-dim: rgba(78, 141, 224, 0.12);
+  --purple: #7c6ce0;
+  --purple-dim: rgba(124, 108, 224, 0.12);
+  --bento-surface: rgba(255, 252, 247, 0.9);
+  --bento-surface-soft: rgba(248, 242, 234, 0.88);
+  --bento-border: rgba(120, 134, 150, 0.18);
+  --trust-ok: #1a8f72;
+  --trust-warn: #b9893b;
+  --trust-risk: #d66c7e;
+  --trust-info: #4e8de0;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  /* Allow pages like the landing screen to manage their own scrolling container.
+     The in-app shell still prevents body scroll by owning a fixed-height layout. */
+  overflow: auto;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+#root {
+  min-height: 100%;
+  overflow: visible;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--border2) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, color-mix(in srgb, var(--border2) 18%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 50% -8%, color-mix(in srgb, var(--accent-glow) 78%, transparent), transparent 32%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 94%, #02060d 6%), var(--bg));
+  background-size: 88px 88px, 88px 88px, auto, auto;
+  background-attachment: fixed;
+  isolation: isolate;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+body::before {
+  z-index: -2;
+  background:
+    radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--blue-dim) 34%, transparent), transparent 24%),
+    radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--peach-dim) 34%, transparent), transparent 26%),
+    radial-gradient(circle at 50% 82%, color-mix(in srgb, var(--accent-glow) 24%, transparent), transparent 28%);
+  filter: blur(62px);
+  opacity: 0.72;
+}
+
+body::after {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, white 4%, transparent), transparent 18%, transparent 82%, color-mix(in srgb, white 2%, transparent)),
+    linear-gradient(135deg, color-mix(in srgb, white 4%, transparent), transparent 28%),
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 28%);
+}
+
+@keyframes floatDrift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
+}
+
+@keyframes haloPulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+  50% { box-shadow: 0 0 0 12px color-mix(in srgb, var(--accent) 10%, transparent); }
+}
+
+@keyframes streamBlink {
+  0%, 48% { opacity: 1; }
+  52%, 100% { opacity: 0.16; }
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    height: 100%;
+    min-height: -webkit-fill-available;
+    overflow: auto;
+  }
+
+  #root {
+    min-height: 100%;
+    min-height: -webkit-fill-available;
+    overflow: visible;
+  }
+}
+
+input, select, button, textarea {
+  font-family: var(--font-body);
+}
+
+a,
+button,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex]:not([tabindex="-1"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, select, textarea {
+  font-size: 16px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 54%, white 46%);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.skipLink {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 2000;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, white 12%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 92%, var(--border) 8%);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--glass-shadow-soft);
+  transform: translateY(-140%);
+  transition: transform var(--motion-duration) var(--motion-ease-out);
+}
+
+.skipLink:focus-visible {
+  transform: translateY(0);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--border2) 88%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text3) 62%, transparent);
+  background-clip: padding-box;
+}

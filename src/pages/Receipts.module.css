@@ -1,0 +1,1180 @@
+.receiptsPage {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-bottom: 1rem;
+}
+
+.heroSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
+  gap: 8px;
+  margin-bottom: 0.7rem;
+}
+
+.heroCopy,
+.heroAside,
+.topSummaryCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 80%, transparent 20%), transparent 44%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.heroCopy {
+  padding: 0.95rem 1rem;
+}
+
+.heroAside,
+.topSummaryCard {
+  padding: 0.9rem 0.95rem;
+}
+
+.pageEyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  max-width: 13ch;
+}
+
+.pageSub {
+  margin-top: 8px;
+  max-width: 48ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+}
+
+.heroAside {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.heroAsideLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.heroAsideValue {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.08;
+  color: var(--text);
+}
+
+.heroAsideTrack {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface2) 85%, white 15%);
+  overflow: hidden;
+}
+
+.heroAsideFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--blue) 70%, white 30%));
+}
+
+.heroAsideMeta {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.topSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 0.7rem;
+}
+
+.topSummaryLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.42px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.topSummaryValue {
+  font-family: var(--font-display);
+  font-size: 21px;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.topSummaryValueAccent {
+  color: var(--accent);
+}
+
+.topSummaryValueBlue {
+  color: var(--blue);
+}
+
+.topSummaryMeta {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text3);
+}
+
+.statusBanner {
+  margin-bottom: 1rem;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.statusBannerOk {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 78%, var(--surface) 22%);
+  color: var(--accent);
+}
+
+.statusBannerWarn {
+  border-color: color-mix(in srgb, var(--amber) 38%, var(--border));
+  background: color-mix(in srgb, var(--amber-dim) 78%, var(--surface) 22%);
+  color: var(--amber);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.captureCard,
+.summaryCard,
+.controlsCard,
+.analyticsCard,
+.panelCard,
+.galleryCard,
+.detailCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.captureCard,
+.summaryCard,
+.controlsCard,
+.analyticsCard,
+.panelCard,
+.galleryCard,
+.detailCard {
+  padding: 1.25rem;
+}
+
+.sectionEyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.sectionCopy {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.captureActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.deleteButton {
+  min-height: 44px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.primaryButton {
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  color: #08110d;
+  box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.secondaryButton {
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  color: var(--text2);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+}
+
+.deleteButton {
+  border: 1px solid color-mix(in srgb, var(--red) 34%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--red-dim) 90%, var(--glass-2) 10%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  color: var(--red);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.deleteButton:hover {
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.deleteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.captureHint {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.controlsCard {
+  margin-bottom: 1rem;
+}
+
+.summaryBlock + .summaryBlock {
+  margin-top: 1rem;
+}
+
+.summaryInlinePills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.summaryMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.summaryMetric {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+}
+
+.summaryMetric span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.summaryMetric strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.summaryLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text2);
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+}
+
+.summaryRow:last-child {
+  border-bottom: none;
+}
+
+.summaryEmpty {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.filtersGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 0.8fr));
+  gap: 12px;
+}
+
+.searchField {
+  grid-column: span 1;
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.filterChip {
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.filterChipActive {
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  color: var(--accent);
+}
+
+.filterMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.analyticsSplit {
+  display: grid;
+  gap: 16px;
+}
+
+.chartCard {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: radial-gradient(circle at top, color-mix(in srgb, var(--blue-dim) 32%, transparent), transparent 56%), linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+}
+
+.chartColumns {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+  min-height: 220px;
+}
+
+.chartColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.chartValue {
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--text3);
+  text-align: center;
+  min-height: 28px;
+}
+
+.chartTrack {
+  width: 100%;
+  min-height: 130px;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: 16px;
+  padding: 8px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--surface3) 76%, transparent));
+}
+
+.chartBar {
+  width: 100%;
+  min-height: 10px;
+  border-radius: 12px 12px 6px 6px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 72%, white 28%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  box-shadow: 0 10px 18px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.chartLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chartMeta {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.analyticsFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text3);
+}
+
+.rankingRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.rankingRow:last-child {
+  border-bottom: none;
+}
+
+.rankingCopy {
+  min-width: 0;
+}
+
+.rankingCopy strong,
+.rankingCopy span {
+  display: block;
+}
+
+.rankingCopy strong {
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankingCopy span {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 3px;
+}
+
+.rankingBarTrack {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface3) 76%, transparent);
+  overflow: hidden;
+}
+
+.rankingBar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 82%, white 18%), color-mix(in srgb, var(--accent) 92%, black 8%));
+}
+
+.rankingBarAlt {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--blue) 80%, white 20%), color-mix(in srgb, var(--blue) 90%, black 10%));
+}
+
+.rankingValue {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+.reviewGrid,
+.galleryGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.reviewGrid {
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: start;
+}
+
+.reviewMedia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviewImage,
+.detailImage {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  object-fit: contain;
+}
+
+.privacyImagePlaceholder {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background:
+    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 58%, var(--surface2) 42%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  color: var(--muted);
+  font-weight: 800;
+  text-align: center;
+}
+
+.mediaMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mediaMeta span,
+.infoPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--blue) 24%, var(--border));
+  background: color-mix(in srgb, var(--blue) 10%, var(--surface2));
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.confidenceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.confidencePill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.confidenceHigh {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  color: var(--accent);
+}
+
+.confidenceMedium {
+  border-color: color-mix(in srgb, var(--blue) 30%, var(--border));
+  background: color-mix(in srgb, var(--blue-dim) 82%, var(--surface) 18%);
+  color: var(--blue);
+}
+
+.confidenceLow,
+.confidenceNone {
+  border-color: color-mix(in srgb, var(--amber) 30%, var(--border));
+  background: color-mix(in srgb, var(--amber-dim) 82%, var(--surface) 18%);
+  color: var(--amber);
+}
+
+.reviewForm {
+  min-width: 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formField span {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.formField input,
+.formField select,
+.formField textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-body);
+  outline: none;
+}
+
+.formField textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+.formField input:focus,
+.formField select:focus,
+.formField textarea:focus {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.saveModeCard {
+  display: grid;
+  gap: 12px;
+  margin-top: 1rem;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--glass-border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 34%, transparent), transparent 50%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 58%, var(--surface2) 42%), color-mix(in srgb, var(--surface2) 94%, transparent 6%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent);
+}
+
+.saveModeTitle {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: -0.01em;
+}
+
+.saveModeHint {
+  margin: 4px 0 0;
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.saveModeOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.saveModeButton {
+  min-height: 42px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 48%, var(--surface2) 52%), color-mix(in srgb, var(--surface2) 94%, transparent 6%));
+  color: var(--text2);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 800;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.saveModeButton:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+}
+
+.saveModeButtonActive {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 72%, var(--glass-2) 28%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  color: var(--accent);
+}
+
+.saveModeAccount {
+  max-width: 100%;
+}
+
+.saveModeOutcome {
+  display: grid;
+  gap: 9px;
+  padding: 11px 12px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--glass-border));
+  background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+}
+
+.saveModeOutcomeTitle {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.saveModeOutcomeList {
+  display: grid;
+  gap: 6px;
+}
+
+.saveModeOutcomeList span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text2);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.saveModeOutcomeList span::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.rawTextBox,
+.textBlock {
+  margin-top: 1rem;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+}
+
+.lineItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lineItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text2);
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  word-break: break-word;
+}
+
+.lineItemRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rawTextLabel,
+.textBlockLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.rawTextValue,
+.textBlockValue {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.galleryGrid {
+  grid-template-columns: 1.08fr 0.92fr;
+}
+
+.listHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.listCount {
+  min-width: 38px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.receiptList {
+  display: grid;
+  gap: 10px;
+}
+
+.receiptCard {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  text-align: left;
+}
+
+.receiptCardActive {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
+}
+
+.receiptThumbWrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.receiptThumb,
+.receiptThumbFallback {
+  width: 100%;
+  height: 100%;
+}
+
+.receiptThumb {
+  object-fit: cover;
+}
+
+.receiptThumbFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.receiptCopy {
+  min-width: 0;
+}
+
+.receiptTopRow,
+.receiptMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.receiptTopRow {
+  margin-bottom: 6px;
+}
+
+.receiptMetaRow {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.receiptMerchant,
+.receiptAmount {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receiptMerchant {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.receiptAmount {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detailMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.detailMetaItem {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.detailMetaItem span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.detailMetaItem strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.merchantHistoryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.historyMetric {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, white 12%);
+}
+
+.historyMetric span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.historyMetric strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.emptyState {
+  padding: 2rem 1rem;
+  border-radius: 18px;
+  border: 1px dashed var(--border);
+  background: var(--surface2);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.emptyCopy {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text3);
+}
+
+@media (max-width: 980px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+  }
+
+  .topSummaryGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .heroGrid,
+  .analyticsGrid,
+  .reviewGrid,
+  .galleryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtersGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .searchField {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .topSummaryGrid {
+    display: flex;
+    margin-inline: -0.85rem;
+    padding-inline: 0.85rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .topSummaryGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .topSummaryCard {
+    min-width: min(230px, 72vw);
+    scroll-snap-align: start;
+  }
+
+  .heroCopy,
+  .heroAside,
+  .captureCard,
+  .summaryCard,
+  .controlsCard,
+  .analyticsCard,
+  .panelCard,
+  .galleryCard,
+  .detailCard {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+
+  .formGrid,
+  .saveModeOptions,
+  .detailMetaGrid,
+  .summaryMetricGrid,
+  .merchantHistoryGrid,
+  .filtersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topSummaryGrid { gap: 8px; }
+
+  .receiptCard {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .receiptThumbWrap {
+    width: 62px;
+    height: 62px;
+  }
+
+  .lineItemRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chartColumns {
+    gap: 8px;
+    min-height: 188px;
+  }
+
+  .chartTrack {
+    min-height: 104px;
+    height: 104px;
+  }
+
+  .chartValue {
+    font-size: 9px;
+    min-height: 24px;
+  }
+
+  .rankingRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .rankingValue {
+    white-space: normal;
+  }
+
+  .filterMeta,
+  .analyticsFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

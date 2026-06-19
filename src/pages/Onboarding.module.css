@@ -1,0 +1,2081 @@
+.screen {
+  --takda-accent: #67e2ba;
+  --takda-glow: rgba(103, 226, 186, 0.18);
+  --lakas-accent: #fb923c;
+  --lakas-glow: rgba(251, 146, 60, 0.18);
+  --tala-accent: #8b8cff;
+  --tala-glow: rgba(139, 140, 255, 0.18);
+  --buhay-accent: #c4b5fd;
+  --buhay-glow: rgba(196, 181, 253, 0.16);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--border2) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, color-mix(in srgb, var(--border2) 14%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at top left, color-mix(in srgb, var(--takda-accent) 13%, transparent), transparent 28%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 12%, transparent), transparent 34%),
+    radial-gradient(circle at 58% 112%, color-mix(in srgb, var(--tala-accent) 14%, transparent), transparent 38%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 94%, #ffffff 6%), var(--bg));
+  background-size: 108px 108px, 108px 108px, auto, auto, auto, auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+:global(.neo).screen {
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 91, 79, 0.18), transparent 38%),
+    radial-gradient(circle at 88% 18%, rgba(70, 103, 255, 0.16), transparent 44%),
+    radial-gradient(circle, rgba(16, 16, 16, 0.04) 1px, transparent 1px),
+    var(--nb-paper);
+  background-size: auto, auto, 28px 28px, auto;
+  color: var(--nb-ink);
+}
+
+:global(.neo) .brandBlock,
+:global(.neo) .progressCard,
+:global(.neo) .liveCard,
+:global(.neo) .tipCard,
+:global(.neo) .card,
+:global(.neo) .sectionCard,
+:global(.neo) .dynamicCard,
+:global(.neo) .summaryCard,
+:global(.neo) .insightCard {
+  background: var(--nb-paper-2);
+  border: 4px solid var(--nb-stroke);
+  border-radius: var(--nb-radius);
+  box-shadow: var(--nb-shadow);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:global(.neo) .logo {
+  font-family: var(--nb-font-display);
+  color: var(--nb-ink);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+}
+
+:global(.neo) .sideKicker,
+:global(.neo) .progressLabel {
+  font-family: var(--nb-font-mono);
+  color: var(--nb-ink-2);
+}
+
+:global([data-theme="light"]) .screen {
+  --takda-accent: #16b88a;
+  --takda-glow: rgba(22, 184, 138, 0.14);
+  --lakas-accent: #ea580c;
+  --lakas-glow: rgba(234, 88, 12, 0.13);
+  --tala-accent: #6366f1;
+  --tala-glow: rgba(99, 102, 241, 0.13);
+  --buhay-accent: #8b5cf6;
+  --buhay-glow: rgba(139, 92, 246, 0.12);
+}
+
+.notice {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 1rem;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--accent);
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+}
+
+.shell {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.sideRail {
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.brandBlock,
+.progressCard,
+.liveCard,
+.tipCard,
+.card,
+.sectionCard,
+.dynamicCard,
+.summaryCard,
+.insightCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 16%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
+  border-radius: var(--bento-radius-lg);
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.brandBlock,
+.progressCard,
+.liveCard,
+.tipCard {
+  padding: 1.15rem;
+}
+
+.progressCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 40%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.liveCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-info) 10%, transparent), transparent 40%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.tipCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-ok) 10%, transparent), transparent 40%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: var(--type-heading-sm);
+  color: transparent;
+  letter-spacing: -1px;
+  background: linear-gradient(90deg, var(--takda-accent), var(--lakas-accent), var(--tala-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.sideKicker,
+.kicker,
+.progressLabel,
+.liveKicker,
+.tipTitle,
+.insightLabel {
+  font-size: var(--type-caption);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+
+.sideKicker {
+  margin-top: 0.35rem;
+}
+
+.sideTitle {
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-size: var(--type-heading-sm);
+  line-height: 1.02;
+  letter-spacing: -0.8px;
+  color: var(--text);
+}
+
+.sideSub,
+.tipText {
+  margin-top: 0.65rem;
+  font-size: var(--type-body);
+  line-height: 1.65;
+  color: var(--text2);
+}
+
+.spacePulseRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.95rem;
+}
+
+.spacePulse {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background: color-mix(in srgb, var(--surface2) 82%, #ffffff 18%);
+  color: var(--text3);
+  font-size: var(--type-overline);
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spacePulseActive {
+  color: var(--text);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+}
+
+.spacePulseTakda.spacePulseActive {
+  border-color: color-mix(in srgb, var(--takda-accent) 36%, var(--border));
+  background: color-mix(in srgb, var(--takda-glow) 84%, var(--surface) 16%);
+}
+
+.spacePulseLakas.spacePulseActive {
+  border-color: color-mix(in srgb, var(--lakas-accent) 36%, var(--border));
+  background: color-mix(in srgb, var(--lakas-glow) 84%, var(--surface) 16%);
+}
+
+.spacePulseTala.spacePulseActive {
+  border-color: color-mix(in srgb, var(--tala-accent) 36%, var(--border));
+  background: color-mix(in srgb, var(--tala-glow) 84%, var(--surface) 16%);
+}
+
+.progressHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0.8rem;
+}
+
+.progressValue {
+  margin-top: 4px;
+  font-size: var(--type-title-md);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.progressPct {
+  font-family: var(--font-mono);
+  font-size: var(--type-body-sm);
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.progressBar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 82%, transparent);
+}
+
+.progressBar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 76%, white 24%));
+}
+
+.progressList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.progressItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+}
+
+.progressItemActive {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 86%, var(--surface) 14%);
+}
+
+.progressItemDone {
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+}
+
+.progressIndex {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 84%, #ffffff 16%);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--type-support);
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.progressItemActive .progressIndex,
+.progressItemDone .progressIndex {
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--border));
+  color: var(--accent);
+}
+
+.progressCopy {
+  min-width: 0;
+}
+
+.progressStep {
+  font-size: var(--type-body-sm);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.progressStepSub {
+  margin-top: 3px;
+  font-size: var(--type-support);
+  line-height: 1.45;
+  color: var(--text3);
+}
+
+.liveValue {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-size: var(--type-display-md);
+  line-height: 0.95;
+  letter-spacing: -1px;
+  color: var(--text);
+}
+
+.liveSub {
+  margin-top: 0.55rem;
+  font-size: var(--type-body-sm);
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.liveStream {
+  display: grid;
+  gap: 5px;
+  margin-top: 0.9rem;
+  padding: 11px 12px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+}
+
+.liveStream strong {
+  font-size: 12px;
+  line-height: 1.55;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+.liveMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.liveMetric {
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  background: color-mix(in srgb, var(--surface2) 86%, #ffffff 14%);
+}
+
+.liveMetricLabel {
+  font-size: var(--type-overline);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.liveMetricValue {
+  font-size: var(--type-body);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.tipTitle {
+  color: var(--blue);
+}
+
+.tipText {
+  margin-top: 0.45rem;
+}
+
+.guideCard {
+  padding: 1.1rem;
+  border-radius: var(--bento-radius-lg);
+  border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
+    radial-gradient(circle at bottom left, color-mix(in srgb, var(--blue) 10%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+}
+
+.guideCluster {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.guideAvatar {
+  position: relative;
+  width: 50px;
+  height: 56px;
+  margin-left: -9px;
+  border-radius: 18px 18px 18px 12px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  animation: floatDrift 5.8s var(--ease-fluid) infinite;
+}
+
+.guideAvatar:first-child {
+  margin-left: 0;
+}
+
+.guideAvatarTakda {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--takda-accent) 28%, white 10%), color-mix(in srgb, var(--takda-accent) 80%, black 20%));
+}
+
+.guideAvatarLakas {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lakas-accent) 28%, white 10%), color-mix(in srgb, var(--lakas-accent) 80%, black 20%));
+  animation-delay: 0.4s;
+}
+
+.guideAvatarTala {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tala-accent) 28%, white 10%), color-mix(in srgb, var(--tala-accent) 80%, black 20%));
+  animation-delay: 0.8s;
+}
+
+.guideAvatarActive {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent),
+    0 0 0 8px color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.guideEyes {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.guideEyes i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(7, 10, 22, 0.72);
+}
+
+.guideSmile {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  width: 16px;
+  height: 8px;
+  transform: translateX(-50%);
+  border-bottom: 2px solid rgba(7, 10, 22, 0.62);
+  border-radius: 0 0 14px 14px;
+}
+
+.guideLabel,
+.liveStreamLabel,
+.mobileGuideLabel {
+  display: block;
+  font-size: var(--type-overline);
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.guideText,
+.mobileGuideText {
+  display: block;
+  margin-top: 7px;
+  font-size: var(--type-body-sm);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.streamCursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.05em;
+  margin-left: 6px;
+  vertical-align: text-bottom;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--blue) 46%, var(--accent)));
+  animation: streamBlink 1.05s steps(1, end) infinite;
+}
+
+.card {
+  padding: 2rem;
+}
+
+.mobileSetupBar {
+  display: none;
+}
+
+.mobileGuide {
+  display: none;
+}
+
+.stepWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stepWrapWelcome {
+  gap: 1.15rem;
+}
+
+.stepTitle {
+  font-family: var(--font-display);
+  font-size: var(--type-display-page);
+  line-height: 0.98;
+  letter-spacing: -0.9px;
+  color: var(--text);
+}
+
+.stepSub {
+  max-width: 760px;
+  font-size: var(--type-body-lg);
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.recommendedPathCard {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: var(--bento-radius);
+  border: 1px solid color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
+  background:
+    radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 36%),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 36%),
+    radial-gradient(circle at 82% 100%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.recommendedPathLabel {
+  display: block;
+  color: var(--accent);
+  font-size: var(--type-overline);
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.recommendedPathTitle {
+  display: block;
+  color: var(--text);
+  font-size: var(--type-title-sm);
+  line-height: 1.35;
+}
+
+.recommendedPathSteps {
+  display: grid;
+  gap: 8px;
+}
+
+.recommendedPathSteps span {
+  display: block;
+  padding: 9px 11px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  background: color-mix(in srgb, var(--surface2) 84%, #ffffff 16%);
+  color: var(--text2);
+  font-size: var(--type-support);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.welcomeStats {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.welcomeStat {
+  grid-column: span 4;
+  padding: 1rem 1.05rem;
+  border-radius: var(--bento-radius);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 36%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 56%, var(--surface2) 44%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+}
+
+.welcomeStat:first-child { grid-column: span 6; }
+.welcomeStat:nth-child(2),
+.welcomeStat:nth-child(3) { grid-column: span 3; }
+
+.welcomeStat span {
+  display: block;
+  font-size: var(--type-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.welcomeStat strong {
+  font-size: var(--type-body-lg);
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.setupPromise {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.spaceGrid,
+.choiceGrid,
+.quickStartGrid,
+.setupScopeGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.spaceGrid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.setupScopeGrid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.choiceGrid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.quickStartGrid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.spaceCard,
+.choiceCard,
+.quickStartCard,
+.setupScopeCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--bento-radius);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.spaceCard {
+  grid-column: span 4;
+  padding: 1.05rem;
+}
+
+.spaceCard:first-child { grid-column: span 5; }
+.spaceCard:nth-child(2) { grid-column: span 3; }
+.spaceCard:nth-child(3) { grid-column: span 4; }
+
+.setupScopeCard {
+  grid-column: span 4;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.setupScopeCard:first-child { grid-column: span 3; }
+.setupScopeCard:nth-child(2) { grid-column: span 5; }
+.setupScopeCard:nth-child(3) { grid-column: span 4; }
+
+.setupScopeCard span {
+  display: block;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.setupScopeCard strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.setupScopeCard p {
+  margin-top: 8px;
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.spaceCardTakda,
+.choiceCardTakda {
+  border-color: color-mix(in srgb, var(--takda-accent) 30%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--takda-accent) 14%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.spaceCardLakas,
+.choiceCardLakas {
+  border-color: color-mix(in srgb, var(--lakas-accent) 30%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 14%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.spaceCardTala,
+.choiceCardTala {
+  border-color: color-mix(in srgb, var(--tala-accent) 30%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 14%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.choiceCardBuhay {
+  border-color: color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
+  background:
+    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 38%),
+    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 38%),
+    radial-gradient(circle at 72% 92%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.spaceIcon,
+.choiceIcon {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--glass-highlight) 16%, transparent);
+  font-size: 21px;
+}
+
+.spaceMeta,
+.choiceMeta,
+.quickStartKicker {
+  margin-top: 12px;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spaceName,
+.choiceTitle,
+.quickStartTitle {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.spaceDesc,
+.choiceDesc,
+.quickStartText {
+  display: block;
+  margin-top: 8px;
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.choiceCard {
+  grid-column: span 6;
+  min-height: 180px;
+  padding: 1.05rem;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.choiceCard:hover {
+  transform: translateY(-1px);
+}
+
+.choiceCardActive {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
+    0 18px 38px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.choiceCardTakda.choiceCardActive {
+  border-color: color-mix(in srgb, var(--takda-accent) 54%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
+    0 18px 38px color-mix(in srgb, var(--takda-accent) 16%, transparent);
+}
+
+.choiceCardLakas.choiceCardActive {
+  border-color: color-mix(in srgb, var(--lakas-accent) 54%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
+    0 18px 38px color-mix(in srgb, var(--lakas-accent) 16%, transparent);
+}
+
+.choiceCardTala.choiceCardActive {
+  border-color: color-mix(in srgb, var(--tala-accent) 54%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
+    0 18px 38px color-mix(in srgb, var(--tala-accent) 16%, transparent);
+}
+
+.choiceCardBuhay.choiceCardActive {
+  border-color: color-mix(in srgb, var(--buhay-accent) 54%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
+    0 18px 38px color-mix(in srgb, var(--buhay-accent) 16%, transparent);
+}
+
+.choiceTop {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.choiceMeta {
+  margin-top: 0;
+}
+
+.choiceBadge {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--takda-glow) 86%, var(--surface) 14%);
+  border: 1px solid color-mix(in srgb, var(--takda-accent) 30%, var(--border));
+  color: var(--takda-accent);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.quickStartCard {
+  grid-column: span 6;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 1.15rem;
+}
+
+.quickStartLakas {
+  border-color: color-mix(in srgb, var(--lakas-accent) 28%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 12%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.quickStartTala {
+  border-color: color-mix(in srgb, var(--tala-accent) 28%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 12%, transparent), transparent 44%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.quickStartActive {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border));
+}
+
+.quickStartLakas.quickStartActive {
+  border-color: color-mix(in srgb, var(--lakas-accent) 50%, var(--glass-border));
+}
+
+.quickStartTala.quickStartActive {
+  border-color: color-mix(in srgb, var(--tala-accent) 50%, var(--glass-border));
+}
+
+.quickStartHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.quickStartKicker {
+  margin-top: 0;
+}
+
+.toggleBtn {
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.quickStartLakas .toggleBtn {
+  border-color: color-mix(in srgb, var(--lakas-accent) 32%, var(--border));
+  background: color-mix(in srgb, var(--lakas-glow) 82%, var(--surface) 18%);
+  color: var(--lakas-accent);
+}
+
+.quickStartTala .toggleBtn {
+  border-color: color-mix(in srgb, var(--tala-accent) 32%, var(--border));
+  background: color-mix(in srgb, var(--tala-glow) 82%, var(--surface) 18%);
+  color: var(--tala-accent);
+}
+
+.setupPromiseItem {
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
+    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+}
+
+.setupPromiseItem strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.setupPromiseItem span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text3);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.featureIcon {
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.sectionCard,
+.dynamicCard,
+.summaryCard,
+.insightCard {
+  box-shadow: none;
+}
+
+.sectionCard,
+.summaryCard,
+.insightCard {
+  padding: 1.15rem;
+}
+
+.dynamicStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dynamicCard {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dynamicHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionTitle,
+.summaryTitle,
+.dynamicTitle {
+  font-size: var(--type-body);
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.inputGroup label {
+  font-size: var(--type-support);
+  color: var(--text3);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.stepHint {
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--blue) 22%, var(--border));
+  background: color-mix(in srgb, var(--blue-dim) 78%, var(--surface) 22%);
+  color: var(--text2);
+  font-size: var(--type-body-sm);
+  line-height: 1.6;
+}
+
+.inputControl,
+.inputGroup input,
+.inputGroup select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border-radius: 16px;
+  color: var(--text);
+  font-size: var(--type-title-sm);
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+  font-family: var(--font-body);
+  box-sizing: border-box;
+  line-height: 1.2;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus,
+.inputControl:focus {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.inputGroup input:disabled,
+.inputGroup select:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+.inputGroup select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 5.25L7 9.25L11 5.25' stroke='%236d7196' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+.inputGroup input[type='number'],
+.inputControl[type='number'] {
+  -moz-appearance: textfield;
+}
+.inputGroup input[type='number']::-webkit-outer-spin-button,
+.inputGroup input[type='number']::-webkit-inner-spin-button,
+.inputControl[type='number']::-webkit-outer-spin-button,
+.inputControl[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dateFieldWrap {
+  position: relative;
+}
+
+.dateFieldWrap:focus-within .dateFieldDisplay {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.dateFieldDisplay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 46px;
+  pointer-events: none;
+}
+
+.dateFieldDisplay::after {
+  content: '▾';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text2);
+}
+
+.dateFieldNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  color: transparent;
+}
+
+.dateFieldNative::-webkit-date-and-time-value { opacity: 0; }
+
+.dateFieldNative::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.helper {
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.currencyGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 0.85rem;
+}
+
+.currencyBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 76px;
+  padding: 12px 8px;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+  cursor: pointer;
+  transition: border-color 0.16s ease, transform 0.16s ease, background 0.16s ease;
+  font-family: var(--font-body);
+}
+
+.currencyBtn:hover {
+  transform: translateY(-1px);
+}
+
+.currencyBtnActive {
+  border-color: color-mix(in srgb, var(--accent) 44%, var(--border)) !important;
+  background: color-mix(in srgb, var(--accent-glow) 88%, var(--surface) 12%) !important;
+}
+
+.currencySymbol {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+.currencyCode {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.currencyBtnActive .currencySymbol {
+  color: var(--accent);
+}
+
+.addRowBtn,
+.removeBtn,
+.btnSkip,
+.btnNext,
+.btnFinish {
+  border-radius: 16px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: transform 0.16s ease, opacity 0.16s ease, border-color 0.16s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.addRowBtn,
+.removeBtn {
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  background: none;
+  color: var(--text2);
+}
+
+.addRowBtn {
+  align-self: flex-start;
+  min-height: 46px;
+  padding: 11px 15px;
+  font-size: var(--type-body);
+  font-weight: 600;
+}
+
+.removeBtn {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: var(--type-support);
+  font-weight: 600;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0.85rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: var(--type-body-sm);
+}
+
+.summaryRow span:first-child {
+  color: var(--text3);
+}
+
+.summaryRow span:last-child {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+}
+
+.insightCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 40%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.insightLabel {
+  color: var(--accent);
+}
+
+.insightValue {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: var(--type-display-md);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  color: var(--text);
+}
+
+.insightSub {
+  margin-top: 8px;
+  font-size: var(--type-body-sm);
+  color: var(--text2);
+  line-height: 1.65;
+}
+
+.seedList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finalSaveCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.15rem;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+}
+
+.finalSaveLabel {
+  font-size: var(--type-overline);
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.finalSaveTitle {
+  font-size: var(--type-title-sm);
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.finalSaveText {
+  font-size: var(--type-body-sm);
+  line-height: 1.65;
+  color: var(--text2);
+}
+
+.finalSaveBadge {
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 86%, var(--surface) 14%);
+  color: var(--accent);
+  font-size: var(--type-support);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.seedItem {
+  font-size: var(--type-body-sm);
+  line-height: 1.6;
+  color: var(--text2);
+  padding: 13px 14px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+}
+
+.actionBar {
+  display: flex;
+  gap: 10px;
+  margin-top: 0.35rem;
+  padding-top: 0.6rem;
+}
+
+.btnSkip {
+  flex: 1;
+  min-height: 50px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  color: var(--text2);
+  font-size: var(--type-body);
+  font-weight: 600;
+}
+
+.btnNext,
+.btnFinish {
+  min-height: 50px;
+  padding: 12px 18px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  color: #08110d;
+  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--glass-border));
+  font-size: var(--type-body);
+  font-weight: 800;
+  box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.btnNext {
+  flex: 1.35;
+}
+
+.btnFinish {
+  flex: 1.35;
+}
+
+.btnNext:hover,
+.btnFinish:hover,
+.btnSkip:hover,
+.addRowBtn:hover,
+.removeBtn:hover {
+  transform: translateY(-1px);
+}
+
+.btnFinish:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 980px) {
+  .screen {
+    padding: 0.95rem;
+  }
+
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sideRail {
+    display: none;
+  }
+
+  .card {
+    order: 0;
+    padding: 1.55rem;
+  }
+
+  .welcomeStats,
+  .setupPromise,
+  .setupScopeGrid,
+  .spaceGrid,
+  .choiceGrid,
+  .quickStartGrid,
+  .recommendedPathCard,
+  .liveMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .welcomeStat,
+  .spaceCard,
+  .setupScopeCard,
+  .choiceCard,
+  .quickStartCard {
+    grid-column: auto !important;
+  }
+
+  .mobileSetupBar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 0.85rem;
+    padding: 12px 13px;
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
+      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface) 32%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+    box-shadow: var(--glass-shadow-soft);
+    backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+  }
+
+  .mobileGuide {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 0.85rem;
+    padding: 12px 13px;
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
+      color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+    box-shadow: var(--glass-shadow-soft);
+  }
+
+  .mobileSetupTop {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .mobileSetupLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .mobileSetupValue {
+    margin-top: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .mobileSetupPct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    align-self: flex-start;
+  }
+
+  .mobileSetupTrack {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--border) 82%, transparent);
+  }
+
+  .mobileSetupTrack span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 76%, white 24%));
+  }
+
+  .stepWrap {
+    gap: 0.9rem;
+  }
+
+  .stepSub {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .recommendedPathSteps span {
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 680px) {
+  .card,
+  .brandBlock,
+  .progressCard,
+  .liveCard,
+  .tipCard,
+  .sectionCard,
+  .dynamicCard,
+  .summaryCard,
+  .insightCard {
+    border-radius: 24px;
+  }
+
+  .card {
+    padding: 1.1rem;
+  }
+
+  .stageHeader {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0;
+  }
+
+  .stageMeta,
+  .stageFacts,
+  .mobileSetupBar {
+    display: none;
+  }
+
+  .sideTitle {
+    font-size: 24px;
+  }
+
+  .stepTitle {
+    font-size: 32px;
+  }
+
+  .helper {
+    max-width: 34ch;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .stepHint {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .mobileSetupBar,
+  .mobileGuide {
+    margin-bottom: 0.75rem;
+    border-radius: 18px;
+  }
+
+  .insightCard {
+    display: none;
+  }
+
+  .insightValue {
+    font-size: clamp(30px, 12vw, 40px);
+  }
+
+  .insightSub {
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .currencyGrid,
+  .formGrid,
+  .summaryGrid,
+  .recommendedPathCard,
+  .welcomeStats,
+  .setupPromise,
+  .setupScopeGrid,
+  .spaceGrid,
+  .choiceGrid,
+  .quickStartGrid,
+  .liveMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .dynamicHeader,
+  .actionBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btnSkip,
+  .btnNext,
+  .btnFinish,
+  .addRowBtn {
+    width: 100%;
+  }
+
+  .finalSaveCard {
+    grid-template-columns: 1fr;
+  }
+
+  .finalSaveBadge {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .screen {
+    padding: 0.75rem;
+  }
+
+  .brandBlock,
+  .progressCard,
+  .liveCard,
+  .tipCard,
+  .card {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .stepTitle {
+    font-size: 30px;
+    letter-spacing: -0.7px;
+  }
+
+  .card {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .stepWrap {
+    gap: 0.85rem;
+  }
+
+  .actionBar {
+    gap: 8px;
+    margin-top: 0.15rem;
+    padding-top: 0.2rem;
+  }
+}
+
+/* Visible redesign overrides */
+.shell {
+  max-width: 1220px;
+  grid-template-columns: minmax(280px, 312px) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.sideRail {
+  top: 1.25rem;
+}
+
+.railFrame {
+  display: grid;
+  gap: 12px;
+  padding: 0.4rem;
+  border-radius: 34px;
+  border: 1px solid color-mix(in srgb, var(--bento-border) 76%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 70%, var(--surface) 30%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  box-shadow: var(--glass-shadow);
+}
+
+.brandBlock,
+.progressCard,
+.tipCard {
+  border-radius: 26px;
+  box-shadow: none;
+}
+
+.brandBlock {
+  padding: 1.2rem;
+}
+
+.sideTitle {
+  font-size: 32px;
+  line-height: 0.98;
+}
+
+.progressCard {
+  padding: 1.05rem;
+}
+
+.tipCard {
+  padding: 1rem 1.05rem;
+}
+
+.card {
+  padding: 1.35rem;
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  box-shadow: var(--glass-shadow-strong);
+}
+
+.stageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0.25rem 0 1rem;
+}
+
+.stageEyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stageTitle {
+  margin-top: 8px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  max-width: 13ch;
+}
+
+.stageMeta {
+  margin-top: 8px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.stageBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mobileSetupBar {
+  margin-bottom: 1.1rem;
+  padding: 14px 16px;
+  border-radius: 24px;
+}
+
+.stepWrap {
+  max-width: 940px;
+  padding: 0;
+}
+
+.choiceGrid,
+.quickStartGrid {
+  gap: 14px;
+}
+
+.choiceCard,
+.quickStartCard {
+  border-radius: 26px;
+}
+
+.sectionCard,
+.dynamicCard,
+.summaryCard,
+.insightCard {
+  border-radius: 28px;
+}
+
+.dynamicCard {
+  padding: 1.15rem;
+}
+
+.summaryGrid {
+  gap: 14px;
+}
+
+.actionBar {
+  margin-top: 1.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+}
+
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sideRail {
+    position: static;
+  }
+
+  .railFrame {
+    grid-template-columns: 1fr;
+  }
+
+  .stageHeader {
+    padding-bottom: 0.85rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .card {
+    padding: 1rem;
+    border-radius: 28px;
+  }
+
+  .stageHeader {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stageTitle {
+    max-width: none;
+    font-size: 30px;
+  }
+
+  .stageMeta {
+    font-size: 13px;
+  }
+
+  .mobileSetupBar {
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+}
+
+/* 2026 redesign overrides */
+
+.screen {
+  padding: clamp(22px, 4vw, 40px);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--border2) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, color-mix(in srgb, var(--border2) 16%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--blue-dim) 30%, transparent), transparent 28%),
+    radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--accent-glow) 42%, transparent), transparent 30%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, white 5%), var(--bg));
+  background-size: 92px 92px, 92px 92px, auto, auto, auto;
+}
+
+.shell {
+  width: min(var(--page-max), 100%);
+  max-width: var(--page-max);
+  grid-template-columns: minmax(290px, 330px) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 28px);
+}
+
+.sideRail {
+  top: clamp(18px, 4vw, 28px);
+}
+
+.railFrame {
+  display: grid;
+  gap: 14px;
+}
+
+.brandBlock,
+.progressCard,
+.liveCard,
+.tipCard,
+.card,
+.sectionCard,
+.dynamicCard,
+.summaryCard,
+.insightCard {
+  border-radius: 30px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)),
+    radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 26%);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+}
+
+.brandBlock,
+.progressCard,
+.liveCard,
+.tipCard {
+  padding: 1.2rem;
+}
+
+.sideTitle {
+  font-size: clamp(30px, 3.4vw, 40px);
+  letter-spacing: -0.05em;
+}
+
+.sideSub,
+.tipText {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.progressCard {
+  border-radius: 28px;
+}
+
+.liveCard {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--blue-dim) 24%, transparent), transparent 40%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+}
+
+.liveTitle {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.liveSteps {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.liveStep {
+  padding: 11px 12px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 78%, transparent);
+  color: var(--text2);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.card {
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: 36px;
+}
+
+.stageHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 1.4rem;
+}
+
+.stageEyebrow {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.stageTitle {
+  max-width: 16ch;
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.stageMeta {
+  margin-top: 10px;
+  max-width: 52ch;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.stageFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stageFacts span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 78%, transparent);
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.stageBadge {
+  min-width: 72px;
+  min-height: 72px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.stepWrap {
+  gap: 16px;
+}
+
+.stepTitle {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.choiceGrid,
+.quickStartGrid,
+.summaryGrid {
+  gap: 14px;
+}
+
+.choiceCard,
+.quickStartCard,
+.summaryCard,
+.dynamicCard,
+.sectionCard,
+.insightCard {
+  border-radius: 26px;
+}
+
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .stageHeader {
+    grid-template-columns: 1fr;
+  }
+}
