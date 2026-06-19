@@ -113,8 +113,7 @@
 /* ---------------------------------------------------- */
 
 .ribbon {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 30;
   background: var(--nb-accent-2);
   color: var(--nb-ribbon-ink);
@@ -357,7 +356,7 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(400px, 0.95fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
   gap: clamp(30px, 4vw, 58px);
   align-items: center;
   min-width: 0;
