@@ -476,7 +476,6 @@ export default function Onboarding({ user, onDone, notice = '' }) {
     accountId: bill.accountId || '',
     accountBalanceLinked: false,
     seedSource: 'onboarding',
-    gamificationExcluded: true,
   })), [preparedBills])
 
   const startingBalance = getCurrentBalance(preparedAccounts)

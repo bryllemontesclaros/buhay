@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fsAddTransaction, fsSaveReceipt, fsUpdate } from '../lib/firestore'
+import { fsAddTransaction } from '../lib/firestore'
 import {
   findPresetByLabel,
   getDefaultTransactionDraft,
@@ -13,7 +13,6 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { formatDisplayDate, RECUR_OPTIONS, today } from '../lib/utils'
-import ReceiptScanner from '../components/ReceiptScanner'
 import styles from './QuickAdd.module.css'
 
 function normalizeAmountInput(value) {
@@ -28,26 +27,7 @@ function normalizeAmountInput(value) {
   return integerPart
 }
 
-function buildReceiptDraft(parsed = {}, fallbackCurrency = 'PHP') {
-  if (parsed?.source !== 'receipt') return null
 
-  return {
-    merchant: parsed.desc || '',
-    currency: parsed.currency || fallbackCurrency,
-    reference: parsed.reference || '',
-    rawText: parsed.rawText || '',
-    confidence: parsed.confidence || '',
-    lineItems: Array.isArray(parsed.lineItems) ? parsed.lineItems : [],
-    originalBlob: parsed.originalBlob || null,
-    cleanedBlob: parsed.cleanedBlob || null,
-    cleanupSummary: parsed.cleanupSummary || '',
-    imageWidth: parsed.imageWidth || 0,
-    imageHeight: parsed.imageHeight || 0,
-    cleanedWidth: parsed.cleanedWidth || 0,
-    cleanedHeight: parsed.cleanedHeight || 0,
-    fileName: parsed.fileName || 'receipt.jpg',
-  }
-}
 
 export default function QuickAdd({ user, profile = {}, accounts = [], symbol, onClose, onTypeChange, defaultType = 'expense', defaultDate, initialEntry = null }) {
   const s = symbol || '₱'
@@ -80,9 +60,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [saving, setSaving] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
-  const [importSource, setImportSource] = useState(initialEntry?.source || '')
-  const [importedReceipt, setImportedReceipt] = useState(initialEntry?.receiptDraft || null)
-  const [saveReceiptToBox, setSaveReceiptToBox] = useState(Boolean(initialEntry?.receiptDraft))
   const isIncome = type === 'income'
   const selectedAccount = accounts.find(account => account._id === accountId) || null
   const entryWillAffectCurrentBalance = Boolean(accountId && paymentStatus !== 'unpaid' && entryDate && entryDate <= today())
@@ -108,7 +85,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     const selected = quickPresets.find(item => item.key === presetKey)
     return selected ? [...limited.slice(0, 5), selected] : limited
   }, [presetKey, quickPresets, showPresetBrowser])
-  const canSaveImportedReceipt = importSource === 'receipt' && Boolean(importedReceipt)
+
 
   useEffect(() => {
     if (!accountId && defaultAccountId) setAccountId(defaultAccountId)
@@ -180,7 +157,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     setError('')
   }
 
-  const [showScanner, setShowScanner] = useState(false)
+
 
   // Numpad input
   function numPress(val) {
@@ -209,7 +186,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     try {
       const col = type === 'income' ? 'income' : 'expenses'
       const trimmedDesc = desc.trim()
-      const txRef = await fsAddTransaction(user.uid, col, {
+      await fsAddTransaction(user.uid, col, {
         desc: trimmedDesc,
         amount: parseFloat(amount),
         date: entryDate,
@@ -221,46 +198,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         paymentStatus,
         accountId,
         accountBalanceLinked: Boolean(accountId),
-        ...(importSource ? { source: importSource } : {}),
       }, accounts)
-
-      if (canSaveImportedReceipt && saveReceiptToBox) {
-        try {
-          const savedReceipt = await fsSaveReceipt(user.uid, {
-            merchant: trimmedDesc || importedReceipt?.merchant || 'Receipt',
-            total: parseFloat(amount),
-            date: entryDate,
-            currency: importedReceipt?.currency || profile.currency || 'PHP',
-            category: cat,
-            reference: importedReceipt?.reference || '',
-            notes: '',
-            rawText: importedReceipt?.rawText || '',
-            confidence: importedReceipt?.confidence || '',
-            originalBlob: importedReceipt?.originalBlob || null,
-            cleanedBlob: importedReceipt?.cleanedBlob || null,
-            cleanupSummary: importedReceipt?.cleanupSummary || '',
-            imageWidth: importedReceipt?.imageWidth || 0,
-            imageHeight: importedReceipt?.imageHeight || 0,
-            cleanedWidth: importedReceipt?.cleanedWidth || 0,
-            cleanedHeight: importedReceipt?.cleanedHeight || 0,
-            fileName: importedReceipt?.fileName || 'receipt.jpg',
-            source: 'receipt',
-            transactionId: txRef.id,
-            transactionCollection: col,
-            lineItems: importedReceipt?.lineItems || [],
-          })
-          try {
-            await fsUpdate(user.uid, col, txRef.id, { receiptId: savedReceipt._id })
-          } catch {
-            // The receipt is saved; the transaction link can be repaired later if sync is interrupted.
-          }
-        } catch {
-          setDone(true)
-          setSaving(false)
-          setError('Entry saved, but the receipt could not be added to your receipt box.')
-          return
-        }
-      }
 
       setDone(true)
       setTimeout(() => {
@@ -274,9 +212,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         setRecur('')
         setPaymentStatus('paid')
         setAccountId(defaultAccountId)
-        setImportSource('')
-        setImportedReceipt(null)
-        setSaveReceiptToBox(false)
         if (!defaultDate) setEntryDate(today())
         setDone(false)
         setSaving(false)
@@ -288,61 +223,10 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
       setError('Could not save this entry right now. Check your connection and try again.')
     }
   }
-
-  async function handleReceiptResult(parsed) {
-    const nextType = parsed.type === 'income' ? 'income' : 'expense'
-    const nextDraft = getDefaultTransactionDraft(nextType)
-    const nextCat = sanitizeTransactionCategory(nextType, parsed.cat || nextDraft.cat)
-    const matchedPreset = findPresetByLabel(nextType, parsed.desc || '')
-    const nextPreset = matchedPreset && !matchedPreset.isCustom && matchedPreset.cat === nextCat ? matchedPreset : null
-    const nextSubcat = sanitizeTransactionSubcategory(nextType, nextCat, parsed.subcat || nextPreset?.subcat || nextDraft.subcat)
-    const nextDesc = parsed.desc || ''
-    if (parsed.amount) setAmount(String(parsed.amount))
-    setDesc(nextDesc || getSuggestedDescription(nextType, nextCat, nextSubcat, nextPreset?.key || ''))
-    setDescTouched(Boolean(nextDesc))
-    setCat(nextCat)
-    setSubcat(nextSubcat)
-    setPresetKey(nextPreset?.key || '')
-    setShowPresetBrowser(Boolean(nextPreset?.key))
-    if (parsed.date && !defaultDate) setEntryDate(parsed.date)
-    setImportSource(parsed.source || 'receipt')
-    const nextReceiptDraft = buildReceiptDraft(parsed, profile.currency || 'PHP')
-    setImportedReceipt(nextReceiptDraft)
-    setSaveReceiptToBox(Boolean(nextReceiptDraft))
-    setType(nextType)
-    setShowScanner(false)
-  }
   const color = isIncome ? 'var(--accent)' : 'var(--red)'
   const bgColor = isIncome ? 'var(--accent-glow)' : 'var(--red-dim)'
 
-  if (showScanner) {
-    return (
-      <div className={styles.wrap}>
-        <div className={styles.importStepHeader}>
-          <button
-            type="button"
-            className={styles.importBackBtn}
-            onClick={() => setShowScanner(false)}
-          >
-            ← Back to form
-          </button>
-          <div>
-            <div className={styles.sectionLabel}>Import screenshot</div>
-            <div className={styles.importStepCopy}>
-              Import from a wallet screenshot, then review the details before Takda changes History or balances.
-            </div>
-          </div>
-        </div>
-        <ReceiptScanner
-          embedded
-          defaultMode="wallet"
-          walletOnly
-          onResult={handleReceiptResult}
-          onClose={() => setShowScanner(false)}
-        />
-      </div>
-    )
-  }
+
 
   return (
     <div className={styles.wrap}>
@@ -378,16 +262,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
       </div>
 
       <div className={styles.utilityRow}>
-        <button
-          className={styles.importBtn}
-          onClick={() => {
-            setError('')
-            setShowScanner(true)
-          }}
-        >
-          <span className={styles.importBtnIcon}>🧾</span>
-          <span>Import screenshot</span>
-        </button>
         <button
           type="button"
           className={`${styles.morePresetsBtn} ${showPresetBrowser ? styles.morePresetsBtnActive : ''}`}
@@ -565,28 +439,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
 
       <div className={styles.accountNote}>{accountHint}</div>
 
-      {canSaveImportedReceipt && (
-        <div className={styles.receiptSaveCard}>
-          <div className={styles.receiptSaveCopy}>
-            <div className={styles.receiptSaveTitle}>Save scanned receipt to Receipts</div>
-            <div className={styles.receiptSaveHint}>
-              Keep the image and imported details in your receipt box after this {isIncome ? 'income' : 'expense'} is added. Review totals first because image imports can still be wrong.
-            </div>
-            <div className={styles.receiptSaveMeta}>
-              <span>{importedReceipt?.currency || profile.currency || 'PHP'}</span>
-              {importedReceipt?.cleanupSummary ? <span>{importedReceipt.cleanupSummary}</span> : null}
-            </div>
-          </div>
-          <button
-            type="button"
-            className={`${styles.receiptToggle} ${saveReceiptToBox ? styles.receiptToggleActive : ''}`}
-            aria-pressed={saveReceiptToBox}
-            onClick={() => setSaveReceiptToBox(current => !current)}
-          >
-            {saveReceiptToBox ? 'On' : 'Off'}
-          </button>
-        </div>
-      )}
+
 
       {error && <div className={styles.formError}>{error}</div>}
 

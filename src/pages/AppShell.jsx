@@ -2,7 +2,6 @@ import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 
 import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
-import { getGamificationSnapshot } from '../lib/gamification'
 import { getInitials, getCurrencySymbol, today } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
@@ -12,14 +11,10 @@ import Accounts from './Accounts'
 import Breakdown from './Breakdown'
 import Budget from './Budget'
 import Bills from './Bills'
-import Receipts from './Receipts'
 import Settings from './Settings'
 import History from './History'
 import Portfolio from './Portfolio'
 import QuickAdd from './QuickAdd'
-import GroceryMode from './GroceryMode'
-import AskTakdaCommand from '../components/AskTakdaCommand'
-import ReceiptScanner from '../components/ReceiptScanner'
 import {
   findPresetByLabel,
   getDefaultTransactionDraft,
@@ -539,14 +534,11 @@ export default function AppShell({ user }) {
     talaGoals: [],
   })
   const [profile, setProfile] = useState({})
-  const [gamificationReady, setGamificationReady] = useState(false)
-  const [celebrationToast, setCelebrationToast] = useState(null)
   const [quickAddMenuOpen, setQuickAddMenuOpen] = useState(false)
   const [quickAddSheet, setQuickAddSheet] = useState({ open: false, mode: 'manual', type: 'expense', initialEntry: null })
   const [spaceActionRequest, setSpaceActionRequest] = useState(null)
   const [takdaActionRequest, setTakdaActionRequest] = useState(null)
   const [portfolioActionRequest, setPortfolioActionRequest] = useState(null)
-  const [askTakdaOpen, setAskTakdaOpen] = useState(false)
   const [mobileNavMenuOpen, setMobileNavMenuOpen] = useState(false)
   const [calendarQuickAddDate, setCalendarQuickAddDate] = useState('')
   const [emailVerified, setEmailVerified] = useState(() => Boolean(auth.currentUser?.emailVerified || user?.emailVerified))
@@ -555,78 +547,13 @@ export default function AppShell({ user }) {
   const [syncIssue, setSyncIssue] = useState(null)
   const [billPaymentTarget, setBillPaymentTarget] = useState(null)
   const [chromeMode, setChromeMode] = useState({ compact: false, hidden: false })
-  const previousGamificationRef = useRef(null)
-  const celebrationToastRef = useRef(null)
-  const toastQueueRef = useRef([])
-  const toastTimerRef = useRef(null)
   const syncingDueTransactionsRef = useRef(false)
   const preferredSpaceAppliedRef = useRef(false)
   const mainRef = useRef(null)
   const lastMainScrollRef = useRef(0)
   const previousVisiblePageRef = useRef(null)
-  const gamificationHydratedRef = useRef(false)
-  const loadFlagsRef = useRef({
-    income: false,
-    expenses: false,
-    bills: false,
-    goals: false,
-    accounts: false,
-    budgets: false,
-    receipts: false,
-    transfers: false,
-    calendarEvents: false,
-    portfolioHoldings: false,
-    balanceOverrideLog: false,
-    profile: false,
-  })
 
-  function markLoaded(key) {
-    if (loadFlagsRef.current[key]) return
-    loadFlagsRef.current[key] = true
-    if (Object.values(loadFlagsRef.current).every(Boolean)) {
-      setGamificationReady(true)
-    }
-  }
 
-  function clearCelebrationToastTimer() {
-    if (!toastTimerRef.current) return
-    window.clearTimeout(toastTimerRef.current)
-    toastTimerRef.current = null
-  }
-
-  function dismissCelebrationToast() {
-    clearCelebrationToastTimer()
-    const nextToast = toastQueueRef.current.shift() || null
-    celebrationToastRef.current = nextToast
-    setCelebrationToast(nextToast)
-    if (!nextToast) return
-    toastTimerRef.current = window.setTimeout(() => {
-      dismissCelebrationToast()
-    }, 3200)
-  }
-
-  function showCelebrationToast(toast) {
-    celebrationToastRef.current = toast
-    setCelebrationToast(toast)
-    clearCelebrationToastTimer()
-    toastTimerRef.current = window.setTimeout(() => {
-      dismissCelebrationToast()
-    }, 3200)
-  }
-
-  function enqueueCelebrationToasts(toasts = []) {
-    const incoming = toasts.filter(Boolean)
-    if (!incoming.length) return
-
-    if (celebrationToastRef.current) {
-      toastQueueRef.current.push(...incoming)
-      return
-    }
-
-    const [firstToast, ...rest] = incoming
-    toastQueueRef.current.push(...rest)
-    showCelebrationToast(firstToast)
-  }
 
   function handleRealtimeError(key, error) {
     console.error(`Buhay sync failed for ${key}`, error)
@@ -643,76 +570,41 @@ export default function AppShell({ user }) {
     if (!user) return
     preferredSpaceAppliedRef.current = false
     setProfile({})
-    setGamificationReady(false)
     setSyncIssue(null)
-    previousGamificationRef.current = null
-    gamificationHydratedRef.current = false
-    toastQueueRef.current = []
-    celebrationToastRef.current = null
-    setCelebrationToast(null)
-    loadFlagsRef.current = {
-      income: false,
-      expenses: false,
-      bills: false,
-      goals: false,
-      accounts: false,
-      budgets: false,
-      receipts: false,
-      transfers: false,
-      calendarEvents: false,
-      portfolioHoldings: false,
-      balanceOverrideLog: false,
-      profile: false,
-    }
     const uid = user.uid
     const unsubs = [
       listenCol(uid, 'income', rows => {
         setData(d => ({ ...d, income: rows }))
-        markLoaded('income')
       }, error => handleRealtimeError('income', error)),
       listenCol(uid, 'expenses', rows => {
         setData(d => ({ ...d, expenses: rows }))
-        markLoaded('expenses')
       }, error => handleRealtimeError('expenses', error)),
       listenCol(uid, 'bills', rows => {
         setData(d => ({ ...d, bills: rows }))
-        markLoaded('bills')
       }, error => handleRealtimeError('bills', error)),
       listenCol(uid, 'goals', rows => {
         setData(d => ({ ...d, goals: rows }))
-        markLoaded('goals')
       }, error => handleRealtimeError('goals', error)),
       listenCol(uid, 'accounts', rows => {
         setData(d => ({ ...d, accounts: rows }))
-        markLoaded('accounts')
       }, error => handleRealtimeError('accounts', error)),
       listenCol(uid, 'budgets', rows => {
         setData(d => ({ ...d, budgets: rows }))
-        markLoaded('budgets')
       }, error => handleRealtimeError('budgets', error)),
-      listenCol(uid, 'receipts', rows => {
-        setData(d => ({ ...d, receipts: rows }))
-        markLoaded('receipts')
-      }, error => handleRealtimeError('receipts', error)),
       listenCol(uid, 'transfers', rows => {
         setData(d => ({ ...d, transfers: rows }))
-        markLoaded('transfers')
       }, error => handleRealtimeError('transfers', error)),
       listenCol(uid, 'calendarEvents', rows => {
         setData(d => ({ ...d, calendarEvents: rows }))
-        markLoaded('calendarEvents')
       }, error => handleRealtimeError('calendarEvents', error)),
       listenCol(uid, 'portfolioHoldings', rows => {
         setData(d => ({ ...d, portfolioHoldings: rows }))
-        markLoaded('portfolioHoldings')
       }, error => handleRealtimeError('portfolioHoldings', error)),
       listenCol(uid, 'balanceOverrideLog', rows => {
         setData(d => ({ ...d, balanceOverrideLog: rows }))
-        markLoaded('balanceOverrideLog')
       }, error => handleRealtimeError('balanceOverrideLog', error)),
       listenProfile(uid, p => {
         setProfile(p)
-        markLoaded('profile')
       }, error => handleRealtimeError('profile', error)),
     ]
     return () => unsubs.forEach(u => u())
@@ -816,78 +708,13 @@ export default function AppShell({ user }) {
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
   const privacyMode = Boolean(profile.privacyMode)
-  const gamification = useMemo(
-    () => getGamificationSnapshot(data, profile),
-    [data, profile],
-  )
 
-  useEffect(() => {
-    if (!gamification) return
-
-    // Do not fire celebration toasts while the app is hydrating data on login.
-    // Otherwise "Level up" can appear every fresh session as collections stream in.
-    if (!gamificationReady) return
-    if (!gamificationHydratedRef.current) {
-      previousGamificationRef.current = gamification
-      gamificationHydratedRef.current = true
-      return
-    }
-    if (previousGamificationRef.current == null) {
-      previousGamificationRef.current = gamification
-      return
-    }
-
-    const previous = previousGamificationRef.current
-    const nextToasts = []
-
-    if (gamification.level > previous.level) {
-      nextToasts.push({
-        eyebrow: 'Level up',
-        title: `Buhay Level ${gamification.level} reached`,
-        meta: 'Your everyday rhythm just moved up another step.',
-      })
-    }
-
-    const streakMilestone = STREAK_MILESTONES.find(target => (
-      gamification.currentStreakDays >= target && previous.currentStreakDays < target
-    ))
-
-    if (streakMilestone) {
-      nextToasts.push({
-        eyebrow: 'Streak milestone',
-        title: `${streakMilestone}-day rhythm`,
-        meta: 'Your logging habit is starting to feel automatic. Protect the streak tomorrow.',
-      })
-    }
-
-    if (
-      gamification.weeklyCheckins >= gamification.weeklyTarget &&
-      previous.weeklyCheckins < previous.weeklyTarget
-    ) {
-      nextToasts.push({
-        eyebrow: 'Weekly target hit',
-        title: `${gamification.weeklyTarget} check-ins done`,
-        meta: 'That weekly rhythm is what keeps the product useful day to day.',
-      })
-    }
-
-    enqueueCelebrationToasts(nextToasts)
-
-    previousGamificationRef.current = gamification
-  }, [gamification, gamificationReady])
-
-  useEffect(() => {
-    return () => {
-      clearCelebrationToastTimer()
-    }
-  }, [])
 
   useEffect(() => {
     function handleKeydown(event) {
       if (event.key !== 'Escape') return
       setMobileNavMenuOpen(false)
       setQuickAddMenuOpen(false)
-      setAskTakdaOpen(false)
       setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
     }
 
@@ -898,7 +725,6 @@ export default function AppShell({ user }) {
   useEffect(() => {
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(false)
-    setAskTakdaOpen(false)
     if (activeSpace !== 'takda' || page !== 'calendar') setCalendarQuickAddDate('')
   }, [activeSpace, page, lakasPage, talaPage])
 
@@ -1001,7 +827,6 @@ export default function AppShell({ user }) {
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: null },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: null },
-    { id: 'receipts', label: 'Receipts', iconKey: 'receipts', section: 'Tools' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const lakasNav = [
@@ -1022,7 +847,6 @@ export default function AppShell({ user }) {
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: 'Review' },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: 'Review' },
-    { id: 'receipts', label: 'Receipts', iconKey: 'receipts', section: 'Tools' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
 
@@ -1032,7 +856,6 @@ export default function AppShell({ user }) {
     portfolio: Portfolio,
     money: TakdaMoneyPage,
     plan: TakdaPlanPage,
-    receipts: Receipts,
     settings: Settings,
     history: History,
     savings: Savings,
@@ -1097,7 +920,7 @@ export default function AppShell({ user }) {
     ? 'Open Lakas settings and account controls.'
     : activeSpace === 'tala'
       ? 'Open Tala insights and settings.'
-      : 'Open savings, accounts, insights, receipts, and Takda settings here.'
+      : 'Open savings, accounts, insights, and Takda settings here.'
   const isMorePage = activeSpace === 'lakas'
     ? lakasMoreNav.some(item => item.id === resolvedLakasPage)
     : activeSpace === 'tala'
@@ -1121,7 +944,6 @@ export default function AppShell({ user }) {
   function openSpace(nextSpace) {
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(false)
-    setAskTakdaOpen(false)
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
@@ -1177,49 +999,24 @@ export default function AppShell({ user }) {
   function toggleQuickAddMenu() {
     if (quickAddSheet.open) return
     if (activeSpace === 'takda' && page === 'portfolio') {
-      setAskTakdaOpen(false)
       setMobileNavMenuOpen(false)
       setQuickAddMenuOpen(false)
       setPortfolioActionRequest({ type: 'add-holding', token: Date.now() })
       return
     }
-    setAskTakdaOpen(false)
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(current => !current)
   }
 
   function toggleMobileNavMenu() {
     setQuickAddMenuOpen(false)
-    setAskTakdaOpen(false)
     setMobileNavMenuOpen(current => !current)
-  }
-
-  function openAskTakda() {
-    setMobileNavMenuOpen(false)
-    setQuickAddMenuOpen(false)
-    setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
-    setAskTakdaOpen(true)
   }
 
   function openQuickAdd(type) {
     setMobileNavMenuOpen(false)
-    setAskTakdaOpen(false)
     setQuickAddMenuOpen(false)
     setQuickAddSheet({ open: true, mode: 'manual', type, initialEntry: null })
-  }
-
-  function openQuickImport() {
-    setMobileNavMenuOpen(false)
-    setAskTakdaOpen(false)
-    setQuickAddMenuOpen(false)
-    setQuickAddSheet({ open: true, mode: 'import', type: 'expense', initialEntry: null })
-  }
-
-  function openGroceryMode() {
-    setMobileNavMenuOpen(false)
-    setAskTakdaOpen(false)
-    setQuickAddMenuOpen(false)
-    setQuickAddSheet({ open: true, mode: 'grocery', type: 'expense', initialEntry: null })
   }
 
   function openLakasFabAction(type) {
@@ -1238,7 +1035,6 @@ export default function AppShell({ user }) {
 
   function openTakdaAction(type, payload = {}) {
     setMobileNavMenuOpen(false)
-    setAskTakdaOpen(false)
     setQuickAddMenuOpen(false)
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
@@ -1281,49 +1077,7 @@ export default function AppShell({ user }) {
     ))
   }
 
-  async function handleQuickImportResult(parsed) {
-    if (!parsed) return
-    const nextType = parsed.type === 'income' ? 'income' : 'expense'
-    const nextDraft = getDefaultTransactionDraft(nextType)
-    const nextCat = sanitizeTransactionCategory(nextType, parsed.cat || nextDraft.cat)
-    const matchedPreset = findPresetByLabel(nextType, parsed.desc || '')
-    const nextPreset = matchedPreset && !matchedPreset.isCustom && matchedPreset.cat === nextCat ? matchedPreset : null
-    const nextSubcat = sanitizeTransactionSubcategory(nextType, nextCat, parsed.subcat || nextPreset?.subcat || nextDraft.subcat)
-    const receiptDraft = parsed.source === 'receipt'
-      ? {
-          merchant: parsed.desc || '',
-          currency: parsed.currency || profile.currency || 'PHP',
-          reference: parsed.reference || '',
-          rawText: parsed.rawText || '',
-          confidence: parsed.confidence || '',
-          lineItems: Array.isArray(parsed.lineItems) ? parsed.lineItems : [],
-          originalBlob: parsed.originalBlob || null,
-          cleanedBlob: parsed.cleanedBlob || null,
-          cleanupSummary: parsed.cleanupSummary || '',
-          imageWidth: parsed.imageWidth || 0,
-          imageHeight: parsed.imageHeight || 0,
-          cleanedWidth: parsed.cleanedWidth || 0,
-          cleanedHeight: parsed.cleanedHeight || 0,
-          fileName: parsed.fileName || 'receipt.jpg',
-        }
-      : null
-    setQuickAddSheet({
-      open: true,
-      mode: 'manual',
-      type: nextType,
-      initialEntry: {
-        type: nextType,
-        amount: parsed.amount ? String(parsed.amount) : '',
-        date: parsed.date || quickAddDefaultDate || '',
-        desc: parsed.desc || '',
-        cat: nextCat,
-        subcat: nextSubcat,
-        presetKey: nextPreset?.key || '',
-        source: parsed.source || 'wallet',
-        receiptDraft,
-      },
-    })
-  }
+
 
   async function handleResendVerification() {
     const currentUser = auth.currentUser
@@ -1382,7 +1136,7 @@ export default function AppShell({ user }) {
     profile,
     symbol,
     privacyMode,
-    gamification,
+
     billPaymentTarget,
     activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,
     financeToolSelections,
@@ -1429,11 +1183,8 @@ export default function AppShell({ user }) {
           { key: 'mood', label: 'What is your mood?', meta: 'Log mood, energy, stress, and triggers.', icon: 'MO', className: styles.fabActionMood, onClick: () => openTalaFabAction('mood') },
         ]
       : [
-          { key: 'ask', label: 'Ask Takda', icon: 'AI', className: styles.fabActionAsk, onClick: openAskTakda },
           { key: 'expense', label: 'Expense', icon: '-', className: styles.fabActionExpense, onClick: () => openQuickAdd('expense') },
           { key: 'income', label: 'Income', icon: '+', className: styles.fabActionIncome, onClick: () => openQuickAdd('income') },
-          { key: 'import', label: 'Import screenshot', icon: 'RC', className: styles.fabActionImport, onClick: openQuickImport },
-          { key: 'grocery', label: 'Grocery', icon: 'GR', className: styles.fabActionGrocery, onClick: openGroceryMode },
         ]
 
   return (
@@ -1530,15 +1281,10 @@ export default function AppShell({ user }) {
             </div>
           </div>
           <div className={styles.topBarRight}>
-            {activeStatusLabel && gamification && (
-              <div
-                className={styles.topBarStatus}
-                aria-label={`${activeStatusLabel}. Level ${gamification.level}. ${gamification.totalExp} EXP.`}
-              >
-                <div className={styles.topBarStatusBadge}>Lv {gamification.level}</div>
+            {activeStatusLabel && (
+              <div className={styles.topBarStatus}>
                 <div className={styles.topBarStatusMain}>
                   <div className={styles.topBarStatusLabel}>{activeStatusLabel}</div>
-                  <div className={styles.topBarStatusMeta}>{gamification.totalExp} EXP</div>
                 </div>
               </div>
             )}
@@ -1594,28 +1340,7 @@ export default function AppShell({ user }) {
             </div>
           </div>
         )}
-        {celebrationToast && (
-          <div className={styles.levelToastWrap}>
-            <div className={styles.levelToast} role="status" aria-live="polite">
-              <button
-                type="button"
-                className={styles.levelToastDismiss}
-                onClick={dismissCelebrationToast}
-                aria-label="Dismiss celebration notification"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-              <div className={styles.levelToastEyebrow}>{celebrationToast.eyebrow}</div>
-              <div className={styles.levelToastTitle}>{celebrationToast.title}</div>
-              <div className={styles.levelToastMeta}>
-                {celebrationToast.meta}
-              </div>
-            </div>
-          </div>
-        )}
+
         {!!user?.email && !emailVerified && (
           <div className={styles.verifyBannerWrap}>
             <div className={styles.verifyBanner}>
@@ -1683,60 +1408,34 @@ export default function AppShell({ user }) {
           </button>
         </div>
       )}
-      <AskTakdaCommand
-        open={activeSpace === 'takda' && askTakdaOpen}
-        onClose={() => setAskTakdaOpen(false)}
-        user={user}
-        data={data}
-        profile={profile}
-        symbol={symbol}
-        privacyMode={privacyMode}
-        onOpenReceiptScanner={openQuickImport}
-        onNavigate={handleCommandNavigate}
-      />
       {activeSpace === 'takda' && quickAddSheet.open && (
         <div className={styles.quickAddLayer}>
           <div
-            className={`${styles.quickAddSheet} ${quickAddSheet.mode === 'grocery' ? styles.quickAddSheetWide : ''}`}
+            className={styles.quickAddSheet}
             role="dialog"
             aria-modal="true"
             aria-label={quickAddDialogLabel}
           >
-            {quickAddSheet.mode === 'import' ? (
-              <ReceiptScanner defaultMode="wallet" walletOnly onResult={handleQuickImportResult} onClose={closeQuickAdd} />
-            ) : quickAddSheet.mode === 'grocery' ? (
-              <GroceryMode
-                user={user}
-                profile={profile}
-                accounts={data.accounts}
-                symbol={symbol}
-                defaultDate={quickAddDefaultDate}
-                onClose={closeQuickAdd}
-              />
-            ) : (
-              <>
-                <div className={styles.quickAddHeader}>
-                  <div>
-                    <div className={styles.quickAddEyebrow}>Quick add</div>
-                    <div className={styles.quickAddTitle} id="quick-add-title">
-                      {quickAddSheet.type === 'income' ? 'Log income' : 'Track expense'}
-                    </div>
-                  </div>
-                  <button type="button" className={styles.quickAddClose} onClick={closeQuickAdd} aria-label="Close quick add">✕</button>
+            <div className={styles.quickAddHeader}>
+              <div>
+                <div className={styles.quickAddEyebrow}>Quick add</div>
+                <div className={styles.quickAddTitle} id="quick-add-title">
+                  {quickAddSheet.type === 'income' ? 'Log income' : 'Track expense'}
                 </div>
-                <QuickAdd
-                  user={user}
-                  profile={profile}
-                  accounts={data.accounts}
-                  symbol={symbol}
-                  defaultType={quickAddSheet.type}
-                  defaultDate={quickAddDefaultDate}
-                  initialEntry={quickAddSheet.initialEntry}
-                  onTypeChange={handleQuickAddTypeChange}
-                  onClose={closeQuickAdd}
-                />
-              </>
-            )}
+              </div>
+              <button type="button" className={styles.quickAddClose} onClick={closeQuickAdd} aria-label="Close quick add">✕</button>
+            </div>
+            <QuickAdd
+              user={user}
+              profile={profile}
+              accounts={data.accounts}
+              symbol={symbol}
+              defaultType={quickAddSheet.type}
+              defaultDate={quickAddDefaultDate}
+              initialEntry={quickAddSheet.initialEntry}
+              onTypeChange={handleQuickAddTypeChange}
+              onClose={closeQuickAdd}
+            />
           </div>
         </div>
       )}

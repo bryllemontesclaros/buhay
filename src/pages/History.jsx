@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import GamificationCard from '../components/GamificationCard'
 import { fsDeleteTransaction, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
 import {
   getTakdaTransactionLifecycle,
@@ -25,7 +24,7 @@ import hStyles from './History.module.css'
 
 const ALL_CATS = ['All categories', ...new Set([...getTransactionCategories('income'), ...getTransactionCategories('expense')])]
 const TYPES = ['All types', 'Income', 'Expense']
-export default function History({ user, data, symbol, privacyMode = false, gamification }) {
+export default function History({ user, data, symbol, privacyMode = false }) {
   const s = symbol || '₱'
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('All types')
@@ -346,15 +345,7 @@ export default function History({ user, data, symbol, privacyMode = false, gamif
         </button>
       </div>
 
-      <div className={hStyles.gamificationWrap}>
-        <GamificationCard
-          gamification={gamification}
-          privacyMode={privacyMode}
-          compact
-          title="Buhay progress"
-          message="Takda, Lakas, and Tala all feed the same level, streak, and EXP now."
-        />
-      </div>
+
 
       <div className={hStyles.searchShell}>
         <div className={hStyles.searchRow}>

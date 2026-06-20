@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import GamificationCard from '../components/GamificationCard'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { isTransactionPaid } from '../lib/finance'
@@ -10,7 +9,7 @@ import bStyles from './Budget.module.css'
 
 const EXPENSE_CATS = getTransactionCategories('expense')
 
-export default function Budget({ user, data, profile = {}, symbol, privacyMode = false, gamification }) {
+export default function Budget({ user, data, profile = {}, symbol, privacyMode = false }) {
   const s = symbol || '₱'
   const now = new Date()
   const [viewMonth, setViewMonth] = useState(now.getMonth())
@@ -146,15 +145,7 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
         </div>
       </div>
 
-      <div className={bStyles.gamificationWrap}>
-        <GamificationCard
-          gamification={gamification}
-          privacyMode={privacyMode}
-          compact
-          title="Buhay progress"
-          message="Takda, Lakas, and Tala all feed the same level, streak, and EXP now."
-        />
-      </div>
+
 
       <div className={bStyles.monthBar}>
         <button type="button" className={bStyles.navBtn} onClick={prevMonth}>←</button>

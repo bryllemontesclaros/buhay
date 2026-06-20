@@ -202,7 +202,6 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     billId: bill._id,
     billPeriodKey: period.key,
     source: payment.source || 'bill-payment',
-    gamificationExcluded: true,
   }, accounts)
   const paidAt = Date.now()
   await fsUpdate(uid, 'bills', bill._id, {
@@ -364,18 +363,6 @@ function getReceiptExtension(fileName = '', fallback = 'jpg') {
   return (match?.[1] || fallback).toLowerCase()
 }
 
-async function uploadReceiptAsset(uid, receiptId, label, blob, fileName = '') {
-  if (!blob) return null
-  const extension = label === 'original' ? getReceiptExtension(fileName, 'jpg') : 'jpg'
-  const path = `users/${uid}/receipts/${receiptId}/${label}.${extension}`
-  const target = storageRef(storage, path)
-  await uploadBytes(target, blob, {
-    contentType: blob.type || `image/${extension === 'jpg' ? 'jpeg' : extension}`,
-    cacheControl: 'private,max-age=0,no-transform',
-  })
-  return { path }
-}
-
 async function deleteReceiptAsset(path) {
   if (!path) return
   try {
@@ -383,87 +370,6 @@ async function deleteReceiptAsset(path) {
   } catch {
     // Ignore missing or already-deleted assets so the Firestore delete can still finish.
   }
-}
-
-export async function fsSaveReceipt(uid, payload = {}) {
-  const receiptRef = doc(userCol(uid, 'receipts'))
-  const receiptId = receiptRef.id
-  let originalUpload = null
-  let cleanedUpload = null
-
-  try {
-    originalUpload = await uploadReceiptAsset(uid, receiptId, 'original', payload.originalBlob, payload.fileName)
-    cleanedUpload = await uploadReceiptAsset(uid, receiptId, 'cleaned', payload.cleanedBlob || payload.originalBlob, payload.fileName)
-    const normalizedDate = normalizeDate(payload.date) || today()
-    const total = Number(payload.total) || 0
-    const lineItems = Array.isArray(payload.lineItems) ? payload.lineItems : []
-    const merchant = String(payload.merchant || '').trim() || 'Receipt'
-    const rawText = String(payload.rawText || '')
-    const confidence = payload.confidence && typeof payload.confidence === 'object'
-      ? payload.confidence
-      : { overall: payload.confidence || '' }
-    const extractedData = {
-      merchant,
-      total,
-      currency: payload.currency || 'PHP',
-      date: normalizedDate,
-      category: payload.category || 'Other',
-      reference: payload.reference || '',
-      lineItems,
-      confidence,
-    }
-
-    const receiptDoc = {
-      userId: uid,
-      merchant,
-      total,
-      currency: payload.currency || 'PHP',
-      date: normalizedDate,
-      category: payload.category || 'Other',
-      reference: payload.reference || '',
-      notes: payload.notes || '',
-      source: payload.source || 'receipt',
-      transactionId: payload.transactionId || '',
-      transactionCollection: payload.transactionCollection || '',
-      imageUrl: '',
-      imagePath: originalUpload?.path || '',
-      cleanedImageUrl: '',
-      cleanedImagePath: cleanedUpload?.path || '',
-      thumbnailUrl: '',
-      cleanupSummary: payload.cleanupSummary || '',
-      confidence,
-      extractedData,
-      lineItems,
-      rawText,
-      rawTextPreview: rawText.slice(0, 2400),
-      stats: {
-        itemCount: lineItems.length,
-        imageWidth: Number(payload.imageWidth) || 0,
-        imageHeight: Number(payload.imageHeight) || 0,
-        cleanedWidth: Number(payload.cleanedWidth) || 0,
-        cleanedHeight: Number(payload.cleanedHeight) || 0,
-      },
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    }
-
-    await setDoc(receiptRef, receiptDoc)
-    return { _id: receiptId, ...receiptDoc }
-  } catch (error) {
-    await Promise.all([
-      deleteReceiptAsset(originalUpload?.path),
-      deleteReceiptAsset(cleanedUpload?.path),
-    ])
-    throw error
-  }
-}
-
-export async function fsDeleteReceipt(uid, receipt = {}) {
-  await Promise.all([
-    deleteReceiptAsset(receipt.imagePath),
-    deleteReceiptAsset(receipt.cleanedImagePath),
-  ])
-  await deleteDoc(doc(db, 'users', uid, 'receipts', receipt._id))
 }
 
 async function uploadLakasImage(uid, folder, docId, blob, fileName = '') {

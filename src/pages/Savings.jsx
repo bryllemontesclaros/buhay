@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import GamificationCard from '../components/GamificationCard'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, formatDisplayDate, maskMoney } from '../lib/utils'
@@ -7,7 +6,7 @@ import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import sStyles from './Savings.module.css'
 
-export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, gamification, actionRequest = null, onActionHandled = () => {} }) {
+export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {} }) {
   const s = symbol || '₱'
   const [form, setForm] = useState({ name: '', target: '', current: '', date: '' })
   const [contribs, setContribs] = useState({})
@@ -273,15 +272,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
         </div>
       </div>
 
-      <div className={sStyles.gamificationWrap}>
-        <GamificationCard
-          gamification={gamification}
-          privacyMode={privacyMode}
-          compact
-          title="Buhay progress"
-          message="Takda, Lakas, and Tala all feed the same level, streak, and EXP now."
-        />
-      </div>
+
 
       {!goals.length ? (
         <div className={sStyles.emptyCard}>

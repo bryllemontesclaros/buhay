@@ -126,7 +126,7 @@ function pluralize(count, singular, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`
 }
 
-export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, gamification, onTogglePrivacy }) {
+export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy }) {
   const s = symbol || '₱'
   const now = new Date()
   const year = now.getFullYear()
@@ -303,8 +303,6 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   const accountCountLabel = portfolioIncludedValue
     ? `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} + included portfolio`
     : `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} right now`
-  const weeklyRemaining = Math.max(0, (gamification?.weeklyTarget || 0) - (gamification?.weeklyCheckins || 0))
-  const checkedInToday = Boolean(gamification?.checkedInToday)
   const activeGoalCount = data.goals.filter(goal => (Number(goal.target) || 0) > 0).length
 
   const actualIncome = useMemo(
@@ -387,7 +385,6 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   ]
 
   const focusPills = [
-    gamification?.currentStreakDays >= 3 ? `${gamification.currentStreakDays}-day streak` : null,
     eomBalance >= 0 ? 'Month-end forecast positive' : null,
     mNet > 0 ? 'Net positive this month' : null,
     budgetHealth.total > 0 && budgetHealth.over === 0 ? 'Budgets holding' : null,
@@ -401,21 +398,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
     body: 'One real update keeps the month useful. Takda is here to help you review what matters next, not to replace your judgment.',
   }
 
-  if (!checkedInToday) {
-    focusState = gamification?.currentStreakDays > 0
-      ? {
-          tone: 'var(--accent)',
-          eyebrow: 'Keep the streak',
-          title: 'Log one real action today',
-          body: `One real check-in today keeps your ${gamification.currentStreakDays}-day streak moving across Buhay.`,
-        }
-      : {
-          tone: 'var(--blue)',
-          eyebrow: 'Start strong',
-          title: 'Make today your first check-in',
-          body: 'Log one real money, fitness, or reflection check-in so Buhay becomes part of your day, not just another screen.',
-        }
-  } else if (biggestBudgetGap) {
+  if (biggestBudgetGap) {
     focusState = {
       tone: 'var(--red)',
       eyebrow: 'Budget rescue',
@@ -435,13 +418,6 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
       eyebrow: 'Finish a win',
       title: `Close out ${goalHighlight.name}`,
       body: `You are only ${money(goalHighlight.remaining)} away from finishing this goal. One contribution would close it out.`,
-    }
-  } else if (weeklyRemaining > 0) {
-    focusState = {
-      tone: 'var(--blue)',
-      eyebrow: 'Weekly rhythm',
-      title: 'Stay on your check-in pace',
-      body: `${pluralize(weeklyRemaining, 'more check-in')} gets you to your ${gamification.weeklyTarget}-day weekly target.`,
     }
   } else {
     focusState = {
@@ -604,32 +580,6 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
                 </div>
               </>
             )}
-          </div>
-
-          <div className={dStyles.missionCard} style={{ '--mission-tone': checkedInToday ? 'var(--blue)' : 'var(--accent)' }}>
-            <div className={dStyles.missionTop}>
-              <div className={dStyles.missionTitle}>
-                Buhay rhythm
-                <span
-                  className={dStyles.infoTooltip}
-                  title="Any action in Buhay counts as a check-in: adding money entries or paying bills in Takda; logging workouts, habits, active steps, or meals in Lakas; and writing journal entries, tracking moods, or completing tasks in Tala."
-                >
-                  ⓘ
-                </span>
-              </div>
-              <div className={dStyles.missionStat}>{gamification?.currentStreakDays || 0}d streak</div>
-            </div>
-            <div className={dStyles.missionTrack}>
-              <div
-                className={dStyles.missionFill}
-                style={{ width: `${Math.min(100, ((gamification?.weeklyCheckins || 0) / Math.max(1, gamification?.weeklyTarget || 1)) * 100)}%` }}
-              />
-            </div>
-            <div className={dStyles.missionBody}>
-              {checkedInToday
-                ? 'Today already has a real check-in. Keep the week consistent.'
-                : `${pluralize(weeklyRemaining, 'more check-in')} gets you to the weekly target.`}
-            </div>
           </div>
         </div>
       </div>

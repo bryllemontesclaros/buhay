@@ -814,7 +814,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     + data.goals.length
     + data.accounts.length
     + data.budgets.length
-    + data.receipts.length
     + (data.transfers || []).length
     + (data.portfolioHoldings || []).length
     + lakasRecords
@@ -1199,7 +1198,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.goals.length}</div><div className={settStyles.summaryLabel}>Savings goals</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.accounts.length}</div><div className={settStyles.summaryLabel}>Accounts</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.budgets.length}</div><div className={settStyles.summaryLabel}>Budgets</div></div>
-              <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.receipts.length}</div><div className={settStyles.summaryLabel}>Receipts</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{(data.transfers || []).length}</div><div className={settStyles.summaryLabel}>Transfers</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{lakasRecords}</div><div className={settStyles.summaryLabel}>Lakas records</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{talaRecords}</div><div className={settStyles.summaryLabel}>Tala records</div></div>
