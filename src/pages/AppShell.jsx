@@ -871,7 +871,7 @@ export default function AppShell({ user }) {
     : page === 'plan'
       ? PLAN_TOOLS.find(tool => tool.id === financeToolSelections.plan)
       : null
-  const activeStatusLabel = 'Buhay progress'
+
   const isCalendarPage = activeSpace === 'takda' && page === 'calendar'
   const pageBoundaryKey = activeSpace === 'takda'
     ? `${page}:${selectedFinanceTool?.id || 'main'}`
@@ -1281,13 +1281,7 @@ export default function AppShell({ user }) {
             </div>
           </div>
           <div className={styles.topBarRight}>
-            {activeStatusLabel && (
-              <div className={styles.topBarStatus}>
-                <div className={styles.topBarStatusMain}>
-                  <div className={styles.topBarStatusLabel}>{activeStatusLabel}</div>
-                </div>
-              </div>
-            )}
+
             <button
               type="button"
               className={styles.themeBtn}
