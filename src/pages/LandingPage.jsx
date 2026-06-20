@@ -14,7 +14,7 @@ const HERO_SPACES = [
   {
     label: 'Takda',
     title: 'Money',
-    desc: 'Balances, bills, savings, budgets, receipts, and date-based money review stay in one clear place.',
+    desc: 'Balances, bills, savings, budgets, and date-based money review stay in one clear place.',
     tone: 'takda',
   },
   {
@@ -34,7 +34,7 @@ const HERO_SPACES = [
 const SPACE_FEATURES = [
   {
     title: 'Takda',
-    desc: 'Track money day by day with balances, bills, savings goals, budgets, receipts, and calendar-based review.',
+    desc: 'Track money day by day with balances, bills, savings goals, budgets, and calendar-based review.',
     tone: 'takda',
   },
   {
@@ -560,7 +560,7 @@ export default function LandingPage() {
                   </div>
                   <p className={styles.heroSpaceDesc}>{activeHeroSpace.desc}</p>
                   <div className={styles.heroSpaceMeta}>
-                    {activeHeroSpace.tone === 'takda' && 'Balances · bills · receipts · forecast'}
+                    {activeHeroSpace.tone === 'takda' && 'Balances · bills · forecast · budgets'}
                     {activeHeroSpace.tone === 'lakas' && 'Workout · meals · body logs · progress'}
                     {activeHeroSpace.tone === 'tala' && 'Journal · moods · tasks · focus'}
                   </div>
@@ -671,7 +671,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className={styles.spaceTelemetry}>
-                  {feature.tone === 'takda' && 'Forecast · accounts · receipts'}
+                  {feature.tone === 'takda' && 'Forecast · accounts · budgets'}
                   {feature.tone === 'lakas' && 'Sessions · meals · body logs'}
                   {feature.tone === 'tala' && 'Entries · moods · quiet goals'}
                   {feature.tone === 'buhay' && 'Sign-in · export · restore'}
