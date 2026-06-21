@@ -1287,6 +1287,18 @@ export default function AppShell({ user }) {
     if (normalizedSpace === 'tala') setTalaPage(DEFAULT_SPACE_PAGES.tala)
   }
 
+  function handleBadgeClick(spaceId) {
+    playTick()
+    openSpace(spaceId)
+    if (spaceId === 'takda') {
+      setPage('breakdown')
+    } else if (spaceId === 'lakas') {
+      setLakasPage('progress')
+    } else if (spaceId === 'tala') {
+      setTalaPage('insights')
+    }
+  }
+
   function navigateToFinancePage(nextPage = DEFAULT_SPACE_PAGES.takda) {
     const alias = FINANCE_PAGE_ALIASES[nextPage]
     setActiveSpace('takda')
@@ -1620,7 +1632,7 @@ export default function AppShell({ user }) {
               <button
                 type="button"
                 className={`${styles.headerSpaceBadge} ${styles.badgeTakda} ${activeSpace === 'takda' ? styles.activeBadge : ''}`}
-                onClick={() => openSpace('takda')}
+                onClick={() => handleBadgeClick('takda')}
                 title={`Takda: ${takdaPulse.label} pulse status`}
               >
                 <span className={styles.badgeIndicator} style={{ backgroundColor: takdaPulse.color }}></span>
@@ -1631,7 +1643,7 @@ export default function AppShell({ user }) {
               <button
                 type="button"
                 className={`${styles.headerSpaceBadge} ${styles.badgeLakas} ${activeSpace === 'lakas' ? styles.activeBadge : ''}`}
-                onClick={() => openSpace('lakas')}
+                onClick={() => handleBadgeClick('lakas')}
                 title={`Lakas: Weekly Consistency score ${lakasScoreValue} pts`}
               >
                 <span className={styles.badgeLabel}>Lakas:</span>
@@ -1642,7 +1654,7 @@ export default function AppShell({ user }) {
               <button
                 type="button"
                 className={`${styles.headerSpaceBadge} ${styles.badgeTala} ${activeSpace === 'tala' ? styles.activeBadge : ''}`}
-                onClick={() => openSpace('tala')}
+                onClick={() => handleBadgeClick('tala')}
                 title="Tala: Emotional Climate weather status"
               >
                 <span className={styles.badgeLabel}>Tala:</span>
