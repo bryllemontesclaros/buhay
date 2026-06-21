@@ -1078,26 +1078,63 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   useEffect(() => {
     if (!selected && !showModal && !recurringDateTarget) return undefined
-    const handleEscape = event => {
-      if (event.key !== 'Escape') return
-      if (recurringDateTarget) {
-        if (recurringDateSaving) return
-        closeRecurringDateEditor()
+    const handleKeyDownGlobal = event => {
+      if (event.key === 'Escape') {
+        if (recurringDateTarget) {
+          if (recurringDateSaving) return
+          closeRecurringDateEditor()
+          return
+        }
+        if (showModal) {
+          if (formSaving) return
+          closeTransactionEditor()
+          return
+        }
+        if (editingDayBalance) {
+          closeDayBalanceEditor()
+          return
+        }
+        closeSelectedDay()
         return
       }
-      if (showModal) {
-        if (formSaving) return
-        closeTransactionEditor()
-        return
+
+      if (event.key === 'Tab') {
+        let activeRef = null
+        if (recurringDateTarget) activeRef = recurringDateModalRef
+        else if (showModal) activeRef = transactionModalRef
+        else if (selected) activeRef = selectedDayRef
+
+        const container = activeRef?.current
+        if (!container) return
+
+        const focusables = container.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusables.length === 0) return
+
+        const activeFocusables = Array.from(focusables).filter(
+          el => !el.disabled && el.getAttribute('aria-hidden') !== 'true'
+        )
+        if (activeFocusables.length === 0) return
+
+        const first = activeFocusables[0]
+        const last = activeFocusables[activeFocusables.length - 1]
+
+        if (event.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus()
+            event.preventDefault()
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus()
+            event.preventDefault()
+          }
+        }
       }
-      if (editingDayBalance) {
-        closeDayBalanceEditor()
-        return
-      }
-      closeSelectedDay()
     }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
+    window.addEventListener('keydown', handleKeyDownGlobal)
+    return () => window.removeEventListener('keydown', handleKeyDownGlobal)
   }, [selected, showModal, recurringDateTarget, recurringDateSaving, editingDayBalance, dayBalanceSaving, defaultAccountId, formSaving])
 
   return (
