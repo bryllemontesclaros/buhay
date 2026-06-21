@@ -1445,6 +1445,26 @@ export default function AppShell({ user }) {
 
   function handleNotificationAction(alert) {
     const action = alert?.action || {}
+
+    // Lakas navigation
+    if (activeSpace === 'lakas') {
+      if (action.page) {
+        openSpace('lakas')
+        setLakasPage(action.page)
+      }
+      return
+    }
+
+    // Tala navigation
+    if (activeSpace === 'tala') {
+      if (action.page) {
+        openSpace('tala')
+        setTalaPage(action.page)
+      }
+      return
+    }
+
+    // Takda (financial) navigation
     if (action.page === 'lakas') {
       openSpace('lakas')
     } else if (action.page === 'tala') {
@@ -1683,9 +1703,7 @@ export default function AppShell({ user }) {
                 </svg>
               )}
             </button>
-            {activeSpace === 'takda' && (
-              <NotificationBell data={data} profile={profile} privacyMode={privacyMode} onAction={handleNotificationAction} />
-            )}
+              <NotificationBell data={data} profile={profile} privacyMode={privacyMode} onAction={handleNotificationAction} space={activeSpace} />
           </div>
         </header>
         {syncIssue && (

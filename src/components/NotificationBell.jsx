@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { getAlerts, requestPushPermission } from '../lib/notifications'
+import { getSpaceAlerts, requestPushPermission } from '../lib/notifications'
 import nStyles from './NotificationBell.module.css'
 
 const TYPE_COLORS = {
@@ -20,13 +20,14 @@ const safeLocalStorageSet = (key, value) => {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch {}
 }
 
-export default function NotificationBell({ data, profile, privacyMode = false, onAction = null }) {
+export default function NotificationBell({ data, profile, privacyMode = false, onAction = null, space = 'takda' }) {
+  const dismissedKey = `sentimo_dismissed_${space}`
   const [open, setOpen] = useState(false)
-  const [dismissed, setDismissed] = useState(() => safeLocalStorageGet('sentimo_dismissed', '[]'))
+  const [dismissed, setDismissed] = useState(() => safeLocalStorageGet(dismissedKey, '[]'))
   const [pushEnabled, setPushEnabled] = useState(() => safeNotificationPermission() === 'granted')
   const ref = useRef(null)
 
-  const allAlerts = getAlerts(data, profile, privacyMode)
+  const allAlerts = getSpaceAlerts(space, data, profile, privacyMode)
   const alerts = allAlerts.filter(a => !dismissed.includes(a.id))
   const count = alerts.length
 
@@ -47,14 +48,14 @@ export default function NotificationBell({ data, profile, privacyMode = false, o
   function dismiss(id) {
     const next = [...dismissed, id]
     setDismissed(next)
-    safeLocalStorageSet('sentimo_dismissed', next)
+    safeLocalStorageSet(dismissedKey, next)
   }
 
   function dismissAll() {
     const next = alerts.map(a => a.id)
     setDismissed(d => {
       const updated = [...d, ...next]
-      safeLocalStorageSet('sentimo_dismissed', updated)
+      safeLocalStorageSet(dismissedKey, updated)
       return updated
     })
   }
