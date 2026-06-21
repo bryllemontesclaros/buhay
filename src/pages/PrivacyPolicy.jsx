@@ -1,7 +1,7 @@
 import LegalPageLayout from './LegalPageLayout'
 
 const SUMMARY_POINTS = [
-  'Covers account, money, fitness, reflection, settings, and any older saved media linked to your records.',
+  'Covers account, money, fitness, reflection, settings, and any optional media attachments.',
   'Explains manual data entry, exports, deletion, and privacy requests.',
   'Shows which providers help run Buhay and how your data is protected, handled, and removed.',
 ]
@@ -27,13 +27,14 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Older saved images',
+    title: 'Image uploads and media attachments',
     paragraphs: [
-      'If you saved receipt or fitness images in older versions of the app, those files and their metadata may still remain linked to the related records until you delete them.',
+      'If you choose to upload images to Buhay (such as fitness progress photos or meal logs), those files and their associated metadata are stored securely and remain linked to your tracking records.',
+      'Buhay does not require any image uploads for financial tracking or reflection features.',
     ],
     bullets: [
-      'Buhay does not require receipt, grocery, meal, or body-photo uploads for its active product flows.',
-      'Older saved receipt or fitness images remain under your account until you delete the related record or remove the data through account tools.',
+      'Fitness images (meals and body progress) are entirely optional and can be deleted by you at any time.',
+      'Uploaded files are stored on secure third-party storage infrastructure and are only accessible through your account.',
     ],
   },
   {
@@ -105,7 +106,7 @@ export default function PrivacyPolicy() {
       title="How Buhay handles your account and personal tracking data."
       intro="This page explains what Buhay collects, why it is used, which providers help run the product, and how you can access, export, or delete information tied to your account."
       metaTitle="Privacy Policy — Buhay"
-      metaDescription="Read how Buhay handles account, money, fitness, reflection, and legacy image data, and how you can access, export, or delete it."
+      metaDescription="Read how Buhay handles account, money, fitness, reflection, and optional media uploads, and how you can access, export, or delete it."
       metaPath="/privacy"
       summaryPoints={SUMMARY_POINTS}
       sections={SECTIONS}
