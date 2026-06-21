@@ -2,7 +2,7 @@ import LegalPageLayout from './LegalPageLayout'
 
 const SUMMARY_POINTS = [
   'Covers account, money, fitness, reflection, settings, and any older saved media linked to your records.',
-  'Explains manual receipt records, wallet screenshot review, exports, deletion, and privacy requests.',
+  'Explains manual data entry, exports, deletion, and privacy requests.',
   'Shows which providers help run Buhay and how your data is protected, handled, and removed.',
 ]
 
@@ -10,7 +10,7 @@ const SECTIONS = [
   {
     title: 'What this policy covers',
     paragraphs: [
-      'This Privacy Policy explains how Buhay handles information when you visit the website, create an account, and use the app for money, fitness, reflection, planning, manual receipts, and wallet screenshot review.',
+      'This Privacy Policy explains how Buhay handles information when you visit the website, create an account, and use the app for money, fitness, reflection, and planning.',
       'It is written to match the product as it exists today: a life tracker built with Filipino clarity and warmth, designed for everyday use anywhere.',
     ],
   },
@@ -27,14 +27,12 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Manual receipts, screenshots, and older saved images',
+    title: 'Older saved images',
     paragraphs: [
-      'Buhay no longer requires receipt, grocery, meal, or body-photo uploads for its active product flows. The current finance import flow is limited to wallet screenshots that you review before saving.',
       'If you saved receipt or fitness images in older versions of the app, those files and their metadata may still remain linked to the related records until you delete them.',
     ],
     bullets: [
-      'Wallet screenshots you choose to import are reviewed inside the app before they become saved data.',
-      'Manual receipt records do not require an image upload.',
+      'Buhay does not require receipt, grocery, meal, or body-photo uploads for its active product flows.',
       'Older saved receipt or fitness images remain under your account until you delete the related record or remove the data through account tools.',
     ],
   },
@@ -44,7 +42,7 @@ const SECTIONS = [
       'To create and secure your account, keep you signed in, and support password reset or email-verification flows.',
       'To run the app itself, including money, fitness, reflection, calendar, history, and settings views.',
       'To sync your data across supported devices connected to your account.',
-      'To send product notifications that you explicitly enable.',
+      'To display in-app notifications and alerts that you explicitly enable.',
       'To troubleshoot issues, maintain service reliability, and respond to support requests.',
     ],
   },
@@ -107,7 +105,7 @@ export default function PrivacyPolicy() {
       title="How Buhay handles your account and personal tracking data."
       intro="This page explains what Buhay collects, why it is used, which providers help run the product, and how you can access, export, or delete information tied to your account."
       metaTitle="Privacy Policy — Buhay"
-      metaDescription="Read how Buhay handles account, money, fitness, reflection, manual receipt, wallet screenshot, and legacy image data, and how you can access, export, or delete it."
+      metaDescription="Read how Buhay handles account, money, fitness, reflection, and legacy image data, and how you can access, export, or delete it."
       metaPath="/privacy"
       summaryPoints={SUMMARY_POINTS}
       sections={SECTIONS}
