@@ -14,19 +14,19 @@ const HERO_SPACES = [
   {
     label: 'Takda',
     title: 'Money',
-    desc: 'Balances, bills, savings, budgets, and date-based money review stay in one clear place.',
+    desc: 'Balances, bills, savings sparklines, budgets, and the Financial Pulse Evaluator keep your financial health green.',
     tone: 'takda',
   },
   {
     label: 'Lakas',
     title: 'Fitness',
-    desc: 'Workouts, meals, body check-ins, movement, and progress stay practical enough to return to.',
+    desc: 'Workouts, habits, outdoor runs with live GPS trail maps, and Ghost Racer comparison leaderboards make fitness fun.',
     tone: 'lakas',
   },
   {
     label: 'Tala',
     title: 'Mind',
-    desc: 'Journal entries, mood check-ins, small tasks, and reflection stay quieter and more private here.',
+    desc: 'Journal entries, mood check-ins, monthly Mind Climate maps, and dynamic grounding prompts support quiet reflection.',
     tone: 'tala',
   },
 ]
@@ -34,17 +34,17 @@ const HERO_SPACES = [
 const SPACE_FEATURES = [
   {
     title: 'Takda',
-    desc: 'Track money day by day with balances, bills, savings goals, budgets, and calendar-based review.',
+    desc: 'Track cash flow day-by-day with dynamic balances, savings sparklines, pulsing overdue bill alerts, and the Financial Pulse Evaluator for automated coaching insights.',
     tone: 'takda',
   },
   {
     title: 'Lakas',
-    desc: 'Log workouts, meals, body check-ins, and progress without turning fitness into a second full-time job.',
+    desc: 'Log sessions, check off daily habits, map outdoor run routes using high-accuracy live GPS trails, and compete against your best averages via the Ghost Racer Leaderboard.',
     tone: 'lakas',
   },
   {
     title: 'Tala',
-    desc: 'Keep journal entries, moods, and small life tasks in a gentler space that does not compete with everything else.',
+    desc: 'Reflect with stepped range inputs, tag clouds, a visual Monthly Mind Climate Map (weather-themed HSL glowing orbs), and context-aware Grounded Reflection Prompts.',
     tone: 'tala',
   },
   {
@@ -118,20 +118,20 @@ const TRUST_POINTS = [
 const SPACE_PROMISES = [
   {
     label: 'Takda',
-    promise: 'Money gets a date, an account, and a real balance.',
-    meta: 'Calendar first',
+    promise: 'Includes savings sparklines, dynamic budgets, and Financial Pulse evaluations.',
+    meta: 'Pulse Ring first',
     tone: 'takda',
   },
   {
     label: 'Lakas',
-    promise: 'Training starts with a session, not another decision maze.',
-    meta: 'Workout first',
+    promise: 'Features real-time GPS Outdoor Run mapping and the Ghost Racer self-competition podium.',
+    meta: 'Ghost Racer first',
     tone: 'lakas',
   },
   {
     label: 'Tala',
-    promise: 'Reflection starts with one honest line.',
-    meta: 'Journal first',
+    promise: 'Visualizes your Monthly Mind Climate weather map and unlocks Grounding Prompts.',
+    meta: 'Climate weather first',
     tone: 'tala',
   },
 ]
@@ -150,8 +150,8 @@ function TakdaMockup() {
         <div className={styles.mockupUrl}>buhay.app/takda</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard}>
-          <div className={styles.mockCardLabel}>Wallet Balance</div>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid #00f6ff' }}>
+          <div className={styles.mockCardLabel}>Financial Pulse · Healthy</div>
           <div className={styles.mockBalance}>₱45,210.50</div>
         </div>
         <div className={styles.mockBudget}>
@@ -214,9 +214,9 @@ function LakasMockup() {
         <div className={styles.mockupUrl}>buhay.app/lakas</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard}>
-          <div className={styles.mockCardLabel}>Lakas · Chest & Arms</div>
-          <div className={styles.mockWorkoutTitle}>Rest Focus Mode</div>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid #69d4b2' }}>
+          <div className={styles.mockCardLabel}>Ghost Racer Leaderboard</div>
+          <div className={styles.mockWorkoutTitle}>🏆 1st: You (154 pts)</div>
         </div>
         
         <div className={styles.mockTimerGrid}>
@@ -236,21 +236,8 @@ function LakasMockup() {
           </div>
           
           <div className={styles.mockSets}>
-            <div className={styles.mockSetItemDone}>✓ Set 1: 100kg × 5</div>
-            <div className={styles.mockSetItemDone}>✓ Set 2: 100kg × 5</div>
-            <div className={styles.mockSetItemActive}>⚡ Set 3: 100kg × 5</div>
-          </div>
-        </div>
-
-        <div className={styles.mockMuscleMap}>
-          <div className={styles.mockSilhouette}>
-            <svg viewBox="0 0 100 120" className={styles.silhouetteSvg} width="32" height="38">
-              <path d="M50 15 C55 15, 58 10, 58 5 C58 0, 42 0, 42 5 C42 10, 45 15, 50 15 Z" fill="rgba(255,255,255,0.25)" />
-              <path d="M30 35 L70 35 L66 65 L34 65 Z" fill="rgba(255,255,255,0.16)" />
-              <path d="M35 37 Q50 48 65 37" fill="none" stroke="#69d4b2" strokeWidth="6" strokeLinecap="round" />
-              <circle cx="30" cy="35" r="4" fill="#dfbd78" />
-              <circle cx="70" cy="35" r="4" fill="#dfbd78" />
-            </svg>
+            <div className={styles.mockSetItemDone}>🗺️ GPS Run: 5.2 km Live Trail</div>
+            <div className={styles.mockSetItemActive}>⚡ Consistency Score: Active</div>
           </div>
         </div>
       </div>
@@ -270,29 +257,23 @@ function TalaMockup() {
         <div className={styles.mockupUrl}>buhay.app/tala</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard}>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid #a855f7' }}>
           <div className={styles.mockPanicBar}>
-            <span className={styles.mockCardLabel}>Tala Reflections</span>
-            <span className={styles.mockPanicBtn}>🔒 Blured active</span>
+            <span className={styles.mockCardLabel}>Grounded Reflection Prompt</span>
+            <span className={styles.mockPanicBtn}>🔒 Private default</span>
           </div>
         </div>
         
         <div className={styles.mockTextareaBlur}>
-          Today was intense but productive. Completed chest workout and balanced the grocery budget...
-        </div>
-
-        <div className={styles.mockMoodGrid}>
-          <span className={styles.mockMoodBtnSelected}>😄 Great</span>
-          <span className={styles.mockMoodBtn}>😐 Okay</span>
-          <span className={styles.mockMoodBtn}>😭 Heavy</span>
+          ⛈️ Heavy state detected. Grounding reflection recommendation active...
         </div>
 
         <div className={styles.mockCalendarDots}>
-          <span className={styles.mockCalDay}>1 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
-          <span className={styles.mockCalDay}>2 <span className={`${styles.calDot} ${styles.calDotOkay}`}></span></span>
-          <span className={styles.mockCalDay}>3 <span className={`${styles.calDot} ${styles.calDotHeavy}`}></span></span>
-          <span className={styles.mockCalDay}>4 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
-          <span className={styles.mockCalDay}>5 <span className={`${styles.calDot} ${styles.calDotGreat}`}></span></span>
+          <span className={styles.mockCalDay}>☀️ <span className={styles.mockCalDayNum}>1</span></span>
+          <span className={styles.mockCalDay}>🌤️ <span className={styles.mockCalDayNum}>2</span></span>
+          <span className={styles.mockCalDay}>☁️ <span className={styles.mockCalDayNum}>3</span></span>
+          <span className={styles.mockCalDay}>🌧️ <span className={styles.mockCalDayNum}>4</span></span>
+          <span className={styles.mockCalDay}>⛈️ <span className={styles.mockCalDayNum}>5</span></span>
         </div>
       </div>
     </div>
