@@ -71,11 +71,6 @@
     radial-gradient(circle at 82% 0%, color-mix(in srgb, white 14%, transparent), transparent 22%);
 }
 
-.workspaceBoardSwitcher {
-}
-
-.workspaceBoardStatic {
-}
 
 .boardCompanionBar {
   position: relative;
@@ -3236,6 +3231,7 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
