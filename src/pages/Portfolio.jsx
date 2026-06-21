@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { fsDeletePortfolioHolding, fsSavePortfolioHolding } from '../lib/firestore'
 import { PORTFOLIO_ASSET_TYPES, getPortfolioSummary, normalizePortfolioHolding } from '../lib/portfolio'
@@ -50,6 +51,7 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   const [formOpen, setFormOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const formRef = useRef(null)
+  const [isMobile, setIsMobile] = useState(false)
   const summary = getPortfolioSummary(data.portfolioHoldings || [])
   const holdings = summary.holdings
   const hasHoldings = holdings.length > 0
@@ -71,6 +73,15 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
       safeScrollIntoView(formRef.current, { behavior: 'smooth', block: 'start' })
     }
   }, [formOpen, editingHolding?._id])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia('(max-width: 560px)')
+    setIsMobile(media.matches)
+    const listener = e => setIsMobile(e.matches)
+    media.addEventListener('change', listener)
+    return () => media.removeEventListener('change', listener)
+  }, [])
 
   useEffect(() => {
     if (portfolioActionRequest?.type !== 'add-holding') return
@@ -172,6 +183,111 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
     }
   }
 
+  const formContent = (
+    <>
+      <button
+        type="button"
+        className={pStyles.formBackdrop}
+        onClick={closeForm}
+        aria-label="Close holding form"
+      />
+      <div ref={formRef} className={pStyles.formCard} role="dialog" aria-modal="true" aria-label={editingHolding ? 'Edit portfolio holding' : 'Add portfolio holding'}>
+        <div className={pStyles.formHeader}>
+          <div>
+            <div className={pStyles.eyebrow}>{editingHolding ? 'Edit holding' : 'New holding'}</div>
+            <h3>{editingHolding ? 'Update this asset.' : 'Add a manual investment.'}</h3>
+          </div>
+          <button type="button" className={pStyles.closeBtn} onClick={closeForm} disabled={saving} aria-label="Close holding form">×</button>
+        </div>
+
+        <div className={pStyles.formGrid}>
+          <label>
+            <span>Asset name</span>
+            <input value={form.name} onChange={event => setField('name', event.target.value)} placeholder="Apple, Bitcoin, VTI" />
+          </label>
+          <label>
+            <span>Symbol</span>
+            <input value={form.symbol} onChange={event => setField('symbol', event.target.value.toUpperCase())} placeholder="AAPL, BTC, VTI" />
+          </label>
+          <label>
+            <span>Asset type</span>
+            <select value={form.assetType} onChange={event => setField('assetType', event.target.value)}>
+              {PORTFOLIO_ASSET_TYPES.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Platform / account</span>
+            <input value={form.platform} onChange={event => setField('platform', event.target.value)} placeholder="Maya, Binance, IBKR" />
+          </label>
+          <label>
+            <span>Quantity</span>
+            <input type="number" min="0" step="any" value={form.quantity} onChange={event => setField('quantity', event.target.value)} placeholder="0" />
+          </label>
+          <label>
+            <span>Average buy price</span>
+            <input type="number" min="0" step="any" value={form.averageBuyPrice} onChange={event => setField('averageBuyPrice', event.target.value)} placeholder="0.00" />
+          </label>
+          <label>
+            <span>Current manual price</span>
+            <input type="number" min="0" step="any" value={form.currentPrice} onChange={event => setField('currentPrice', event.target.value)} placeholder="0.00" />
+          </label>
+          <label>
+            <span>Fees</span>
+            <input type="number" min="0" step="any" value={form.fees} onChange={event => setField('fees', event.target.value)} placeholder="0.00" />
+          </label>
+          <label>
+            <span>Currency</span>
+            <input value={form.currency} onChange={event => setField('currency', event.target.value.toUpperCase())} placeholder={defaultCurrency} />
+          </label>
+          <label>
+            <span>Linked Takda account</span>
+            <select value={form.accountId} onChange={event => setField('accountId', event.target.value)}>
+              <option value="">No linked account</option>
+              {accountOptions.map(account => (
+                <option key={account._id} value={account._id}>{account.name} · {account.type}</option>
+              ))}
+            </select>
+          </label>
+          <label className={pStyles.toggleRow}>
+            <input
+              type="checkbox"
+              checked={form.includeInTotalBalance}
+              onChange={event => setField('includeInTotalBalance', event.target.checked)}
+            />
+            <span>
+              Include in Takda Total Balance
+              <small>This adds current market value to current balance, not daily cash-flow forecasts.</small>
+            </span>
+          </label>
+          <label className={pStyles.full}>
+            <span>Notes</span>
+            <textarea value={form.notes} onChange={event => setField('notes', event.target.value)} placeholder="Optional notes, strategy, or reminders" />
+          </label>
+        </div>
+
+        <div className={pStyles.previewCard}>
+          <div>
+            <span>Preview value</span>
+            <strong>{formatMoney(formPreview.marketValue, symbol)}</strong>
+          </div>
+          <div>
+            <span>Preview gain/loss</span>
+            <strong className={formPreview.gainLoss >= 0 ? pStyles.positiveText : pStyles.negativeText}>
+              {formatMoney(formPreview.gainLoss, symbol)} ({formatPercent(formPreview.gainLossPct)})
+            </strong>
+          </div>
+        </div>
+
+        <div className={pStyles.formActions}>
+          <button type="button" className={pStyles.ghostBtn} onClick={closeForm} disabled={saving}>Cancel</button>
+          <button type="button" className={pStyles.primaryBtn} onClick={handleSave} disabled={saving}>
+            {saving ? 'Saving...' : editingHolding ? 'Save changes' : 'Save holding'}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className={`${styles.page} ${pStyles.page}`}>
       <section className={pStyles.hero}>
@@ -236,110 +352,7 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
           </button>
         </div>
 
-        {formOpen && (
-          <>
-          <button
-            type="button"
-            className={pStyles.formBackdrop}
-            onClick={closeForm}
-            aria-label="Close holding form"
-          />
-          <div ref={formRef} className={pStyles.formCard} role="dialog" aria-modal="true" aria-label={editingHolding ? 'Edit portfolio holding' : 'Add portfolio holding'}>
-            <div className={pStyles.formHeader}>
-              <div>
-                <div className={pStyles.eyebrow}>{editingHolding ? 'Edit holding' : 'New holding'}</div>
-                <h3>{editingHolding ? 'Update this asset.' : 'Add a manual investment.'}</h3>
-              </div>
-              <button type="button" className={pStyles.closeBtn} onClick={closeForm} disabled={saving} aria-label="Close holding form">×</button>
-            </div>
-
-            <div className={pStyles.formGrid}>
-              <label>
-                <span>Asset name</span>
-                <input value={form.name} onChange={event => setField('name', event.target.value)} placeholder="Apple, Bitcoin, VTI" />
-              </label>
-              <label>
-                <span>Symbol</span>
-                <input value={form.symbol} onChange={event => setField('symbol', event.target.value.toUpperCase())} placeholder="AAPL, BTC, VTI" />
-              </label>
-              <label>
-                <span>Asset type</span>
-                <select value={form.assetType} onChange={event => setField('assetType', event.target.value)}>
-                  {PORTFOLIO_ASSET_TYPES.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>Platform / account</span>
-                <input value={form.platform} onChange={event => setField('platform', event.target.value)} placeholder="Maya, Binance, IBKR" />
-              </label>
-              <label>
-                <span>Quantity</span>
-                <input type="number" min="0" step="any" value={form.quantity} onChange={event => setField('quantity', event.target.value)} placeholder="0" />
-              </label>
-              <label>
-                <span>Average buy price</span>
-                <input type="number" min="0" step="any" value={form.averageBuyPrice} onChange={event => setField('averageBuyPrice', event.target.value)} placeholder="0.00" />
-              </label>
-              <label>
-                <span>Current manual price</span>
-                <input type="number" min="0" step="any" value={form.currentPrice} onChange={event => setField('currentPrice', event.target.value)} placeholder="0.00" />
-              </label>
-              <label>
-                <span>Fees</span>
-                <input type="number" min="0" step="any" value={form.fees} onChange={event => setField('fees', event.target.value)} placeholder="0.00" />
-              </label>
-              <label>
-                <span>Currency</span>
-                <input value={form.currency} onChange={event => setField('currency', event.target.value.toUpperCase())} placeholder={defaultCurrency} />
-              </label>
-              <label>
-                <span>Linked Takda account</span>
-                <select value={form.accountId} onChange={event => setField('accountId', event.target.value)}>
-                  <option value="">No linked account</option>
-                  {accountOptions.map(account => (
-                    <option key={account._id} value={account._id}>{account.name} · {account.type}</option>
-                  ))}
-                </select>
-              </label>
-              <label className={pStyles.toggleRow}>
-                <input
-                  type="checkbox"
-                  checked={form.includeInTotalBalance}
-                  onChange={event => setField('includeInTotalBalance', event.target.checked)}
-                />
-                <span>
-                  Include in Takda Total Balance
-                  <small>This adds current market value to current balance, not daily cash-flow forecasts.</small>
-                </span>
-              </label>
-              <label className={pStyles.full}>
-                <span>Notes</span>
-                <textarea value={form.notes} onChange={event => setField('notes', event.target.value)} placeholder="Optional notes, strategy, or reminders" />
-              </label>
-            </div>
-
-            <div className={pStyles.previewCard}>
-              <div>
-                <span>Preview value</span>
-                <strong>{formatMoney(formPreview.marketValue, symbol)}</strong>
-              </div>
-              <div>
-                <span>Preview gain/loss</span>
-                <strong className={formPreview.gainLoss >= 0 ? pStyles.positiveText : pStyles.negativeText}>
-                  {formatMoney(formPreview.gainLoss, symbol)} ({formatPercent(formPreview.gainLossPct)})
-                </strong>
-              </div>
-            </div>
-
-            <div className={pStyles.formActions}>
-              <button type="button" className={pStyles.ghostBtn} onClick={closeForm} disabled={saving}>Cancel</button>
-              <button type="button" className={pStyles.primaryBtn} onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : editingHolding ? 'Save changes' : 'Save holding'}
-              </button>
-            </div>
-          </div>
-          </>
-        )}
+        {formOpen && (isMobile && typeof document !== 'undefined' ? createPortal(formContent, document.body) : formContent)}
 
         {!hasHoldings ? (
           <div className={pStyles.emptyState}>
