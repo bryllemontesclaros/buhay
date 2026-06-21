@@ -32,7 +32,7 @@
 :global(.neo) .summaryCard,
 :global(.neo) .toolbar,
 :global(.neo) .surfaceCard {
-  background: #ffffff;
+  background: var(--nb-surface-card);
   border: 4px solid var(--nb-stroke);
   box-shadow: var(--nb-shadow);
   backdrop-filter: none;

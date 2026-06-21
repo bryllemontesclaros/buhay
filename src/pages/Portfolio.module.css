@@ -39,7 +39,7 @@
 :global(.neo) .formCard,
 :global(.neo) .emptyState,
 :global(.neo) .balanceNote {
-  background: #ffffff;
+  background: var(--nb-surface-card);
   border: 4px solid var(--nb-stroke);
   box-shadow: var(--nb-shadow);
 }
