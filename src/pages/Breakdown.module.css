@@ -653,3 +653,159 @@
     justify-content: space-between;
   }
 }
+
+/* Financial Health Pulse Evaluator Styles */
+.pulseCard {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
+  box-shadow: var(--glass-shadow-soft);
+  margin-bottom: 1.25rem;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.pulseVisual {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pulseVisual svg {
+  display: block;
+}
+
+.pulseCircleBg {
+  fill: none;
+  stroke-width: 4;
+}
+
+.pulseCirclePulse {
+  fill: none;
+  stroke-width: 4;
+  transform-origin: center;
+  animation: pulseBreathing 2.2s infinite ease-in-out;
+}
+
+.pulseCircleCenter {
+  stroke: none;
+}
+
+.pulseContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.pulseHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pulseTitle {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+}
+
+.pulseBadge {
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+.pulseAdvice {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text2);
+}
+
+/* Color specific classes */
+.pulseColorHealthy {
+  border-color: rgba(34, 216, 122, 0.28) !important;
+  background: linear-gradient(180deg, rgba(34, 216, 122, 0.08) 0%, rgba(34, 216, 122, 0.02) 100%) !important;
+}
+.pulseColorHealthy .pulseCircleBg {
+  stroke: rgba(34, 216, 122, 0.16);
+}
+.pulseColorHealthy .pulseCirclePulse {
+  stroke: #22d87a;
+}
+.pulseColorHealthy .pulseCircleCenter {
+  fill: #22d87a;
+}
+.pulseColorHealthy .pulseBadge {
+  background: rgba(34, 216, 122, 0.16);
+  color: #22d87a;
+}
+
+.pulseColorCaution {
+  border-color: rgba(255, 179, 71, 0.28) !important;
+  background: linear-gradient(180deg, rgba(255, 179, 71, 0.08) 0%, rgba(255, 179, 71, 0.02) 100%) !important;
+}
+.pulseColorCaution .pulseCircleBg {
+  stroke: rgba(255, 179, 71, 0.16);
+}
+.pulseColorCaution .pulseCirclePulse {
+  stroke: var(--amber);
+}
+.pulseColorCaution .pulseCircleCenter {
+  fill: var(--amber);
+}
+.pulseColorCaution .pulseBadge {
+  background: rgba(255, 179, 71, 0.16);
+  color: var(--amber);
+}
+
+.pulseColorStrained {
+  border-color: rgba(255, 83, 112, 0.28) !important;
+  background: linear-gradient(180deg, rgba(255, 83, 112, 0.08) 0%, rgba(255, 83, 112, 0.02) 100%) !important;
+}
+.pulseColorStrained .pulseCircleBg {
+  stroke: rgba(255, 83, 112, 0.16);
+}
+.pulseColorStrained .pulseCirclePulse {
+  stroke: var(--red);
+}
+.pulseColorStrained .pulseCircleCenter {
+  fill: var(--red);
+}
+.pulseColorStrained .pulseBadge {
+  background: rgba(255, 83, 112, 0.16);
+  color: var(--red);
+}
+
+@keyframes pulseBreathing {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.85;
+    stroke-width: 4;
+  }
+  50% {
+    transform: scale(1.28);
+    opacity: 0;
+    stroke-width: 1;
+  }
+  100% {
+    transform: scale(0.96);
+    opacity: 0;
+    stroke-width: 4;
+  }
+}
+

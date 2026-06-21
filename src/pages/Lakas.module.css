@@ -6369,6 +6369,451 @@
   }
 }
 
+/* Active Running Tracker Styles */
+.runOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1100;
+  background: color-mix(in srgb, var(--surface1) 90%, transparent);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.runTrackerContainer {
+  width: 100%;
+  max-width: 500px;
+  height: calc(100% - 32px);
+  max-height: 760px;
+  background: color-mix(in srgb, var(--surface2) 85%, var(--glass-1));
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.runTrackerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.runTrackerEyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.runTrackerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 4px 0 0;
+}
+
+.runTrackerClose {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.runTrackerClose:hover {
+  background: var(--surface3);
+  color: var(--text);
+}
+
+.runMapWrapper {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  background: var(--surface3);
+}
+
+.runMap {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.runMapError {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.runDash {
+  padding: 24px;
+  background: color-mix(in srgb, var(--surface1) 60%, var(--surface2) 40%);
+  border-top: 1px solid var(--glass-border);
+}
+
+.runStatGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.runStat {
+  background: color-mix(in srgb, var(--surface2) 80%, transparent);
+  border: 1px solid var(--glass-border);
+  padding: 16px 8px;
+  border-radius: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.runStatLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+}
+
+.runStatValue {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.runStatValue small {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+}
+
+.runControls {
+  display: flex;
+  justify-content: center;
+}
+
+.runStartBtn,
+.runPauseBtn,
+.runResumeBtn,
+.runSaveBtn {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.runStartBtn {
+  background: var(--accent);
+  color: var(--surface1);
+}
+
+.runStartBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.runPauseBtn {
+  background: #ff3b30;
+  color: white;
+}
+
+.runPauseBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.runActionGroup {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.runResumeBtn {
+  background: var(--surface3);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+}
+
+.runResumeBtn:hover {
+  background: var(--surface4);
+  transform: translateY(-2px);
+}
+
+.runSaveBtn {
+  background: #34c759;
+  color: white;
+}
+
+.runSaveBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.runSaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* History mini map classes */
+.miniMapContainer {
+  margin-top: 12px;
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: var(--surface3);
+  z-index: 10;
+}
+
+.miniMap {
+  width: 100%;
+  height: 100%;
+}
+
+/* Dark mode invert filter for OSM Tiles */
+.runMap img,
+.miniMap img {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95);
+}
+
+/* Lakas Fitness Leaderboard Styles */
+.leaderboardContainer {
+  box-sizing: border-box;
+  padding: 8px 4px;
+}
+
+.leaderboardSectionTitle {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.leaderboardSubtitle {
+  font-size: 12px;
+  color: var(--text3);
+  margin: 0 0 16px;
+  line-height: 1.45;
+}
+
+.podiumGrid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  margin: 28px 0 16px;
+  padding: 0 8px;
+}
+
+.podiumCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 120px;
+}
+
+.podiumVal {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.podiumVal small {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+}
+
+.podiumBar {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 12px;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.podiumRank {
+  font-size: 20px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.podiumLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 10px;
+  white-space: nowrap;
+}
+
+/* Podium Heights & Gradient themes */
+.podiumGold .podiumBar {
+  background: linear-gradient(180deg, #ffd700 0%, #cca100 100%);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2);
+}
+.podiumGold .podiumVal {
+  color: #ffd700;
+}
+
+.podiumSilver .podiumBar {
+  background: linear-gradient(180deg, #d3d3d3 0%, #a9a9a9 100%);
+  box-shadow: 0 6px 16px rgba(211, 211, 211, 0.15);
+}
+
+.podiumSilverWinner .podiumBar {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%) !important;
+  box-shadow: 0 8px 24px var(--accent-glow) !important;
+}
+.podiumSilverWinner .podiumVal {
+  color: var(--accent) !important;
+}
+
+.podiumBronze .podiumBar {
+  background: linear-gradient(180deg, #cd7f32 0%, #8b5a2b 100%);
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.1);
+}
+.podiumBronze .podiumVal {
+  color: #cd7f32;
+}
+
+.leaderboardQuote {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text2);
+  margin: 16px 0 0;
+  padding: 12px;
+  background: color-mix(in srgb, var(--surface2) 80%, transparent);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  line-height: 1.45;
+}
+
+/* Cohort List Styles */
+.cohortList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.cohortRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--glass-1) 85%, var(--surface) 15%);
+  transition: all 0.2s ease;
+}
+
+.cohortRowUser {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent-glow) 20%, var(--surface2) 80%) !important;
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.cohortRank {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 48px;
+}
+
+.cohortRank span {
+  font-size: 14px;
+}
+
+.cohortRank strong {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.cohortMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cohortMeta strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cohortMeta span {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.cohortScore {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 850;
+  color: var(--text);
+}
+
+.cohortScore small {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+}
+
+
+
 
 
 

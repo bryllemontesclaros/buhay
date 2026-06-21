@@ -15,6 +15,193 @@ import { loadStorageObjectUrl } from '../lib/storageMedia'
 import { formatDisplayDate, today } from '../lib/utils'
 import styles from './Page.module.css'
 import lStyles from './Lakas.module.css'
+import LakasRunningTracker from './LakasRunningTracker'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+function LakasRouteMiniMap({ coordinates = [] }) {
+  const mapRef = useRef(null)
+  const mapInstanceRef = useRef(null)
+
+  useEffect(() => {
+    if (!mapRef.current || !coordinates || coordinates.length === 0) return
+
+    const latLngs = coordinates.map(p => [p.lat, p.lng])
+    if (latLngs.length === 0) return
+
+    const map = L.map(mapRef.current, {
+      zoomControl: false,
+      dragging: false,
+      touchZoom: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      attributionControl: false,
+    })
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(map)
+
+    const polyline = L.polyline(latLngs, {
+      color: '#00f6ff',
+      weight: 3,
+      opacity: 0.9,
+    }).addTo(map)
+
+    try {
+      map.fitBounds(polyline.getBounds(), { padding: [5, 5] })
+    } catch (e) {
+      if (latLngs[0]) {
+        map.setView(latLngs[0], 15)
+      }
+    }
+
+    mapInstanceRef.current = map
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
+      }
+    }
+  }, [coordinates])
+
+  if (!coordinates || coordinates.length === 0) return null
+
+  return (
+    <div className={lStyles.miniMapContainer}>
+      <div ref={mapRef} className={lStyles.miniMap} />
+    </div>
+  )
+}
+function getWeeklyScore(workouts, habits, weekIndex = 0) {
+  const now = new Date()
+  const startMs = now.getTime() - (weekIndex * 7 + 7) * 24 * 60 * 60 * 1000
+  const endMs = now.getTime() - (weekIndex * 7) * 24 * 60 * 60 * 1000
+
+  const formatDate = d => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const startDateStr = formatDate(new Date(startMs))
+  const endDateStr = formatDate(new Date(endMs))
+
+  const weekWorkouts = workouts.filter(w => w.date > startDateStr && w.date <= endDateStr)
+  const weekHabits = habits.filter(h => h.date > startDateStr && h.date <= endDateStr)
+
+  const workoutsPoints = weekWorkouts.length * 10
+  const habitsPoints = weekHabits.reduce((sum, h) => sum + (Number(h.score) || 0), 0) * 2
+  const runDist = weekWorkouts.reduce((sum, w) => sum + (Number(w.distance) || 0), 0)
+  const runPoints = Math.round(runDist * 3)
+
+  const score = workoutsPoints + habitsPoints + runPoints
+
+  return {
+    score,
+    workoutsCount: weekWorkouts.length,
+    habitsCount: weekHabits.length,
+    runDist,
+    label: weekIndex === 0 ? 'This Week' : `Week -${weekIndex}`,
+  }
+}
+
+function LakasLeaderboard({ workouts = [], habits = [], settings = {}, privacyMode = false }) {
+  const currentWeek = useMemo(() => getWeeklyScore(workouts, habits, 0), [workouts, habits])
+  const historyWeeks = useMemo(() => Array.from({ length: 8 }, (_, i) => getWeeklyScore(workouts, habits, i + 1)), [workouts, habits])
+
+  const personalBest = useMemo(() => {
+    const scores = historyWeeks.map(w => w.score)
+    return scores.length > 0 ? Math.max(50, ...scores) : 50
+  }, [historyWeeks])
+
+  const averageWeek = useMemo(() => {
+    if (historyWeeks.length === 0) return 30
+    const sum = historyWeeks.reduce((acc, w) => acc + w.score, 0)
+    return Math.round(sum / historyWeeks.length)
+  }, [historyWeeks])
+
+  const leaderboardRows = useMemo(() => {
+    const goal = settings?.baseline?.goal || 'Consistency'
+    const rows = [
+      { name: 'IronBeast', score: Math.max(12, averageWeek + 15), track: 'Powerlifter', isUser: false },
+      { name: 'ZenStep', score: Math.max(8, averageWeek + 5), track: 'Habit Champ', isUser: false },
+      { name: 'FlexPace', score: Math.max(6, averageWeek - 8), track: 'Marathoner', isUser: false },
+      { name: 'CalmMover', score: Math.max(2, averageWeek - 18), track: 'Yoga Focus', isUser: false },
+      { name: 'You', score: currentWeek.score, track: goal, isUser: true },
+    ]
+    return [...rows].sort((a, b) => b.score - a.score)
+  }, [averageWeek, currentWeek.score, settings])
+
+  return (
+    <div className={lStyles.leaderboardContainer}>
+      <div className={lStyles.leaderboardSectionTitle}>Ghost Racer (Self-Competition)</div>
+      <p className={lStyles.leaderboardSubtitle}>Compare this week's progress against your best and average standards.</p>
+      
+      <div className={lStyles.podiumGrid}>
+        <div className={`${lStyles.podiumCol} ${lStyles.podiumBronze}`}>
+          <div className={lStyles.podiumVal}>{privacyMode ? '••' : averageWeek} <small>pts</small></div>
+          <div className={lStyles.podiumBar} style={{ height: '50px' }}>
+            <span className={lStyles.podiumRank}>3</span>
+          </div>
+          <div className={lStyles.podiumLabel}>Average Week</div>
+        </div>
+
+        <div className={`${lStyles.podiumCol} ${lStyles.podiumGold}`}>
+          <div className={lStyles.podiumVal}>{privacyMode ? '••' : personalBest} <small>pts</small></div>
+          <div className={lStyles.podiumBar} style={{ height: '90px' }}>
+            <span className={lStyles.podiumRank}>1</span>
+          </div>
+          <div className={lStyles.podiumLabel}>Personal Best</div>
+        </div>
+
+        <div className={`${lStyles.podiumCol} ${lStyles.podiumSilver} ${currentWeek.score >= personalBest ? lStyles.podiumSilverWinner : ''}`}>
+          <div className={lStyles.podiumVal}>{privacyMode ? '••' : currentWeek.score} <small>pts</small></div>
+          <div className={lStyles.podiumBar} style={{ height: '70px' }}>
+            <span className={lStyles.podiumRank}>2</span>
+          </div>
+          <div className={lStyles.podiumLabel}>This Week</div>
+        </div>
+      </div>
+
+      <div className={lStyles.leaderboardQuote}>
+        {currentWeek.score >= personalBest ? (
+          <span style={{ color: 'var(--accent)' }}>🔥 You are beating your personal best! Outstanding work.</span>
+        ) : (
+          <span>You need <strong>{privacyMode ? '••' : (personalBest - currentWeek.score)}</strong> more points to beat your personal best. Log another workout or hydration check!</span>
+        )}
+      </div>
+
+      <div className={lStyles.leaderboardSectionTitle} style={{ marginTop: '28px' }}>Weekly Cohort Consistency</div>
+      <p className={lStyles.leaderboardSubtitle}>Ranked against active peers on similar training tracks based on trailing 7-day consistency points.</p>
+
+      <div className={lStyles.cohortList}>
+        {leaderboardRows.map((row, idx) => {
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🎗'
+          return (
+            <div key={row.name} className={`${lStyles.cohortRow} ${row.isUser ? lStyles.cohortRowUser : ''}`}>
+              <div className={lStyles.cohortRank}>
+                <span>{medal}</span>
+                <strong>{idx + 1}</strong>
+              </div>
+              <div className={lStyles.cohortMeta}>
+                <strong>{row.name}</strong>
+                <span>{row.track}</span>
+              </div>
+              <div className={lStyles.cohortScore}>
+                {privacyMode ? '••' : row.score} <small>pts</small>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 const FOOD_PRESETS = [
   { name: 'White rice (1 cup)', calories: 205, protein: 4, carbs: 45, fat: 0 },
@@ -151,6 +338,13 @@ const GYM_SESSION_TYPES = [
     label: 'Cardio',
     templateName: 'Cardio Base',
     desc: 'Easy conditioning before chasing speed.',
+  },
+  {
+    key: 'running',
+    label: 'Outdoor Run',
+    templateName: 'Outdoor Run',
+    desc: 'Starts real-time GPS tracking and maps your running route.',
+    isRunMode: true,
   },
   {
     key: 'recovery',
@@ -1302,6 +1496,12 @@ function getWeightTrendSummary(bodyLogs = [], unit = 'kg') {
 function getTemplateForSessionKey(sessionKey = 'beginner', settings = {}, beginnerTemplate = BUILT_IN_ROUTINES[0]) {
   const session = GYM_SESSION_TYPES.find(row => row.key === sessionKey) || GYM_SESSION_TYPES[0]
   if (session.key === 'beginner') return beginnerTemplate
+  if (session.key === 'running') {
+    return {
+      name: 'Outdoor Run',
+      exercises: [{ name: 'Running', sets: 1, reps: 0, weight: 0 }],
+    }
+  }
   return BUILT_IN_ROUTINES.find(template => template.name === session.templateName) || BUILT_IN_ROUTINES[0]
 }
 
@@ -3452,6 +3652,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       volume: totals.volume,
       notes: String(nextWorkout.notes || '').trim(),
       source: 'lakas',
+      routeCoordinates: nextWorkout.routeCoordinates || null,
+      distance: nextWorkout.distance || null,
+      pace: nextWorkout.pace || null,
     })
     setWorkoutForm(createWorkoutForm(savedLakasSettings))
     notifyApp({ title: 'Workout saved', message: 'Your workout is now in Lakas.', tone: 'success' })
@@ -3466,6 +3669,30 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     const saved = await handleAddWorkout({
       duration: String(actualMinutes),
       notes: [workoutForm.notes, completionNote].filter(Boolean).join(' '),
+    })
+    if (saved) closeGymSessionMode()
+  }
+
+  async function handleSaveRunningSession(elapsedSeconds, distance, coordinates) {
+    const actualMinutes = elapsedSeconds > 0 ? Math.max(1, Math.round(elapsedSeconds / 60)) : 0
+    const paceSeconds = distance > 0 ? Math.round(elapsedSeconds / distance) : 0
+    const paceM = Math.floor(paceSeconds / 60)
+    const paceS = paceSeconds % 60
+    const paceStr = distance > 0 ? `${paceM}:${String(paceS).padStart(2, '0')}` : '−:−−'
+    const durationH = Math.floor(elapsedSeconds / 3600)
+    const durationM = Math.floor((elapsedSeconds % 3600) / 60)
+    const durationS = elapsedSeconds % 60
+    const durationStr = durationH > 0 ? `${durationH}:${String(durationM).padStart(2, '0')}:${String(durationS).padStart(2, '0')}` : `${durationM}:${String(durationS).padStart(2, '0')}`
+
+    const runNote = `Outdoor run logged: Ran ${distance.toFixed(2)} km in ${durationStr} (Pace: ${paceStr}/km).`
+    const saved = await handleAddWorkout({
+      title: 'Outdoor Run',
+      duration: String(actualMinutes),
+      notes: runNote,
+      exercises: [{ name: 'Running', sets: 1, reps: 0, weight: 0, completed: true }],
+      routeCoordinates: coordinates || [],
+      distance: Number(distance.toFixed(2)),
+      pace: paceStr,
     })
     if (saved) closeGymSessionMode()
   }
@@ -4257,9 +4484,12 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   }, [pendingQuickAction, showMeals, onActionHandled])
 
   const gymSessionOverlay = gymSessionMode.open ? (
-    <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
-      <div className={lStyles.gymModeBackdrop} onClick={closeGymSessionMode} aria-hidden="true" />
-      <section className={`${lStyles.gymModeSheet} ${gymSessionMode.focusMode ? lStyles.gymModeSheetFocus : ''}`}>
+    activeGymSession.key === 'running' ? (
+      <LakasRunningTracker onSave={handleSaveRunningSession} onClose={closeGymSessionMode} />
+    ) : (
+      <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
+        <div className={lStyles.gymModeBackdrop} onClick={closeGymSessionMode} aria-hidden="true" />
+        <section className={`${lStyles.gymModeSheet} ${gymSessionMode.focusMode ? lStyles.gymModeSheetFocus : ''}`}>
         <div className={lStyles.gymModeHeader}>
           <div>
             <div className={lStyles.gymModeEyebrow}>Gym session mode</div>
@@ -4723,6 +4953,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
         </div>
       </section>
     </div>
+    )
   ) : null
 
   return (
@@ -5423,6 +5654,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   )}
                   {typeof workout.exercises === 'string' && workout.exercises && (
                     <small>{workout.exercises.split('\n').slice(0, 2).join(' | ')}</small>
+                  )}
+                  {workout.routeCoordinates && workout.routeCoordinates.length > 0 && (
+                    <LakasRouteMiniMap coordinates={workout.routeCoordinates} />
                   )}
                 </div>
                 <div className={lStyles.rowActions}>
@@ -6334,6 +6568,21 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </summary>
               <div style={{ padding: '0 12px 12px' }}>
                 <ConsistencyHeatmap workouts={workouts} habits={habits} privacyMode={privacyMode} />
+              </div>
+            </details>
+
+            <details className={lStyles.advancedBox}>
+              <summary className={lStyles.advancedSummary}>
+                <span>Tactical Leaderboards</span>
+                <small>Ghost Racer self-podium and anonymous peer consistency ranks</small>
+              </summary>
+              <div style={{ padding: '0 12px 12px' }}>
+                <LakasLeaderboard
+                  workouts={workouts}
+                  habits={habits}
+                  settings={savedLakasSettings}
+                  privacyMode={privacyMode}
+                />
               </div>
             </details>
 

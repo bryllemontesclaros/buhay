@@ -1361,11 +1361,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       </button>
                     </div>
                   </div>
-                </div>
-
-                <div className={calStyles.dayPanelBody}>
                   {!editingDayBalance && (
-                    <div className={calStyles.dayPanelActions}>
+                    <div className={calStyles.dayPanelActions} style={{ marginTop: '12px' }}>
                       <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
                         Record income
                       </button>
@@ -1374,6 +1371,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       </button>
                     </div>
                   )}
+                </div>
+
+                <div className={calStyles.dayPanelBody}>
 
                   {selectedIncome.length > 0 && (
                     <div className={calStyles.daySection}>
@@ -2049,16 +2049,24 @@ function DayTxRow({
             >
               {isPaid ? 'Paid' : 'Unpaid'}
             </button>
-            <details className={calStyles.txActionDetails}>
-              <summary className={calStyles.txActionSummary}>
-                <span>More</span>
-                <small>Edit or delete</small>
-              </summary>
-              <div className={calStyles.txActionGrid}>
-                <button type="button" className={calStyles.editBtn} onClick={() => onEdit(t)} aria-label={`Edit ${t.desc || t.cat}`} disabled={locked}>Edit</button>
-                <button type="button" className={calStyles.delBtnSm} onClick={() => onDelete(t)} aria-label={`Delete ${t.desc || t.cat}`} disabled={locked}>Delete</button>
-              </div>
-            </details>
+            <button
+              type="button"
+              className={calStyles.editBtn}
+              onClick={() => onEdit(t)}
+              aria-label={`Edit ${t.desc || t.cat}`}
+              disabled={locked}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              className={calStyles.delBtnSm}
+              onClick={() => onDelete(t)}
+              aria-label={`Delete ${t.desc || t.cat}`}
+              disabled={locked}
+            >
+              Delete
+            </button>
           </div>
         )}
       </div>

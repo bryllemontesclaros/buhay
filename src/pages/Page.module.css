@@ -1035,7 +1035,7 @@ tbody tr:hover td {
 
 @media (max-width: 768px) {
   .page {
-    padding: 0.85rem 0.85rem calc(82px + env(safe-area-inset-bottom));
+    padding: 0.85rem 12px calc(82px + env(safe-area-inset-bottom));
   }
 
   .header {

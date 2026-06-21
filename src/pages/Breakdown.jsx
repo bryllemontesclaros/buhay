@@ -1,10 +1,123 @@
 import { useMemo, useState } from 'react'
 import { getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getProjectedTransactions } from '../lib/recurrence'
-import { displayValue, fmt, maskMoney, playTick } from '../lib/utils'
+import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
+import { getBillPeriodInfo } from '../lib/bills'
 import DetailsModal from '../components/DetailsModal'
 import styles from './Page.module.css'
 import bStyles from './Breakdown.module.css'
+
+function FinancialHealthPulse({ data, incomeTotal, expenseTotal, viewYear, viewMonth, symbol, privacyMode }) {
+  const s = symbol || '₱'
+  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
+  
+  const budgets = data.budgets || []
+  const monthNet = incomeTotal - expenseTotal
+  
+  const savingsRate = useMemo(() => {
+    if (incomeTotal <= 0) return expenseTotal > 0 ? -1 : 0
+    return monthNet / incomeTotal
+  }, [incomeTotal, monthNet, expenseTotal])
+
+  const spending = useMemo(() => {
+    const map = {}
+    data.expenses.filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth)).forEach(tx => {
+      map[tx.cat] = (map[tx.cat] || 0) + (tx.amount || 0)
+    })
+    return map
+  }, [data.expenses, viewMonth, viewYear])
+
+  const { exceededBudgetsCount, warningBudgetsCount } = useMemo(() => {
+    let exceeded = 0
+    let warning = 0
+    budgets.forEach(b => {
+      const spent = spending[b.cat] || 0
+      const pct = b.limit > 0 ? (spent / b.limit) * 100 : 0
+      if (pct > 100) exceeded++
+      else if (pct >= 80) warning++
+    })
+    return { exceededBudgetsCount: exceeded, warningBudgetsCount: warning }
+  }, [budgets, spending])
+
+  const unpaidBillsTotal = useMemo(() => {
+    const list = (data.bills || []).map(bill => ({
+      ...bill,
+      period: getBillPeriodInfo(bill),
+    }))
+    return list
+      .filter(bill => !bill.period?.paid && (bill.period?.status === 'overdue' || bill.period?.status === 'due' || bill.period?.status === 'soon'))
+      .reduce((sum, bill) => sum + (Number(bill.amount) || 0), 0)
+  }, [data.bills])
+
+  const liquidTotal = useMemo(() => {
+    return (data.accounts || [])
+      .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
+      .reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
+  }, [data.accounts])
+
+  const healthStatus = useMemo(() => {
+    if (savingsRate < 0.05 || (unpaidBillsTotal > 0 && liquidTotal < unpaidBillsTotal) || exceededBudgetsCount >= 3) {
+      return 'strained'
+    }
+    if (savingsRate < 0.2 || exceededBudgetsCount > 0 || warningBudgetsCount > 0 || unpaidBillsTotal > 0) {
+      return 'caution'
+    }
+    return 'healthy'
+  }, [savingsRate, unpaidBillsTotal, liquidTotal, exceededBudgetsCount, warningBudgetsCount])
+
+  const coachingAdvice = useMemo(() => {
+    if (savingsRate < 0) {
+      return `Strained: Your monthly expenses exceed income by ${money(Math.abs(monthNet))}. Review discretionary budgets to stop the deficit.`
+    }
+    if (unpaidBillsTotal > 0 && liquidTotal < unpaidBillsTotal) {
+      return `Caution: Liquid cash (${money(liquidTotal)}) is less than near-term unpaid bills (${money(unpaidBillsTotal)}). Conserve cash to cover commitments.`
+    }
+    if (exceededBudgetsCount > 0) {
+      const topExceededCat = budgets
+        .map(b => ({ cat: b.cat, excess: (spending[b.cat] || 0) - b.limit }))
+        .sort((a, b) => b.excess - a.excess)[0]
+      return `Caution: You are over budget on ${topExceededCat.cat} by ${money(topExceededCat.excess)}. Adjust other category limits to balance spending.`
+    }
+    if (savingsRate < 0.2) {
+      return `Caution: Your savings rate is at ${(savingsRate * 100).toFixed(0)}% (target: 20%). Consider trimming minor subscriptions or eating out.`
+    }
+    if (savingsRate >= 0.2) {
+      return `Healthy: Great job! You saved ${(savingsRate * 100).toFixed(0)}% of your income this month and all budgets are inside guide rails.`
+    }
+    return 'Your financial pulse is stable. Keep tracking transactions to see trends.'
+  }, [savingsRate, monthNet, unpaidBillsTotal, liquidTotal, exceededBudgetsCount, budgets, spending, money])
+
+  const statusLabel = {
+    healthy: 'Healthy',
+    caution: 'Caution',
+    strained: 'Strained',
+  }[healthStatus]
+
+  const statusColorClass = {
+    healthy: bStyles.pulseColorHealthy,
+    caution: bStyles.pulseColorCaution,
+    strained: bStyles.pulseColorStrained,
+  }[healthStatus]
+
+  return (
+    <section className={`${bStyles.pulseCard} ${statusColorClass}`} aria-label="Financial health evaluator">
+      <div className={bStyles.pulseVisual}>
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="16" className={bStyles.pulseCircleBg} />
+          <circle cx="20" cy="20" r="16" className={bStyles.pulseCirclePulse} />
+          <circle cx="20" cy="20" r="8" className={bStyles.pulseCircleCenter} />
+        </svg>
+      </div>
+      <div className={bStyles.pulseContent}>
+        <div className={bStyles.pulseHeader}>
+          <span className={bStyles.pulseTitle}>Financial Pulse</span>
+          <span className={bStyles.pulseBadge}>{statusLabel}</span>
+        </div>
+        <p className={bStyles.pulseAdvice}>{coachingAdvice}</p>
+      </div>
+    </section>
+  )
+}
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const CAT_COLORS = {
@@ -566,6 +679,15 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
 
   return (
     <div className={`${styles.page} ${bStyles.breakdownPage}`}>
+      <FinancialHealthPulse
+        data={data}
+        incomeTotal={incomeTotal}
+        expenseTotal={expenseTotal}
+        viewYear={viewYear}
+        viewMonth={viewMonth}
+        symbol={s}
+        privacyMode={privacyMode}
+      />
       <div className={bStyles.heroSection}>
         <div className={bStyles.heroCopy}>
           <div className={bStyles.pageEyebrow}>Breakdown</div>

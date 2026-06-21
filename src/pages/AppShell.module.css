@@ -2515,7 +2515,7 @@
   }
 
   :global(.neo) .main {
-    padding: 16px 12px calc(122px + env(safe-area-inset-bottom));
+    padding: 16px 0px calc(122px + env(safe-area-inset-bottom));
   }
 
   :global(.neo) .bottomNav {
@@ -2531,13 +2531,13 @@
 /* Final mobile shell correction: prevent the header and space switch from overflowing phones. */
 @media (max-width: 768px) {
   :global(.neo) .main {
-    padding-inline: 8px;
+    padding-inline: 0px;
   }
 
   :global(.neo) .topBar {
-    width: calc(100% - 20px);
-    max-width: calc(100vw - 20px);
-    margin: 8px 10px 0;
+    width: calc(100% - 24px);
+    max-width: calc(100vw - 24px);
+    margin: 8px 12px 0;
     padding: 12px;
     border-width: 3px;
     border-radius: 24px;
