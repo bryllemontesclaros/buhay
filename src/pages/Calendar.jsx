@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  getBalanceAtDate,
   getBalanceAtDateWithOverrides,
   getBalanceOverrides,
   getMonthForecast,
@@ -881,6 +882,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.income, data.expenses, selected, balanceOverrides))
     : 0
+  const selectedDayAutoBalance = selected
+    ? getBalanceAtDate(data.accounts, data.income, data.expenses, selected)
+    : 0
   const isCurrentMonthView = year === currentYear && month === currentMonth
   const defaultBalanceDate = useMemo(() => {
     const fallbackDay = isCurrentMonthView
@@ -1369,6 +1373,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           {latestOverrideEvent?.createdAt && (
                             <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                               Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
+                            </div>
+                          )}
+                          {hasManualBalanceOnSelectedDay && (
+                            <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid color-mix(in srgb, var(--border) 32%, transparent)', color: 'var(--text2)', fontSize: 11, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              <span>Ledger calculation: <strong style={{ color: 'var(--text)' }}>{balanceMoney(selectedDayAutoBalance)}</strong></span>
+                              <span style={{ color: 'var(--text3)' }}>·</span>
+                              <span>Adjustment: <strong style={{ color: selectedDayBalance - selectedDayAutoBalance >= 0 ? 'var(--accent)' : 'var(--red)' }}>{selectedDayBalance - selectedDayAutoBalance >= 0 ? '+' : ''}{balanceMoney(selectedDayBalance - selectedDayAutoBalance)}</strong></span>
                             </div>
                           )}
                         </div>
