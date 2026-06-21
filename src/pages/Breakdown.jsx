@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getProjectedTransactions } from '../lib/recurrence'
-import { displayValue, fmt, maskMoney } from '../lib/utils'
+import { displayValue, fmt, maskMoney, playTick } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
 import styles from './Page.module.css'
 import bStyles from './Breakdown.module.css'
@@ -80,7 +80,8 @@ function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {
         <g>
           {slices.map((slice, index) => {
             const pathStyle = {
-              transform: `translate(${slice.dx}px, ${slice.dy}px)`,
+              transform: `translate(${slice.dx}px, ${slice.dy}px) scale(${hoveredIndex === index ? 1.05 : 1})`,
+              transformOrigin: 'center',
               transition: 'transform var(--motion-duration) var(--ease-fluid), opacity var(--motion-duration)',
               cursor: 'pointer',
             }
@@ -93,7 +94,10 @@ function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {
                 r={radius}
                 fill={slice.color}
                 opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.72}
-                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseEnter={() => {
+                  playTick()
+                  setHoveredIndex(index)
+                }}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={pathStyle}
               />
@@ -103,7 +107,10 @@ function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {
                 d={slice.path}
                 fill={slice.color}
                 opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.72}
-                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseEnter={() => {
+                  playTick()
+                  setHoveredIndex(index)
+                }}
                 onMouseLeave={() => setHoveredIndex(null)}
                 stroke="var(--bg)"
                 strokeWidth="1.5"
@@ -284,7 +291,10 @@ function BarChart({ months, income, expenses, symbol, privacyMode }) {
                 rx="3"
                 opacity={hoveredBar && (hoveredBar.index !== index || hoveredBar.type !== 'income') ? 0.6 : 1}
                 style={{ transition: 'y 0.6s ease, height 0.6s ease, opacity 0.2s ease', cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredBar({ index, type: 'income', val: incVal, x: xInc + barW / 2, y: yInc })}
+                onMouseEnter={() => {
+                  playTick()
+                  setHoveredBar({ index, type: 'income', val: incVal, x: xInc + barW / 2, y: yInc })
+                }}
                 onMouseLeave={() => setHoveredBar(null)}
               />
               
@@ -297,7 +307,10 @@ function BarChart({ months, income, expenses, symbol, privacyMode }) {
                 rx="3"
                 opacity={hoveredBar && (hoveredBar.index !== index || hoveredBar.type !== 'expense') ? 0.6 : 1}
                 style={{ transition: 'y 0.6s ease, height 0.6s ease, opacity 0.2s ease', cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredBar({ index, type: 'expense', val: expVal, x: xExp + barW / 2, y: yExp })}
+                onMouseEnter={() => {
+                  playTick()
+                  setHoveredBar({ index, type: 'expense', val: expVal, x: xExp + barW / 2, y: yExp })
+                }}
                 onMouseLeave={() => setHoveredBar(null)}
               />
 

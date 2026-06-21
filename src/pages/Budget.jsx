@@ -3,7 +3,7 @@ import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { isTransactionPaid } from '../lib/finance'
 import { getTransactionCategories } from '../lib/transactionOptions'
-import { displayValue, fmt, isSameMonth, maskMoney } from '../lib/utils'
+import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 import bStyles from './Budget.module.css'
 
@@ -148,9 +148,9 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
 
 
       <div className={bStyles.monthBar}>
-        <button type="button" className={bStyles.navBtn} onClick={prevMonth}>←</button>
+        <button type="button" className={bStyles.navBtn} onClick={() => { playTick(); prevMonth(); }}>←</button>
         <div className={bStyles.monthLabel}>{monthLabel}</div>
-        <button type="button" className={bStyles.navBtn} onClick={nextMonth}>→</button>
+        <button type="button" className={bStyles.navBtn} onClick={() => { playTick(); nextMonth(); }}>→</button>
       </div>
 
       {totalBudget > 0 && (
@@ -197,7 +197,7 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
             <input className={bStyles.fieldInput} type="number" min="0" inputMode="decimal" placeholder="e.g. 5000" value={form.limit} onChange={event => setForm(current => ({ ...current, limit: event.target.value }))} />
           </div>
           <div className={bStyles.field}>
-            <button type="button" className={bStyles.primaryButton} onClick={handleAddBudget}>Save budget</button>
+            <button type="button" className={bStyles.primaryButton} onClick={() => { playTick(); handleAddBudget(); }}>Save budget</button>
           </div>
         </div>
       </div>
@@ -225,7 +225,7 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
             <div className={bStyles.budgetHeaderRight}>
               <span className={bStyles.budgetSpent} style={{ color: statusColor[item.status] }}>{money(item.spent)}</span>
               <span className={bStyles.budgetLimit}>/ {money(item.limit)}</span>
-              <button type="button" className={bStyles.deleteBtn} onClick={() => handleDelBudget(item._id)}>Delete</button>
+              <button type="button" className={bStyles.deleteBtn} onClick={() => { playTick(); handleDelBudget(item._id); }}>Delete</button>
             </div>
           </div>
 

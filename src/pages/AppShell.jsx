@@ -1555,7 +1555,7 @@ export default function AppShell({ user }) {
           </div>
         )}
         <main ref={mainRef} id="app-main" className={`${styles.main} ${isCalendarPage ? styles.mainCalendar : ''}`}>
-          {activeSpace === 'takda' && (
+          {activeSpace === 'takda' && page === 'dashboard' && (
             <TakdaTodayStrip
               netPosition={netPosition}
               monthNet={monthNet}

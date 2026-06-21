@@ -608,16 +608,29 @@
 
 .allocationTrack {
   height: 12px;
-  overflow: hidden;
+  overflow: visible !important;
   border-radius: 999px;
   background: color-mix(in srgb, var(--border) 70%, transparent);
 }
 
 .allocationTrack span {
+  position: relative;
   display: block;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--blue) 46%, var(--accent)));
+}
+.allocationTrack span::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px 2.5px rgba(255, 255, 255, 0.85), 0 0 4px #ffffff;
+  opacity: 0.95;
 }
 
 .disclaimer {

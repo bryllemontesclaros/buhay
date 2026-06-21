@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { fsDeletePortfolioHolding, fsSavePortfolioHolding } from '../lib/firestore'
 import { PORTFOLIO_ASSET_TYPES, getPortfolioSummary, normalizePortfolioHolding } from '../lib/portfolio'
+import { playTick } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import pStyles from './Portfolio.module.css'
@@ -82,12 +83,14 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   }
 
   function openAdd() {
+    playTick()
     setEditingHolding(null)
     setForm(getEmptyHolding(defaultCurrency))
     setFormOpen(true)
   }
 
   function openEdit(holding) {
+    playTick()
     setEditingHolding(holding)
     setForm({
       name: holding.name || '',
@@ -107,12 +110,14 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   }
 
   function closeForm() {
+    playTick()
     setFormOpen(false)
     setEditingHolding(null)
     setForm(getEmptyHolding(defaultCurrency))
   }
 
   async function handleSave() {
+    playTick()
     const next = normalizePortfolioHolding(form)
     if (!next.name && !next.symbol) {
       notifyApp({ title: 'Holding needs a name', message: 'Add an asset name or symbol before saving.', tone: 'warning' })
@@ -150,6 +155,7 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   }
 
   async function handleDelete(holding) {
+    playTick()
     const confirmed = await confirmApp({
       title: 'Delete holding?',
       message: `Delete ${holding.symbol || holding.name || 'this holding'} from Portfolio? This cannot be undone.`,

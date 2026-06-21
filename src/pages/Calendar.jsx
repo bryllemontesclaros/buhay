@@ -307,6 +307,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function closeSelectedDay() {
+    playTick()
     if (dayBalanceSaving || recurringDateSaving) return
     if (recurringDateTarget) {
       closeRecurringDateEditor()
@@ -646,6 +647,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleDelete(tx) {
+    playTick()
     if (tx._projected) {
       notifyApp({
         title: 'Projection only',
@@ -1379,7 +1381,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
                         <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
                       </div>
-                      {selectedIncome.map(tx => (
+                      {selectedIncome.map((tx, index) => (
                         <DayTxRow
                           key={tx._id}
                           t={tx}
@@ -1395,6 +1397,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
                           locked={selectedDateLocked}
                           accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                          animationDelay={`${index * 40}ms`}
                         />
                       ))}
                     </div>
@@ -1406,7 +1409,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         <div className={calStyles.daySectionLabel} style={{ color: 'var(--red)' }}>Expenses</div>
                         <div className={calStyles.daySectionCount}>{selectedExpenses.length}</div>
                       </div>
-                      {selectedExpenses.map(tx => (
+                      {selectedExpenses.map((tx, index) => (
                         <DayTxRow
                           key={tx._id}
                           t={tx}
@@ -1422,6 +1425,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
                           locked={selectedDateLocked}
                           accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                          animationDelay={`${(selectedIncome.length + index) * 40}ms`}
                         />
                       ))}
                     </div>
@@ -1926,6 +1930,7 @@ function DayTxRow({
   recurringActionPending = false,
   locked = false,
   accountLabel = '',
+  animationDelay = '0ms',
 }) {
   const isIncome = t.type === 'income'
   const lifecycle = getTakdaTransactionLifecycle(t, today())
@@ -1945,7 +1950,10 @@ function DayTxRow({
     ? calStyles.statusProjected
     : (lifecycle.statusKey === TAKDA_TRANSACTION_STATUS.PAID ? calStyles.statusPaid : calStyles.statusUnpaid)
   return (
-    <div className={`${calStyles.txRow} ${isPaid ? '' : calStyles.txRowUnpaid} ${isProjected ? calStyles.projectedTxRow : ''}`}>
+    <div
+      className={`${calStyles.txRow} ${calStyles.dayTxRowStaggered} ${isPaid ? '' : calStyles.txRowUnpaid} ${isProjected ? calStyles.projectedTxRow : ''}`}
+      style={{ animationDelay }}
+    >
       <div className={calStyles.txLeft}>
         <div className={calStyles.txIcon} style={{ background: isIncome ? 'var(--accent-glow)' : 'var(--red-dim)', color: isIncome ? 'var(--accent)' : 'var(--red)' }}>
           {isIncome ? '+' : '−'}

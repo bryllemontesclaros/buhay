@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
-import { displayValue, fmt, formatDisplayDate, maskMoney } from '../lib/utils'
+import { displayValue, fmt, formatDisplayDate, maskMoney, playTick } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import sStyles from './Savings.module.css'
@@ -179,7 +179,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
             <button
               type="button"
               className={sStyles.primaryButton}
-              onClick={() => handleContrib(nextGoal)}
+              onClick={() => { playTick(); handleContrib(nextGoal); }}
             >
               Add to goal
             </button>
@@ -223,7 +223,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
         </div>
 
         <details className={sStyles.advancedBox}>
-          <summary className={sStyles.advancedSummary}>
+          <summary className={sStyles.advancedSummary} onClick={() => playTick()}>
             <span>More options</span>
             <small>Target date, starting amount</small>
           </summary>
@@ -268,7 +268,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
           <div className={sStyles.composerHint}>
             Add a target date only if it helps pacing. The goal still works well without one.
           </div>
-          <button type="button" className={sStyles.primaryButton} onClick={handleAdd}>Add goal</button>
+          <button type="button" className={sStyles.primaryButton} onClick={() => { playTick(); handleAdd(); }}>Add goal</button>
         </div>
       </div>
 
@@ -301,6 +301,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                     type="button"
                     className={sStyles.goalDelete}
                     onClick={async () => {
+                      playTick()
                       if (await confirmDeleteApp(goal.name)) await fsDel(user.uid, 'goals', goal._id)
                     }}
                   >
@@ -342,7 +343,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                 <button
                   type="button"
                   className={sStyles.contributionBtn}
-                  onClick={() => handleContrib(goal)}
+                  onClick={() => { playTick(); handleContrib(goal); }}
                 >
                   Add funds
                 </button>
