@@ -6313,6 +6313,62 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Guidance and Session picker overrides to fix specificity conflicts */
+  .guidanceDetails .sessionPicker {
+    display: flex !important;
+    flex-direction: row !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: 0 12px 12px !important;
+  }
+  
+  .guidanceDetails .sessionPicker::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  .guidanceDetails .sessionPicker .sessionChip {
+    flex: 0 0 auto !important;
+    min-width: 132px !important;
+    min-height: 48px !important;
+    scroll-snap-align: start !important;
+  }
+
+  .guidanceDetails .todayGuidanceGrid {
+    grid-template-columns: 1fr !important;
+    padding: 0 12px 12px !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Workout launch actions and alignment cutoffs */
+  .workoutLaunchActions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .workoutLaunchActions button {
+    width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* general container padding/containment controls */
+  .guidanceDetails,
+  .todayGuidanceCard,
+  .sessionPicker,
+  .workoutLaunchActions {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+}
+
 
 
 

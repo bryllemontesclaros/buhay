@@ -6,6 +6,7 @@ import { getBillPeriodInfo } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import styles from './Page.module.css'
+import bStyles from './Bills.module.css'
 
 const BILL_FREQS = RECUR_OPTIONS.filter(option => option.value !== '' && option.value !== 'daily')
 
@@ -436,7 +437,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
 
       <div className={styles.card}>
         <div className={styles.cardTitle}>Bills</div>
-        <div className={styles.tableWrap}>
+        <div className={`${styles.tableWrap} ${bStyles.desktopTableOnly}`}>
           <table>
             <thead>
               <tr>
@@ -485,6 +486,64 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
                 ))}
             </tbody>
           </table>
+        </div>
+
+        <div className={bStyles.mobileCardList}>
+          {!billsWithStatus.length ? (
+            <div className={styles.helper} style={{ textAlign: 'center', padding: '2rem' }}>
+              No bills yet. Add one above to start your bill plan.
+            </div>
+          ) : (
+            sortedBillsWithStatus.map(row => {
+              const statusPeriod = row.period || {}
+              return (
+                <div key={row._id} className={bStyles.billCard}>
+                  <div className={bStyles.billCardHeader}>
+                    <div className={bStyles.billCardTitle}>
+                      <h4>{row.name}</h4>
+                      <span>{row.subcat || row.cat}</span>
+                    </div>
+                  </div>
+                  <div className={bStyles.billCardDetails}>
+                    <div className={bStyles.detailItem}>
+                      <label>Account</label>
+                      <span>{row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}</span>
+                    </div>
+                    <div className={bStyles.detailItem}>
+                      <label>Due Date</label>
+                      <span>Day {row.due} ({formatDisplayDate(statusPeriod.dueDate)})</span>
+                    </div>
+                    <div className={bStyles.detailItem}>
+                      <label>Frequency</label>
+                      <span>{BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}</span>
+                    </div>
+                    <div className={bStyles.detailItem}>
+                      <label>Status</label>
+                      <span style={{ ...getStatusStyle(statusPeriod.status), borderRadius: 20, padding: '4px 10px', fontSize: 11, fontWeight: 700, width: 'fit-content' }}>
+                        {statusPeriod.label}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={bStyles.billCardFooter}>
+                    <div className={bStyles.billCardPrice}>
+                      <span>Amount</span>
+                      <strong>{fmt(row.amount, s)}</strong>
+                    </div>
+                    <div className={bStyles.billCardActions}>
+                      {statusPeriod.paid ? (
+                        <button type="button" className={bStyles.undoBtn} onClick={() => handleUndoPaid(row)}>Undo</button>
+                      ) : (
+                        <button type="button" className={bStyles.payBtn} onClick={() => openPayment(row)}>
+                          {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
+                        </button>
+                      )}
+                      <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )}
         </div>
       </div>
 

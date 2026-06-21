@@ -5377,7 +5377,17 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </label>
             <label>
               <span>Date</span>
-              <input type="date" value={workoutForm.date} onChange={event => setWorkoutForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(workoutForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={workoutForm.date}
+                  onChange={event => setWorkoutForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
           </div>
           <details className={lStyles.advancedBox}>
@@ -5831,7 +5841,17 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </label>
             <label>
               <span>Date</span>
-              <input type="date" value={mealForm.date} onChange={event => setMealForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(mealForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={mealForm.date}
+                  onChange={event => setMealForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <label>
               <span>Calories</span>
@@ -5905,7 +5925,17 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <div className={lStyles.formGrid}>
             <label>
               <span>Date</span>
-              <input type="date" value={activityForm.date} onChange={event => setActivityForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(activityForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={activityForm.date}
+                  onChange={event => setActivityForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <label>
               <span>Type</span>
@@ -5978,25 +6008,31 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <div className={lStyles.formGrid}>
             <label className={lStyles.full}>
               <span>Date</span>
-              <input 
-                type="date" 
-                value={habitForm.date} 
-                onChange={event => {
-                  const nextDate = event.target.value
-                  const found = habits.find(h => h.date === nextDate)
-                  setHabitForm({
-                    date: nextDate,
-                    water: found ? Boolean(found.water) : false,
-                    waterGlasses: found ? numberOrZero(found.waterGlasses) : 0,
-                    protein: found ? Boolean(found.protein) : false,
-                    sleep: found ? Boolean(found.sleep) : false,
-                    stretching: found ? Boolean(found.stretching) : false,
-                    restDay: found ? Boolean(found.restDay) : false,
-                    vitamins: found ? Boolean(found.vitamins) : false,
-                    notes: found ? (found.notes || '') : '',
-                  })
-                }} 
-              />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(habitForm.date)}
+                </div>
+                <input 
+                  type="date" 
+                  className={styles.dateFieldNative}
+                  value={habitForm.date} 
+                  onChange={event => {
+                    const nextDate = event.target.value
+                    const found = habits.find(h => h.date === nextDate)
+                    setHabitForm({
+                      date: nextDate,
+                      water: found ? Boolean(found.water) : false,
+                      waterGlasses: found ? numberOrZero(found.waterGlasses) : 0,
+                      protein: found ? Boolean(found.protein) : false,
+                      sleep: found ? Boolean(found.sleep) : false,
+                      stretching: found ? Boolean(found.stretching) : false,
+                      restDay: found ? Boolean(found.restDay) : false,
+                      vitamins: found ? Boolean(found.vitamins) : false,
+                      notes: found ? (found.notes || '') : '',
+                    })
+                  }} 
+                />
+              </div>
             </label>
           </div>
 
@@ -6076,7 +6112,17 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <div className={lStyles.formGrid}>
             <label>
               <span>Date</span>
-              <input type="date" value={bodyForm.date} onChange={event => setBodyForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(bodyForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={bodyForm.date}
+                  onChange={event => setBodyForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <label>
               <span>Weight ({savedLakasSettings.units.weight})</span>
@@ -6750,7 +6796,17 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   </label>
                   <label>
                     <span>Date</span>
-                    <input type="date" value={reminderForm.date} onChange={event => setReminderForm(current => ({ ...current, date: event.target.value }))} />
+                    <div className={styles.dateFieldWrap}>
+                      <div className={styles.dateFieldDisplay}>
+                        {formatDisplayDate(reminderForm.date)}
+                      </div>
+                      <input
+                        type="date"
+                        className={styles.dateFieldNative}
+                        value={reminderForm.date}
+                        onChange={event => setReminderForm(current => ({ ...current, date: event.target.value }))}
+                      />
+                    </div>
                   </label>
                   <label>
                     <span>Time</span>

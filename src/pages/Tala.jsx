@@ -1273,7 +1273,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <div className={tStyles.formGrid}>
             <label>
               <span>Date</span>
-              <input type="date" value={todayForm.date} onChange={event => setTodayForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(todayForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={todayForm.date}
+                  onChange={event => setTodayForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <div className={tStyles.full} style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '4px 0 10px 0' }}>
               <div className={tStyles.sliderHeader}>
@@ -1413,7 +1423,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <div className={tStyles.formGrid}>
             <label>
               <span>Date</span>
-              <input type="date" value={journalForm.date} onChange={event => setJournalForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(journalForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={journalForm.date}
+                  onChange={event => setJournalForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <label className={tStyles.full}>
               <span>Title</span>
@@ -1502,7 +1522,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <div className={tStyles.formGrid}>
             <label>
               <span>Date</span>
-              <input type="date" value={moodForm.date} onChange={event => setMoodForm(current => ({ ...current, date: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(moodForm.date)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={moodForm.date}
+                  onChange={event => setMoodForm(current => ({ ...current, date: event.target.value }))}
+                />
+              </div>
             </label>
             <div ref={moodSelectRef} className={tStyles.moodSelectionContainer} tabIndex={-1}>
               <span>Mood</span>
@@ -1602,7 +1632,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
             <label>
               <span>Due date</span>
-              <input type="date" value={taskForm.dueDate} onChange={event => setTaskForm(current => ({ ...current, dueDate: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(taskForm.dueDate)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={taskForm.dueDate}
+                  onChange={event => setTaskForm(current => ({ ...current, dueDate: event.target.value }))}
+                />
+              </div>
             </label>
             <label>
               <span>Priority</span>
@@ -1666,7 +1706,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
             <label>
               <span>Target date</span>
-              <input type="date" value={goalForm.targetDate} onChange={event => setGoalForm(current => ({ ...current, targetDate: event.target.value }))} />
+              <div className={styles.dateFieldWrap}>
+                <div className={styles.dateFieldDisplay}>
+                  {formatDisplayDate(goalForm.targetDate)}
+                </div>
+                <input
+                  type="date"
+                  className={styles.dateFieldNative}
+                  value={goalForm.targetDate}
+                  onChange={event => setGoalForm(current => ({ ...current, targetDate: event.target.value }))}
+                />
+              </div>
             </label>
             <label>
               <span>Progress %</span>

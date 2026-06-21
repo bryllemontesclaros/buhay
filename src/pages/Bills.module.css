@@ -1,0 +1,204 @@
+.mobileCardList {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktopTableOnly {
+    display: none !important;
+  }
+
+  .mobileCardList {
+    display: grid;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .billCard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
+      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+    box-shadow: var(--glass-shadow-soft);
+    transition: transform var(--motion-duration) var(--motion-ease-out), box-shadow var(--motion-duration) var(--motion-ease-standard);
+  }
+
+  :global(.neo) .billCard {
+    background: var(--nb-surface-card);
+    border: 3px solid var(--nb-stroke);
+    box-shadow: var(--nb-shadow-sm);
+  }
+
+  .billCard:active {
+    transform: scale(0.98);
+  }
+
+  .billCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .billCardTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .billCardTitle h4 {
+    margin: 0;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .billCardTitle span {
+    color: var(--text3);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .billCardDetails {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--glass-1) 50%, var(--surface2) 50%);
+    border: 1px solid color-mix(in srgb, var(--glass-border) 40%, transparent);
+  }
+
+  :global(.neo) .billCardDetails {
+    background: color-mix(in srgb, var(--nb-stroke) 4%, transparent);
+    border: 1px dashed var(--nb-stroke-soft);
+  }
+
+  .detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .detailItem label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+  }
+
+  .detailItem span {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .billCardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .billCardPrice {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .billCardPrice span {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+  }
+
+  .billCardPrice strong {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--amber);
+  }
+
+  .billCardActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .payBtn {
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
+    color: var(--space-finance-ink);
+    cursor: pointer;
+  }
+
+  :global(.neo) .payBtn {
+    border: 3px solid var(--nb-stroke);
+    background: var(--nb-mint);
+    color: var(--nb-ink);
+    box-shadow: 2px 2px 0 var(--nb-stroke);
+  }
+
+  .undoBtn {
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+    background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+    color: var(--text2);
+    cursor: pointer;
+  }
+
+  :global(.neo) .undoBtn {
+    border: 3px solid var(--nb-stroke);
+    background: var(--nb-paper-2);
+    color: var(--nb-ink);
+    box-shadow: 2px 2px 0 var(--nb-stroke);
+  }
+
+  .delBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--glass-border) 50%, var(--border));
+    background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.16s ease, border-color 0.16s ease;
+  }
+
+  :global(.neo) .delBtn {
+    border: 3px solid var(--nb-stroke);
+    background: var(--nb-paper-2);
+    color: var(--nb-ink);
+    box-shadow: 2px 2px 0 var(--nb-stroke);
+  }
+
+  .delBtn:hover {
+    color: var(--red);
+    border-color: color-mix(in srgb, var(--red) 40%, var(--glass-border));
+  }
+}
