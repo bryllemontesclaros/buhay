@@ -2309,6 +2309,12 @@
   background:
     radial-gradient(circle at top left, color-mix(in srgb, var(--amber) 16%, transparent), transparent 52%),
     color-mix(in srgb, var(--amber-dim) 64%, var(--glass-1) 36%);
+  position: sticky;
+  top: 10px;
+  z-index: 10;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
 }
 
 .gymModeRestCard span {
@@ -5137,4 +5143,144 @@
 .barFill {
   transition: filter 0.2s ease, box-shadow 0.2s ease;
 }
+
+.gymModeToolsRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.gymModeToolDetails {
+  flex: 1;
+  min-width: 150px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.gymModeToolDetails[open] {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+}
+
+.gymModeToolSummary {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text2);
+  cursor: pointer;
+  background: color-mix(in srgb, var(--surface2) 50%, transparent);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gymModeToolSummary::-webkit-details-marker {
+  display: none;
+}
+
+.gymModeToolSummary::after {
+  content: '▼';
+  font-size: 8px;
+  color: var(--text3);
+  transition: transform 0.2s ease;
+}
+
+.gymModeToolDetails[open] .gymModeToolSummary::after {
+  transform: rotate(180deg);
+}
+
+.gymModeToolContent {
+  padding: 10px;
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gymModeToolContent input {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text);
+  font-size: 11px;
+}
+
+/* Barbell plate visual styles */
+.plateCalcVisual {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  padding: 6px;
+  background: color-mix(in srgb, var(--surface3) 40%, transparent);
+  border-radius: 10px;
+  border: 1px dashed var(--glass-border);
+  justify-content: center;
+}
+
+.plateCalcBar {
+  width: 24px;
+  height: 8px;
+  background: #78909c;
+  border-radius: 2px 0 0 2px;
+}
+
+.plateCalcSleeve {
+  height: 20px;
+  min-width: 80px;
+  background: #cfd8dc;
+  border-radius: 1px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  border-left: 3px solid #37474f; /* collar */
+}
+
+.plateVisualObj {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+/* Warmup list styling */
+.warmupTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+
+.warmupTable th, .warmupTable td {
+  padding: 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 11px;
+}
+
+.warmupTable th {
+  color: var(--text3);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.warmupTable td {
+  color: var(--text2);
+}
+
 

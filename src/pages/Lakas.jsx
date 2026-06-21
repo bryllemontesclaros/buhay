@@ -956,6 +956,74 @@ function getExerciseAlternativeHint(exerciseName = '', settings = {}) {
   return ''
 }
 
+function calculatePlates(targetWeight, unit = 'kg') {
+  const isLbs = String(unit || '').toLowerCase() === 'lbs'
+  const barWeight = isLbs ? 45 : 20
+  const denominations = isLbs ? [45, 35, 25, 10, 5, 2.5] : [25, 20, 15, 10, 5, 2.5, 1.25]
+  const remaining = targetWeight - barWeight
+  if (remaining <= 0) return []
+  const sideWeight = remaining / 2
+  const plates = []
+  let current = sideWeight
+  const tolerance = 0.01
+  for (const denom of denominations) {
+    while (current + tolerance >= denom) {
+      plates.push(denom)
+      current -= denom
+    }
+  }
+  return plates
+}
+
+function getPlateStyle(denom, isLbs = false) {
+  if (isLbs) {
+    switch (denom) {
+      case 45: return { color: '#ffffff', background: '#d32f2f', width: '12px', height: '20px' }
+      case 35: return { color: '#ffffff', background: '#1976d2', width: '10px', height: '18px' }
+      case 25: return { color: '#000000', background: '#fbc02d', width: '8px', height: '16px' }
+      case 10: return { color: '#ffffff', background: '#388e3c', width: '6px', height: '14px' }
+      case 5: return { color: '#000000', background: '#e0e0e0', width: '5px', height: '12px' }
+      case 2.5: return { color: '#ffffff', background: '#424242', width: '4px', height: '10px' }
+      default: return { color: '#ffffff', background: '#9e9e9e', width: '4px', height: '8px' }
+    }
+  } else {
+    switch (denom) {
+      case 25: return { color: '#ffffff', background: '#d32f2f', width: '12px', height: '20px' }
+      case 20: return { color: '#ffffff', background: '#1976d2', width: '11px', height: '19px' }
+      case 15: return { color: '#000000', background: '#fbc02d', width: '9px', height: '17px' }
+      case 10: return { color: '#ffffff', background: '#388e3c', width: '7px', height: '15px' }
+      case 5: return { color: '#000000', background: '#f5f5f5', width: '6px', height: '13px' }
+      case 2.5: return { color: '#ffffff', background: '#424242', width: '5px', height: '11px' }
+      case 1.25: return { color: '#ffffff', background: '#9e9e9e', width: '4px', height: '9px' }
+      default: return { color: '#ffffff', background: '#607d8b', width: '4px', height: '8px' }
+    }
+  }
+}
+
+const GENERAL_EXERCISE_SWAPS = {
+  'bench press': ['Incline dumbbell press', 'Push-up', 'Chest fly machine'],
+  'barbell row': ['One-arm dumbbell row', 'Lat pulldown', 'Seated cable row'],
+  'squat': ['Leg press', 'Goblet squat', 'Leg extensions'],
+  'deadlift': ['Romanian deadlift', 'Kettlebell swing', 'Glute bridge'],
+  'romanian deadlift': ['Glute bridge', 'Hamstring curl machine', 'Kettlebell swing'],
+  'lat pulldown': ['Assisted pull-up', 'One-arm dumbbell row', 'Seated cable row'],
+  'pull-up': ['Lat pulldown', 'Assisted pull-up', 'Inverted row'],
+  'goblet squat': ['Bodyweight squat', 'Leg press', 'Dumbbell lunge'],
+  'shoulder press': ['Dumbbell lateral raise', 'Pike push-up', 'Arnold press'],
+  'curl': ['Hammer curl', 'Preacher curl', 'Cable curl'],
+  'push-up': ['Incline push-up', 'Dumbbell floor press', 'Kneeling push-up'],
+  'brisk walk': ['Stationary bike', 'Marching in place', 'Rowing machine'],
+  'glute bridge': ['Single-leg glute bridge', 'Romanian deadlift', 'Hip thrust'],
+  'dead bug': ['Plank', 'Hollow body hold', 'Bird dog']
+}
+
+function getExerciseSwapsList(exerciseName = '') {
+  const normalized = String(exerciseName || '').trim().toLowerCase()
+  if (!normalized) return []
+  const matchKey = Object.keys(GENERAL_EXERCISE_SWAPS).find(key => normalized.includes(key))
+  return matchKey ? GENERAL_EXERCISE_SWAPS[matchKey] : ['Bodyweight squats', 'Incline push-ups', 'One-arm dumbbell rows']
+}
+
 function getExerciseActiveSeconds(exercise = {}) {
   const timedDuration = numberOrZero(exercise.duration)
   if (timedDuration > 0) return timedDuration
@@ -1809,6 +1877,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     focusMode: false,
   })
   const [gymSessionNow, setGymSessionNow] = useState(Date.now())
+  const [plateTargetInput, setPlateTargetInput] = useState('')
   const [pendingQuickAction, setPendingQuickAction] = useState(null)
   const savedLakasSettings = getLakasSettings(profile)
   const profileSettingsKey = JSON.stringify(profile?.lakasSettings || {})
@@ -1942,6 +2011,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   }, [activeTab])
 
   useEffect(() => {
+    if (activeGymExercise) {
+      const w = numberOrZero(activeGymExercise.weight)
+      setPlateTargetInput(w > 0 ? String(w) : '60')
+    }
+  }, [activeGymExerciseIndex, activeGymExercise?.name])
+
+  useEffect(() => {
     if (!gymSessionMode.open) return undefined
 
     const previousOverflow = document.body.style.overflow
@@ -1966,17 +2042,26 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       }
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-        const oscillator = audioCtx.createOscillator()
-        const gainNode = audioCtx.createGain()
-        oscillator.connect(gainNode)
-        gainNode.connect(audioCtx.destination)
-        oscillator.type = 'sine'
-        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime)
-        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime)
-        oscillator.start()
-        oscillator.stop(audioCtx.currentTime + 0.15)
+        const now = audioCtx.currentTime
+        const playNote = (frequency, delay, duration) => {
+          const osc = audioCtx.createOscillator()
+          const gain = audioCtx.createGain()
+          osc.connect(gain)
+          gain.connect(audioCtx.destination)
+          osc.type = 'sine'
+          osc.frequency.setValueAtTime(frequency, now + delay)
+          gain.gain.setValueAtTime(0, now + delay)
+          gain.gain.linearRampToValueAtTime(0.12, now + delay + 0.02)
+          gain.gain.exponentialRampToValueAtTime(0.001, now + delay + duration)
+          osc.start(now + delay)
+          osc.stop(now + delay + duration)
+        }
+        playNote(523.25, 0.0, 0.6)  // C5
+        playNote(659.25, 0.1, 0.6)  // E5
+        playNote(783.99, 0.2, 0.8)  // G5
+        playNote(1046.50, 0.3, 1.0) // C6
       } catch (e) {
-        console.warn('Web Audio beep failed:', e)
+        console.warn('Web Audio chime failed:', e)
       }
     }
     prevRestRemainingRef.current = activeGymRestRemaining
@@ -3410,6 +3495,82 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 Suggested start: {getExerciseLoadHint(activeGymExercise.name, savedLakasSettings)}
               </p>
             )}
+            {activeGymExercise.name && (
+              <div className={lStyles.gymModeToolsRow}>
+                <details className={lStyles.gymModeToolDetails}>
+                  <summary className={lStyles.gymModeToolSummary}>Plate Calculator</summary>
+                  <div className={lStyles.gymModeToolContent}>
+                    <label>
+                      <span>Target Weight ({savedLakasSettings.units.weight || 'kg'})</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={plateTargetInput}
+                        onChange={event => setPlateTargetInput(event.target.value)}
+                        placeholder="e.g. 60"
+                      />
+                    </label>
+                    <div>
+                      <span>Plates per side:</span>
+                      {(() => {
+                        const target = numberOrZero(plateTargetInput)
+                        const unit = savedLakasSettings.units.weight || 'kg'
+                        const calculated = calculatePlates(target, unit)
+                        if (!calculated.length) return <p style={{ margin: '4px 0 0', color: 'var(--text3)' }}>No plates needed (under bar weight).</p>
+                        return (
+                          <div>
+                            <strong style={{ display: 'block', margin: '4px 0' }}>
+                              {calculated.join(' + ')} {unit}
+                            </strong>
+                            <div className={lStyles.plateVisual}>
+                              <div className={lStyles.plateCalcVisual}>
+                                <div className={lStyles.plateCalcBar} />
+                                <div className={lStyles.plateCalcSleeve}>
+                                  {calculated.map((plate, pIdx) => {
+                                    const style = getPlateStyle(plate, unit === 'lbs')
+                                    return (
+                                      <div
+                                        key={`plate-${pIdx}`}
+                                        className={lStyles.plateVisualObj}
+                                        style={{
+                                          background: style.background,
+                                          color: style.color,
+                                          width: style.width,
+                                          height: style.height,
+                                        }}
+                                      >
+                                        {plate}
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })()}
+                    </div>
+                  </div>
+                </details>
+
+                <details className={lStyles.gymModeToolDetails}>
+                  <summary className={lStyles.gymModeToolSummary}>Alternative Swaps</summary>
+                  <div className={lStyles.gymModeToolContent}>
+                    <p style={{ margin: 0 }}>If setup or equipment is busy, try:</p>
+                    <ul style={{ margin: '4px 0 0', paddingLeft: '16px', color: 'var(--text2)' }}>
+                      {getExerciseSwapsList(activeGymExercise.name).map((swap, sIdx) => (
+                        <li key={`swap-${sIdx}`} style={{ margin: '2px 0' }}>{swap}</li>
+                      ))}
+                    </ul>
+                    {getExerciseAlternativeHint(activeGymExercise.name, savedLakasSettings) && (
+                      <small style={{ display: 'block', marginTop: '6px', color: 'var(--accent)' }}>
+                        Tip: {getExerciseAlternativeHint(activeGymExercise.name, savedLakasSettings)}
+                      </small>
+                    )}
+                  </div>
+                </details>
+              </div>
+            )}
             {activeGymRestRemaining > 0 && (
               <div className={lStyles.gymModeRestCard} role="timer" aria-live="polite">
                 <div className={lStyles.gymModeRestCircleContainer}>
@@ -3576,24 +3737,96 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </div>
             </div>
 
-            <div className={`${lStyles.gymModePrepCard} ${gymSessionMode.warmupDone ? lStyles.gymModePrepCardDone : ''}`}>
-              <div>
-                <span>Warm-up first</span>
-                <strong>{gymSessionMode.warmupDone ? 'Warm-up checked' : '2-4 minutes before the first work set'}</strong>
-                <small>Easy walk or bike, joint circles, then one light practice set for the first exercise. Stop if pain feels sharp.</small>
+            <div className={`${lStyles.gymModePrepCard} ${gymSessionMode.warmupDone ? lStyles.gymModePrepCardDone : ''}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+                <div style={{ flex: '1', minWidth: '240px' }}>
+                  <span>Warm-up first</span>
+                  <strong>{gymSessionMode.warmupDone ? 'Warm-up checked' : '2-4 minutes before the first work set'}</strong>
+                  <small>Easy walk or bike, joint circles, then light practice sets for the first exercise to prepare muscles and joints.</small>
+                </div>
+                <button
+                  type="button"
+                  className={gymSessionMode.warmupDone ? lStyles.ghostBtn : lStyles.secondaryBtn}
+                  onClick={gymSessionMode.warmupDone ? resetGymWarmup : markGymWarmupDone}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {gymSessionMode.warmupDone ? 'Reset warm-up' : 'Warm-up done'}
+                </button>
               </div>
-              <div className={lStyles.gymModePrepSteps}>
-                <span>Raise temperature</span>
-                <span>Practice range</span>
-                <span>Start light</span>
+
+              <div style={{ background: 'color-mix(in srgb, var(--surface3) 40%, transparent)', padding: '10px', borderRadius: '12px', border: '1px solid var(--glass-border)', width: '100%' }}>
+                <span style={{ fontSize: '9px', fontWeight: '900', color: 'var(--accent)', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>
+                  Generated Warm-Up Protocol (First Exercise: {activeGymExercises[0]?.name || 'Workout'})
+                </span>
+                {(() => {
+                  const unit = savedLakasSettings.units.weight || 'kg'
+                  const isLbs = unit === 'lbs'
+                  const barWeight = isLbs ? 45 : 20
+                  const target = numberOrZero(activeGymExercises[0]?.weight)
+                  
+                  if (target <= barWeight) {
+                    return (
+                      <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '11px', color: 'var(--text2)', lineHeight: '1.5' }}>
+                        <li>Joint circles (shoulders, hips) &mdash; 10 reps each</li>
+                        <li>Bodyweight squats &mdash; 10 reps</li>
+                        <li>Glute bridges &mdash; 10 reps</li>
+                        <li>Easy practice set of {activeGymExercises[0]?.name || 'exercise'} &mdash; 10 reps (bodyweight)</li>
+                      </ul>
+                    )
+                  }
+
+                  const step1 = barWeight
+                  const step2 = Math.round((target * 0.5) / 2.5) * 2.5
+                  const step3 = Math.round((target * 0.7) / 2.5) * 2.5
+                  const step4 = Math.round((target * 0.9) / 2.5) * 2.5
+
+                  return (
+                    <table className={lStyles.warmupTable}>
+                      <thead>
+                        <tr>
+                          <th>Set</th>
+                          <th>Intensity</th>
+                          <th>Load ({unit})</th>
+                          <th>Reps</th>
+                          <th>Plates per side</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>Empty Bar</td>
+                          <td>{step1}</td>
+                          <td>8</td>
+                          <td>Empty bar</td>
+                        </tr>
+                        {target > barWeight * 1.5 && (
+                          <tr>
+                            <td>2</td>
+                            <td>50% Target</td>
+                            <td>{step2}</td>
+                            <td>5</td>
+                            <td>{calculatePlates(step2, unit).join(' + ') || 'None'}</td>
+                          </tr>
+                        )}
+                        <tr>
+                          <td>{target > barWeight * 1.5 ? 3 : 2}</td>
+                          <td>70% Target</td>
+                          <td>{step3}</td>
+                          <td>3</td>
+                          <td>{calculatePlates(step3, unit).join(' + ') || 'None'}</td>
+                        </tr>
+                        <tr>
+                          <td>{target > barWeight * 1.5 ? 4 : 3}</td>
+                          <td>90% Target</td>
+                          <td>{step4}</td>
+                          <td>1</td>
+                          <td>{calculatePlates(step4, unit).join(' + ') || 'None'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )
+                })()}
               </div>
-              <button
-                type="button"
-                className={gymSessionMode.warmupDone ? lStyles.ghostBtn : lStyles.secondaryBtn}
-                onClick={gymSessionMode.warmupDone ? resetGymWarmup : markGymWarmupDone}
-              >
-                {gymSessionMode.warmupDone ? 'Reset warm-up' : 'Warm-up done'}
-              </button>
             </div>
           </details>
         </div>
