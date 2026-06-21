@@ -510,11 +510,63 @@
 }
 
 /* DOTS ONLY — no amount text in cells */
-.dots { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; }
-.dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; opacity: 0.92; }
-.dotBalance { background: var(--blue); }
-.dotIncome { background: var(--accent); }
-.dotExpense { background: var(--red); }
+.manualBalancePin {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 4px var(--blue);
+  flex-shrink: 0;
+}
+
+.overdueBillAlert {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+  animation: pulseAlert 1.6s infinite ease-in-out;
+}
+
+@keyframes pulseAlert {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.4; }
+}
+
+.miniVolumeBars {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5px;
+  width: 100%;
+  margin-top: 2px;
+  padding: 0 2px;
+}
+
+.miniVolumeBarInc {
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width var(--motion-duration) var(--ease-fluid);
+}
+
+.miniVolumeBarExp {
+  height: 2.5px;
+  background: var(--red);
+  border-radius: 999px;
+  transition: width var(--motion-duration) var(--ease-fluid);
+}
+
+.gridAnimated {
+  animation: slideGrid 0.28s var(--ease-fluid);
+}
+
+@keyframes slideGrid {
+  from { opacity: 0.4; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /* FORECAST color tint only — no text in cells */
 .forecastBal { display: none; }

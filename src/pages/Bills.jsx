@@ -4,7 +4,7 @@ import { fsAdd, fsDel, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
-import { fmt, formatDisplayDate, RECUR_OPTIONS, today } from '../lib/utils'
+import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 
 const BILL_FREQS = RECUR_OPTIONS.filter(option => option.value !== '' && option.value !== 'daily')
@@ -187,6 +187,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   }
 
   function openPayment(bill) {
+    playTick()
     setPaymentBill(bill)
     setPaymentForm({
       amount: String(Number(bill.amount) || ''),
@@ -201,6 +202,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   }
 
   async function handleMarkPaid() {
+    playTick()
     if (!paymentBill) return
     const amount = Number(paymentForm.amount)
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -234,6 +236,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   }
 
   async function handleUndoPaid(bill) {
+    playTick()
     const period = getBillPeriodInfo(bill)
     const confirmed = await confirmApp({
       title: 'Undo paid status?',

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fsAdd, fsDel, fsSetProfile, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
-import { formatDisplayDate, today } from '../lib/utils'
+import { formatDisplayDate, today, playTick } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import tStyles from './Tala.module.css'
@@ -314,24 +314,358 @@ function createGoalForm() {
   }
 }
 
-function MiniTrend({ title, rows, hidden = false }) {
-  const maxValue = Math.max(5, ...rows.map(row => numberOrZero(row.value)))
+const ENERGY_STATUS_MAP = {
+  1: { label: 'Very Low', color: '#ef4444' },
+  2: { label: 'Low', color: '#f97316' },
+  3: { label: 'Moderate', color: '#eab308' },
+  4: { label: 'High', color: '#3b82f6' },
+  5: { label: 'Peak', color: '#10b981' },
+}
+
+const STRESS_STATUS_MAP = {
+  1: { label: 'Calm', color: '#10b981' },
+  2: { label: 'Mild', color: '#3b82f6' },
+  3: { label: 'Moderate', color: '#eab308' },
+  4: { label: 'High', color: '#f97316' },
+  5: { label: 'Severe', color: '#ef4444' },
+}
+
+const SLEEP_STATUS_MAP = {
+  1: { label: 'Poor', color: '#ef4444' },
+  2: { label: 'Restless', color: '#f97316' },
+  3: { label: 'Okay', color: '#eab308' },
+  4: { label: 'Good', color: '#3b82f6' },
+  5: { label: 'Great', color: '#10b981' },
+}
+
+function SteppedSlider({ label, value, onChange, statusMap }) {
+  const current = statusMap[value] || { label: 'Moderate', color: '#eab308' }
+  const handleSliderChange = (e) => {
+    playTick()
+    onChange(e.target.value)
+  }
   return (
-    <div className={tStyles.chartCard}>
-      <div className={tStyles.chartTitle}>{title}</div>
-      <div className={tStyles.barChart}>
-        {rows.map(row => (
-          <div key={row.key} className={tStyles.barSlot}>
-            <div className={tStyles.barTrack}>
-              <div className={tStyles.barFill} style={{ height: `${Math.max(8, (numberOrZero(row.value) / maxValue) * 100)}%` }} />
-            </div>
-            <span>{row.label}</span>
-          </div>
-        ))}
+    <div className={tStyles.steppedSlider}>
+      <div className={tStyles.sliderHeader}>
+        <span>{label}</span>
+        <strong style={{ color: current.color }}>{current.label}</strong>
       </div>
-      <div className={tStyles.chartMeta}>{hidden ? 'Private' : `${formatNumber(rows.reduce((sum, row) => sum + numberOrZero(row.value), 0) / Math.max(1, rows.length), 1)} avg`}</div>
+      <div className={tStyles.sliderTrackWrapper}>
+        <input
+          type="range"
+          min="1"
+          max="5"
+          step="1"
+          value={value}
+          onChange={handleSliderChange}
+          style={{ '--accent': current.color }}
+          className={tStyles.rangeInput}
+        />
+        <div className={tStyles.sliderTicks}>
+          {[1, 2, 3, 4, 5].map((tick) => (
+            <span
+              key={tick}
+              className={`${tStyles.sliderTick} ${Number(value) === tick ? tStyles.sliderTickActive : ''}`}
+              style={Number(value) === tick ? { backgroundColor: current.color } : {}}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
+}
+
+function getSlicePath(startPercent, endPercent, r, R, cx, cy) {
+  const startAngle = (startPercent - 0.25) * 2 * Math.PI;
+  const endAngle = (endPercent - 0.25) * 2 * Math.PI;
+
+  const x1_out = cx + R * Math.cos(startAngle);
+  const y1_out = cy + R * Math.sin(startAngle);
+  const x2_out = cx + R * Math.cos(endAngle);
+  const y2_out = cy + R * Math.sin(endAngle);
+
+  const x1_in = cx + r * Math.cos(startAngle);
+  const y1_in = cy + r * Math.sin(startAngle);
+  const x2_in = cx + r * Math.cos(endAngle);
+  const y2_in = cy + r * Math.sin(endAngle);
+
+  const largeArcFlag = endPercent - startPercent > 0.5 ? 1 : 0;
+
+  return `
+    M ${x1_out} ${y1_out}
+    A ${R} ${R} 0 ${largeArcFlag} 1 ${x2_out} ${y2_out}
+    L ${x2_in} ${y2_in}
+    A ${r} ${r} 0 ${largeArcFlag} 0 ${x1_in} ${y1_in}
+    Z
+  `;
+}
+
+function MoodDistributionWheel({ moods, privacyMode }) {
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+
+  const moodKeys = ['Great', 'Good', 'Okay', 'Low', 'Heavy'];
+  const moodColors = {
+    Great: '#10b981',
+    Good: '#3b82f6',
+    Okay: '#eab308',
+    Low: '#f97316',
+    Heavy: '#ef4444',
+  };
+
+  const counts = useMemo(() => {
+    const res = { Great: 0, Good: 0, Okay: 0, Low: 0, Heavy: 0 };
+    moods.forEach((m) => {
+      if (res[m.mood] !== undefined) res[m.mood] += 1;
+    });
+    return res;
+  }, [moods]);
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  if (total === 0) {
+    return <div className={tStyles.empty}>No moods logged to show breakdown.</div>;
+  }
+
+  let currentPercent = 0;
+  const slices = moodKeys
+    .map((key) => {
+      const count = counts[key];
+      const percent = count / total;
+      const start = currentPercent;
+      const end = currentPercent + percent;
+      currentPercent = end;
+      return { key, count, percent, start, end };
+    })
+    .filter((s) => s.percent > 0);
+
+  const cx = 100;
+  const cy = 100;
+  const r = 45;
+  const R = 72;
+
+  return (
+    <div className={tStyles.donutCard}>
+      <div className={tStyles.donutTitle}>Mood breakdown</div>
+      <div className={tStyles.donutContentWrapper}>
+        <div className={tStyles.svgDonutWrapper}>
+          {privacyMode ? (
+            <div className={tStyles.donutPrivateOverlay}>
+              <span>🔒 Locked</span>
+            </div>
+          ) : (
+            <svg viewBox="0 0 200 200" className={tStyles.svgDonut}>
+              {slices.map((slice, idx) => {
+                const isHovered = hoveredIdx === idx;
+                const offset = isHovered ? 6 : 0;
+                const startAngle = (slice.start - 0.25) * 2 * Math.PI;
+                const endAngle = (slice.end - 0.25) * 2 * Math.PI;
+                const midAngle = (startAngle + endAngle) / 2;
+
+                const cx_off = cx + offset * Math.cos(midAngle);
+                const cy_off = cy + offset * Math.sin(midAngle);
+
+                const pathData = getSlicePath(slice.start, slice.end, r, R, cx_off, cy_off);
+
+                return (
+                  <path
+                    key={slice.key}
+                    d={pathData}
+                    fill={moodColors[slice.key]}
+                    onMouseEnter={() => {
+                      playTick();
+                      setHoveredIdx(idx);
+                    }}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                    style={{
+                      transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+                      cursor: 'pointer',
+                      filter: isHovered ? 'drop-shadow(0 4px 10px rgba(0,0,0,0.25))' : 'none',
+                    }}
+                  />
+                );
+              })}
+
+              <text x={cx} y={cy - 4} textAnchor="middle" fill="var(--text)" fontSize="12" fontWeight="800">
+                {hoveredIdx !== null ? slices[hoveredIdx].key : 'Moods'}
+              </text>
+              <text x={cx} y={cy + 12} textAnchor="middle" fill="var(--text3)" fontSize="10" fontWeight="700">
+                {hoveredIdx !== null ? `${slices[hoveredIdx].count} logs` : `${total} total`}
+              </text>
+            </svg>
+          )}
+        </div>
+
+        {!privacyMode && (
+          <div className={tStyles.donutLegend}>
+            {slices.map((slice) => (
+              <div key={slice.key} className={tStyles.donutLegendItem}>
+                <span className={tStyles.donutLegendDot} style={{ backgroundColor: moodColors[slice.key] }} />
+                <span className={tStyles.donutLegendLabel}>{slice.key}</span>
+                <span className={tStyles.donutLegendCount}>{formatNumber(slice.count)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MiniTrend({ title, rows, hidden = false }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const maxValue = 5;
+  const width = 340;
+  const height = 180;
+  const paddingLeft = 30;
+  const paddingRight = 10;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  const count = rows.length || 7;
+  const groupWidth = chartWidth / count;
+  const barWidth = 20;
+
+  const average = rows.reduce((sum, row) => sum + numberOrZero(row.value), 0) / Math.max(1, rows.length);
+
+  return (
+    <div className={tStyles.chartCard}>
+      <div className={tStyles.chartHeaderRow}>
+        <div className={tStyles.chartTitle}>{title}</div>
+        <div className={tStyles.chartMeta}>
+          {hidden ? 'Private' : `${formatNumber(average, 1)} avg`}
+        </div>
+      </div>
+
+      <div className={tStyles.svgChartWrapper}>
+        {hidden ? (
+          <div className={tStyles.chartPrivateOverlay}>
+            <span>🔒 Locked in Privacy Mode</span>
+          </div>
+        ) : (
+          <svg viewBox={`0 0 ${width} ${height}`} className={tStyles.svgChart}>
+            <defs>
+              <linearGradient id={`barGrad-${title}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent)" stopOpacity="1" />
+                <stop offset="100%" stopColor="var(--purple)" stopOpacity="0.4" />
+              </linearGradient>
+              <linearGradient id={`barGradHover-${title}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent)" stopOpacity="1" />
+                <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.7" />
+              </linearGradient>
+            </defs>
+
+            {/* Horizontal Gridlines */}
+            {[0, 1.25, 2.5, 3.75, 5].map((yVal, idx) => {
+              const yPos = height - paddingBottom - (yVal / maxValue) * chartHeight;
+              return (
+                <g key={idx}>
+                  <line
+                    x1={paddingLeft}
+                    y1={yPos}
+                    x2={width - paddingRight}
+                    y2={yPos}
+                    stroke="color-mix(in srgb, var(--glass-border) 24%, var(--border))"
+                    strokeWidth="1"
+                    strokeDasharray="4 4"
+                  />
+                  <text
+                    x={paddingLeft - 8}
+                    y={yPos + 4}
+                    fill="var(--text3)"
+                    fontSize="10"
+                    fontWeight="800"
+                    textAnchor="end"
+                  >
+                    {yVal === 5 ? '5' : yVal === 0 ? '0' : ''}
+                  </text>
+                </g>
+              );
+            })}
+
+            {/* X Axis Line */}
+            <line
+              x1={paddingLeft}
+              y1={height - paddingBottom}
+              x2={width - paddingRight}
+              y2={height - paddingBottom}
+              stroke="color-mix(in srgb, var(--glass-border) 48%, var(--border))"
+              strokeWidth="1.5"
+            />
+
+            {/* Columns */}
+            {rows.map((row, idx) => {
+              const val = numberOrZero(row.value);
+              const barHeight = (val / maxValue) * chartHeight;
+              const xPos = paddingLeft + idx * groupWidth + (groupWidth - barWidth) / 2;
+              const yPos = height - paddingBottom - barHeight;
+
+              const isHovered = hoveredIndex === idx;
+
+              return (
+                <g
+                  key={row.key}
+                  onMouseEnter={() => {
+                    playTick();
+                    setHoveredIndex(idx);
+                  }}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <rect
+                    x={paddingLeft + idx * groupWidth}
+                    y={paddingTop}
+                    width={groupWidth}
+                    height={chartHeight}
+                    fill="transparent"
+                  />
+
+                  {val > 0 && (
+                    <rect
+                      x={xPos}
+                      y={yPos}
+                      width={barWidth}
+                      height={Math.max(4, barHeight)}
+                      rx="6"
+                      ry="6"
+                      fill={isHovered ? `url(#barGradHover-${title})` : `url(#barGrad-${title})`}
+                      style={{ transition: 'all 0.2s ease' }}
+                    />
+                  )}
+
+                  <text
+                    x={xPos + barWidth / 2}
+                    y={height - paddingBottom + 16}
+                    fill="var(--text3)"
+                    fontSize="10"
+                    fontWeight="800"
+                    textAnchor="middle"
+                  >
+                    {row.label}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        )}
+
+        {!hidden && hoveredIndex !== null && rows[hoveredIndex] && (
+          <div
+            className={tStyles.chartTooltip}
+            style={{
+              left: `${paddingLeft + hoveredIndex * groupWidth + groupWidth / 2}px`,
+              bottom: `${paddingBottom + (numberOrZero(rows[hoveredIndex].value) / maxValue) * chartHeight + 8}px`,
+            }}
+          >
+            <strong>{formatNumber(rows[hoveredIndex].value, 1)}</strong>
+            <span>Day {rows[hoveredIndex].label}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function Tala({ user, data = {}, profile = {}, privacyMode = false, activeTab = 'journal', actionRequest = null, onActionHandled = () => {} }) {
@@ -400,6 +734,22 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
     })
     const allTags = journal.flatMap(row => normalizeRows(row.tags))
     const allTriggers = moods.flatMap(row => normalizeRows(row.triggers))
+    const tagFreq = {}
+    allTags.forEach(tag => {
+      tagFreq[tag] = (tagFreq[tag] || 0) + 1
+    })
+    const sortedTags = Object.entries(tagFreq)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+
+    const triggerFreq = {}
+    allTriggers.forEach(trig => {
+      triggerFreq[trig] = (triggerFreq[trig] || 0) + 1
+    })
+    const sortedTriggers = Object.entries(triggerFreq)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+
     const journalDates = new Set(journal.map(row => row.date).filter(Boolean))
     let streak = 0
     let cursor = today()
@@ -423,6 +773,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
       journalStreak: streak,
       topTags: [...new Set(allTags)].slice(0, 6),
       topTriggers: [...new Set(allTriggers)].slice(0, 6),
+      sortedTags,
+      sortedTriggers,
     }
   }, [checkins, goals, journal, moods, tasks])
 
@@ -912,7 +1264,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <button
               type="button"
               className={`${tStyles.panicHideBtn} ${panicHide ? tStyles.panicHideBtnActive : ''}`}
-              onClick={() => setPanicHide(current => !current)}
+              onClick={() => { playTick(); setPanicHide(current => !current); }}
               title="Blur writing canvas for public privacy"
             >
               {panicHide ? '👁️ Show' : '🔒 Hide'}
@@ -923,13 +1275,33 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <span>Date</span>
               <input type="date" value={todayForm.date} onChange={event => setTodayForm(current => ({ ...current, date: event.target.value }))} />
             </label>
-            <label>
-              <span>Mood</span>
-              <select value={todayForm.mood} onChange={event => setTodayForm(current => ({ ...current, mood: event.target.value }))}>
-                {MOOD_OPTIONS.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </label>
-            <label>
+            <div className={tStyles.full} style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '4px 0 10px 0' }}>
+              <div className={tStyles.sliderHeader}>
+                <span>Mood</span>
+                <strong style={{ color: 'var(--accent)' }}>{todayForm.mood}</strong>
+              </div>
+              <div className={tStyles.moodBtnGrid}>
+                {MOOD_OPTIONS.map(option => {
+                  const emojiMap = { Great: '😄', Good: '🙂', Okay: '😐', Low: '😕', Heavy: '😭' }
+                  const selected = todayForm.mood === option
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`${tStyles.moodSelectBtn} ${tStyles[`moodBtn_${option}`]} ${selected ? tStyles.moodSelectBtnActive : ''}`}
+                      onClick={() => {
+                        playTick()
+                        setTodayForm(current => ({ ...current, mood: option }))
+                      }}
+                    >
+                      <span className={tStyles.moodEmoji}>{emojiMap[option] || '😐'}</span>
+                      <span className={tStyles.moodText}>{option}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <label className={tStyles.full}>
               <span>Top priority</span>
               <input className={panicHide ? tStyles.blurActive : ''} value={todayForm.priority} placeholder="One thing that matters today" onChange={event => setTodayForm(current => ({ ...current, priority: event.target.value }))} />
             </label>
@@ -939,36 +1311,36 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
           </div>
           <details className={tStyles.advancedBox}>
-            <summary className={tStyles.advancedSummary}>
+            <summary className={tStyles.advancedSummary} onClick={() => playTick()}>
               <span>More check-in details</span>
               <small>Energy, stress, sleep, gratitude</small>
             </summary>
             <div className={tStyles.advancedGrid}>
-              <label>
-                <span>Energy</span>
-                <select value={todayForm.energy} onChange={event => setTodayForm(current => ({ ...current, energy: event.target.value }))}>
-                  {ENERGY_OPTIONS.map(option => <option key={option}>{option}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>Stress</span>
-                <select value={todayForm.stress} onChange={event => setTodayForm(current => ({ ...current, stress: event.target.value }))}>
-                  {STRESS_OPTIONS.map(option => <option key={option}>{option}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>Sleep quality</span>
-                <select value={todayForm.sleepQuality} onChange={event => setTodayForm(current => ({ ...current, sleepQuality: event.target.value }))}>
-                  {ENERGY_OPTIONS.map(option => <option key={option}>{option}</option>)}
-                </select>
-              </label>
+              <SteppedSlider
+                label="Energy"
+                value={todayForm.energy}
+                onChange={val => setTodayForm(current => ({ ...current, energy: val }))}
+                statusMap={ENERGY_STATUS_MAP}
+              />
+              <SteppedSlider
+                label="Stress"
+                value={todayForm.stress}
+                onChange={val => setTodayForm(current => ({ ...current, stress: val }))}
+                statusMap={STRESS_STATUS_MAP}
+              />
+              <SteppedSlider
+                label="Sleep quality"
+                value={todayForm.sleepQuality}
+                onChange={val => setTodayForm(current => ({ ...current, sleepQuality: val }))}
+                statusMap={SLEEP_STATUS_MAP}
+              />
               <label>
                 <span>Gratitude</span>
                 <input className={panicHide ? tStyles.blurActive : ''} value={todayForm.gratitude} placeholder="Something small but real" onChange={event => setTodayForm(current => ({ ...current, gratitude: event.target.value }))} />
               </label>
             </div>
           </details>
-          <button type="button" className={tStyles.primaryBtn} onClick={handleSaveToday}>Save check-in</button>
+          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleSaveToday(); }}>Save check-in</button>
         </section>
 
         <section className={tStyles.panel}>
@@ -979,17 +1351,26 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Keep today simple: current check-in, due tasks, and one gentle next step.</p>
             </div>
           </div>
-          <div className={tStyles.calmPlanCard}>
+          <div className={tStyles.calmPlanTimeline}>
             <div className={tStyles.calmPlanTop}>
-              <span>{calmPlan.kicker}</span>
-              <strong>{calmPlan.title}</strong>
-              <p>{calmPlan.body}</p>
+              <span className={tStyles.calmPlanKicker}>{calmPlan.kicker}</span>
+              <h4 className={tStyles.calmPlanTitle}>{calmPlan.title}</h4>
+              <p className={tStyles.calmPlanBody}>{calmPlan.body}</p>
             </div>
-            <div className={tStyles.calmPlanSteps}>
-              {calmPlan.steps.map((step, index) => <span key={step}>{index + 1}. {step}</span>)}
+            <div className={tStyles.timelineTrack}>
+              {calmPlan.steps.map((step, index) => (
+                <div key={step} className={tStyles.timelineStep}>
+                  <div className={tStyles.timelineNode}>
+                    <span>{index + 1}</span>
+                  </div>
+                  <div className={tStyles.timelineContent}>
+                    <strong>{step}</strong>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className={tStyles.calmBoundaryGrid}>
-              {TALA_CALM_BOUNDARIES.map(boundary => <span key={boundary}>{boundary}</span>)}
+              {TALA_CALM_BOUNDARIES.map(boundary => <span key={boundary} className={tStyles.boundaryTag}>{boundary}</span>)}
             </div>
           </div>
           <div className={tStyles.focusCard}>
@@ -1003,7 +1384,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>{task.title}</strong>
                   <span>{task.priority} · Due today</span>
                 </div>
-                <button type="button" onClick={() => fsUpdate(user.uid, 'talaTasks', task._id, { done: true, completedAt: Date.now() })}>Done</button>
+                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: true, completedAt: Date.now() }); }}>Done</button>
               </div>
             ))}
           </div>
@@ -1023,7 +1404,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <button
               type="button"
               className={`${tStyles.panicHideBtn} ${panicHide ? tStyles.panicHideBtnActive : ''}`}
-              onClick={() => setPanicHide(current => !current)}
+              onClick={() => { playTick(); setPanicHide(current => !current); }}
               title="Blur writing canvas for public privacy"
             >
               {panicHide ? '👁️ Show Text' : '🔒 Panic Hide'}
@@ -1044,13 +1425,13 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
           </div>
           <details className={tStyles.advancedBox}>
-            <summary className={tStyles.advancedSummary}>
+            <summary className={tStyles.advancedSummary} onClick={() => playTick()}>
               <span>Need a prompt?</span>
               <small>Optional shortcuts if the blank page feels heavy</small>
             </summary>
             <div className={tStyles.journalPromptRow} aria-label="Journal prompt shortcuts">
               {JOURNAL_PROMPTS.map(prompt => (
-                <button key={prompt.title} type="button" className={tStyles.journalPromptChip} onClick={() => applyJournalPrompt(prompt)}>
+                <button key={prompt.title} type="button" className={tStyles.journalPromptChip} onClick={() => { playTick(); applyJournalPrompt(prompt); }}>
                   <strong>{prompt.title}</strong>
                   <span>{prompt.tags}</span>
                 </button>
@@ -1058,7 +1439,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </div>
           </details>
           <details className={tStyles.advancedBox}>
-            <summary className={tStyles.advancedSummary}>
+            <summary className={tStyles.advancedSummary} onClick={() => playTick()}>
               <span>More journal details</span>
               <small>Mood, tags, privacy</small>
             </summary>
@@ -1082,7 +1463,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
             </div>
           </details>
-          <button type="button" className={tStyles.primaryBtn} onClick={handleAddJournal}>Save journal</button>
+          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddJournal(); }}>Save journal</button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1101,7 +1482,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 <p>{privacyMode && entry.private ? 'Private entry hidden.' : entry.body || 'No body text.'}</p>
                 {!!normalizeRows(entry.tags).length && <small>{normalizeRows(entry.tags).join(' · ')}</small>}
               </div>
-              <button type="button" onClick={async () => { if (await confirmDeleteApp(entry.title)) await fsDel(user.uid, 'talaJournal', entry._id) }}>Delete</button>
+              <button type="button" onClick={async () => { playTick(); if (await confirmDeleteApp(entry.title)) await fsDel(user.uid, 'talaJournal', entry._id); }}>Delete</button>
             </div>
           ))}
         </section>
@@ -1134,7 +1515,10 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                       key={option}
                       type="button"
                       className={`${tStyles.moodSelectBtn} ${tStyles[`moodBtn_${option}`]} ${selected ? tStyles.moodSelectBtnActive : ''}`}
-                      onClick={() => setMoodForm(current => ({ ...current, mood: option }))}
+                      onClick={() => {
+                        playTick()
+                        setMoodForm(current => ({ ...current, mood: option }))
+                      }}
                     >
                       <span className={tStyles.moodEmoji}>{emojiMap[option] || '😐'}</span>
                       <span className={tStyles.moodText}>{option}</span>
@@ -1143,25 +1527,25 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 })}
               </div>
             </div>
-            <label>
-              <span>Energy</span>
-              <select value={moodForm.energy} onChange={event => setMoodForm(current => ({ ...current, energy: event.target.value }))}>
-                {ENERGY_OPTIONS.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </label>
-            <label>
-              <span>Stress</span>
-              <select value={moodForm.stress} onChange={event => setMoodForm(current => ({ ...current, stress: event.target.value }))}>
-                {STRESS_OPTIONS.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </label>
-            <label>
-              <span>Sleep quality</span>
-              <select value={moodForm.sleepQuality} onChange={event => setMoodForm(current => ({ ...current, sleepQuality: event.target.value }))}>
-                {ENERGY_OPTIONS.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </label>
-            <label>
+            <SteppedSlider
+              label="Energy"
+              value={moodForm.energy}
+              onChange={val => setMoodForm(current => ({ ...current, energy: val }))}
+              statusMap={ENERGY_STATUS_MAP}
+            />
+            <SteppedSlider
+              label="Stress"
+              value={moodForm.stress}
+              onChange={val => setMoodForm(current => ({ ...current, stress: val }))}
+              statusMap={STRESS_STATUS_MAP}
+            />
+            <SteppedSlider
+              label="Sleep quality"
+              value={moodForm.sleepQuality}
+              onChange={val => setMoodForm(current => ({ ...current, sleepQuality: val }))}
+              statusMap={SLEEP_STATUS_MAP}
+            />
+            <label className={tStyles.full}>
               <span>Triggers</span>
               <input value={moodForm.triggers} placeholder="work, sleep, money" onChange={event => setMoodForm(current => ({ ...current, triggers: event.target.value }))} />
             </label>
@@ -1170,7 +1554,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={moodForm.notes} placeholder="What affected your mood?" onChange={event => setMoodForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={handleAddMood}>Save mood</button>
+          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddMood(); }}>Save mood</button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1193,7 +1577,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <span>{formatDisplayDate(row.date)} · Energy {row.energy || '-'} · Stress {row.stress || '-'}</span>
                   {!!normalizeRows(row.triggers).length && <small>{normalizeRows(row.triggers).join(' · ')}</small>}
                 </div>
-                <button type="button" onClick={async () => { if (await confirmDeleteApp('this mood log')) await fsDel(user.uid, 'talaMoods', row._id) }}>Delete</button>
+                <button type="button" onClick={async () => { playTick(); if (await confirmDeleteApp('this mood log')) await fsDel(user.uid, 'talaMoods', row._id); }}>Delete</button>
               </div>
             ))}
           </div>
@@ -1231,7 +1615,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={taskForm.notes} placeholder="Optional details" onChange={event => setTaskForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={handleAddTask}>Add task</button>
+          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddTask(); }}>Add task</button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1250,8 +1634,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 {task.notes && <small>{task.notes}</small>}
               </div>
               <div className={tStyles.rowActions}>
-                <button type="button" onClick={() => fsUpdate(user.uid, 'talaTasks', task._id, { done: !task.done, completedAt: task.done ? 0 : Date.now() })}>{task.done ? 'Reopen' : 'Done'}</button>
-                <button type="button" onClick={async () => { if (await confirmDeleteApp(task.title)) await fsDel(user.uid, 'talaTasks', task._id) }}>Delete</button>
+                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: !task.done, completedAt: task.done ? 0 : Date.now() }); }}>{task.done ? 'Reopen' : 'Done'}</button>
+                <button type="button" onClick={async () => { playTick(); if (await confirmDeleteApp(task.title)) await fsDel(user.uid, 'talaTasks', task._id); }}>Delete</button>
               </div>
             </div>
           ))}
@@ -1293,7 +1677,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={goalForm.notes} placeholder="Why this matters, first step, milestone" onChange={event => setGoalForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={handleAddGoal}>Save goal</button>
+          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddGoal(); }}>Save goal</button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1309,15 +1693,60 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <div className={tStyles.goalTop}>
                 <div>
                   <strong>{goal.name}</strong>
-                  <span>{goal.area} · {goal.targetDate ? formatDisplayDate(goal.targetDate) : 'No target date'} · {formatNumber(goal.progress)}%</span>
+                  <span>{goal.area} · {goal.targetDate ? formatDisplayDate(goal.targetDate) : 'No target date'}</span>
                   {goal.notes && <small>{goal.notes}</small>}
                 </div>
-                <button type="button" onClick={async () => { if (await confirmDeleteApp(goal.name)) await fsDel(user.uid, 'talaGoals', goal._id) }}>Delete</button>
+                <button type="button" onClick={async () => { playTick(); if (await confirmDeleteApp(goal.name)) await fsDel(user.uid, 'talaGoals', goal._id); }}>Delete</button>
               </div>
-              <div className={tStyles.track}><div style={{ width: `${Math.min(100, numberOrZero(goal.progress))}%` }} /></div>
-              <div className={tStyles.goalUpdate}>
-                <input type="number" min="0" max="100" inputMode="numeric" placeholder="New %" value={goalProgress[goal._id] || ''} onChange={event => setGoalProgress(current => ({ ...current, [goal._id]: event.target.value }))} />
-                <button type="button" onClick={() => handleGoalProgress(goal)}>Set</button>
+              <div className={tStyles.goalProgressRow}>
+                <div className={tStyles.progressRingWrapper}>
+                  <svg width="60" height="60" viewBox="0 0 60 60" className={tStyles.progressRing}>
+                    <defs>
+                      <linearGradient id={`goalProgressGrad-${goal._id}`} x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stopColor="var(--accent)" />
+                        <stop offset="100%" stopColor="var(--purple)" />
+                      </linearGradient>
+                    </defs>
+                    <circle
+                      className={tStyles.progressRingBg}
+                      cx="30"
+                      cy="30"
+                      r="24"
+                      strokeWidth="4.5"
+                      fill="transparent"
+                    />
+                    <circle
+                      className={tStyles.progressRingEl}
+                      cx="30"
+                      cy="30"
+                      r="24"
+                      strokeWidth="4.5"
+                      fill="transparent"
+                      strokeDasharray={`${2 * Math.PI * 24}`}
+                      strokeDashoffset={`${2 * Math.PI * 24 * (1 - Math.min(100, numberOrZero(goal.progress)) / 100)}`}
+                      stroke={`url(#goalProgressGrad-${goal._id})`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className={tStyles.progressText}>{formatNumber(goal.progress)}%</span>
+                </div>
+                <div className={tStyles.goalSliderWrapper}>
+                  <span>Progress Slider</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={goal.progress}
+                    onChange={async (e) => {
+                      const value = Math.max(0, Math.min(100, numberOrZero(e.target.value)));
+                      playTick();
+                      await fsUpdate(user.uid, 'talaGoals', goal._id, { progress: value, updatedAt: Date.now() });
+                    }}
+                    className={tStyles.rangeInput}
+                    style={{ '--accent': 'var(--accent)' }}
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -1335,29 +1764,31 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <p className={tStyles.sectionHint}>Dots show check-ins, journal entries, mood logs, task due dates, and goal target dates.</p>
           </div>
           <div className={tStyles.monthControls}>
-            <button type="button" aria-label="Previous month" onClick={() => setCalendarMonth(current => addMonths(current, -1))}>‹</button>
+            <button type="button" aria-label="Previous month" onClick={() => { playTick(); setCalendarMonth(current => addMonths(current, -1)); }}>‹</button>
             <div className={tStyles.monthLabelWrap}>
               <span className={tStyles.monthLabelEyebrow}>Month view</span>
               <strong>{formatMonthLabel(calendarMonth)}</strong>
             </div>
-            <button type="button" aria-label="Next month" onClick={() => setCalendarMonth(current => addMonths(current, 1))}>›</button>
+            <button type="button" aria-label="Next month" onClick={() => { playTick(); setCalendarMonth(current => addMonths(current, 1)); }}>›</button>
           </div>
         </div>
-        <div className={tStyles.calendarGrid}>
+        <div key={calendarMonth} className={`${tStyles.calendarGrid} ${tStyles.gridAnimated}`}>
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((label, index) => <div key={`${label}-${index}`} className={tStyles.calendarHead}>{label}</div>)}
           {calendarData.map(day => (
             <button
               key={day.key}
               type="button"
               className={`${tStyles.calendarDay} ${day.empty ? tStyles.calendarEmpty : ''} ${day.key === today() ? tStyles.calendarToday : ''} ${day.key === selectedTalaDate ? tStyles.calendarSelected : ''}`}
-              onClick={() => selectCalendarDay(day)}
+              onClick={() => { playTick(); selectCalendarDay(day); }}
               disabled={day.empty}
               aria-pressed={!day.empty && day.key === selectedTalaDate}
               aria-label={day.empty ? 'Empty calendar slot' : `${formatDisplayDate(day.key)}. ${day.checkins.length} check-ins, ${day.journal.length} journal entries, ${day.moods.length} mood logs, ${day.tasks.length} tasks, ${day.goals.length} goals.`}
             >
               {!day.empty && (
                 <>
-                  <strong>{day.day}</strong>
+                  <strong className={day.moods[0]?.mood ? `${tStyles.dayNumber} ${tStyles[`dayMoodGlow_${day.moods[0].mood}`]}` : tStyles.dayNumber}>
+                    {day.day}
+                  </strong>
                   <div className={tStyles.calendarDots}>
                     {!!day.checkins.length && <span title="Check-in" className={tStyles.dotCheckin} />}
                     {!!day.journal.length && <span title="Journal" className={tStyles.dotJournal} />}
@@ -1392,6 +1823,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </p>
             </div>
             <button type="button" className={tStyles.ghostBtn} onClick={() => {
+              playTick();
               setSelectedTalaDate(today())
               setCalendarMonth(today().slice(0, 7))
             }}>
@@ -1405,25 +1837,80 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <div className={tStyles.selectedDayMetric}><span>Tasks</span><strong>{selectedDayData.tasks.length}</strong></div>
             <div className={tStyles.selectedDayMetric}><span>Goals</span><strong>{selectedDayData.goals.length}</strong></div>
           </div>
-          <div className={tStyles.selectedDayList}>
+          <div className={tStyles.dayTimeline}>
             {selectedDayTotal ? (
-              <>
+              <div className={tStyles.dayTimelineTrack}>
                 {selectedDayData.checkins.map(row => (
-                  <div key={`checkin-${row._id}`} className={tStyles.selectedDayItem}><span>Check-in</span><strong>{privacyMode ? 'Private' : row.mood}</strong><small>{privacyMode ? 'Details hidden.' : row.priority || row.reflection || 'Saved daily check-in'}</small></div>
+                  <div key={`checkin-${row._id}`} className={tStyles.dayTimelineItem}>
+                    <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeCheckin}`}>
+                      <span>📋</span>
+                    </div>
+                    <div className={tStyles.dayTimelineContent}>
+                      <span className={tStyles.dayItemKicker}>Check-in</span>
+                      <strong>{privacyMode ? 'Private check-in' : `Mood: ${row.mood}`}</strong>
+                      <p>{privacyMode ? 'Details hidden.' : row.priority || row.reflection || 'Saved daily check-in'}</p>
+                    </div>
+                  </div>
                 ))}
                 {selectedDayData.journal.map(row => (
-                  <div key={`journal-${row._id}`} className={tStyles.selectedDayItem}><span>Journal</span><strong>{privacyMode && row.private ? 'Private entry' : row.title}</strong><small>{privacyMode && row.private ? 'Details hidden.' : normalizeRows(row.tags).join(' · ') || 'Journal entry'}</small></div>
+                  <div key={`journal-${row._id}`} className={tStyles.dayTimelineItem}>
+                    <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeJournal}`}>
+                      <span>✍️</span>
+                    </div>
+                    <div className={tStyles.dayTimelineContent}>
+                      <span className={tStyles.dayItemKicker}>Journal</span>
+                      <strong>{privacyMode && row.private ? 'Private entry' : row.title}</strong>
+                      <p>{privacyMode && row.private ? 'Details hidden.' : row.body || 'No body text.'}</p>
+                      {(!privacyMode || !row.private) && !!normalizeRows(row.tags).length && (
+                        <small className={tStyles.dayItemTags}>{normalizeRows(row.tags).join(' · ')}</small>
+                      )}
+                    </div>
+                  </div>
                 ))}
                 {selectedDayData.moods.map(row => (
-                  <div key={`mood-${row._id}`} className={tStyles.selectedDayItem}><span>Mood</span><strong>{privacyMode ? 'Private' : row.mood}</strong><small>{privacyMode ? 'Details hidden.' : `Energy ${row.energy || '-'} · Stress ${row.stress || '-'}`}</small></div>
+                  <div key={`mood-${row._id}`} className={tStyles.dayTimelineItem}>
+                    <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeMood}`}>
+                      <span>📊</span>
+                    </div>
+                    <div className={tStyles.dayTimelineContent}>
+                      <span className={tStyles.dayItemKicker}>Mood log</span>
+                      <strong>{privacyMode ? 'Private mood' : `${row.mood}`}</strong>
+                      <p>
+                        {privacyMode
+                          ? 'Details hidden.'
+                          : `Energy ${row.energy || '-'} · Stress ${row.stress || '-'} · Sleep ${row.sleepQuality || '-'}`}
+                      </p>
+                      {!privacyMode && !!normalizeRows(row.triggers).length && (
+                        <small className={tStyles.dayItemTags}>{normalizeRows(row.triggers).join(' · ')}</small>
+                      )}
+                    </div>
+                  </div>
                 ))}
                 {selectedDayData.tasks.map(row => (
-                  <div key={`task-${row._id}`} className={tStyles.selectedDayItem}><span>Task</span><strong>{row.title}</strong><small>{row.done ? 'Done' : `${row.priority} priority`}</small></div>
+                  <div key={`task-${row._id}`} className={tStyles.dayTimelineItem}>
+                    <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeTask}`}>
+                      <span>📌</span>
+                    </div>
+                    <div className={tStyles.dayTimelineContent}>
+                      <span className={tStyles.dayItemKicker}>Task</span>
+                      <strong className={row.done ? tStyles.timelineDoneText : ''}>{row.title}</strong>
+                      <p>{row.done ? 'Done' : `${row.priority} priority`}</p>
+                    </div>
+                  </div>
                 ))}
                 {selectedDayData.goals.map(row => (
-                  <div key={`goal-${row._id}`} className={tStyles.selectedDayItem}><span>Goal</span><strong>{row.name}</strong><small>{row.area} · {formatNumber(row.progress)}%</small></div>
+                  <div key={`goal-${row._id}`} className={tStyles.dayTimelineItem}>
+                    <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeGoal}`}>
+                      <span>🎯</span>
+                    </div>
+                    <div className={tStyles.dayTimelineContent}>
+                      <span className={tStyles.dayItemKicker}>Goal</span>
+                      <strong>{row.name}</strong>
+                      <p>{row.area} · {formatNumber(row.progress)}% complete</p>
+                    </div>
+                  </div>
                 ))}
-              </>
+              </div>
             ) : (
               <div className={tStyles.empty}>Use Today, Journal, Mood, Tasks, or Goals to add something for this date.</div>
             )}
@@ -1446,6 +1933,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <div className={tStyles.chartGrid}>
             <MiniTrend title="Mood" rows={insights.moodTrend} hidden={privacyMode || !talaSettings.showMoodInsights} />
             <MiniTrend title="Energy" rows={insights.energyTrend} hidden={privacyMode || !talaSettings.showMoodInsights} />
+            <MoodDistributionWheel moods={moods} privacyMode={privacyMode} />
           </div>
         </section>
 
@@ -1458,10 +1946,64 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </div>
           </div>
           <div className={tStyles.tagCloud}>
-            {!insights.topTags.length ? <span>No journal tags yet</span> : insights.topTags.map(tag => <span key={tag}>{tag}</span>)}
+            {!insights.sortedTags?.length ? (
+              <span className={tStyles.emptyCloudText}>No journal tags yet</span>
+            ) : (
+              insights.sortedTags.map((tag) => {
+                const maxVal = Math.max(1, ...insights.sortedTags.map(t => t.count));
+                const weight = tag.count / maxVal;
+                const fontSize = 11 + weight * 6;
+                const hue = 260; // Purple theme for journal tags
+                const opacity = 0.5 + weight * 0.5;
+                return (
+                  <span
+                    key={tag.name}
+                    className={tStyles.weightedPill}
+                    style={{
+                      fontSize: `${fontSize}px`,
+                      backgroundColor: `hsla(${hue}, 80%, 60%, ${0.08 + weight * 0.15})`,
+                      color: `hsla(${hue}, 90%, 80%, ${opacity})`,
+                      borderColor: `hsla(${hue}, 80%, 65%, ${0.12 + weight * 0.25})`,
+                      fontWeight: weight > 0.6 ? '900' : '700',
+                    }}
+                    onClick={() => playTick()}
+                  >
+                    {tag.name}
+                    <small className={tStyles.pillCount}>{tag.count}</small>
+                  </span>
+                );
+              })
+            )}
           </div>
           <div className={tStyles.tagCloud}>
-            {!insights.topTriggers.length ? <span>No mood triggers yet</span> : insights.topTriggers.map(trigger => <span key={trigger}>{trigger}</span>)}
+            {!insights.sortedTriggers?.length ? (
+              <span className={tStyles.emptyCloudText}>No mood triggers yet</span>
+            ) : (
+              insights.sortedTriggers.map((trig) => {
+                const maxVal = Math.max(1, ...insights.sortedTriggers.map(t => t.count));
+                const weight = trig.count / maxVal;
+                const fontSize = 11 + weight * 6;
+                const hue = 32; // Orange theme for mood triggers
+                const opacity = 0.5 + weight * 0.5;
+                return (
+                  <span
+                    key={trig.name}
+                    className={tStyles.weightedPill}
+                    style={{
+                      fontSize: `${fontSize}px`,
+                      backgroundColor: `hsla(${hue}, 85%, 60%, ${0.08 + weight * 0.15})`,
+                      color: `hsla(${hue}, 90%, 80%, ${opacity})`,
+                      borderColor: `hsla(${hue}, 85%, 65%, ${0.12 + weight * 0.25})`,
+                      fontWeight: weight > 0.6 ? '900' : '700',
+                    }}
+                    onClick={() => playTick()}
+                  >
+                    {trig.name}
+                    <small className={tStyles.pillCount}>{trig.count}</small>
+                  </span>
+                );
+              })
+            )}
           </div>
         </section>
       </div>
@@ -1481,17 +2023,17 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <div className={tStyles.formGrid}>
               <label>
                 <span>Reminder time</span>
-                <input type="time" value={settingsForm.reminderTime} onChange={event => updateSettings('reminderTime', event.target.value)} />
+                <input type="time" value={settingsForm.reminderTime} onChange={event => { playTick(); updateSettings('reminderTime', event.target.value); }} />
               </label>
               <label>
                 <span>Weekly review</span>
-                <select value={settingsForm.weeklyReviewDay} onChange={event => updateSettings('weeklyReviewDay', event.target.value)}>
+                <select value={settingsForm.weeklyReviewDay} onChange={event => { playTick(); updateSettings('weeklyReviewDay', event.target.value); }}>
                   {WEEK_DAYS.map(day => <option key={day}>{day}</option>)}
                 </select>
               </label>
               <label>
                 <span>Prompt style</span>
-                <select value={settingsForm.promptStyle} onChange={event => updateSettings('promptStyle', event.target.value)}>
+                <select value={settingsForm.promptStyle} onChange={event => { playTick(); updateSettings('promptStyle', event.target.value); }}>
                   <option>Gentle</option>
                   <option>Direct</option>
                   <option>Reflective</option>
@@ -1499,14 +2041,14 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
               <label>
                 <span>Journal privacy by default</span>
-                <select value={settingsForm.privateByDefault ? 'private' : 'open'} onChange={event => updateSettings('privateByDefault', event.target.value === 'private')}>
+                <select value={settingsForm.privateByDefault ? 'private' : 'open'} onChange={event => { playTick(); updateSettings('privateByDefault', event.target.value === 'private'); }}>
                   <option value="private">Private by default</option>
                   <option value="open">Open by default</option>
                 </select>
               </label>
               <label className={tStyles.full}>
                 <span>Show mood insights</span>
-                <select value={settingsForm.showMoodInsights ? 'show' : 'hide'} onChange={event => updateSettings('showMoodInsights', event.target.value === 'show')}>
+                <select value={settingsForm.showMoodInsights ? 'show' : 'hide'} onChange={event => { playTick(); updateSettings('showMoodInsights', event.target.value === 'show'); }}>
                   <option value="show">Show mood insights</option>
                   <option value="hide">Hide mood insights</option>
                 </select>
@@ -1517,7 +2059,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 <strong>Pending changes</strong>
                 <span>Update the basics here, then save when you are ready.</span>
               </div>
-              <button type="button" className={tStyles.primaryBtn} onClick={handleSaveSettings} disabled={savingSettings}>
+              <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
                 {savingSettings ? 'Saving...' : 'Save Tala settings'}
               </button>
             </div>
@@ -1539,7 +2081,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Keep a copy</strong>
                   <span>Download your Tala entries before making bigger changes.</span>
                 </div>
-                <button type="button" className={tStyles.secondaryBtn} onClick={handleExportTalaData}>Export Tala data</button>
+                <button type="button" className={tStyles.secondaryBtn} onClick={() => { playTick(); handleExportTalaData(); }}>Export Tala data</button>
               </div>
 
               <div className={tStyles.settingsActionBlock}>
@@ -1547,7 +2089,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Clear Tala logs</strong>
                   <span>Remove Tala entries from this account while keeping your Tala defaults.</span>
                 </div>
-                <button type="button" className={tStyles.ghostBtn} onClick={handleDeleteTalaData} disabled={deletingTalaData}>
+                <button type="button" className={tStyles.ghostBtn} onClick={() => { playTick(); handleDeleteTalaData(); }} disabled={deletingTalaData}>
                   {deletingTalaData ? 'Deleting...' : 'Delete Tala logs'}
                 </button>
                 <div className={tStyles.empty}>Your Tala settings stay if you delete Tala logs.</div>
@@ -1558,7 +2100,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Log out</strong>
                   <span>Leave this account safely without changing your Tala settings.</span>
                 </div>
-                <button type="button" className={tStyles.ghostBtn} onClick={handleLogout}>
+                <button type="button" className={tStyles.ghostBtn} onClick={() => { playTick(); handleLogout(); }}>
                   Log out
                 </button>
               </div>

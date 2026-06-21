@@ -29,62 +29,368 @@ function getCatColor(cat) {
   return CAT_COLORS[cat] || '#9090b0'
 }
 
-function PieChart({ data, size = 160 }) {
+function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null)
   if (!data.length) return <div className={bStyles.noData}>No data yet</div>
   const total = data.reduce((sum, item) => sum + item.value, 0)
   if (total === 0) return <div className={bStyles.noData}>No data yet</div>
 
   const cx = size / 2
   const cy = size / 2
-  const radius = size / 2 - 8
+  const radius = size / 2 - 10
+  const innerRadius = radius * 0.58
   const fullSweep = 2 * Math.PI
   const fullSliceThreshold = fullSweep - 0.0001
   let angle = -Math.PI / 2
-  const slices = data.map(item => {
+
+  const slices = data.map((item, idx) => {
     const sweep = (item.value / total) * fullSweep
-    const x1 = cx + radius * Math.cos(angle)
-    const y1 = cy + radius * Math.sin(angle)
+    const startAngle = angle
+    const middleAngle = startAngle + sweep / 2
+    
+    const x1 = cx + radius * Math.cos(startAngle)
+    const y1 = cy + radius * Math.sin(startAngle)
     angle += sweep
     const x2 = cx + radius * Math.cos(angle)
     const y2 = cy + radius * Math.sin(angle)
+    
     const large = sweep > Math.PI ? 1 : 0
     const isFullSlice = sweep >= fullSliceThreshold
+
+    // Calculate displacement translate vector if hovered
+    const offset = hoveredIndex === idx ? 6 : 0
+    const dx = offset * Math.cos(middleAngle)
+    const dy = offset * Math.sin(middleAngle)
+
     return {
       ...item,
       isFullSlice,
+      dx,
+      dy,
       path: isFullSlice ? '' : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2} Z`,
+      pct: total > 0 ? Math.round((item.value / total) * 100) : 0
     }
   })
 
+  const activeSlice = hoveredIndex !== null ? slices[hoveredIndex] : null
+
   return (
-    <div style={{ width: size, height: size, flexShrink: 0 }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block' }}>
-        {slices.map((slice, index) => (
-          slice.isFullSlice
-            ? <circle key={index} cx={cx} cy={cy} r={radius} fill={slice.color} opacity={0.9} />
-            : <path key={index} d={slice.path} fill={slice.color} opacity={0.9} />
-        ))}
-        <circle cx={cx} cy={cy} r={radius * 0.55} fill="var(--surface)" />
+    <div style={{ width: size, height: size, flexShrink: 0, position: 'relative' }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: 'block', overflow: 'visible' }}>
+        <g>
+          {slices.map((slice, index) => {
+            const pathStyle = {
+              transform: `translate(${slice.dx}px, ${slice.dy}px)`,
+              transition: 'transform var(--motion-duration) var(--ease-fluid), opacity var(--motion-duration)',
+              cursor: 'pointer',
+            }
+
+            return slice.isFullSlice ? (
+              <circle
+                key={index}
+                cx={cx}
+                cy={cy}
+                r={radius}
+                fill={slice.color}
+                opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.72}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={pathStyle}
+              />
+            ) : (
+              <path
+                key={index}
+                d={slice.path}
+                fill={slice.color}
+                opacity={hoveredIndex === null || hoveredIndex === index ? 1 : 0.72}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                stroke="var(--bg)"
+                strokeWidth="1.5"
+                style={pathStyle}
+              />
+            )
+          })}
+        </g>
+        
+        {/* Central Donut Hole */}
+        <circle cx={cx} cy={cy} r={innerRadius} fill="var(--surface)" stroke="var(--border)" strokeWidth="1" />
+        
+        {/* Hover Center Text Information */}
+        {activeSlice ? (
+          <g style={{ pointerEvents: 'none' }}>
+            <text
+              x={cx}
+              y={cy - 12}
+              textAnchor="middle"
+              fill="var(--text3)"
+              fontSize="10"
+              fontWeight="700"
+              letterSpacing="0.5"
+              textTransform="uppercase"
+            >
+              {activeSlice.cat.length > 10 ? `${activeSlice.cat.slice(0, 8)}..` : activeSlice.cat}
+            </text>
+            <text
+              x={cx}
+              y={cy + 6}
+              textAnchor="middle"
+              fill="var(--text)"
+              fontSize="13"
+              fontWeight="800"
+              fontFamily="var(--font-mono)"
+            >
+              {privacyMode ? '•••' : fmt(activeSlice.value, symbol)}
+            </text>
+            <text
+              x={cx}
+              y={cy + 20}
+              textAnchor="middle"
+              fill={activeSlice.color}
+              fontSize="10"
+              fontWeight="800"
+            >
+              {privacyMode ? '••%' : `${activeSlice.pct}%`}
+            </text>
+          </g>
+        ) : (
+          <g style={{ pointerEvents: 'none' }}>
+            <text
+              x={cx}
+              y={cy - 4}
+              textAnchor="middle"
+              fill="var(--text3)"
+              fontSize="10"
+              fontWeight="700"
+            >
+              TOTAL
+            </text>
+            <text
+              x={cx}
+              y={cy + 10}
+              textAnchor="middle"
+              fill="var(--text)"
+              fontSize="13"
+              fontWeight="800"
+              fontFamily="var(--font-mono)"
+            >
+              {privacyMode ? '•••••' : fmt(total, symbol)}
+            </text>
+          </g>
+        )}
       </svg>
     </div>
   )
 }
 
+function formatCompactCellBalance(value) {
+  const numericValue = Number(value) || 0
+  const absoluteValue = Math.abs(numericValue)
+  const sign = numericValue < 0 ? '−' : ''
+
+  if (absoluteValue >= 1_000_000) {
+    return `${sign}${(absoluteValue / 1_000_000).toFixed(absoluteValue >= 10_000_000 ? 0 : 1)}M`
+  }
+  if (absoluteValue >= 1_000) {
+    return `${sign}${Math.round(absoluteValue / 1_000)}k`
+  }
+  return `${sign}${Math.round(absoluteValue)}`
+}
+
 function BarChart({ months, income, expenses, symbol, privacyMode }) {
-  const max = Math.max(...income, ...expenses, 1)
-  const barH = 80
+  const [hoveredBar, setHoveredBar] = useState(null)
+  const maxVal = Math.max(...income, ...expenses, 1000)
+  
+  const width = 480
+  const height = 160
+  const paddingLeft = 45
+  const paddingRight = 10
+  const paddingTop = 20
+  const paddingBottom = 25
+  
+  const chartW = width - paddingLeft - paddingRight
+  const chartH = height - paddingTop - paddingBottom
+  
+  const yTicksCount = 4
+  const yTicks = Array.from({ length: yTicksCount }, (_, i) => (maxVal / (yTicksCount - 1)) * i)
 
   return (
-    <div className={bStyles.barChart}>
-      {months.map((month, index) => (
-        <div key={index} className={bStyles.barGroup}>
-          <div className={bStyles.bars}>
-            <div className={bStyles.barIncome} style={{ height: `${(income[index] / max) * barH}px` }} title={privacyMode ? 'Income hidden' : `Income: ${fmt(income[index], symbol)}`} />
-            <div className={bStyles.barExpense} style={{ height: `${(expenses[index] / max) * barH}px` }} title={privacyMode ? 'Expenses hidden' : `Expense: ${fmt(expenses[index], symbol)}`} />
-          </div>
-          <div className={bStyles.barLabel}>{month}</div>
-        </div>
-      ))}
+    <div className={bStyles.barChartWrapper}>
+      <svg viewBox={`0 0 ${width} ${height}`} className={bStyles.barChartSvg} width="100%" height="100%">
+        <defs>
+          <linearGradient id="barIncGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--accent-dim)" stopOpacity="0.3" />
+          </linearGradient>
+          <linearGradient id="barExpGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--red)" />
+            <stop offset="100%" stopColor="var(--red-dim)" stopOpacity="0.3" />
+          </linearGradient>
+        </defs>
+
+        {yTicks.map((tick, i) => {
+          const y = height - paddingBottom - (tick / maxVal) * chartH
+          return (
+            <g key={i} opacity="0.6">
+              <line
+                x1={paddingLeft}
+                y1={y}
+                x2={width - paddingRight}
+                y2={y}
+                stroke="var(--border)"
+                strokeDasharray="4 4"
+                strokeWidth="1"
+              />
+              <text
+                x={paddingLeft - 8}
+                y={y + 3}
+                textAnchor="end"
+                fill="var(--text3)"
+                fontSize="9"
+                fontFamily="var(--font-mono)"
+              >
+                {privacyMode ? '•••' : formatCompactCellBalance(tick)}
+              </text>
+            </g>
+          )
+        })}
+
+        {months.map((month, index) => {
+          const incVal = income[index] || 0
+          const expVal = expenses[index] || 0
+          
+          const groupW = chartW / months.length
+          const barW = Math.max(6, groupW * 0.32)
+          const gap = groupW * 0.08
+          
+          const xGroupStart = paddingLeft + index * groupW
+          const xInc = xGroupStart + (groupW - 2 * barW - gap) / 2
+          const xExp = xInc + barW + gap
+          
+          const hInc = (incVal / maxVal) * chartH
+          const hExp = (expVal / maxVal) * chartH
+          
+          const yInc = height - paddingBottom - hInc
+          const yExp = height - paddingBottom - hExp
+
+          return (
+            <g key={index}>
+              <rect
+                x={xInc}
+                y={yInc}
+                width={barW}
+                height={hInc}
+                fill="url(#barIncGrad)"
+                rx="3"
+                opacity={hoveredBar && (hoveredBar.index !== index || hoveredBar.type !== 'income') ? 0.6 : 1}
+                style={{ transition: 'y 0.6s ease, height 0.6s ease, opacity 0.2s ease', cursor: 'pointer' }}
+                onMouseEnter={() => setHoveredBar({ index, type: 'income', val: incVal, x: xInc + barW / 2, y: yInc })}
+                onMouseLeave={() => setHoveredBar(null)}
+              />
+              
+              <rect
+                x={xExp}
+                y={yExp}
+                width={barW}
+                height={hExp}
+                fill="url(#barExpGrad)"
+                rx="3"
+                opacity={hoveredBar && (hoveredBar.index !== index || hoveredBar.type !== 'expense') ? 0.6 : 1}
+                style={{ transition: 'y 0.6s ease, height 0.6s ease, opacity 0.2s ease', cursor: 'pointer' }}
+                onMouseEnter={() => setHoveredBar({ index, type: 'expense', val: expVal, x: xExp + barW / 2, y: yExp })}
+                onMouseLeave={() => setHoveredBar(null)}
+              />
+
+              <text
+                x={xGroupStart + groupW / 2}
+                y={height - 8}
+                textAnchor="middle"
+                fill="var(--text2)"
+                fontSize="10"
+                fontWeight="600"
+              >
+                {month}
+              </text>
+            </g>
+          )
+        })}
+
+        <line
+          x1={paddingLeft}
+          y1={height - paddingBottom}
+          x2={width - paddingRight}
+          y2={height - paddingBottom}
+          stroke="var(--border2)"
+          strokeWidth="1.5"
+        />
+
+        {hoveredBar && (
+          <g style={{ pointerEvents: 'none' }}>
+            <rect
+              x={Math.max(10, Math.min(width - 110, hoveredBar.x - 50))}
+              y={Math.max(5, hoveredBar.y - 32)}
+              width="100"
+              height="24"
+              rx="6"
+              fill="var(--surface-solid-2)"
+              stroke="var(--border2)"
+              strokeWidth="1"
+            />
+            <text
+              x={Math.max(60, Math.min(width - 60, hoveredBar.x))}
+              y={Math.max(20, hoveredBar.y - 17)}
+              textAnchor="middle"
+              fill={hoveredBar.type === 'income' ? 'var(--accent)' : 'var(--red)'}
+              fontSize="9"
+              fontWeight="850"
+              fontFamily="var(--font-mono)"
+            >
+              {privacyMode ? 'Hidden' : fmt(hoveredBar.val, symbol)}
+            </text>
+          </g>
+        )}
+      </svg>
+    </div>
+  )
+}
+
+function Sparkline({ data, width = 220, height = 36, strokeColor = 'var(--blue)', symbol = '₱', privacyMode = false }) {
+  if (!data || data.length < 2) return null
+
+  const values = data.map(d => d.value)
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const range = max - min || 1
+
+  const points = data.map((d, index) => {
+    const x = (index / (data.length - 1)) * width
+    const y = height - ((d.value - min) / range) * height
+    return `${x},${y}`
+  }).join(' ')
+
+  const fillPoints = `${width},${height} 0,${height} ${points}`
+
+  return (
+    <div style={{ position: 'relative', width, height }}>
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block', overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="sparklineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={strokeColor} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={strokeColor} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <polygon points={fillPoints} fill="url(#sparklineGrad)" />
+        <polyline
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={points}
+        />
+        <circle cx="0" cy={height - ((values[0] - min) / range) * height} r="3.5" fill="var(--bg)" stroke={strokeColor} strokeWidth="1.5" />
+        <circle cx={width} cy={height - ((values[values.length - 1] - min) / range) * height} r="4" fill={strokeColor} />
+      </svg>
     </div>
   )
 }
@@ -257,13 +563,21 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
         </div>
 
         <div className={bStyles.heroAside}>
-          <div className={bStyles.heroAsideLabel}>Current month</div>
-          <div className={bStyles.heroAsideValue}>{monthLabel}</div>
-          <div className={bStyles.heroAsideTrack}>
-            <div className={bStyles.heroAsideFill} style={{ width: `${expenseShare}%` }} />
+          <div className={bStyles.heroAsideLabel}>6-Month Net Savings Trend</div>
+          <div className={bStyles.sparklineBox}>
+            <Sparkline
+              data={last6.map(m => ({ value: m.net }))}
+              width={220}
+              height={36}
+              strokeColor={monthNet >= 0 ? 'var(--accent)' : 'var(--red)'}
+              symbol={s}
+              privacyMode={privacyMode}
+            />
           </div>
           <div className={bStyles.heroAsideMeta}>
-            {tab === 'expenses' ? 'Viewing expense categories as logged.' : 'Viewing income sources as logged.'}
+            {monthNet >= 0 
+              ? `Surplus trend is stable · ${money(monthNet)} net`
+              : `Expense pressure warning · ${money(monthNet)} net`}
           </div>
         </div>
       </div>
@@ -310,7 +624,7 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
           <div className={bStyles.emptyState}>No {tab} data yet for this month.</div>
         ) : (
           <div className={bStyles.pieSection}>
-            <PieChart data={cats} size={160} />
+            <PieChart data={cats} size={180} symbol={s} privacyMode={privacyMode} />
             <div className={bStyles.legend}>
               {cats.map((cat, index) => (
                 <div key={index} className={bStyles.legendItem}>

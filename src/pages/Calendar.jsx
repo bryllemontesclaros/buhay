@@ -32,7 +32,8 @@ import {
   sanitizeTransactionCategory,
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
-import { fmt, normalizeDate, RECUR_OPTIONS, today } from '../lib/utils'
+import { fmt, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
+import { getBillPeriodInfo } from '../lib/bills'
 import { createPortal } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
@@ -174,6 +175,49 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     [data.accounts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
   )
 
+  const unpaidBillsByDateKey = useMemo(() => {
+    const map = {}
+    if (!data?.bills || !Array.isArray(data.bills)) return map
+    const refDate = new Date(year, month, 15)
+    data.bills.forEach(bill => {
+      const info = getBillPeriodInfo(bill, refDate)
+      if (info && !info.paid && info.dueDate <= todayStr) {
+        if (!map[info.dueDate]) {
+          map[info.dueDate] = []
+        }
+        map[info.dueDate].push(bill)
+      }
+    })
+    return map
+  }, [data?.bills, year, month, todayStr])
+
+  const dailyVolumes = useMemo(() => {
+    const map = {}
+    let maxInc = 0
+    let maxExp = 0
+    
+    allIncome.forEach(tx => {
+      const ds = normalizeDate(tx.date)
+      if (!ds) return
+      if (!map[ds]) map[ds] = { income: 0, expense: 0 }
+      map[ds].income += Number(tx.amount) || 0
+    })
+    
+    allExpenses.forEach(tx => {
+      const ds = normalizeDate(tx.date)
+      if (!ds) return
+      if (!map[ds]) map[ds] = { income: 0, expense: 0 }
+      map[ds].expense += Number(tx.amount) || 0
+    })
+    
+    Object.values(map).forEach(v => {
+      if (v.income > maxInc) maxInc = v.income
+      if (v.expense > maxExp) maxExp = v.expense
+    })
+    
+    return { map, maxInc: maxInc || 1, maxExp: maxExp || 1 }
+  }, [allIncome, allExpenses])
+
   const isIncome = modalType === 'income'
   const cats = getTransactionCategories(modalType)
   const quickPresets = getQuickItems(modalType)
@@ -230,14 +274,17 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function prev() {
+    playTick()
     bumpMonth(-1)
   }
 
   function next() {
+    playTick()
     bumpMonth(1)
   }
 
   function handleJumpToDate(event) {
+    playTick()
     const nextDateKey = normalizeDate(event.target.value)
     if (!nextDateKey) return
     const nextDate = new Date(`${nextDateKey}T00:00:00`)
@@ -279,6 +326,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function openComposer(type = 'income') {
+    playTick()
     const nextDraft = getEmptyForm(type, defaultAccountId)
     closeDayBalanceEditor()
     setEditTx(null)
@@ -315,6 +363,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function applyComposerPreset(nextPresetKey) {
+    playTick()
     const preset = getPresetByKey(modalType, nextPresetKey)
     if (!preset || preset.isCustom) {
       clearComposerPreset(modalType, 'Other', 'Miscellaneous')
@@ -333,6 +382,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function applyComposerCategory(nextCat) {
+    playTick()
     const resolvedCat = sanitizeTransactionCategory(modalType, nextCat)
     const resolvedSubcat = getTransactionSubcategories(modalType, resolvedCat)[0]
     setForm(current => ({
@@ -346,6 +396,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function applyComposerSubcategory(nextSubcat) {
+    playTick()
     const resolvedSubcat = sanitizeTransactionSubcategory(modalType, form.cat, nextSubcat)
     setForm(current => ({
       ...current,
@@ -357,6 +408,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function switchComposerType(nextType) {
+    playTick()
     if (nextType === modalType) return
     const nextDraft = getEmptyForm(nextType, form.accountId || defaultAccountId)
     setModalType(nextType)
@@ -370,6 +422,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function openEdit(tx) {
+    playTick()
     const nextType = tx.type || 'income'
     const nextCat = sanitizeTransactionCategory(nextType, tx.cat)
     const nextMatchedPreset =
@@ -457,6 +510,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   function openDayBalanceEditor() {
+    playTick()
     if (!selected) return
     const nextValue = Number.isFinite(Number(selectedDayBalance)) ? Number(selectedDayBalance).toFixed(2) : '0.00'
     setEditingDayBalance(true)
@@ -469,6 +523,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleSaveDayBalance() {
+    playTick()
     if (!selected) return
     const rawValue = dayBalanceDraft.trim()
     if (!rawValue) {
@@ -505,6 +560,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleClearDayBalance() {
+    playTick()
     if (!selected) return
     if (!hasManualBalanceOnSelectedDay) {
       closeDayBalanceEditor()
@@ -537,6 +593,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleSave() {
+    playTick()
     const amount = parseFloat(form.amount)
     const targetDate = editTx?.date || selected
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -608,6 +665,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleTogglePaymentStatus(tx) {
+    playTick()
     if (tx._projected) {
       notifyApp({
         title: 'Projection only',
@@ -639,6 +697,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleLogProjected(tx) {
+    playTick()
     if (!tx?._projected || !tx?._sourceId) return
     if (selectedDateLocked) {
       notifyApp({ title: 'Date locked', message: 'You cannot add entries on a locked date.', tone: 'warning' })
@@ -704,6 +763,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
 
   async function handleSettleProjectedNow(tx) {
+    playTick()
     if (!tx?._projected || !tx?._sourceId) return
 
     const actualDate = todayStr
@@ -1170,7 +1230,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <div key={index} className={calStyles.dayName}>{day}</div>)}
           </div>
 
-          <div className={calStyles.grid} aria-label={`${label} calendar`}>
+          <div
+            key={`${year}-${month}`}
+            className={`${calStyles.grid} ${calStyles.gridAnimated}`}
+            aria-label={`${label} calendar`}
+          >
             {Array.from({ length: firstDay }, (_, index) => (
               <div key={`p${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
                 <div className={calStyles.dateNum}>{prevDays - firstDay + 1 + index}</div>
@@ -1188,26 +1252,48 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const forecast = forecastMap[ds]
               const balanceLabel = forecast ? formatCellBalance(forecast.runningBalance) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
+              
+              const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
+              const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
+              const expPct = dailyVolumes.maxExp > 0 && dayVol.expense > 0 ? Math.max(15, Math.min(100, (dayVol.expense / dailyVolumes.maxExp) * 100)) : 0
+              const overdueBills = unpaidBillsByDateKey[ds] || []
 
               return (
                 <button
                   type="button"
                   key={day}
                   className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense) ? calStyles.hasData : ''}`}
-                  onClick={() => setSelected(ds)}
+                  onClick={() => {
+                    playTick()
+                    setSelected(ds)
+                  }}
                   aria-pressed={isSelected}
                   aria-label={dayAriaLabel}
                 >
+                  {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
+                  
                   <div className={calStyles.cellTop}>
                     <div className={calStyles.dateNum}>{day}</div>
-                    {(hasIncome || hasExpense || hasManualBalance) && (
-                      <div className={calStyles.dots}>
-                        {hasManualBalance && <div className={`${calStyles.dot} ${calStyles.dotBalance}`} />}
-                        {hasIncome && <div className={`${calStyles.dot} ${calStyles.dotIncome}`} />}
-                        {hasExpense && <div className={`${calStyles.dot} ${calStyles.dotExpense}`} />}
-                      </div>
-                    )}
+                    {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
                   </div>
+                  
+                  {(hasIncome || hasExpense) && (
+                    <div className={calStyles.miniVolumeBars}>
+                      {dayVol.income > 0 && (
+                        <div
+                          className={calStyles.miniVolumeBarInc}
+                          style={{ width: `${incPct}%` }}
+                        />
+                      )}
+                      {dayVol.expense > 0 && (
+                        <div
+                          className={calStyles.miniVolumeBarExp}
+                          style={{ width: `${expPct}%` }}
+                        />
+                      )}
+                    </div>
+                  )}
+
                   {!privacyMode && (
                     <div
                       className={calStyles.cellBalance}

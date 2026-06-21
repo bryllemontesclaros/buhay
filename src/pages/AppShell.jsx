@@ -2,7 +2,9 @@ import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 
 import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
-import { getInitials, getCurrencySymbol, today } from '../lib/utils'
+import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '../lib/utils'
+import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
+import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Dashboard from './Dashboard'
@@ -501,6 +503,131 @@ function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pag
   )
 }
 
+function TakdaTodayStrip({
+  netPosition,
+  monthNet,
+  billWatchCount,
+  budgetStatus,
+  savingsProgress,
+  symbol,
+  privacyMode,
+  onNavigate,
+}) {
+  const formatVal = (val) => {
+    if (privacyMode) return '••••'
+    return symbol + Number(val || 0).toLocaleString('en-PH', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+  }
+
+  const formatNetVal = (val) => {
+    if (privacyMode) return '••••'
+    const sign = val < 0 ? '−' : '+'
+    return `${sign}${symbol}${Math.abs(Number(val || 0)).toLocaleString('en-PH', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })}`
+  }
+
+  const handleCardClick = (targetPage) => {
+    playTick()
+    onNavigate(targetPage)
+  }
+
+  return (
+    <div className={styles.todayStrip} role="region" aria-label="Today summary strip">
+      <button
+        type="button"
+        className={styles.stripCard}
+        onClick={() => handleCardClick('portfolio')}
+      >
+        <span className={styles.stripLabel}>Net Position</span>
+        <strong className={styles.stripValue}>{formatVal(netPosition)}</strong>
+        <span className={styles.stripMeta}>Portfolio balance</span>
+      </button>
+
+      <button
+        type="button"
+        className={styles.stripCard}
+        onClick={() => handleCardClick('breakdown')}
+      >
+        <span className={styles.stripLabel}>Month Net</span>
+        <strong
+          className={`${styles.stripValue} ${
+            monthNet >= 0 ? styles.stripValuePositive : styles.stripValueNegative
+          }`}
+        >
+          {formatNetVal(monthNet)}
+        </strong>
+        <span className={styles.stripMeta}>Insights view</span>
+      </button>
+
+      <button
+        type="button"
+        className={styles.stripCard}
+        onClick={() => handleCardClick('bills')}
+      >
+        <span className={styles.stripLabel}>Bill Watch</span>
+        <strong
+          className={`${styles.stripValue} ${
+            billWatchCount > 0 ? styles.stripValueWarning : ''
+          }`}
+        >
+          {billWatchCount}
+        </strong>
+        <span className={styles.stripMeta}>
+          {billWatchCount === 1 ? '1 due soon' : `${billWatchCount} due soon`}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        className={styles.stripCard}
+        onClick={() => handleCardClick('budget')}
+      >
+        <span className={styles.stripLabel}>Budgets</span>
+        <strong
+          className={`${styles.stripValue} ${
+            budgetStatus.overCount > 0
+              ? styles.stripValueNegative
+              : budgetStatus.warningCount > 0
+              ? styles.stripValueWarning
+              : ''
+          }`}
+        >
+          {budgetStatus.overCount > 0
+            ? 'Over'
+            : budgetStatus.warningCount > 0
+            ? 'Warn'
+            : 'OK'}
+        </strong>
+        <span className={styles.stripMeta}>
+          {budgetStatus.overCount > 0
+            ? `${budgetStatus.overCount} over limit`
+            : `${budgetStatus.totalBudgets} configured`}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        className={styles.stripCard}
+        onClick={() => handleCardClick('savings')}
+      >
+        <span className={styles.stripLabel}>Savings</span>
+        <strong className={styles.stripValue}>
+          {privacyMode ? '••••' : `${savingsProgress.pct}%`}
+        </strong>
+        <span className={styles.stripMeta}>
+          {savingsProgress.totalGoals === 1
+            ? '1 target'
+            : `${savingsProgress.totalGoals} targets`}
+        </span>
+      </button>
+    </div>
+  )
+}
+
 export default function AppShell({ user }) {
   const [activeSpace, setActiveSpace] = useState('takda')
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
@@ -708,6 +835,74 @@ export default function AppShell({ user }) {
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
   const privacyMode = Boolean(profile.privacyMode)
+
+  const netPosition = useMemo(() => {
+    const accounts = Array.isArray(data?.accounts) ? data.accounts : []
+    return accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
+  }, [data?.accounts])
+
+  const monthNet = useMemo(() => {
+    const now = new Date()
+    const y = now.getFullYear()
+    const m = now.getMonth()
+    const income = getMonthTransactions(data.income || [], y, m)
+    const expenses = getMonthTransactions(data.expenses || [], y, m)
+    const incSum = income.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
+    const expSum = expenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
+    return incSum - expSum
+  }, [data.income, data.expenses])
+
+  const billWatchCount = useMemo(() => {
+    if (!data?.bills || !Array.isArray(data.bills)) return 0
+    let count = 0
+    const now = new Date()
+    data.bills.forEach(bill => {
+      const period = getBillPeriodInfo(bill, now)
+      if (period && !period.paid && (period.status === 'overdue' || period.status === 'due' || period.status === 'soon')) {
+        count++
+      }
+    })
+    return count
+  }, [data?.bills])
+
+  const budgetStatus = useMemo(() => {
+    const budgets = data?.budgets || []
+    const now = new Date()
+    const y = now.getFullYear()
+    const m = now.getMonth()
+    
+    const spending = {}
+    if (Array.isArray(data?.expenses)) {
+      data.expenses
+        .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, y, m))
+        .forEach(tx => {
+          spending[tx.cat] = (spending[tx.cat] || 0) + (tx.amount || 0)
+        })
+    }
+    
+    let overCount = 0
+    let warningCount = 0
+    budgets.forEach(budget => {
+      const spent = spending[budget.cat] || 0
+      const pct = budget.limit > 0 ? (spent / budget.limit) * 100 : 0
+      if (pct >= 100) {
+        overCount++
+      } else if (pct >= 80) {
+        warningCount++
+      }
+    })
+    
+    return { overCount, warningCount, totalBudgets: budgets.length }
+  }, [data?.budgets, data?.expenses])
+
+  const savingsProgress = useMemo(() => {
+    const goals = data?.goals || []
+    const totalSaved = goals.reduce((sum, goal) => sum + (Number(goal.current) || 0), 0)
+    const totalTarget = goals.reduce((sum, goal) => sum + (Number(goal.target) || 0), 0)
+    const pct = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0
+    return { totalSaved, totalTarget, pct, totalGoals: goals.length }
+  }, [data?.goals])
+
 
 
   useEffect(() => {
@@ -1360,6 +1555,18 @@ export default function AppShell({ user }) {
           </div>
         )}
         <main ref={mainRef} id="app-main" className={`${styles.main} ${isCalendarPage ? styles.mainCalendar : ''}`}>
+          {activeSpace === 'takda' && (
+            <TakdaTodayStrip
+              netPosition={netPosition}
+              monthNet={monthNet}
+              billWatchCount={billWatchCount}
+              budgetStatus={budgetStatus}
+              savingsProgress={savingsProgress}
+              symbol={symbol}
+              privacyMode={privacyMode}
+              onNavigate={navigateToFinancePage}
+            />
+          )}
           <PageErrorBoundary key={pageBoundaryKey} onRecover={() => navigateToFinancePage(DEFAULT_SPACE_PAGES.takda)}>
             <Suspense fallback={<PageLoading />}>
               <PageComponent {...pageProps} />

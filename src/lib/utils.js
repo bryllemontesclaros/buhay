@@ -115,3 +115,23 @@ export function validateAmount(val, fieldName = 'Amount') {
   if (isNaN(n) || n <= 0) return `${fieldName} must be a positive number.`
   return null
 }
+
+export function playTick() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1000, now);
+    gain.gain.setValueAtTime(0.04, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  } catch (e) {
+    console.warn('Audio tick failed:', e);
+  }
+}
+
