@@ -1235,6 +1235,97 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 </div>
 
                 <div className={calStyles.dayPanelBody}>
+                  {!editingDayBalance && (
+                    <div className={calStyles.dayPanelActions}>
+                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
+                        Record income
+                      </button>
+                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionExpense}`} onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
+                        Record expense
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedIncome.length > 0 && (
+                    <div className={calStyles.daySection}>
+                      <div className={calStyles.daySectionHeader}>
+                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
+                        <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
+                      </div>
+                      {selectedIncome.map(tx => (
+                        <DayTxRow
+                          key={tx._id}
+                          t={tx}
+                          s={s}
+                          privacyMode={privacyMode}
+                          onEdit={openEdit}
+                          onDelete={handleDelete}
+                          onTogglePaymentStatus={handleTogglePaymentStatus}
+                          onSettleProjectedNow={handleSettleProjectedNow}
+                          onOpenRecurringDateEditor={openRecurringDateEditor}
+                          onLogProjected={handleLogProjected}
+                          onEditRecurrence={handleEditRecurrence}
+                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
+                          locked={selectedDateLocked}
+                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedExpenses.length > 0 && (
+                    <div className={calStyles.daySection}>
+                      <div className={calStyles.daySectionHeader}>
+                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--red)' }}>Expenses</div>
+                        <div className={calStyles.daySectionCount}>{selectedExpenses.length}</div>
+                      </div>
+                      {selectedExpenses.map(tx => (
+                        <DayTxRow
+                          key={tx._id}
+                          t={tx}
+                          s={s}
+                          privacyMode={privacyMode}
+                          onEdit={openEdit}
+                          onDelete={handleDelete}
+                          onTogglePaymentStatus={handleTogglePaymentStatus}
+                          onSettleProjectedNow={handleSettleProjectedNow}
+                          onOpenRecurringDateEditor={openRecurringDateEditor}
+                          onLogProjected={handleLogProjected}
+                          onEditRecurrence={handleEditRecurrence}
+                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
+                          locked={selectedDateLocked}
+                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedIncome.length === 0 && selectedExpenses.length === 0 && (
+                    <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
+                  )}
+
+                  {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
+                    privacyMode ? (
+                      <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
+                        Totals are hidden while privacy mode is on.
+                      </div>
+                    ) : (
+                      <div className={calStyles.daySummary}>
+                        <span style={{ color: 'var(--accent)' }}>
+                          {`+${fmt(selectedDayIncome, s)}`}
+                        </span>
+                        <span style={{ color: 'var(--text3)' }}>·</span>
+                        <span style={{ color: 'var(--red)' }}>
+                          {`−${fmt(selectedDayExpense, s)}`}
+                        </span>
+                        <span style={{ color: 'var(--text3)' }}>·</span>
+                        <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
+                          {`Net ${fmt(selectedDayNet, s)}`}
+                        </span>
+                      </div>
+                    )
+                  )}
+
                   <div className={calStyles.dayBalanceCard}>
                     {!editingDayBalance ? (
                       <>
@@ -1323,100 +1414,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   </div>
 
                   {!editingDayBalance && (
-                    <div className={calStyles.dayPanelActions}>
-                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
-                        Record income
-                      </button>
-                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionExpense}`} onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
-                        Record expense
-                      </button>
-                    </div>
-                  )}
-
-                  {!editingDayBalance && (
                     <div className={calStyles.daySystemNote}>
                       Paid linked entries update account balances and this calendar close. Unpaid stays visible without counting yet. Forecast rows are upcoming recurring items until you record them.
                     </div>
-                  )}
-
-                  {selectedIncome.length > 0 && (
-                    <div className={calStyles.daySection}>
-                      <div className={calStyles.daySectionHeader}>
-                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
-                        <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
-                      </div>
-                      {selectedIncome.map(tx => (
-                        <DayTxRow
-                          key={tx._id}
-                          t={tx}
-                          s={s}
-                          privacyMode={privacyMode}
-                          onEdit={openEdit}
-                          onDelete={handleDelete}
-                          onTogglePaymentStatus={handleTogglePaymentStatus}
-                          onSettleProjectedNow={handleSettleProjectedNow}
-                          onOpenRecurringDateEditor={openRecurringDateEditor}
-                          onLogProjected={handleLogProjected}
-                          onEditRecurrence={handleEditRecurrence}
-                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
-                          locked={selectedDateLocked}
-                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedExpenses.length > 0 && (
-                    <div className={calStyles.daySection}>
-                      <div className={calStyles.daySectionHeader}>
-                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--red)' }}>Expenses</div>
-                        <div className={calStyles.daySectionCount}>{selectedExpenses.length}</div>
-                      </div>
-                      {selectedExpenses.map(tx => (
-                        <DayTxRow
-                          key={tx._id}
-                          t={tx}
-                          s={s}
-                          privacyMode={privacyMode}
-                          onEdit={openEdit}
-                          onDelete={handleDelete}
-                          onTogglePaymentStatus={handleTogglePaymentStatus}
-                          onSettleProjectedNow={handleSettleProjectedNow}
-                          onOpenRecurringDateEditor={openRecurringDateEditor}
-                          onLogProjected={handleLogProjected}
-                          onEditRecurrence={handleEditRecurrence}
-                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
-                          locked={selectedDateLocked}
-                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedIncome.length === 0 && selectedExpenses.length === 0 && (
-                    <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
-                  )}
-
-                  {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
-                    privacyMode ? (
-                      <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
-                        Totals are hidden while privacy mode is on.
-                      </div>
-                    ) : (
-                      <div className={calStyles.daySummary}>
-                        <span style={{ color: 'var(--accent)' }}>
-                          {`+${fmt(selectedDayIncome, s)}`}
-                        </span>
-                        <span style={{ color: 'var(--text3)' }}>·</span>
-                        <span style={{ color: 'var(--red)' }}>
-                          {`−${fmt(selectedDayExpense, s)}`}
-                        </span>
-                        <span style={{ color: 'var(--text3)' }}>·</span>
-                        <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
-                          {`Net ${fmt(selectedDayNet, s)}`}
-                        </span>
-                      </div>
-                    )
                   )}
 
                   {data.goals.length > 0 && (
