@@ -13,7 +13,7 @@ import { deleteField } from 'firebase/firestore'
 import { auth, getEmailActionSettings, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsAdd, fsDel, fsDeleteAccountData, fsResetFinancialData, fsRestoreBackup, fsSetProfile, fsUpdate } from '../lib/firestore'
 import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '../lib/legal'
-import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs, requestPushPermission } from '../lib/notifications'
+import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs } from '../lib/notifications'
 import { generateMonthlyReport } from '../lib/report'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, today } from '../lib/utils'
@@ -105,13 +105,6 @@ const DONATION_WALLETS = [
   },
 ]
 
-function getNotificationPermission() {
-  try {
-    return typeof Notification === 'undefined' ? 'unsupported' : Notification.permission
-  } catch {
-    return 'unsupported'
-  }
-}
 
 function normalizeBackupArray(value) {
   if (value == null) return []
@@ -293,7 +286,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [jsonExportDone, setJsonExportDone] = useState(false)
   const [rates, setRates] = useState(null)
   const [ratesLoading, setRatesLoading] = useState(false)
-  const [browserPermission, setBrowserPermission] = useState(getNotificationPermission)
+
   const [accountForm, setAccountForm] = useState({ displayName: '', newEmail: '', password: '' })
   const [accountMsg, setAccountMsg] = useState({ text: '', ok: false })
   const [accountSaving, setAccountSaving] = useState(false)
@@ -396,20 +389,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     }
   }
 
-  async function handleEnableBrowserNotifications() {
-    const granted = await requestPushPermission()
-    const permission = getNotificationPermission()
-    setBrowserPermission(permission)
-    if (granted) {
-      setNotifMsg({ text: 'Browser notifications enabled.', ok: true })
-      return
-    }
-    if (permission === 'denied') {
-      setNotifMsg({ text: 'Browser notifications are blocked. Update your browser site permissions to enable them.', ok: false })
-      return
-    }
-    setNotifMsg({ text: 'Browser notifications were not enabled.', ok: false })
-  }
+
 
   async function handleSaveAccountProfile() {
     const currentUser = auth.currentUser
@@ -951,40 +931,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         <CardHeader
           eyebrow="Alerts"
           title="Notifications"
-          description="Choose which alerts Buhay can show and whether this browser is allowed to display them."
+          description="Choose which in-app alerts Buhay can show."
         />
         <StatusBanner message={notifMsg} />
-
-        <div className={settStyles.preferenceRow}>
-          <div>
-            <div className={settStyles.preferenceTitle}>Browser notifications</div>
-            <div className={settStyles.preferenceMeta}>Allow this browser to show notifications when supported.</div>
-          </div>
-          <div className={settStyles.inlineActions}>
-            <span
-              className={`${settStyles.statusPill} ${
-                browserPermission === 'granted'
-                  ? settStyles.statusPillOk
-                  : browserPermission === 'denied'
-                    ? settStyles.statusPillError
-                    : settStyles.statusPillNeutral
-              }`}
-            >
-              {browserPermission === 'granted'
-                ? 'Enabled'
-                : browserPermission === 'denied'
-                  ? 'Blocked'
-                  : browserPermission === 'unsupported'
-                    ? 'Unsupported'
-                    : 'Not enabled'}
-            </span>
-            {browserPermission !== 'granted' && browserPermission !== 'unsupported' && (
-              <button className={settStyles.btnExport} onClick={handleEnableBrowserNotifications}>
-                Enable notifications
-              </button>
-            )}
-          </div>
-        </div>
 
         {NOTIFICATION_OPTIONS.map(option => (
           <div
