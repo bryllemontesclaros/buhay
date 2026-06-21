@@ -2710,8 +2710,7 @@
 
   .bottomNav,
   :global(.neo) .bottomNav {
-    display: grid;
-    grid-template-columns: repeat(var(--nav-items-count, 5), minmax(0, 1fr));
+    display: flex;
   }
 
   .bottomNavItem,
