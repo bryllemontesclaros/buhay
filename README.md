@@ -4,7 +4,7 @@
 
 Buhay is an all-in-one life tracker built with Filipino clarity and warmth for everyday use anywhere. It brings three focused spaces into one installable React + Firebase app:
 
-- Takda: finance, daily balances, bills, receipts, budgets, savings, reports, and cashflow.
+- Takda: finance, daily balances, bills, budgets, savings, reports, and cashflow.
 - Lakas: fitness, workouts, routines, meals, activity, body progress, habits, and goals.
 - Tala: mind, journal, mood, tasks, life goals, calendar patterns, and insights.
 
@@ -22,7 +22,6 @@ Takda finance:
   - Savings
   - Bills
   - Budget
-- Receipts
 - Settings
 
 Lakas fitness:
@@ -74,7 +73,7 @@ Tala mind and everyday life:
 
 ## Takda Finance
 
-- Dashboard with current balance, monthly income/expense summary, savings rate, budget health, recent transactions, gamification status, and projected month-end balance.
+- Dashboard with current balance, monthly income/expense summary, savings rate, budget health, recent transactions, and projected month-end balance.
 - Calendar-based finance tracking with daily closing balances, selected-day detail, date/month/year jump, and privacy-safe display.
 - Income and expense tracking with categories, subcategories, recurrence, notes, account links, add/edit/delete flows, and quick add.
 - Transfers between accounts.
@@ -82,12 +81,8 @@ Tala mind and everyday life:
 - Accounts for cash, bank, e-wallet, credit card, investment, and other balances.
 - Savings goals with target dates, progress tracking, contribution updates, and summaries.
 - Budgets with category limits, overspending warnings, unbudgeted spending visibility, and budget status.
-- Receipts with manual receipt records, older saved receipt review, thumbnails for legacy image-backed entries, merchant/category summaries, and receipt box search.
-- Grocery mode for manual items and one-trip expense saving.
 - History with search, filters, sorting, and inline editing.
 - Breakdown charts with category views, trends, and month comparisons.
-- Ask Takda command sheet for finance commands with preview/confirmation before write actions.
-- EXP and level-based gamification focused on real finance habits rather than raw fake transaction volume.
 
 ## Lakas Fitness
 
@@ -121,7 +116,7 @@ Tala mind and everyday life:
 - Firestore rules restrict user data to the authenticated owner.
 - Firebase Storage rules should restrict any older saved user images to the authenticated owner.
 - Privacy mode masks sensitive money and personal values across app views.
-- Receipt records, screenshot imports, commands, workouts, tasks, and goals use review-before-save behavior where relevant.
+- Workouts, tasks, and goals use review-before-save behavior where relevant.
 - JSON backups include app data and any legacy image metadata links, but image files are not re-uploaded from backups.
 - Account deletion and data reset tools are available in Settings.
 - Legal pages explain privacy, terms, third-party services, import behavior, and product limits.
@@ -131,10 +126,9 @@ Tala mind and everyday life:
 - Frontend: React + Vite
 - Auth: Firebase Authentication, Email/Password
 - Database: Firestore, real-time per-user collections
-- Storage: Firebase Storage for older saved receipt and fitness images
+- Storage: Firebase Storage for older saved fitness images
 - Hosting: Vercel
 - PWA: Installable web app with service worker caching
-- Import flow: local screenshot cleanup plus manual review for wallet screenshots
 
 ## System Docs
 
@@ -172,10 +166,10 @@ VITE_FIREBASE_APPCHECK_SITE_KEY=your_recaptcha_v3_site_key
 ## Production Privacy Hardening
 
 - Firestore records are stored under `users/{uid}` and rules require `request.auth.uid == userId`, so signed-in users cannot read or write another user's app records.
-- Older saved receipt, meal, and body progress image files are stored under `users/{uid}/...` and require the same authenticated owner.
+- Older saved meal and body progress image files are stored under `users/{uid}/...` and require the same authenticated owner.
 - Privacy mode is screen privacy only: it masks sensitive values in the UI when someone is looking at the device. Firebase Auth, Firestore rules, Storage rules, and App Check are the real access controls.
 - Enable Firebase App Check for the production Vercel domain and set `VITE_FIREBASE_APPCHECK_SITE_KEY` before enforcing App Check in Firebase.
-- After every Firebase rules change, deploy rules and verify with two test accounts that User A cannot read User B's `accounts`, `expenses`, `income`, `receipts`, `lakasBodyLogs`, or `talaJournal`.
+- After every Firebase rules change, deploy rules and verify with two test accounts that User A cannot read User B's `accounts`, `expenses`, `income`, `lakasBodyLogs`, or `talaJournal`.
 
 ## Deploy Firestore And Storage Rules
 
@@ -215,8 +209,8 @@ Manual QA:
 
 - Auth: sign up, log in, log out, remember-me, password reset, and email verification banner.
 - Onboarding: currency, opening balances, recurring bills, bill pay-from account, and optional Lakas/Tala starter paths.
-- Takda: calendar home, overview dashboard, quick add, wallet screenshot import, selected-day detail, accounts, history, savings, bills, budget, breakdown, receipts, grocery mode, and Ask Takda confirmation.
-- Bills/receipts trust check: marking a bill paid should create only one expense when enabled; manual receipt saves should not move balances; screenshot-assisted quick add should only change balances after confirmation.
+- Takda: calendar home, overview dashboard, quick add, selected-day detail, accounts, history, savings, bills, budget, and breakdown.
+- Bills trust check: marking a bill paid should create only one expense when enabled.
 - Lakas: beginner recommendation, Gym Session start, muted in-session YouTube autoplay, warm-up, set tracker, rest timer, next exercise, save workout, meal log, body log, activity, habits, goals, and settings/logout.
 - Tala: journal home, check-in, calm plan, journal prompts/privacy masking, mood trends, tasks done/reopen, goals, calendar selected-day detail, insights, and settings/logout.
 - PWA: install on iOS Safari and Android Chrome, launch from home screen, navigate while offline, then reconnect and verify Firebase-backed data refreshes.
@@ -234,7 +228,6 @@ users/{uid}/
   goals/            { name, target, current, date, createdAt, ... }
   accounts/         { name, type, balance, color, notes, createdAt, ... }
   budgets/          { cat, limit, createdAt, ... }
-  receipts/         { merchant, total, date, category, reference, notes, source, imagePath?, cleanedImagePath?, createdAt, ... }
   calendarEvents/   { title, date, notes, source, createdAt, ... }
   feedback/         { kind, rating, message, allowFeature, email, createdBy, createdAt }
   lakasRoutines/    { name, focus, exercises, exerciseCount, setCount, duration, notes, createdAt, ... }
@@ -256,8 +249,6 @@ users/{uid}/
 
 ```text
 users/{uid}/
-  receipts/{receiptId}/original.{ext}
-  receipts/{receiptId}/cleaned.{ext}
   lakas/meals/{mealId}/photo.{ext}
   lakas/bodyLogs/{bodyLogId}/photo.{ext}
 ```
@@ -269,9 +260,7 @@ users/{uid}/
 - The signed-in app lives at `/app`.
 - The whole product is named Buhay.
 - The finance space inside Buhay is still named Takda.
-- Ask Takda is intentionally finance-focused for now.
 - Google Sign-In is not enabled in the active auth screen.
-- Receipt and wallet imports currently use local image cleanup plus manual review before saving.
 - JSON backup/restore covers Takda, Lakas, Tala, profile settings, and metadata links for images.
 - Build verification requires Node/npm. If this environment has no Node/npm installed, `npm run build` cannot run.
 
