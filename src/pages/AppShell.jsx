@@ -1131,6 +1131,144 @@ export default function AppShell({ user }) {
         : activeSpace === 'takda' && page === item.id
   )
 
+  // 1. Takda Financial Pulse Status
+  const takdaPulse = useMemo(() => {
+    const transactions = data.transactions || []
+    const expenses = data.expenses || []
+    const bills = data.bills || []
+    const accounts = data.accounts || []
+    const budgets = data.budgets || []
+
+    const isSameMonth = (dStr, yr, mo) => {
+      if (!dStr) return false
+      const [y, m] = dStr.split('-')
+      return y === yr && m === mo
+    }
+    const isTransactionPaid = tx => tx.status !== 'unpaid'
+    const todayStr = today()
+    const viewYear = todayStr.slice(0, 4)
+    const viewMonth = todayStr.slice(5, 7)
+
+    const monthExpenses = expenses.filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const monthIncomes = (data.incomes || []).filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const incomeTotal = monthIncomes.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const expenseTotal = monthExpenses.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const monthNet = incomeTotal - expenseTotal
+
+    const savingsRate = incomeTotal <= 0 ? (expenseTotal > 0 ? -1 : 0) : monthNet / incomeTotal
+
+    const spendingMap = {}
+    monthExpenses.forEach(tx => {
+      spendingMap[tx.cat] = (spendingMap[tx.cat] || 0) + (tx.amount || 0)
+    })
+    let exceededBudgetsCount = 0
+    let warningBudgetsCount = 0
+    budgets.forEach(b => {
+      const spent = spendingMap[b.cat] || 0
+      const pct = b.limit > 0 ? (spent / b.limit) * 100 : 0
+      if (pct > 100) exceededBudgetsCount++
+      else if (pct >= 80) warningBudgetsCount++
+    })
+
+    const getBillPeriodInfo = (bill) => {
+      const scheds = Array.isArray(bill.schedules) ? bill.schedules : []
+      const dueSoonDate = (() => {
+        const d = new Date()
+        d.setDate(d.getDate() + 14)
+        const y = d.getFullYear()
+        const m = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        return `${y}-${m}-${day}`
+      })()
+      const list = scheds.map(s => {
+        const isPaid = (bill.payments || []).some(p => p.date === s.date)
+        const isOverdue = s.date < todayStr && !isPaid
+        const isDue = s.date === todayStr && !isPaid
+        const isSoon = s.date > todayStr && s.date <= dueSoonDate && !isPaid
+        let status = 'future'
+        if (isOverdue) status = 'overdue'
+        else if (isDue) status = 'due'
+        else if (isSoon) status = 'soon'
+        else if (isPaid) status = 'paid'
+        return { date: s.date, status, paid: isPaid }
+      })
+      const activePeriod = list.find(p => !p.paid && ['overdue', 'due', 'soon'].includes(p.status))
+      return activePeriod || list[0] || null
+    }
+
+    const unpaidBillsTotal = bills.map(bill => ({
+      ...bill,
+      period: getBillPeriodInfo(bill),
+    }))
+    .filter(bill => bill.period && !bill.period.paid && ['overdue', 'due', 'soon'].includes(bill.period.status))
+    .reduce((sum, bill) => sum + (Number(bill.amount) || 0), 0)
+
+    const liquidTotal = accounts
+      .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
+      .reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
+
+    let status = 'healthy'
+    let color = '#00e676'
+    let label = 'Healthy'
+
+    if (savingsRate < 0.05 || (unpaidBillsTotal > 0 && liquidTotal < unpaidBillsTotal) || exceededBudgetsCount >= 3) {
+      status = 'strained'
+      color = '#ff3d00'
+      label = 'Strained'
+    } else if (savingsRate < 0.2 || exceededBudgetsCount > 0 || warningBudgetsCount > 0 || unpaidBillsTotal > 0) {
+      status = 'caution'
+      color = '#ffc107'
+      label = 'Caution'
+    }
+
+    return { status, color, label }
+  }, [data])
+
+  // 2. Lakas Weekly Consistency Score
+  const lakasScoreValue = useMemo(() => {
+    const workouts = data.lakasWorkouts || []
+    const habits = data.lakasHabits || []
+
+    const now = new Date()
+    const startMs = now.getTime() - 7 * 24 * 60 * 60 * 1000
+    const endMs = now.getTime()
+
+    const formatDate = d => {
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+
+    const startDateStr = formatDate(new Date(startMs))
+    const endDateStr = formatDate(new Date(endMs))
+
+    const weekWorkouts = workouts.filter(w => w.date > startDateStr && w.date <= endDateStr)
+    const weekHabits = habits.filter(h => h.date > startDateStr && h.date <= endDateStr)
+
+    const workoutsPoints = weekWorkouts.length * 10
+    const habitsPoints = weekHabits.reduce((sum, h) => sum + (Number(h.score) || 0), 0) * 2
+    const runDist = weekWorkouts.reduce((sum, w) => sum + (Number(w.distance) || 0), 0)
+    const runPoints = Math.round(runDist * 3)
+
+    return workoutsPoints + habitsPoints + runPoints
+  }, [data])
+
+  // 3. Tala Weather Climate Status
+  const talaWeatherValue = useMemo(() => {
+    const checkins = data.talaCheckins || []
+    const moods = data.talaMoods || []
+    const todayStr = today()
+
+    const todayLog = checkins.find(row => row.date === todayStr)
+    const sortedMoods = [...moods].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+    const lastMood = sortedMoods[0]?.mood || 'Okay'
+
+    const mName = todayLog?.mood || lastMood
+    const emojiMap = { Great: '☀️', Good: '🌤️', Okay: '☁️', Low: '🌧️', Heavy: '⛈️' }
+    return emojiMap[mName] || '☁️'
+  }, [data])
+
   const { theme, toggle: toggleTheme } = useTheme()
   // Keep the same layout + component styling in both light and dark.
   // The neo palette itself flips via `[data-theme="dark"] .neo` tokens in `index.css`.
@@ -1477,6 +1615,40 @@ export default function AppShell({ user }) {
             </div>
           </div>
           <div className={styles.topBarRight}>
+            <div className={styles.headerSpaceBadges}>
+              {/* Takda (Money Pulse) Badge */}
+              <button
+                type="button"
+                className={`${styles.headerSpaceBadge} ${styles.badgeTakda} ${activeSpace === 'takda' ? styles.activeBadge : ''}`}
+                onClick={() => openSpace('takda')}
+                title={`Takda: ${takdaPulse.label} pulse status`}
+              >
+                <span className={styles.badgeIndicator} style={{ backgroundColor: takdaPulse.color }}></span>
+                <span className={styles.badgeLabel}>Takda</span>
+              </button>
+
+              {/* Lakas (Consistency Score) Badge */}
+              <button
+                type="button"
+                className={`${styles.headerSpaceBadge} ${styles.badgeLakas} ${activeSpace === 'lakas' ? styles.activeBadge : ''}`}
+                onClick={() => openSpace('lakas')}
+                title={`Lakas: Weekly Consistency score ${lakasScoreValue} pts`}
+              >
+                <span className={styles.badgeLabel}>Lakas:</span>
+                <strong className={styles.badgeVal}>⚡ {lakasScoreValue}</strong>
+              </button>
+
+              {/* Tala (Weather Climate) Badge */}
+              <button
+                type="button"
+                className={`${styles.headerSpaceBadge} ${styles.badgeTala} ${activeSpace === 'tala' ? styles.activeBadge : ''}`}
+                onClick={() => openSpace('tala')}
+                title="Tala: Emotional Climate weather status"
+              >
+                <span className={styles.badgeLabel}>Tala:</span>
+                <strong className={styles.badgeVal}>{talaWeatherValue}</strong>
+              </button>
+            </div>
 
             <button
               type="button"
