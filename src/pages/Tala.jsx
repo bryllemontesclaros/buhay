@@ -1474,8 +1474,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Private entries are masked when privacy mode is on.</p>
             </div>
           </div>
-          {!journal.length ? <div className={tStyles.empty}>No journal entries yet.</div> : journal.slice(0, 8).map(entry => (
-            <div key={entry._id} className={tStyles.entryCard}>
+          {!journal.length ? <div className={tStyles.empty}>No journal entries yet.</div> : journal.slice(0, 8).map((entry, idx) => (
+            <div key={entry._id} className={`${tStyles.entryCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div>
                 <span>{formatDisplayDate(entry.date)} · {entry.mood} · {entry.private ? 'Private' : 'Open'}</span>
                 <strong>{entry.title}</strong>
@@ -1570,8 +1570,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <MiniTrend title="Energy" rows={insights.energyTrend} hidden={privacyMode || !talaSettings.showMoodInsights} />
           </div>
           <div className={tStyles.routineList}>
-            {!moods.length ? <div className={tStyles.empty}>No mood logs yet.</div> : moods.slice(0, 5).map(row => (
-              <div key={row._id} className={tStyles.rowCard}>
+            {!moods.length ? <div className={tStyles.empty}>No mood logs yet.</div> : moods.slice(0, 5).map((row, idx) => (
+              <div key={row._id} className={`${tStyles.rowCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
                 <div>
                   <strong><span className={`${tStyles.moodDot} ${tStyles[moodTone(row.mood)]}`} /> {row.mood}</strong>
                   <span>{formatDisplayDate(row.date)} · Energy {row.energy || '-'} · Stress {row.stress || '-'}</span>
@@ -1626,8 +1626,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Mark done when complete. Finished tasks stay visible for momentum.</p>
             </div>
           </div>
-          {!tasks.length ? <div className={tStyles.empty}>No tasks yet.</div> : tasks.slice(0, 10).map(task => (
-            <div key={task._id} className={`${tStyles.rowCard} ${task.done ? tStyles.rowDone : ''}`}>
+          {!tasks.length ? <div className={tStyles.empty}>No tasks yet.</div> : tasks.slice(0, 10).map((task, idx) => (
+            <div key={task._id} className={`${tStyles.rowCard} ${task.done ? tStyles.rowDone : ''} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div>
                 <strong>{task.title}</strong>
                 <span>{task.dueDate ? formatDisplayDate(task.dueDate) : 'No due date'} · {task.priority} · {task.done ? 'Done' : 'Open'}</span>
@@ -1688,8 +1688,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Update progress directly from the card.</p>
             </div>
           </div>
-          {!goals.length ? <div className={tStyles.empty}>No Tala goals yet.</div> : goals.map(goal => (
-            <div key={goal._id} className={tStyles.goalCard}>
+          {!goals.length ? <div className={tStyles.empty}>No Tala goals yet.</div> : goals.map((goal, idx) => (
+            <div key={goal._id} className={`${tStyles.goalCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div className={tStyles.goalTop}>
                 <div>
                   <strong>{goal.name}</strong>
@@ -1840,8 +1840,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <div className={tStyles.dayTimeline}>
             {selectedDayTotal ? (
               <div className={tStyles.dayTimelineTrack}>
-                {selectedDayData.checkins.map(row => (
-                  <div key={`checkin-${row._id}`} className={tStyles.dayTimelineItem}>
+                {selectedDayData.checkins.map((row, idx) => (
+                  <div key={`checkin-${row._id}`} className={`${tStyles.dayTimelineItem} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
                     <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeCheckin}`}>
                       <span>📋</span>
                     </div>
@@ -1852,8 +1852,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                     </div>
                   </div>
                 ))}
-                {selectedDayData.journal.map(row => (
-                  <div key={`journal-${row._id}`} className={tStyles.dayTimelineItem}>
+                {selectedDayData.journal.map((row, jdx) => (
+                  <div key={`journal-${row._id}`} className={`${tStyles.dayTimelineItem} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${(selectedDayData.checkins.length + jdx) * 45}ms` }}>
                     <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeJournal}`}>
                       <span>✍️</span>
                     </div>
@@ -1867,8 +1867,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                     </div>
                   </div>
                 ))}
-                {selectedDayData.moods.map(row => (
-                  <div key={`mood-${row._id}`} className={tStyles.dayTimelineItem}>
+                {selectedDayData.moods.map((row, mdx) => (
+                  <div key={`mood-${row._id}`} className={`${tStyles.dayTimelineItem} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${(selectedDayData.checkins.length + selectedDayData.journal.length + mdx) * 45}ms` }}>
                     <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeMood}`}>
                       <span>📊</span>
                     </div>
@@ -1886,8 +1886,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                     </div>
                   </div>
                 ))}
-                {selectedDayData.tasks.map(row => (
-                  <div key={`task-${row._id}`} className={tStyles.dayTimelineItem}>
+                {selectedDayData.tasks.map((row, tdx) => (
+                  <div key={`task-${row._id}`} className={`${tStyles.dayTimelineItem} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${(selectedDayData.checkins.length + selectedDayData.journal.length + selectedDayData.moods.length + tdx) * 45}ms` }}>
                     <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeTask}`}>
                       <span>📌</span>
                     </div>
@@ -1898,8 +1898,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                     </div>
                   </div>
                 ))}
-                {selectedDayData.goals.map(row => (
-                  <div key={`goal-${row._id}`} className={tStyles.dayTimelineItem}>
+                {selectedDayData.goals.map((row, gdx) => (
+                  <div key={`goal-${row._id}`} className={`${tStyles.dayTimelineItem} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${(selectedDayData.checkins.length + selectedDayData.journal.length + selectedDayData.moods.length + selectedDayData.tasks.length + gdx) * 45}ms` }}>
                     <div className={`${tStyles.dayTimelineNode} ${tStyles.nodeGoal}`}>
                       <span>🎯</span>
                     </div>
