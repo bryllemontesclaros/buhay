@@ -1148,6 +1148,7 @@ export default function AppShell({ user }) {
       : (spaceActionRequest?.space === activeSpace ? spaceActionRequest : null),
     onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
     onTakdaAction: openTakdaAction,
+    onLakasTabChange: setLakasPage,
     portfolioActionRequest: activeSpace === 'takda' && page === 'portfolio' ? portfolioActionRequest : null,
     onPortfolioActionHandled: handlePortfolioActionHandled,
   }

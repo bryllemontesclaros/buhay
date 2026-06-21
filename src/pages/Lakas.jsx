@@ -704,6 +704,7 @@ function createHabitForm() {
   return {
     date: today(),
     water: false,
+    waterGlasses: 0,
     protein: false,
     sleep: false,
     stretching: false,
@@ -755,6 +756,7 @@ function getLakasSettings(profile = {}) {
     reminders: { ...DEFAULT_LAKAS_SETTINGS.reminders, ...(settings.reminders || {}) },
     display: { ...DEFAULT_LAKAS_SETTINGS.display, ...(settings.display || {}) },
     exerciseLibrary: sanitizeExerciseLibrary(settings.exerciseLibrary || []),
+    mealCombos: settings.mealCombos || [],
   }
 }
 
@@ -808,6 +810,13 @@ function sanitizeLakasSettings(settings = {}) {
       hideProgressPhotosInPrivacy: next.display.hideProgressPhotosInPrivacy !== false,
     },
     exerciseLibrary: sanitizeExerciseLibrary(next.exerciseLibrary || []),
+    mealCombos: (next.mealCombos || []).map(combo => ({
+      name: String(combo.name || '').trim(),
+      calories: numberOrZero(combo.calories),
+      protein: numberOrZero(combo.protein),
+      carbs: numberOrZero(combo.carbs),
+      fat: numberOrZero(combo.fat),
+    })),
   }
 }
 
@@ -1814,30 +1823,473 @@ function getHabitScore(row = {}) {
   return HABIT_OPTIONS.reduce((score, option) => score + (row[option.key] ? 1 : 0), 0)
 }
 
-function MiniBarChart({ title, rows, unit = '', hidden = false }) {
+function MiniBarChart({ title, rows, unit = '', hidden = false, color = 'var(--accent)' }) {
   const maxValue = Math.max(1, ...rows.map(row => numberOrZero(row.value)))
+  const total = rows.reduce((sum, row) => sum + numberOrZero(row.value), 0)
+  const svgH = 52
+  const barW = 14
+  const gap = 6
+  const svgW = rows.length * (barW + gap)
 
   return (
     <div className={lStyles.chartCard}>
       <div className={lStyles.chartTitle}>{title}</div>
-      <div className={lStyles.barChart}>
-        {rows.map(row => (
-          <div key={row.key} className={lStyles.barSlot}>
-            <div className={lStyles.barTrack}>
-              <div className={lStyles.barFill} style={{ height: `${Math.max(5, (numberOrZero(row.value) / maxValue) * 100)}%` }} />
-            </div>
-            <span>{row.label}</span>
-          </div>
-        ))}
-      </div>
+      <svg
+        viewBox={`0 0 ${svgW} ${svgH}`}
+        width="100%"
+        height={svgH}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        className={lStyles.svgBarChart}
+      >
+        {rows.map((row, index) => {
+          const pct = numberOrZero(row.value) / maxValue
+          const barH = Math.max(3, pct * (svgH - 14))
+          const x = index * (barW + gap)
+          const y = svgH - barH - 12
+          return (
+            <g key={row.key}>
+              <rect
+                x={x} y={y} width={barW} height={barH} rx={3}
+                fill={color}
+                opacity={pct < 0.05 ? 0.2 : 0.82}
+                className={lStyles.svgBarRect}
+              />
+              <text x={x + barW / 2} y={svgH - 1} textAnchor="middle" fontSize="7" fill="var(--text3)">
+                {row.label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
       <div className={lStyles.chartMeta}>
-        {hidden ? 'Private' : `${formatNumber(rows.reduce((sum, row) => sum + numberOrZero(row.value), 0), 1)} ${unit}`.trim()}
+        {hidden ? 'Private' : `${formatNumber(total, 1)} ${unit}`.trim()}
       </div>
     </div>
   )
 }
 
-export default function Lakas({ user, data = {}, profile = {}, privacyMode = false, activeTab = 'workout', actionRequest = null, onActionHandled = () => {} }) {
+function SvgSparkLine({ title, rows, unit = '', hidden = false, color = 'var(--accent)', showArea = true }) {
+  if (!rows.length) return null
+  const values = rows.map(row => numberOrZero(row.value))
+  const minVal = Math.min(...values)
+  const maxVal = Math.max(...values)
+  const range = Math.max(1, maxVal - minVal)
+  const W = 200
+  const H = 52
+  const pad = 6
+
+  const toX = index => pad + (index / Math.max(1, rows.length - 1)) * (W - pad * 2)
+  const toY = value => H - 14 - ((value - minVal) / range) * (H - pad - 14)
+
+  const points = rows.map((row, index) => `${toX(index)},${toY(numberOrZero(row.value))}`)
+  const polyline = points.join(' ')
+  const lastVal = values[values.length - 1]
+  const firstVal = values[0]
+  const delta = lastVal - firstVal
+  const deltaLabel = delta > 0 ? `+${formatNumber(delta, 1)}` : formatNumber(delta, 1)
+  const areaPath = rows.length > 1
+    ? `M${toX(0)},${H - 12} L${points[0]} ${rows.slice(1).map((_, i) => `L${points[i + 1]}`).join(' ')} L${toX(rows.length - 1)},${H - 12} Z`
+    : ''
+
+  return (
+    <div className={lStyles.chartCard}>
+      <div className={lStyles.chartTitle}>{title}</div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        width="100%"
+        height={H}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        className={lStyles.svgSparkLine}
+      >
+        {showArea && areaPath && (
+          <path d={areaPath} fill={color} opacity="0.13" />
+        )}
+        {rows.length > 1 && (
+          <polyline
+            points={polyline}
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        )}
+        {rows.map((row, index) => (
+          <circle
+            key={row.key}
+            cx={toX(index)}
+            cy={toY(numberOrZero(row.value))}
+            r={index === rows.length - 1 ? 3.5 : 2}
+            fill={index === rows.length - 1 ? color : 'var(--surface)'}
+            stroke={color}
+            strokeWidth={index === rows.length - 1 ? 0 : 1.5}
+          />
+        ))}
+        {rows.map((row, index) => (
+          index === 0 || index === rows.length - 1 || index === Math.floor(rows.length / 2) ? (
+            <text key={`lbl-${row.key}`} x={toX(index)} y={H - 2} textAnchor="middle" fontSize="7" fill="var(--text3)">
+              {row.label}
+            </text>
+          ) : null
+        ))}
+      </svg>
+      <div className={lStyles.chartMeta}>
+        {hidden
+          ? 'Private'
+          : rows.length > 1
+            ? `${formatNumber(lastVal, 1)} ${unit} · ${delta !== 0 ? deltaLabel : 'steady'}`
+            : `${formatNumber(lastVal, 1)} ${unit}`}
+      </div>
+    </div>
+  )
+}
+
+function HabitHeatmap({ title, rows, hidden = false }) {
+  const max = Math.max(1, ...rows.map(row => numberOrZero(row.value)))
+  return (
+    <div className={lStyles.chartCard}>
+      <div className={lStyles.chartTitle}>{title}</div>
+      <div className={lStyles.heatmapRow} aria-hidden="true">
+        {rows.map(row => {
+          const pct = numberOrZero(row.value) / max
+          return (
+            <div
+              key={row.key}
+              className={lStyles.heatmapCell}
+              style={{ opacity: hidden ? 0.3 : Math.max(0.1, pct) }}
+              title={hidden ? 'Private' : `${row.label}: ${row.value}`}
+            />
+          )
+        })}
+      </div>
+      <div className={lStyles.heatmapLabels} aria-hidden="true">
+        {rows.filter((_, i) => i === 0 || i === rows.length - 1 || i === Math.floor(rows.length / 2)).map(row => (
+          <span key={`hl-${row.key}`}>{row.label}</span>
+        ))}
+      </div>
+      <div className={lStyles.chartMeta}>
+        {hidden ? 'Private' : `${rows.filter(r => numberOrZero(r.value) > 0).length} of ${rows.length} days`}
+      </div>
+    </div>
+  )
+}
+
+function playTick() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1000, now);
+    gain.gain.setValueAtTime(0.04, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  } catch (e) {
+    console.warn('Audio tick failed:', e);
+  }
+}
+
+function ConsistencyHeatmap({ workouts = [], habits = [], privacyMode = false }) {
+  const data = useMemo(() => {
+    const dataMap = {};
+    
+    workouts.forEach(w => {
+      if (w.date) {
+        dataMap[w.date] = (dataMap[w.date] || 0) + 3;
+      }
+    });
+    
+    habits.forEach(h => {
+      if (h.date) {
+        let score = 0;
+        HABIT_OPTIONS.forEach(opt => {
+          if (h[opt.key]) score += 1;
+        });
+        dataMap[h.date] = (dataMap[h.date] || 0) + score;
+      }
+    });
+    
+    const list = [];
+    const todayDate = new Date();
+    const daysToShow = 365;
+    const startDay = new Date();
+    startDay.setDate(todayDate.getDate() - (daysToShow - 1));
+    const startDayOfWeek = startDay.getDay();
+    
+    for (let i = 0; i < daysToShow; i++) {
+      const d = new Date(startDay);
+      d.setDate(startDay.getDate() + i);
+      
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      const val = dataMap[dateStr] || 0;
+      list.push({
+        date: dateStr,
+        value: val,
+        dayOfWeek: d.getDay(),
+        month: d.getMonth(),
+        dayOfMonth: d.getDate(),
+        year
+      });
+    }
+    return { list, startDayOfWeek };
+  }, [workouts, habits]);
+
+  const { list, startDayOfWeek } = data;
+  const cellS = 10;
+  const cellGap = 2;
+  const weekW = cellS + cellGap;
+  const columnsCount = Math.ceil((list.length + startDayOfWeek) / 7);
+  const svgW = columnsCount * weekW + 20;
+  const svgH = 7 * weekW + 15;
+
+  const activeDays = list.filter(d => d.value > 0).length;
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let tempStreak = 0;
+  
+  list.forEach(day => {
+    if (day.value > 0) {
+      tempStreak++;
+      if (tempStreak > longestStreak) {
+        longestStreak = tempStreak;
+      }
+    } else {
+      tempStreak = 0;
+    }
+  });
+  currentStreak = tempStreak;
+
+  const rects = list.map((day, i) => {
+    const col = Math.floor((i + startDayOfWeek) / 7);
+    const row = (i + startDayOfWeek) % 7;
+    const x = col * weekW + 15;
+    const y = row * weekW + 10;
+    
+    let color = 'rgba(255, 255, 255, 0.05)';
+    if (!privacyMode && day.value > 0) {
+      if (day.value <= 2) color = 'color-mix(in srgb, var(--accent) 30%, transparent)';
+      else if (day.value <= 4) color = 'color-mix(in srgb, var(--accent) 55%, transparent)';
+      else if (day.value <= 6) color = 'color-mix(in srgb, var(--accent) 80%, transparent)';
+      else color = 'var(--accent)';
+    } else if (privacyMode && day.value > 0) {
+      color = 'rgba(255, 255, 255, 0.15)';
+    }
+
+    const labelText = privacyMode 
+      ? 'Private activity check-in'
+      : `${day.date}: ${day.value} activity points`;
+
+    return (
+      <rect
+        key={day.date}
+        x={x}
+        y={y}
+        width={cellS}
+        height={cellS}
+        fill={color}
+        className={lStyles.heatmapRect}
+      >
+        <title>{labelText}</title>
+      </rect>
+    );
+  });
+
+  const monthLabels = [];
+  let lastMonth = -1;
+  list.forEach((day, i) => {
+    if (day.month !== lastMonth) {
+      const col = Math.floor((i + startDayOfWeek) / 7);
+      const x = col * weekW + 15;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      if (x < svgW - 30) {
+        monthLabels.push(
+          <text key={day.date} x={x} y={8} className={lStyles.heatmapText} fontSize="8">
+            {monthNames[day.month]}
+          </text>
+        );
+      }
+      lastMonth = day.month;
+    }
+  });
+
+  return (
+    <div className={lStyles.chartCard}>
+      <div className={lStyles.chartTitle}>Annual Consistency</div>
+      <div className={lStyles.annualHeatmapContainer}>
+        <svg viewBox={`0 0 ${svgW} ${svgH}`} className={lStyles.annualHeatmapSvg} width={svgW} height={svgH}>
+          <text x={0} y={10 + 1 * weekW} className={lStyles.heatmapText} fontSize="8">Mon</text>
+          <text x={0} y={10 + 3 * weekW} className={lStyles.heatmapText} fontSize="8">Wed</text>
+          <text x={0} y={10 + 5 * weekW} className={lStyles.heatmapText} fontSize="8">Fri</text>
+          {monthLabels}
+          {rects}
+        </svg>
+      </div>
+      <div className={lStyles.heatmapLegend}>
+        <span>Less</span>
+        <div className={lStyles.heatmapLegendGrid}>
+          <div className={lStyles.heatmapLegendCell} style={{ background: 'rgba(255, 255, 255, 0.05)' }} />
+          <div className={lStyles.heatmapLegendCell} style={{ background: 'color-mix(in srgb, var(--accent) 30%, transparent)' }} />
+          <div className={lStyles.heatmapLegendCell} style={{ background: 'color-mix(in srgb, var(--accent) 55%, transparent)' }} />
+          <div className={lStyles.heatmapLegendCell} style={{ background: 'color-mix(in srgb, var(--accent) 80%, transparent)' }} />
+          <div className={lStyles.heatmapLegendCell} style={{ background: 'var(--accent)' }} />
+        </div>
+        <span>More</span>
+      </div>
+      <div className={lStyles.chartMeta} style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+        <span>Active days: {privacyMode ? 'Private' : `${activeDays} / 365`}</span>
+        <span>Longest streak: {privacyMode ? 'Private' : `${longestStreak} days`}</span>
+        <span>Current: {privacyMode ? 'Private' : `${currentStreak} days`}</span>
+      </div>
+    </div>
+  );
+}
+
+function InteractiveRoadmap({ workouts = [], onLakasTabChange = () => {}, privacyMode = false }) {
+  const [expandedPhase, setExpandedPhase] = useState(null);
+  
+  const foundationWorkouts = useMemo(() => {
+    const beginnerTemplateNames = ['Foundation A', 'Foundation B', 'Foundation C', 'Beginner A', 'Beginner B'];
+    return workouts.filter(workout => {
+      const name = `${workout.title || ''} ${workout.routineName || ''}`.toLowerCase();
+      return beginnerTemplateNames.some(templateName => name.includes(templateName.toLowerCase()));
+    });
+  }, [workouts]);
+  
+  const completed = foundationWorkouts.length;
+  const currentPhaseIndex = completed < 4 ? 0 : completed < 8 ? 1 : 2;
+  
+  const phases = [
+    {
+      title: 'Weeks 1-2: Learn the moves',
+      desc: 'Focus on perfect form, control, and learning the patterns. Keep sets comfortable.',
+      milestone: 'Complete 4 foundation sessions',
+      target: 4,
+      rules: [
+        'Focus on smooth pain-free range of motion.',
+        'Use light, comfortable weight.',
+        'Stop 2-3 reps before your form breaks.'
+      ]
+    },
+    {
+      title: 'Weeks 3-4: Add one small step',
+      desc: 'Introduce small increases in reps or sets while maintaining clean execution.',
+      milestone: 'Complete 8 foundation sessions',
+      target: 8,
+      rules: [
+        'Add 1-2 reps per set if the last session felt easy.',
+        'Only add volume (an extra set) if recovery was fast.',
+        'Keep the core tight and elbows stacked.'
+      ]
+    },
+    {
+      title: 'Weeks 5-8: Build consistency',
+      desc: 'Establish a regular rhythm and begin cautious weight progression.',
+      milestone: 'Establish a consistent 2-3x/week workout habit',
+      target: 12,
+      rules: [
+        'Add small weight increments only after hitting all target reps twice.',
+        'Prioritize sleep and hydration to support recovery.',
+        'Take a deload week (light effort) if joints feel tired.'
+      ]
+    }
+  ];
+
+  const handleStepClick = (index) => {
+    playTick();
+    setExpandedPhase(expandedPhase === index ? null : index);
+  };
+
+  return (
+    <div className={lStyles.chartCard}>
+      <div className={lStyles.chartTitle}>Beginner Roadmap</div>
+      <p className={lStyles.chartMeta} style={{ marginBottom: '16px' }}>
+        You have logged <strong>{privacyMode ? 'Private' : completed}</strong> foundation sessions. 
+        {completed < 8 ? ' Keep building your base!' : ' Foundation built, nice job!'}
+      </p>
+      <div className={lStyles.roadmapTimeline}>
+        {phases.map((phase, index) => {
+          const isCompleted = completed >= phase.target || (index === 0 && completed >= 4) || (index === 1 && completed >= 8);
+          const isActive = index === currentPhaseIndex;
+          const isExpanded = expandedPhase === index;
+          
+          let statusLabel = 'Upcoming';
+          let badgeClass = lStyles.roadmapBadgeUpcoming;
+          let dotClass = lStyles.roadmapDot;
+          
+          if (isCompleted) {
+            statusLabel = 'Completed';
+            badgeClass = lStyles.roadmapBadgeCompleted;
+            dotClass = `${lStyles.roadmapDot} ${lStyles.roadmapDotCompleted}`;
+          } else if (isActive) {
+            statusLabel = 'Active';
+            badgeClass = lStyles.roadmapBadgeActive;
+            dotClass = `${lStyles.roadmapDot} ${lStyles.roadmapDotActive}`;
+          }
+          
+          return (
+            <div 
+              key={phase.title} 
+              className={`${lStyles.roadmapStep} ${isActive ? lStyles.roadmapStepActive : ''}`}
+              onClick={() => handleStepClick(index)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className={dotClass} />
+              <div className={lStyles.roadmapHeader}>
+                <span className={lStyles.roadmapTitle}>{phase.title}</span>
+                <span className={`${lStyles.roadmapBadge} ${badgeClass}`}>{statusLabel}</span>
+              </div>
+              <p className={lStyles.roadmapDesc}>{phase.desc}</p>
+              
+              {isExpanded && (
+                <div className={lStyles.roadmapDetails} onClick={(e) => e.stopPropagation()}>
+                  <div className={lStyles.roadmapMilestone}>
+                    🎯 Milestone: {phase.milestone} 
+                    {!privacyMode && ` (${Math.min(completed, phase.target)}/${phase.target})`}
+                  </div>
+                  <div style={{ marginTop: '8px' }}>
+                    <strong style={{ fontSize: '11px', display: 'block', marginBottom: '4px', color: 'var(--text2)' }}>
+                      Core guidelines for this phase:
+                    </strong>
+                    <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '3px', color: 'var(--text2)' }}>
+                      {phase.rules.map(rule => (
+                        <li key={rule}>{rule}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {isActive && (
+                    <button 
+                      type="button" 
+                      className={lStyles.roadmapAction}
+                      onClick={() => {
+                        playTick();
+                        onLakasTabChange('workout');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      Go to workouts & start session
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default function Lakas({ user, data = {}, profile = {}, privacyMode = false, activeTab = 'workout', actionRequest = null, onActionHandled = () => {}, onLakasTabChange = () => {} }) {
   const initialSettings = getLakasSettings(profile)
   const [routineForm, setRoutineForm] = useState(() => createRoutineForm(initialSettings))
   const [workoutForm, setWorkoutForm] = useState(() => createWorkoutForm(initialSettings))
@@ -1850,6 +2302,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const [settingsForm, setSettingsForm] = useState(initialSettings)
   const [exerciseLibraryDraft, setExerciseLibraryDraft] = useState(createExerciseLibraryDraft)
   const [goalProgress, setGoalProgress] = useState({})
+  const [celebrationGoal, setCelebrationGoal] = useState(null)
   const [savingMeal, setSavingMeal] = useState(false)
   const [savingBody, setSavingBody] = useState(false)
   const [savingSettings, setSavingSettings] = useState(false)
@@ -1895,6 +2348,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const handledActionTokenRef = useRef(null)
   const mealPhotoUrlsRef = useRef({})
   const bodyPhotoUrlsRef = useRef({})
+  const hasInitializedHabitsRef = useRef(false)
   const [mealPhotoUrls, setMealPhotoUrls] = useState({})
   const [bodyPhotoUrls, setBodyPhotoUrls] = useState({})
 
@@ -1953,6 +2407,11 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const activeGymGuide = getExerciseGuide(activeGymExercise.name)
   const activeGymSetCount = getExerciseSetCount(activeGymExercise)
   const activeGymCompletedSets = gymSessionMode.completedSets?.[activeGymExerciseIndex] || {}
+  const activeWorkoutExercise = workoutForm.exercises[activeGymExerciseIndex] || {}
+  const activeGymHistory = exerciseHistory[normalizeExerciseKey(activeGymExercise.name)]
+  const activeGymAnalytic = exerciseInsights.exercises.find(entry => entry.key === normalizeExerciseKey(activeGymExercise.name))
+  const activeGymPB = activeGymAnalytic ? numberOrZero(activeGymAnalytic.bestWeight) : 0
+  const activeGymHasNewPR = activeGymPB > 0 && numberOrZero(activeWorkoutExercise.weight) > activeGymPB
   const activeGymDoneSets = Object.values(activeGymCompletedSets).filter(Boolean).length
   const activeGymCompletedCount = activeGymExercises.reduce((count, exercise, index) => {
     const doneSets = getCompletedSetCount(gymSessionMode.completedSets, index)
@@ -1987,6 +2446,26 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   }, [profileSettingsKey])
 
   useEffect(() => {
+    if (habits.length && !hasInitializedHabitsRef.current) {
+      const todayHabit = habits.find(h => h.date === today())
+      if (todayHabit) {
+        setHabitForm({
+          date: today(),
+          water: Boolean(todayHabit.water),
+          waterGlasses: numberOrZero(todayHabit.waterGlasses),
+          protein: Boolean(todayHabit.protein),
+          sleep: Boolean(todayHabit.sleep),
+          stretching: Boolean(todayHabit.stretching),
+          restDay: Boolean(todayHabit.restDay),
+          vitamins: Boolean(todayHabit.vitamins),
+          notes: todayHabit.notes || '',
+        })
+      }
+      hasInitializedHabitsRef.current = true
+    }
+  }, [habits])
+
+  useEffect(() => {
     if (!gymSessionMode.open) return undefined
 
     setGymSessionNow(Date.now())
@@ -2005,6 +2484,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 
   useEffect(() => {
     setTrackView(current => {
+      if (activeTab === 'body' && VALID_LAKAS_TRACK_VIEWS.has(current)) {
+        return current
+      }
       const next = normalizeTrackView(getTrackViewForTab(activeTab), activeTab)
       return current === next ? current : next
     })
@@ -2077,9 +2559,31 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     const latestBody = bodyLogs.find(row => numberOrZero(row.weight) > 0 || numberOrZero(row.waist) > 0) || {}
     const latestWeight = latestBody.weight || 0
     const latestBmi = calculateBmi(latestBody.weight, latestBody.height, savedLakasSettings.units.weight, savedLakasSettings.units.body)
-    const activeGoals = goals.filter(goal => numberOrZero(goal.current) < numberOrZero(goal.target)).length
     const todayActivity = activities.find(row => row.date === today()) || {}
     const todayHabit = habits.find(row => row.date === today()) || {}
+    const activeGoals = goals.filter(goal => {
+      let resolvedCurrent = numberOrZero(goal.current)
+      const typeLower = String(goal.type || '').toLowerCase()
+      const nameLower = String(goal.name || '').toLowerCase()
+      if (typeLower === 'steps') {
+        resolvedCurrent = numberOrZero(todayActivity.steps)
+      } else if (typeLower === 'workout' || typeLower === 'workouts') {
+        if (nameLower.includes('week') || String(goal.unit || '').toLowerCase().includes('week')) {
+          resolvedCurrent = workoutsThisWeek
+        } else {
+          resolvedCurrent = workouts.length
+        }
+      } else if (typeLower === 'calories') {
+        resolvedCurrent = caloriesToday
+      } else if (typeLower === 'protein') {
+        resolvedCurrent = proteinToday
+      } else if (typeLower === 'weight') {
+        resolvedCurrent = latestWeight
+      } else if (typeLower === 'habit' || typeLower === 'habits') {
+        resolvedCurrent = getHabitScore(todayHabit)
+      }
+      return resolvedCurrent < numberOrZero(goal.target)
+    }).length
     const activeDays = new Set([
       ...workouts.filter(row => row.date >= weekStart).map(row => row.date),
       ...activities.filter(row => row.date >= weekStart && (
@@ -2107,6 +2611,20 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       value: numberOrZero(row.weight),
     }))
     const records = getPersonalRecords(workouts, activities)
+    const caloriesByDay = lastSevenDays.map(day => ({
+      key: day,
+      label: day.slice(8),
+      value: meals.filter(row => row.date === day).reduce((sum, row) => sum + numberOrZero(row.calories), 0),
+    }))
+    const proteinByDay = lastSevenDays.map(day => ({
+      key: day,
+      label: day.slice(8),
+      value: meals.filter(row => row.date === day).reduce((sum, row) => sum + numberOrZero(row.protein), 0),
+    }))
+    const habitByDay = lastSevenDays.map(day => {
+      const h = habits.find(row => row.date === day) || {}
+      return { key: day, label: day.slice(8), value: getHabitScore(h) }
+    })
 
     return {
       workoutsThisWeek,
@@ -2119,14 +2637,89 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       stepsToday: numberOrZero(todayActivity.steps),
       activeMinutesToday: numberOrZero(todayActivity.activeMinutes) + numberOrZero(todayActivity.cardioMinutes) + numberOrZero(todayActivity.walkingMinutes),
       habitScoreToday: getHabitScore(todayHabit),
+      waterGlassesToday: numberOrZero(todayHabit.waterGlasses),
       activeDays,
       volumeByDay,
       stepsByDay,
       workoutFrequency,
       weightTrend,
+      caloriesByDay,
+      proteinByDay,
+      habitByDay,
       records,
     }
   }, [activities, bodyLogs, goals, habits, meals, profileSettingsKey, routines.length, savedLakasSettings.units.body, savedLakasSettings.units.weight, workouts])
+
+  const resolvedGoals = useMemo(() => {
+    return goals.map(goal => {
+      let resolvedCurrent = numberOrZero(goal.current)
+      const typeLower = String(goal.type || '').toLowerCase()
+      const nameLower = String(goal.name || '').toLowerCase()
+      
+      if (typeLower === 'steps') {
+        resolvedCurrent = insights.stepsToday
+      } else if (typeLower === 'workout' || typeLower === 'workouts') {
+        if (nameLower.includes('week') || String(goal.unit || '').toLowerCase().includes('week')) {
+          resolvedCurrent = insights.workoutsThisWeek
+        } else {
+          resolvedCurrent = workouts.length
+        }
+      } else if (typeLower === 'calories') {
+        resolvedCurrent = insights.caloriesToday
+      } else if (typeLower === 'protein') {
+        resolvedCurrent = insights.proteinToday
+      } else if (typeLower === 'weight') {
+        resolvedCurrent = insights.latestWeight
+      } else if (typeLower === 'habit' || typeLower === 'habits') {
+        resolvedCurrent = insights.habitScoreToday
+      }
+      
+      return {
+        ...goal,
+        current: resolvedCurrent,
+      }
+    })
+  }, [goals, insights, workouts.length])
+
+  const almostDoneGoals = useMemo(() => {
+    return resolvedGoals.filter(goal => {
+      const target = numberOrZero(goal.target)
+      const current = numberOrZero(goal.current)
+      if (target <= 0) return false
+      const pct = (current / target) * 100
+      return pct >= 80 && pct < 100
+    })
+  }, [resolvedGoals])
+
+  // Confetti/Celebration trigger on goal achievement
+  const celebratedGoalsRef = useRef(new Set())
+  useEffect(() => {
+    if (!goals.length) return
+    let timerId = null
+    resolvedGoals.forEach(goal => {
+      const target = numberOrZero(goal.target)
+      const current = numberOrZero(goal.current)
+      if (target > 0 && current >= target) {
+        if (!celebratedGoalsRef.current.has(goal._id)) {
+          celebratedGoalsRef.current.add(goal._id)
+          notifyApp({
+            title: '🎉 Goal Achieved!',
+            message: `Congratulations! You hit your goal: "${goal.name}" (${current}/${target} ${goal.unit || ''})`,
+            tone: 'success'
+          })
+          setCelebrationGoal(goal)
+          timerId = setTimeout(() => {
+            setCelebrationGoal(null)
+          }, 8000)
+        }
+      } else {
+        celebratedGoalsRef.current.delete(goal._id)
+      }
+    })
+    return () => {
+      if (timerId) clearTimeout(timerId)
+    }
+  }, [resolvedGoals, goals.length])
 
   const coachingSystem = useMemo(() => {
     const primaryGoalKey = normalizePrimaryGoal(savedLakasSettings.baseline.goal)
@@ -2455,6 +3048,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   }
 
   function toggleGymSet(setNumber) {
+    playTick()
     setGymSessionMode(current => {
       const index = Math.max(0, Math.min(current.exerciseIndex, Math.max(0, activeGymExercises.length - 1)))
       const exercise = activeGymExercises[index] || {}
@@ -2586,6 +3180,44 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   function renderExerciseEditor(rows, formSetter, ariaLabel) {
     return (
       <div className={lStyles.exerciseBuilder} aria-label={ariaLabel}>
+        {rows.some(row => exerciseHistory[normalizeExerciseKey(row.name)]) && (
+          <div className={lStyles.editorGlobalActions}>
+            <button
+              type="button"
+              className={lStyles.secondaryBtn}
+              onClick={() => {
+                let copiedCount = 0;
+                formSetter(current => {
+                  const updatedExercises = current.exercises.map(row => {
+                    const prev = exerciseHistory[normalizeExerciseKey(row.name)];
+                    if (prev) {
+                      copiedCount++;
+                      return {
+                        ...row,
+                        sets: String(prev.sets || row.sets || ''),
+                        reps: String(prev.reps || row.reps || ''),
+                        weight: String(prev.weight || row.weight || ''),
+                        duration: String(prev.duration || row.duration || ''),
+                        rest: String(prev.rest || row.rest || ''),
+                        notes: prev.notes || row.notes || '',
+                      };
+                    }
+                    return row;
+                  });
+                  return { ...current, exercises: updatedExercises };
+                });
+                notifyApp({
+                  title: 'Copy complete',
+                  message: `Prefilled last session values for ${copiedCount} exercises.`,
+                  tone: 'success'
+                });
+              }}
+              style={{ marginBottom: '12px', width: '100%' }}
+            >
+              ⚡ Prefill All Last Session Values
+            </button>
+          </div>
+        )}
         {rows.map((row, index) => {
           const guide = getExerciseGuide(row.name)
           const loadHint = getExerciseLoadHint(row.name, savedLakasSettings)
@@ -2642,23 +3274,73 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <div className={lStyles.exerciseMetrics}>
                 <label>
                   <span>Sets</span>
-                  <input type="number" min="0" inputMode="numeric" value={row.sets} onChange={event => updateExerciseRow(formSetter, row.rowId, 'sets', event.target.value)} />
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    value={row.sets}
+                    placeholder={previousEntry ? String(previousEntry.sets) : '3'}
+                    onChange={event => updateExerciseRow(formSetter, row.rowId, 'sets', event.target.value)}
+                  />
                 </label>
                 <label>
                   <span>Reps</span>
-                  <input type="number" min="0" inputMode="numeric" value={row.reps} onChange={event => updateExerciseRow(formSetter, row.rowId, 'reps', event.target.value)} />
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    value={row.reps}
+                    placeholder={previousEntry ? String(previousEntry.reps) : '10'}
+                    onChange={event => updateExerciseRow(formSetter, row.rowId, 'reps', event.target.value)}
+                  />
                 </label>
                 <label>
                   <span>Weight ({savedLakasSettings.units.weight})</span>
-                  <input type="number" min="0" inputMode="decimal" value={row.weight} onChange={event => updateExerciseRow(formSetter, row.rowId, 'weight', event.target.value)} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="decimal"
+                      value={row.weight}
+                      placeholder={previousEntry ? String(previousEntry.weight) : '60'}
+                      onChange={event => updateExerciseRow(formSetter, row.rowId, 'weight', event.target.value)}
+                    />
+                    {(() => {
+                      const analytic = exerciseInsights.exercises.find(entry => entry.key === normalizeExerciseKey(row.name))
+                      const pb = analytic ? numberOrZero(analytic.bestWeight) : 0
+                      const cur = numberOrZero(row.weight)
+                      if (pb > 0 && cur > pb) {
+                        return (
+                          <span className={lStyles.prBadgeInline} title="Personal Record!">
+                            🏅 PR!
+                          </span>
+                        )
+                      }
+                      return null
+                    })()}
+                  </div>
                 </label>
                 <label>
                   <span>Timed work (s)</span>
-                  <input type="number" min="0" inputMode="numeric" value={row.duration} onChange={event => updateExerciseRow(formSetter, row.rowId, 'duration', event.target.value)} />
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    value={row.duration}
+                    placeholder={previousEntry ? String(previousEntry.duration) : '0'}
+                    onChange={event => updateExerciseRow(formSetter, row.rowId, 'duration', event.target.value)}
+                  />
                 </label>
                 <label>
                   <span>Rest (s)</span>
-                  <input type="number" min="0" inputMode="numeric" value={row.rest} onChange={event => updateExerciseRow(formSetter, row.rowId, 'rest', event.target.value)} />
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    value={row.rest}
+                    placeholder={previousEntry ? String(previousEntry.rest) : '60'}
+                    onChange={event => updateExerciseRow(formSetter, row.rowId, 'rest', event.target.value)}
+                  />
                 </label>
               </div>
               {(loadHint || row.name) && (
@@ -2869,20 +3551,124 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 
   async function handleAddHabit() {
     const score = getHabitScore(habitForm)
-    if (!habitForm.date || (!score && !habitForm.notes.trim())) {
-      notifyApp({ title: 'Check-in needs details', message: 'Tick at least one habit or add a note.', tone: 'warning' })
+    if (!habitForm.date || (!score && !habitForm.notes.trim() && !habitForm.waterGlasses)) {
+      notifyApp({ title: 'Check-in needs details', message: 'Tick at least one habit, track water, or add a note.', tone: 'warning' })
       return
     }
 
-    await fsAdd(user.uid, 'lakasHabits', {
+    const payload = {
       ...HABIT_OPTIONS.reduce((payload, option) => ({ ...payload, [option.key]: Boolean(habitForm[option.key]) }), {}),
+      waterGlasses: numberOrZero(habitForm.waterGlasses),
       date: habitForm.date,
       score,
       notes: habitForm.notes.trim(),
       source: 'lakas',
-    })
+    }
+
+    const existing = habits.find(h => h.date === habitForm.date)
+    if (existing) {
+      await fsUpdate(user.uid, 'lakasHabits', existing._id, payload)
+      notifyApp({ title: 'Check-in updated', message: 'Habit check-in has been updated.', tone: 'success' })
+    } else {
+      await fsAdd(user.uid, 'lakasHabits', payload)
+      notifyApp({ title: 'Check-in saved', message: 'Habit check-in added.', tone: 'success' })
+    }
     setHabitForm(createHabitForm())
-    notifyApp({ title: 'Check-in saved', message: 'Habit check-in added for today.', tone: 'success' })
+  }
+
+  const updateWaterGlasses = (glasses) => {
+    playTick()
+    const nextGlasses = Math.max(0, glasses)
+    const waterTarget = Number(savedLakasSettings.targets.water) || 8
+    setHabitForm(current => ({
+      ...current,
+      waterGlasses: nextGlasses,
+      water: nextGlasses >= waterTarget
+    }))
+  }
+
+  const handleHabitChange = (key, checked) => {
+    playTick()
+    setHabitForm(current => {
+      const updates = { [key]: checked }
+      if (key === 'water') {
+        const waterTarget = Number(savedLakasSettings.targets.water) || 8
+        updates.waterGlasses = checked ? waterTarget : 0
+      }
+      return { ...current, ...updates }
+    })
+  }
+
+  async function handleQuickAdjustWater(delta) {
+    const todayHabit = habits.find(h => h.date === today())
+    const currentGlasses = todayHabit ? numberOrZero(todayHabit.waterGlasses) : 0
+    const nextGlasses = Math.max(0, currentGlasses + delta)
+    const waterTarget = Number(savedLakasSettings.targets.water) || 8
+    const isComplete = nextGlasses >= waterTarget
+
+    const payload = todayHabit ? { ...todayHabit } : { date: today(), source: 'lakas' }
+    payload.waterGlasses = nextGlasses
+    payload.water = isComplete
+    payload.score = getHabitScore(payload)
+
+    delete payload._id
+    delete payload.createdAt
+    delete payload.updatedAt
+
+    try {
+      if (todayHabit?._id) {
+        await fsUpdate(user.uid, 'lakasHabits', todayHabit._id, payload)
+      } else {
+        await fsAdd(user.uid, 'lakasHabits', payload)
+      }
+      notifyApp({ title: 'Water updated', message: `You logged ${nextGlasses} glass${nextGlasses === 1 ? '' : 'es'} of water today.`, tone: 'success' })
+    } catch (e) {
+      notifyApp({ title: 'Error logging water', message: 'Could not save water log.', tone: 'error' })
+    }
+  }
+
+  async function handleSaveMealCombo() {
+    if (!mealForm.name.trim()) {
+      notifyApp({ title: 'Enter a meal name', message: 'You need a name to save a quick combo preset.', tone: 'warning' })
+      return
+    }
+    const newCombo = {
+      name: mealForm.name.trim(),
+      calories: numberOrZero(mealForm.calories),
+      protein: numberOrZero(mealForm.protein),
+      carbs: numberOrZero(mealForm.carbs),
+      fat: numberOrZero(mealForm.fat),
+    }
+
+    const nextCombos = [...(savedLakasSettings.mealCombos || []), newCombo]
+    const nextSettings = {
+      ...settingsForm,
+      mealCombos: nextCombos,
+    }
+
+    try {
+      await fsSetProfile(user.uid, { lakasSettings: sanitizeLakasSettings(nextSettings) })
+      setSettingsForm(nextSettings)
+      notifyApp({ title: 'Combo preset saved', message: `Saved "${newCombo.name}" to your quick-tap combos.`, tone: 'success' })
+    } catch (e) {
+      notifyApp({ title: 'Could not save preset', message: 'Check your connection and try again.', tone: 'error' })
+    }
+  }
+
+  async function handleDeleteMealCombo(index) {
+    const nextCombos = (savedLakasSettings.mealCombos || []).filter((_, idx) => idx !== index)
+    const nextSettings = {
+      ...settingsForm,
+      mealCombos: nextCombos,
+    }
+
+    try {
+      await fsSetProfile(user.uid, { lakasSettings: sanitizeLakasSettings(nextSettings) })
+      setSettingsForm(nextSettings)
+      notifyApp({ title: 'Combo preset deleted', message: 'Preset removed.', tone: 'success' })
+    } catch (e) {
+      notifyApp({ title: 'Could not delete preset', message: 'Check your connection and try again.', tone: 'error' })
+    }
   }
 
   async function handleAddGoal() {
@@ -3207,13 +3993,27 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const showSettings = currentTab === 'settings'
   const tabCopy = LAKAS_TAB_COPY[currentTab] || LAKAS_TAB_COPY.workout
   const workoutVolume7d = insights.volumeByDay.reduce((sum, row) => sum + numberOrZero(row.value), 0)
+
+  // Today at-a-glance strip data
+  const todayWorkoutDone = workouts.some(row => row.date === today())
+  const todayWaterTarget = Math.max(1, numberOrZero(savedLakasSettings.targets.water) || 8)
+  const todayWaterPct = Math.min(100, Math.round((insights.waterGlassesToday / todayWaterTarget) * 100))
+  const todayCaloriePct = coachingSystem.nutrition.calorieTarget > 0
+    ? Math.min(100, Math.round((insights.caloriesToday / coachingSystem.nutrition.calorieTarget) * 100))
+    : 0
+  const todayProteinPct = coachingSystem.nutrition.proteinTarget > 0
+    ? Math.min(100, Math.round((insights.proteinToday / coachingSystem.nutrition.proteinTarget) * 100))
+    : 0
+  const todayStepTarget = Math.max(1, numberOrZero(savedLakasSettings.targets.steps) || 8000)
+  const todayStepPct = Math.min(100, Math.round((insights.stepsToday / todayStepTarget) * 100))
+  const todayHabitPct = HABIT_OPTIONS.length > 0 ? Math.min(100, Math.round((insights.habitScoreToday / HABIT_OPTIONS.length) * 100)) : 0
   const mealsToday = meals.filter(row => row.date === today()).length
   const latestBodyLog = bodyLogs[0] || {}
-  const completedGoals = goals.filter(goal => {
+  const completedGoals = resolvedGoals.filter(goal => {
     const target = numberOrZero(goal.target)
     return target > 0 && numberOrZero(goal.current) >= target
   }).length
-  const activeGoalsCount = goals.filter(goal => {
+  const activeGoalsCount = resolvedGoals.filter(goal => {
     const target = numberOrZero(goal.target)
     return target > 0 && numberOrZero(goal.current) < target
   }).length
@@ -3619,6 +4419,81 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             <p className={lStyles.gymModeSetHint}>
               Tap each set as you finish it. Lakas starts the rest timer automatically until the exercise is complete.
             </p>
+            {activeWorkoutExercise && activeWorkoutExercise.rowId && (
+              <div className={lStyles.gymModeActiveLogger}>
+                <div className={lStyles.gymModeLoggerHeader}>
+                  <strong>Adjust today's metrics</strong>
+                  {activeGymHistory && (
+                    <button
+                      type="button"
+                      className={lStyles.gymModeCopyLastBtn}
+                      onClick={() => {
+                        updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'sets', String(activeGymHistory.sets || ''));
+                        updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'reps', String(activeGymHistory.reps || ''));
+                        updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'weight', String(activeGymHistory.weight || ''));
+                        updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'rest', String(activeGymHistory.rest || ''));
+                        updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'notes', activeGymHistory.notes || '');
+                        notifyApp({ title: 'Values copied', message: 'Last session metrics applied.', tone: 'success' });
+                      }}
+                    >
+                      ⚡ Use Last Session ({(activeGymHistory.weight || 0) + (savedLakasSettings.units.weight || 'kg')})
+                    </button>
+                  )}
+                </div>
+                <div className={lStyles.gymModeLoggerGrid}>
+                  <label>
+                    <span>Sets</span>
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="numeric"
+                      value={activeWorkoutExercise.sets || ''}
+                      placeholder={activeGymHistory ? String(activeGymHistory.sets) : '3'}
+                      onChange={event => updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'sets', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>Reps</span>
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="numeric"
+                      value={activeWorkoutExercise.reps || ''}
+                      placeholder={activeGymHistory ? String(activeGymHistory.reps) : '10'}
+                      onChange={event => updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'reps', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>Weight ({savedLakasSettings.units.weight})</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <input
+                        type="number"
+                        min="0"
+                        inputMode="decimal"
+                        value={activeWorkoutExercise.weight || ''}
+                        placeholder={activeGymHistory ? String(activeGymHistory.weight) : '60'}
+                        onChange={event => updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'weight', event.target.value)}
+                      />
+                      {activeGymHasNewPR && (
+                        <span className={lStyles.prBadgeInline} title="Personal Record!">
+                          🏅 PR!
+                        </span>
+                      )}
+                    </div>
+                  </label>
+                </div>
+                <div className={lStyles.gymModeLoggerNotes}>
+                  <label>
+                    <span>Set/Exercise Notes</span>
+                    <input
+                      value={activeWorkoutExercise.notes || ''}
+                      placeholder="E.g. Warmup, RPE 8, easy"
+                      onChange={event => updateExerciseRow(setWorkoutForm, activeWorkoutExercise.rowId, 'notes', event.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
             {activeGymGuide && (
               <div className={lStyles.gymModeCue}>
                 <strong>{activeGymGuide.name} cue</strong>
@@ -3852,11 +4727,275 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 
   return (
     <div className={`${styles.page} ${lStyles.page}`}>
+      {celebrationGoal && (
+        <div className={lStyles.celebrationOverlay} onClick={() => setCelebrationGoal(null)}>
+          <div className={lStyles.celebrationContent}>
+            <div className={lStyles.confettiWrapper}>
+              {Array.from({ length: 16 }).map((_, i) => (
+                <div 
+                  key={i} 
+                  className={lStyles.confettiParticle} 
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 0.8}s`,
+                    backgroundColor: ['#ffeb3b', '#ff5722', '#4caf50', '#00bcd4', '#e91e63'][i % 5]
+                  }} 
+                />
+              ))}
+            </div>
+            <div className={lStyles.celebrationEmoji}>🏆</div>
+            <h2>Goal Achieved!</h2>
+            <p>You hit your target for:</p>
+            <strong>{celebrationGoal.name}</strong>
+            <span>
+              {celebrationGoal.current} / {celebrationGoal.target} {celebrationGoal.unit || ''}
+            </span>
+            <small>Tap anywhere to close</small>
+          </div>
+        </div>
+      )}
       <datalist id="lakas-exercise-library">
         {exerciseSuggestions.map(name => (
           <option key={name} value={name} />
         ))}
       </datalist>
+
+      {/* Today at-a-glance strip — always visible on every tab */}
+      <div className={lStyles.todayStrip} aria-label="Today's summary">
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('workout')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('workout')
+            }
+          }}
+          aria-label="Workout status: Go to Workouts tab"
+        >
+          <span className={`${lStyles.todayStripDot} ${todayWorkoutDone ? lStyles.todayStripDotGreen : lStyles.todayStripDotDim}`} />
+          <div className={lStyles.todayStripLabel}>
+            <strong>{todayWorkoutDone ? 'Workout ✓' : 'Workout'}</strong>
+            <span>{todayWorkoutDone ? 'Logged today' : `${displayMetric(insights.workoutsThisWeek, '', privacyMode, 0)}/${weeklyWorkoutTarget} this week`}</span>
+          </div>
+        </div>
+
+        <div className={lStyles.todayStripDivider} aria-hidden="true" />
+
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('body')
+            setTrackView('meals')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('body')
+              setTrackView('meals')
+            }
+          }}
+          aria-label="Calories: Go to meals log"
+        >
+          <div className={lStyles.todayStripRing}>
+            <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface3)" strokeWidth="3.5" />
+              <circle cx="16" cy="16" r="13" fill="none" stroke="hsl(25 90% 55%)" strokeWidth="3.5"
+                strokeDasharray={`${(todayCaloriePct / 100) * 81.68} 81.68`}
+                strokeLinecap="round" strokeDashoffset="20.42"
+                style={{ transition: 'stroke-dasharray 0.6s ease' }}
+              />
+            </svg>
+            <span>{privacyMode ? '—' : `${todayCaloriePct}%`}</span>
+          </div>
+          <div className={lStyles.todayStripLabel}>
+            <strong>Calories</strong>
+            <span>{privacyMode ? '—' : `${displayMetric(insights.caloriesToday, '', privacyMode, 0)} / ${displayMetric(coachingSystem.nutrition.calorieTarget, 'kcal', privacyMode, 0)}`}</span>
+          </div>
+        </div>
+
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('body')
+            setTrackView('meals')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('body')
+              setTrackView('meals')
+            }
+          }}
+          aria-label="Protein: Go to meals log"
+        >
+          <div className={lStyles.todayStripRing}>
+            <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface3)" strokeWidth="3.5" />
+              <circle cx="16" cy="16" r="13" fill="none" stroke="hsl(155 70% 45%)" strokeWidth="3.5"
+                strokeDasharray={`${(todayProteinPct / 100) * 81.68} 81.68`}
+                strokeLinecap="round" strokeDashoffset="20.42"
+                style={{ transition: 'stroke-dasharray 0.6s ease' }}
+              />
+            </svg>
+            <span>{privacyMode ? '—' : `${todayProteinPct}%`}</span>
+          </div>
+          <div className={lStyles.todayStripLabel}>
+            <strong>Protein</strong>
+            <span>{privacyMode ? '—' : `${displayMetric(insights.proteinToday, '', privacyMode, 0)}g / ${displayMetric(coachingSystem.nutrition.proteinTarget, 'g', privacyMode, 0)}`}</span>
+          </div>
+        </div>
+
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('body')
+            setTrackView('recovery')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('body')
+              setTrackView('recovery')
+            }
+          }}
+          aria-label="Water: Go to recovery log"
+        >
+          <div className={lStyles.todayStripRing}>
+            <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface3)" strokeWidth="3.5" />
+              <circle cx="16" cy="16" r="13" fill="none" stroke="hsl(200 85% 55%)" strokeWidth="3.5"
+                strokeDasharray={`${(todayWaterPct / 100) * 81.68} 81.68`}
+                strokeLinecap="round" strokeDashoffset="20.42"
+                style={{ transition: 'stroke-dasharray 0.6s ease' }}
+              />
+            </svg>
+            <span>{privacyMode ? '—' : `${todayWaterPct}%`}</span>
+          </div>
+          <div className={lStyles.todayStripLabel}>
+            <strong>Water</strong>
+            <span>{privacyMode ? '—' : `${insights.waterGlassesToday} / ${todayWaterTarget} glasses`}</span>
+          </div>
+        </div>
+
+        <div className={lStyles.todayStripDivider} aria-hidden="true" />
+
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('body')
+            setTrackView('activity')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('body')
+              setTrackView('activity')
+            }
+          }}
+          aria-label="Steps: Go to activity log"
+        >
+          <div className={lStyles.todayStripRing}>
+            <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface3)" strokeWidth="3.5" />
+              <circle cx="16" cy="16" r="13" fill="none" stroke="hsl(45 95% 55%)" strokeWidth="3.5"
+                strokeDasharray={`${(todayStepPct / 100) * 81.68} 81.68`}
+                strokeLinecap="round" strokeDashoffset="20.42"
+                style={{ transition: 'stroke-dasharray 0.6s ease' }}
+              />
+            </svg>
+            <span>{privacyMode ? '—' : `${todayStepPct}%`}</span>
+          </div>
+          <div className={lStyles.todayStripLabel}>
+            <strong>Steps</strong>
+            <span>{privacyMode ? '—' : `${displayMetric(insights.stepsToday, '', privacyMode, 0)} / ${displayMetric(todayStepTarget, '', privacyMode, 0)}`}</span>
+          </div>
+        </div>
+
+        <div 
+          className={`${lStyles.todayStripItem} ${lStyles.todayStripItemInteractive}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            playTick()
+            onLakasTabChange('body')
+            setTrackView('recovery')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              playTick()
+              onLakasTabChange('body')
+              setTrackView('recovery')
+            }
+          }}
+          aria-label="Habits: Go to recovery log"
+        >
+          <div className={lStyles.todayStripRing}>
+            <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="var(--surface3)" strokeWidth="3.5" />
+              <circle cx="16" cy="16" r="13" fill="none" stroke="hsl(280 70% 60%)" strokeWidth="3.5"
+                strokeDasharray={`${(todayHabitPct / 100) * 81.68} 81.68`}
+                strokeLinecap="round" strokeDashoffset="20.42"
+                style={{ transition: 'stroke-dasharray 0.6s ease' }}
+              />
+            </svg>
+            <span>{privacyMode ? '—' : `${todayHabitPct}%`}</span>
+          </div>
+          <div className={lStyles.todayStripLabel}>
+            <strong>Habits</strong>
+            <span>{privacyMode ? '—' : `${insights.habitScoreToday} / ${HABIT_OPTIONS.length} done`}</span>
+          </div>
+        </div>
+      </div>
+
+      {almostDoneGoals.length > 0 && (
+        <div className={lStyles.goalsNudgeRow}>
+          {almostDoneGoals.map(goal => {
+            const target = numberOrZero(goal.target)
+            const current = numberOrZero(goal.current)
+            const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0
+            return (
+              <div 
+                key={`nudge-${goal._id}`} 
+                className={lStyles.goalNudgeChip}
+                onClick={() => {
+                  onLakasTabChange('body');
+                  setTrackView('goals');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                <span className={lStyles.goalNudgeIcon}>🎯</span>
+                <span>
+                  <strong>Almost there!</strong> Goal <em>"{goal.name}"</em> is at <strong>{pct}%</strong> ({current}/{target} {goal.unit || ''})
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
         {(showWorkouts || showWorkoutLog) && (
       <div className={lStyles.grid}>
@@ -4516,6 +5655,97 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <p className={lStyles.sectionHint}>Manual meal logging first. Add calories, macros, and notes without depending on photo capture.</p>
             </div>
           </div>
+
+          {/* Macro Distribution Ring */}
+          <div className={lStyles.macroRingContainer}>
+            <div className={lStyles.macroRingSvgWrapper}>
+              <svg width="160" height="160" viewBox="0 0 160 160" className={lStyles.macroSvg}>
+                <defs>
+                  <linearGradient id="calGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#ff5722" />
+                    <stop offset="100%" stopColor="#ff9800" />
+                  </linearGradient>
+                  <linearGradient id="protGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#4caf50" />
+                    <stop offset="100%" stopColor="#8bc34a" />
+                  </linearGradient>
+                  <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#00bcd4" />
+                    <stop offset="100%" stopColor="#2196f3" />
+                  </linearGradient>
+                </defs>
+
+                {/* Calorie Ring */}
+                <circle cx="80" cy="80" r="70" className={lStyles.ringBg} strokeWidth="10" />
+                <circle 
+                  cx="80" cy="80" r="70" 
+                  className={lStyles.ringFill} 
+                  strokeWidth="10"
+                  stroke="url(#calGrad)"
+                  strokeDasharray={2 * Math.PI * 70}
+                  strokeDashoffset={(2 * Math.PI * 70) - (Math.min(1, insights.caloriesToday / (numberOrZero(savedLakasSettings.targets.calories) || numberOrZero(savedLakasSettings.meals.calorieGoal) || 2200)) * 2 * Math.PI * 70)}
+                  strokeLinecap="round"
+                  transform="rotate(-90 80 80)"
+                />
+
+                {/* Protein Ring */}
+                <circle cx="80" cy="80" r="56" className={lStyles.ringBg} strokeWidth="10" />
+                <circle 
+                  cx="80" cy="80" r="56" 
+                  className={lStyles.ringFill} 
+                  strokeWidth="10"
+                  stroke="url(#protGrad)"
+                  strokeDasharray={2 * Math.PI * 56}
+                  strokeDashoffset={(2 * Math.PI * 56) - (Math.min(1, insights.proteinToday / (numberOrZero(savedLakasSettings.targets.protein) || numberOrZero(savedLakasSettings.meals.proteinGoal) || 120)) * 2 * Math.PI * 56)}
+                  strokeLinecap="round"
+                  transform="rotate(-90 80 80)"
+                />
+
+                {/* Water Ring */}
+                <circle cx="80" cy="80" r="42" className={lStyles.ringBg} strokeWidth="10" />
+                <circle 
+                  cx="80" cy="80" r="42" 
+                  className={lStyles.ringFill} 
+                  strokeWidth="10"
+                  stroke="url(#waterGrad)"
+                  strokeDasharray={2 * Math.PI * 42}
+                  strokeDashoffset={(2 * Math.PI * 42) - (Math.min(1, (insights.waterGlassesToday || 0) / (Number(savedLakasSettings.targets.water) || 8)) * 2 * Math.PI * 42)}
+                  strokeLinecap="round"
+                  transform="rotate(-90 80 80)"
+                />
+              </svg>
+            </div>
+            <div className={lStyles.macroRingLegend}>
+              <div className={lStyles.legendItem}>
+                <span className={lStyles.legendDot} style={{ backgroundColor: '#ff5722' }} />
+                <div>
+                  <strong>Calories</strong>
+                  <span>{privacyMode ? '***' : `${Math.round(insights.caloriesToday)} / ${numberOrZero(savedLakasSettings.targets.calories) || numberOrZero(savedLakasSettings.meals.calorieGoal) || 2200}`} kcal</span>
+                </div>
+              </div>
+              <div className={lStyles.legendItem}>
+                <span className={lStyles.legendDot} style={{ backgroundColor: '#4caf50' }} />
+                <div>
+                  <strong>Protein</strong>
+                  <span>{privacyMode ? '***' : `${Math.round(insights.proteinToday)}g / ${numberOrZero(savedLakasSettings.targets.protein) || numberOrZero(savedLakasSettings.meals.proteinGoal) || 120}g`}</span>
+                </div>
+              </div>
+              <div className={lStyles.legendItem}>
+                <span className={lStyles.legendDot} style={{ backgroundColor: '#00bcd4' }} />
+                <div>
+                  <strong>Water</strong>
+                  <span>{privacyMode ? '***' : `${insights.waterGlassesToday || 0} / ${savedLakasSettings.targets.water || 8}`} glasses</span>
+                  {!privacyMode && (
+                    <div className={lStyles.waterLegendControls}>
+                      <button type="button" className={lStyles.waterLegendBtn} onClick={() => handleQuickAdjustWater(-1)}>−</button>
+                      <button type="button" className={lStyles.waterLegendBtn} onClick={() => handleQuickAdjustWater(1)}>+</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <section className={lStyles.nutritionCoachCard}>
             <div className={lStyles.nutritionCoachHeader}>
               <div>
@@ -4548,6 +5778,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </div>
             </div>
           </section>
+
           <div className={lStyles.presetRow}>
             {FOOD_PRESETS.slice(0, 6).map(food => (
               <button key={food.name} type="button" className={lStyles.chip} onClick={() => applyFoodPreset(food)}>
@@ -4555,6 +5786,38 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </button>
             ))}
           </div>
+
+          {/* Quick-Tap Meal Combos */}
+          {savedLakasSettings.mealCombos && savedLakasSettings.mealCombos.length > 0 && (
+            <div className={lStyles.customPresetContainer}>
+              <div className={lStyles.customPresetHeader}>
+                <strong>Your quick combos:</strong>
+              </div>
+              <div className={lStyles.presetRow}>
+                {savedLakasSettings.mealCombos.map((food, idx) => (
+                  <div key={idx} className={lStyles.comboChipWrapper}>
+                    <button type="button" className={lStyles.chip} onClick={() => applyFoodPreset(food)}>
+                      {food.name}
+                    </button>
+                    <button 
+                      type="button" 
+                      className={lStyles.deleteComboBtn} 
+                      onClick={async (e) => { 
+                        e.stopPropagation(); 
+                        if (await confirmDeleteApp(`combo "${food.name}"`)) {
+                          handleDeleteMealCombo(idx);
+                        } 
+                      }}
+                      title="Delete combo"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className={lStyles.formGrid}>
             <label>
               <span>Meal</span>
@@ -4599,9 +5862,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </label>
             </div>
           </details>
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddMeal} disabled={savingMeal}>
-            {savingMeal ? 'Saving meal...' : 'Save meal'}
-          </button>
+          <div className={lStyles.comboActionRow}>
+            <button type="button" className={lStyles.primaryBtn} onClick={handleAddMeal} disabled={savingMeal}>
+              {savingMeal ? 'Saving meal...' : 'Save meal'}
+            </button>
+            <button type="button" className={lStyles.secondaryBtn} onClick={handleSaveMealCombo}>
+              Save as quick combo
+            </button>
+          </div>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent meals</strong>
@@ -4710,13 +5978,61 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <div className={lStyles.formGrid}>
             <label className={lStyles.full}>
               <span>Date</span>
-              <input type="date" value={habitForm.date} onChange={event => setHabitForm(current => ({ ...current, date: event.target.value }))} />
+              <input 
+                type="date" 
+                value={habitForm.date} 
+                onChange={event => {
+                  const nextDate = event.target.value
+                  const found = habits.find(h => h.date === nextDate)
+                  setHabitForm({
+                    date: nextDate,
+                    water: found ? Boolean(found.water) : false,
+                    waterGlasses: found ? numberOrZero(found.waterGlasses) : 0,
+                    protein: found ? Boolean(found.protein) : false,
+                    sleep: found ? Boolean(found.sleep) : false,
+                    stretching: found ? Boolean(found.stretching) : false,
+                    restDay: found ? Boolean(found.restDay) : false,
+                    vitamins: found ? Boolean(found.vitamins) : false,
+                    notes: found ? (found.notes || '') : '',
+                  })
+                }} 
+              />
             </label>
           </div>
+
+          {/* Interactive Hydration Tracker */}
+          <div className={lStyles.waterBottleSection}>
+            <div className={lStyles.waterBottleLeft}>
+              <div className={lStyles.waterBottle}>
+                <div className={lStyles.waterBottleCap} />
+                <div className={lStyles.waterBottleNeck} />
+                <div className={lStyles.waterBottleBody}>
+                  <div 
+                    className={lStyles.waterLiquid} 
+                    style={{ height: `${Math.min(100, ((habitForm.waterGlasses || 0) / (Number(savedLakasSettings.targets.water) || 8)) * 100)}%` }} 
+                  />
+                  <div className={lStyles.waterBottleReflection} />
+                </div>
+              </div>
+            </div>
+            <div className={lStyles.waterBottleControls}>
+              <strong>Hydration Tracker</strong>
+              <p>Target: {savedLakasSettings.targets.water || 8} glasses</p>
+              <div className={lStyles.waterRow}>
+                <button type="button" className={lStyles.waterBtn} onClick={() => updateWaterGlasses((habitForm.waterGlasses || 0) - 1)}>−</button>
+                <span className={lStyles.waterCount}>{habitForm.waterGlasses || 0} / {savedLakasSettings.targets.water || 8}</span>
+                <button type="button" className={lStyles.waterBtn} onClick={() => updateWaterGlasses((habitForm.waterGlasses || 0) + 1)}>+</button>
+              </div>
+              <small className={lStyles.waterProgressKicker} style={{ color: habitForm.water ? '#4caf50' : '#0288d1' }}>
+                {habitForm.water ? '🎉 Daily water goal achieved!' : 'Keep drinking to hit your daily goal.'}
+              </small>
+            </div>
+          </div>
+
           <div className={lStyles.habitGrid}>
             {HABIT_OPTIONS.map(option => (
               <label key={option.key} className={`${lStyles.habitPill} ${habitForm[option.key] ? lStyles.habitPillActive : ''}`}>
-                <input type="checkbox" checked={habitForm[option.key]} onChange={event => setHabitForm(current => ({ ...current, [option.key]: event.target.checked }))} />
+                <input type="checkbox" checked={habitForm[option.key]} onChange={event => handleHabitChange(option.key, event.target.checked)} />
                 <span>{option.label}</span>
               </label>
             ))}
@@ -4738,6 +6054,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <div>
                   <strong>{formatDisplayDate(habit.date)} · {getHabitScore(habit)}/{HABIT_OPTIONS.length}</strong>
                   <span>{HABIT_OPTIONS.filter(option => habit[option.key]).map(option => option.label).join(' · ') || 'No habits ticked'}</span>
+                  {habit.waterGlasses !== undefined && <small style={{ display: 'block', color: '#0288d1', marginTop: '2px', fontWeight: '500' }}>💧 Water: {habit.waterGlasses} / {savedLakasSettings.targets.water || 8} glasses</small>}
                   {habit.notes && <small>{habit.notes}</small>}
                 </div>
                 <button type="button" onClick={async () => { if (await confirmDeleteApp('this check-in')) await fsDel(user.uid, 'lakasHabits', habit._id) }}>Delete</button>
@@ -4867,7 +6184,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <strong>Tracked goals</strong>
               <span>Update progress in place without opening another screen.</span>
             </div>
-            {!goals.length ? <div className={lStyles.empty}>No goals yet.</div> : goals.map(goal => {
+            {!resolvedGoals.length ? <div className={lStyles.empty}>No goals yet.</div> : resolvedGoals.map(goal => {
               const target = numberOrZero(goal.target)
               const current = numberOrZero(goal.current)
               const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0
@@ -4964,6 +6281,77 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             ))}
           </div>
           <div className={lStyles.progressReviewAccordion}>
+            <details className={lStyles.advancedBox}>
+              <summary className={lStyles.advancedSummary}>
+                <span>Annual Consistency</span>
+                <small>Workout and habit frequency over the past year</small>
+              </summary>
+              <div style={{ padding: '0 12px 12px' }}>
+                <ConsistencyHeatmap workouts={workouts} habits={habits} privacyMode={privacyMode} />
+              </div>
+            </details>
+
+            <details className={lStyles.advancedBox}>
+              <summary className={lStyles.advancedSummary}>
+                <span>Interactive Beginner Roadmap</span>
+                <small>Step-by-step milestones to build your fitness base</small>
+              </summary>
+              <div style={{ padding: '0 12px 12px' }}>
+                <InteractiveRoadmap workouts={workouts} onLakasTabChange={onLakasTabChange} privacyMode={privacyMode} />
+              </div>
+            </details>
+
+            <details className={lStyles.advancedBox}>
+              <summary className={lStyles.advancedSummary}>
+                <span>7-day trends</span>
+                <small>Weight, nutrition, and habit consistency over the past week</small>
+              </summary>
+              <div className={lStyles.progressReviewStack}>
+                <div className={lStyles.chartGrid}>
+                  <SvgSparkLine
+                    title={`Weight trend (${savedLakasSettings.units.weight})`}
+                    rows={insights.weightTrend}
+                    unit={savedLakasSettings.units.weight}
+                    hidden={privacyMode}
+                    color="hsl(200 80% 55%)"
+                  />
+                  <MiniBarChart
+                    title="Calories logged (kcal)"
+                    rows={insights.caloriesByDay}
+                    unit="kcal"
+                    hidden={privacyMode}
+                    color="hsl(25 90% 55%)"
+                  />
+                  <MiniBarChart
+                    title="Protein logged (g)"
+                    rows={insights.proteinByDay}
+                    unit="g"
+                    hidden={privacyMode}
+                    color="hsl(155 70% 45%)"
+                  />
+                  <MiniBarChart
+                    title="Workout volume"
+                    rows={insights.volumeByDay}
+                    unit={`${savedLakasSettings.units.weight} vol`}
+                    hidden={privacyMode}
+                    color="hsl(280 70% 60%)"
+                  />
+                  <MiniBarChart
+                    title="Daily steps"
+                    rows={insights.stepsByDay}
+                    unit="steps"
+                    hidden={privacyMode}
+                    color="hsl(45 95% 55%)"
+                  />
+                  <HabitHeatmap
+                    title="Habit check-ins (7 days)"
+                    rows={insights.habitByDay}
+                    hidden={privacyMode}
+                  />
+                </div>
+              </div>
+            </details>
+
             <details className={lStyles.advancedBox}>
               <summary className={lStyles.advancedSummary}>
                 <span>Records and main exercises</span>
