@@ -1699,7 +1699,11 @@ export default function AppShell({ user }) {
           </div>
         </>
       )}
-      <nav className={`${styles.bottomNav} ${shouldHideBottomNav ? styles.bottomNavHidden : ''}`} aria-label="Primary navigation">
+      <nav
+        className={`${styles.bottomNav} ${shouldHideBottomNav ? styles.bottomNavHidden : ''}`}
+        style={{ '--nav-items-count': bottomNav.length + (mobileMoreNav.length ? 1 : 0) }}
+        aria-label="Primary navigation"
+      >
         {bottomNav.map(n => (
           <button
             key={`${n.space}-${n.id}`}
