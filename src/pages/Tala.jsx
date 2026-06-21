@@ -1727,6 +1727,25 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                       stroke={`url(#goalProgressGrad-${goal._id})`}
                       strokeLinecap="round"
                     />
+                    {(() => {
+                      const p = Math.min(100, Math.max(0, numberOrZero(goal.progress)));
+                      if (p <= 0) return null;
+                      const rad = (p / 100) * 2 * Math.PI;
+                      const dotCx = 30 + 24 * Math.cos(rad);
+                      const dotCy = 30 + 24 * Math.sin(rad);
+                      return (
+                        <circle
+                          cx={dotCx}
+                          cy={dotCy}
+                          r="3"
+                          fill="#ffffff"
+                          style={{
+                            filter: 'drop-shadow(0 0 4px var(--accent))',
+                            transition: 'cx 0.35s cubic-bezier(0.4, 0, 0.2, 1), cy 0.35s cubic-bezier(0.4, 0, 0.2, 1)'
+                          }}
+                        />
+                      );
+                    })()}
                   </svg>
                   <span className={tStyles.progressText}>{formatNumber(goal.progress)}%</span>
                 </div>
