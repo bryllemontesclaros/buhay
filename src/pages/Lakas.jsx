@@ -112,9 +112,9 @@ const FORM_GUIDES = [
 const GYM_SESSION_TYPES = [
   {
     key: 'beginner',
-    label: 'Beginner path',
+    label: 'Beginner program',
     templateName: '',
-    desc: 'Adaptive starter plan based on your workout place and equipment.',
+    desc: 'Adaptive starter program based on your workout place and equipment.',
   },
   {
     key: 'push',
@@ -330,7 +330,7 @@ const BUILT_IN_ROUTINES = [
     duration: 32,
     progression: 'Add reps first. Only add load from a backpack or dumbbells after two easy, clean sessions.',
     deload: 'If recovery drops, repeat the same session and shorten the walk instead of forcing more reps.',
-    notes: 'Home-first recomposition path. Keep the barrier low and the pace steady.',
+    notes: 'Home-first recomposition program. Keep the barrier low and the pace steady.',
     exercises: [
       { name: 'Bodyweight squat', sets: 3, reps: 10, weight: 0, duration: 0, rest: 75, notes: 'Use a chair if balance or depth feels shaky' },
       { name: 'Incline push-up', sets: 3, reps: 8, weight: 0, duration: 0, rest: 75, notes: 'Counter, table, or couch works' },
@@ -448,8 +448,8 @@ const REMINDER_TYPES = ['Workout', 'Weigh-in', 'Rest day', 'Steps', 'Habit', 'Me
 const REMINDER_FREQUENCIES = ['once', 'daily', 'weekly', 'monthly']
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const ROUTINE_LIBRARY_META = {
-  'Starter plans': 'Simple beginner-first sessions for building confidence and consistency.',
-  'Gym splits': 'Push, pull, legs, and full-body templates for structured gym days.',
+  'Starter programs': 'Simple beginner-first sessions for building confidence and consistency.',
+  'Gym routines': 'Push, pull, legs, and full-body templates for structured gym days.',
   'Home & travel': 'Low-equipment options for home weeks, travel days, or backup training.',
   'Cardio & recovery': 'Lower-intensity sessions for conditioning, mobility, and reset days.',
   General: 'Saved routines that do not fit a preset group yet.',
@@ -557,9 +557,9 @@ const DEFAULT_LAKAS_SETTINGS = {
 const LAKAS_TAB_COPY = {
   workout: {
     eyebrow: 'Workout',
-    title: 'Choose a path and start.',
+    title: 'Choose a program and start.',
     sub: 'Pick one guided workout, then log what actually happened.',
-    guide: ['Choose a path', 'Start the workout', 'Log the real work'],
+    guide: ['Choose a program', 'Start the workout', 'Log the real work'],
   },
   body: {
     eyebrow: 'Body & nutrition',
@@ -1566,10 +1566,10 @@ function getRoutineGroupLabel(routine = {}) {
   const focus = String(routine.focus || '').trim().toLowerCase()
   const name = String(routine.name || '').trim().toLowerCase()
 
-  if (focus === 'beginner') return 'Starter plans'
+  if (focus === 'beginner') return 'Starter programs'
   if (name.includes('home') || name.includes('travel')) return 'Home & travel'
   if (focus === 'cardio' || focus === 'mobility' || name.includes('recovery')) return 'Cardio & recovery'
-  if (focus === 'strength' || focus === 'hypertrophy' || focus === 'conditioning') return 'Gym splits'
+  if (focus === 'strength' || focus === 'hypertrophy' || focus === 'conditioning') return 'Gym routines'
   return 'General'
 }
 
@@ -1797,7 +1797,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const [gymSessionMode, setGymSessionMode] = useState({
     open: false,
     sessionKey: 'beginner',
-    sessionLabel: 'Beginner path',
+    sessionLabel: 'Beginner program',
     templateName: 'Beginner Foundation A',
     exerciseIndex: 0,
     completed: {},
@@ -1908,7 +1908,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const activeGymFinished = activeGymExercises.length > 0 && activeGymCompletedCount >= activeGymExercises.length
   const beginnerNextSession = {
     key: 'beginner-guided',
-    label: 'Beginner path',
+    label: 'Beginner program',
     templateName: beginnerNextTemplate.name,
     desc: 'Guided foundation progression.',
   }
@@ -2080,7 +2080,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     } else if (primaryGoalKey === 'gain-muscle') {
       recommendedReason = 'Use the most controllable muscle-building session available, then progress slowly from clean reps.'
     } else if (primaryGoalKey === 'strength') {
-      recommendedReason = 'Choose the clearer load-bearing path today and treat technique plus repeatability as the real win.'
+      recommendedReason = 'Choose the clearer load-bearing program today and treat technique plus repeatability as the real win.'
     } else if (primaryGoalKey === 'move-more') {
       recommendedReason = 'The best session today is the one with the lowest barrier to starting and finishing.'
     }
@@ -3379,7 +3379,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <div>
             <div className={lStyles.gymModeEyebrow}>Gym session mode</div>
             <h3 id="gym-session-title">{activeGymTemplate.name}</h3>
-            <p>{activeGymSession.label} · {activeGymCompletedCount}/{activeGymExercises.length} exercises done · {activeGymPlanMinutes} min plan</p>
+            <p>{activeGymSession.label} · {activeGymCompletedCount}/{activeGymExercises.length} exercises done · {activeGymPlanMinutes} min routine</p>
           </div>
           <div className={lStyles.gymModeHeaderActions}>
             <button
@@ -3564,7 +3564,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <strong>{formatDurationClock(activeGymElapsedSeconds)}</strong>
               </div>
               <div>
-                <span>Plan duration</span>
+                <span>Routine duration</span>
                 <strong>{activeGymPlanMinutes} min</strong>
               </div>
               <div>
@@ -3661,7 +3661,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                    Start workout + video
 	                  </button>
 	                  <button type="button" className={lStyles.ghostBtn} onClick={openWorkoutPathChooser}>
-	                    Change today&apos;s path
+	                    Change today&apos;s program
 	                  </button>
 	                </div>
 	              </article>
@@ -3705,13 +3705,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 
 	            <div className={`${lStyles.workoutSecondaryRow} ${lStyles.workoutPrimaryActionRow}`}>
 	              <button type="button" className={lStyles.workoutSecondaryAction} onClick={openWorkoutPathChooser}>
-	                <span>Change path</span>
+	                <span>Change program</span>
 	                <strong>{selectedGymSession.label}</strong>
 	                <small>{coachingSystem.workout.selectedPathReason}</small>
 	              </button>
 	              <button type="button" className={lStyles.workoutSecondaryAction} onClick={openProgramsPanel}>
 	                <span>Browse routines</span>
-	                <strong>Starter plans and saved splits</strong>
+	                <strong>Starter programs and saved routines</strong>
 	                <small>Open the full routine library only when today needs a different shape.</small>
 	              </button>
 	              <button
@@ -3736,10 +3736,10 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	            onToggle={event => setPathChooserOpen(event.currentTarget.open)}
 	          >
 	            <summary className={lStyles.advancedSummary}>
-	              <span>Change the path or open the routines library</span>
+	              <span>Change the program or open the routines library</span>
 	              <small>Only open this when today needs a different workout shape.</small>
 	            </summary>
-	            <div className={lStyles.sessionPicker} aria-label="Choose today&apos;s workout path">
+	            <div className={lStyles.sessionPicker} aria-label="Choose today&apos;s workout program">
 	              {todayPathOptions.map(option => (
 	                <button
 	                  key={option.key}
@@ -3755,7 +3755,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	            </div>
 	            <div className={`${lStyles.todayGuidanceGrid} ${lStyles.pathChooserSupport}`}>
 	              <article className={lStyles.todayGuidanceCard}>
-	                <span className={lStyles.todayGuidanceEyebrow}>Current path</span>
+	                <span className={lStyles.todayGuidanceEyebrow}>Current program</span>
 	                <div className={lStyles.todayGuidanceList}>
 	                  <div className={lStyles.todayGuidanceNote}>
 	                    <strong>{selectedGymSession.label}</strong>
@@ -3768,7 +3768,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                <span className={lStyles.todayGuidanceEyebrow}>Routines library</span>
 	                <div className={lStyles.todayGuidanceList}>
 	                  <div className={lStyles.todayGuidanceNote}>
-	                    <strong>Saved routines and starter splits</strong>
+	                    <strong>Saved routines and starter programs</strong>
 	                    <span>Browse the full library without losing today&apos;s recommended start.</span>
 	                    <small>Use this when you want to repeat a saved workout or pick a more deliberate program.</small>
 	                  </div>
@@ -3833,7 +3833,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <p>{buildTemplateNotes(selectedGymTemplate) || selectedGymSession.desc}</p>
                 <div className={lStyles.gymSessionStats}>
                   <span>{selectedGymExercises.length} exercises</span>
-                  <span>{selectedGymEstimate} min plan</span>
+                  <span>{selectedGymEstimate} min routine</span>
                   <span>{selectedGymTemplate.focus}</span>
                   {selectedGymSession.key === 'beginner' && <span>{beginnerProgression.trackLabel}</span>}
                 </div>
@@ -3919,7 +3919,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <details className={lStyles.gymKnowledgeSection}>
                   <summary className={lStyles.gymKnowledgeSummary}>
                     <span>Program roadmap</span>
-                    <small>See how the beginner path progresses before you worry about perfect optimization.</small>
+                    <small>See how the beginner program progresses before you worry about perfect optimization.</small>
                   </summary>
                   <div className={lStyles.advancedGrid}>
                     {BEGINNER_PHASES.map(phase => (
@@ -4066,7 +4066,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           onToggle={event => setProgramsOpen(event.currentTarget.open)}
         >
           <summary className={lStyles.advancedSummary}>
-            <span>Browse routines and saved plans</span>
+            <span>Browse routines</span>
             <small>Open your reusable templates only when you want something beyond today&apos;s recommended start.</small>
           </summary>
           <div className={lStyles.advancedBody}>
@@ -4075,7 +4075,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <span className={lStyles.programCalloutEyebrow}>Recomp starter</span>
               <strong>Low muscle + soft waist: start with muscle-building consistency.</strong>
               <p>
-                This path is for people who feel skinny-fat or under-muscled. Train three days per week,
+                This program is for people who feel skinny-fat or under-muscled. Train three days per week,
                 leave a few reps in reserve, and let food quality plus walking tighten things up slowly.
               </p>
               <ul className={lStyles.programCalloutList}>
@@ -4121,7 +4121,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             ))}
           </div>
           {!groupedRoutines.length ? (
-            <div className={lStyles.empty}>No saved routines yet. Use a starter template above or save your own plan below.</div>
+            <div className={lStyles.empty}>No saved routines yet. Use a starter template above or save your own routine below.</div>
           ) : (
             <div className={lStyles.routineGroupList}>
               {groupedRoutines.map(group => (
@@ -4158,7 +4158,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           <details className={lStyles.advancedBox}>
             <summary className={lStyles.advancedSummary}>
               <span>Browse the guided library and edit routines</span>
-              <small>Starter paths, templates, focus, duration, and exercise list</small>
+              <small>Starter programs, routines, focus, duration, and exercise list</small>
             </summary>
             <div className={lStyles.advancedBody}>
               <div className={lStyles.routineLibrary}>
@@ -4673,7 +4673,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           </div>
           <div className={lStyles.progressCoachGrid}>
             <div className={lStyles.progressCoachSummary}>
-              <span>Next recommended path</span>
+              <span>Next recommended program</span>
               <strong>{featuredWorkoutSession.label}</strong>
               <p>{coachingSystem.progress.body}</p>
               <div className={lStyles.progressCoachNotes}>
@@ -5232,7 +5232,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   </label>
                   <label className={lStyles.full}>
                     <span>Limitations or comfort notes</span>
-                    <input value={settingsForm.baseline.limitations} placeholder="Optional. Keep starter plans gentler." onChange={event => updateSettingGroup('baseline', 'limitations', event.target.value)} />
+                    <input value={settingsForm.baseline.limitations} placeholder="Optional. Keep starter programs gentler." onChange={event => updateSettingGroup('baseline', 'limitations', event.target.value)} />
                   </label>
                   <label>
                     <span>Sets</span>
