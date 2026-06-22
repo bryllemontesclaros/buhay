@@ -6608,10 +6608,10 @@
   height: 100%;
 }
 
-/* Dark mode invert filter for OSM Tiles */
+/* Dark mode tiles styling */
 .runMap img,
 .miniMap img {
-  filter: invert(1) hue-rotate(180deg) brightness(0.95);
+  opacity: 0.95;
 }
 
 /* Lakas Fitness Leaderboard Styles */

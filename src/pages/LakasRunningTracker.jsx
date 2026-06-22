@@ -118,9 +118,10 @@ export default function LakasRunningTracker({ onSave, onClose }) {
       attributionControl: true,
     }).setView(defaultCenter, 15)
 
-    // Load OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+    // Load CartoDB Dark Matter tiles (premium dark mode native map)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 20,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     }).addTo(map)
 
     // Setup layers
@@ -132,6 +133,34 @@ export default function LakasRunningTracker({ onSave, onClose }) {
 
     mapInstanceRef.current = map
     pathLayerRef.current = pathLayer
+
+    // Get current location on mount to center the map and display the pin before the run begins
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.setView([latitude, longitude], 16)
+            
+            // Draw current position circle marker
+            if (markerLayerRef.current) {
+              markerLayerRef.current.setLatLng([latitude, longitude])
+            } else {
+              markerLayerRef.current = L.circleMarker([latitude, longitude], {
+                radius: 8,
+                fillColor: '#00f6ff',
+                color: '#ffffff',
+                weight: 2.5,
+                opacity: 1,
+                fillOpacity: 1,
+              }).addTo(mapInstanceRef.current)
+            }
+          }
+        },
+        err => console.warn('Initial geolocation fetch failed:', err),
+        { enableHighAccuracy: true, timeout: 8000 }
+      )
+    }
 
     // Force map invalidation after small timeouts to ensure size calculation runs after any modal layout transitions complete
     const t1 = setTimeout(() => {
