@@ -240,6 +240,7 @@
 :global(.neo) .quickEntryPanel,
 :global(.neo) .advancedBox,
 :global(.neo) .guidanceDetails,
+:global(.neo) .workoutSecondaryAction,
 :global(.neo) .exerciseRow,
 :global(.neo) .previousValueCard,
 :global(.neo) .exerciseIdentityCard,
@@ -256,6 +257,12 @@
   box-shadow: var(--nb-shadow-sm);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+:global(.neo) .workoutSecondaryAction:hover {
+  transform: translateY(-3px);
+  border-color: var(--nb-stroke);
+  box-shadow: var(--nb-shadow);
 }
 
 .hero::before,
