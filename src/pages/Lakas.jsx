@@ -60,7 +60,18 @@ function LakasRouteMiniMap({ coordinates = [] }) {
 
     mapInstanceRef.current = map
 
+    // Attach ResizeObserver to handle map element sizing lag
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize()
+      // Refit bounds on resize/render to make sure route stays centered
+      try {
+        map.fitBounds(polyline.getBounds(), { padding: [5, 5] })
+      } catch (e) {}
+    })
+    resizeObserver.observe(mapRef.current)
+
     return () => {
+      resizeObserver.disconnect()
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null

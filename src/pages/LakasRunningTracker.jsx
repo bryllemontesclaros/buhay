@@ -90,8 +90,15 @@ export default function LakasRunningTracker({ onSave, onClose }) {
     mapInstanceRef.current = map
     pathLayerRef.current = pathLayer
 
+    // Attach ResizeObserver to handle element size calculation lag / visibility changes
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize()
+    })
+    resizeObserver.observe(mapRef.current)
+
     // Clean up
     return () => {
+      resizeObserver.disconnect()
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null
