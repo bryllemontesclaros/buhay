@@ -105,6 +105,12 @@ export default function LakasRunningTracker({ onSave, onClose }) {
   useEffect(() => {
     if (!mapRef.current) return
 
+    // Reset container DOM and Leaflet ID to prevent double-initialization crashes in React
+    mapRef.current.innerHTML = ''
+    if (mapRef.current._leaflet_id) {
+      delete mapRef.current._leaflet_id
+    }
+
     // Standard center coordinates (Manila default)
     const defaultCenter = [14.5995, 120.9842]
     const map = L.map(mapRef.current, {

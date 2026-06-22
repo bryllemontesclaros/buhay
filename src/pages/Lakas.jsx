@@ -26,6 +26,12 @@ function LakasRouteMiniMap({ coordinates = [] }) {
   useEffect(() => {
     if (!mapRef.current || !coordinates || coordinates.length === 0) return
 
+    // Reset container DOM and Leaflet ID to prevent double-initialization crashes in React
+    mapRef.current.innerHTML = ''
+    if (mapRef.current._leaflet_id) {
+      delete mapRef.current._leaflet_id
+    }
+
     const latLngs = coordinates.map(p => [p.lat, p.lng])
     if (latLngs.length === 0) return
 
