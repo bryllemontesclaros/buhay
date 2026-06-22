@@ -24,6 +24,8 @@ self.addEventListener('fetch', e => {
     url.hostname.includes('googleapis') ||
     url.hostname.includes('gstatic') ||
     url.hostname.includes('firebaseapp') ||
+    url.hostname.includes('openstreetmap') || // Bypass OSM map tiles
+    url.hostname.includes('unpkg') ||          // Bypass Leaflet CDN
     e.request.method !== 'GET'
   ) {
     return // Let browser handle normally
