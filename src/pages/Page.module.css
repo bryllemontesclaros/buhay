@@ -942,21 +942,37 @@ tbody tr:hover td {
 .progressTrack {
   height: 9px;
   margin-bottom: 8px;
-  overflow: hidden;
+  overflow: visible !important;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 42%, transparent);
   background: color-mix(in srgb, var(--glass-1) 76%, var(--surface3) 24%);
 }
 
 .progressFill {
+  position: relative;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--blue) 74%, white 26%));
   transition: width 0.5s ease;
 }
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px 2px var(--blue), 0 0 4px #ffffff;
+  opacity: 0.95;
+}
 
 .progressFill.almost {
   background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 76%, white 24%));
+}
+.progressFill.almost::after {
+  box-shadow: 0 0 10px 2px var(--amber), 0 0 4px #ffffff;
 }
 
 .goalMeta {

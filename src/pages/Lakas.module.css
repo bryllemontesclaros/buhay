@@ -2020,17 +2020,30 @@
 .gymModeProgressTrack {
   grid-column: 1 / -1;
   height: 9px;
-  overflow: hidden;
+  overflow: visible !important;
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface3) 72%, transparent);
 }
 
 .gymModeProgressTrack i {
+  position: relative;
   display: block;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), var(--blue));
   transition: width 0.22s ease;
+}
+.gymModeProgressTrack i::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px 2px var(--blue), 0 0 4px #ffffff;
+  opacity: 0.95;
 }
 
 .gymModePrepCard {
@@ -6871,11 +6884,23 @@
   color: var(--text);
 }
 
-.cohortScore small {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text3);
+@keyframes gymCardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
+
+.gymModeCurrentCard,
+.gymModeRestCard,
+.gymModeNextCard {
+  animation: gymCardSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 
 
 
