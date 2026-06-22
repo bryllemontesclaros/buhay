@@ -118,8 +118,13 @@ export default function LakasRunningTracker({ onSave, onClose }) {
       attributionControl: true,
     }).setView(defaultCenter, 15)
 
-    // Load CartoDB Dark Matter tiles (premium dark mode native map)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Load CartoDB tiles matching the active app theme (Voyager for warm light mode, Dark Matter for dark mode)
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const tileUrl = isDark
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+
+    L.tileLayer(tileUrl, {
       maxZoom: 20,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     }).addTo(map)
