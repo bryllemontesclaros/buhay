@@ -15,90 +15,7 @@ import { loadStorageObjectUrl } from '../lib/storageMedia'
 import { formatDisplayDate, today } from '../lib/utils'
 import styles from './Page.module.css'
 import lStyles from './Lakas.module.css'
-import LakasRunningTracker from './LakasRunningTracker'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 
-function LakasRouteMiniMap({ coordinates = [] }) {
-  const mapRef = useRef(null)
-  const mapInstanceRef = useRef(null)
-
-  useEffect(() => {
-    if (!mapRef.current || !coordinates || coordinates.length === 0) return
-
-    // Reset container DOM and Leaflet ID to prevent double-initialization crashes in React
-    mapRef.current.innerHTML = ''
-    if (mapRef.current._leaflet_id) {
-      delete mapRef.current._leaflet_id
-    }
-
-    const latLngs = coordinates.map(p => [p.lat, p.lng])
-    if (latLngs.length === 0) return
-
-    const map = L.map(mapRef.current, {
-      zoomControl: false,
-      dragging: false,
-      touchZoom: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      keyboard: false,
-      attributionControl: false,
-    })
-
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
-    const tileUrl = isDark
-      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-
-    L.tileLayer(tileUrl, {
-      maxZoom: 20,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    }).addTo(map)
-
-    const polyline = L.polyline(latLngs, {
-      color: '#00f6ff',
-      weight: 3,
-      opacity: 0.9,
-    }).addTo(map)
-
-    try {
-      map.fitBounds(polyline.getBounds(), { padding: [5, 5] })
-    } catch (e) {
-      if (latLngs[0]) {
-        map.setView(latLngs[0], 15)
-      }
-    }
-
-    mapInstanceRef.current = map
-
-    // Attach ResizeObserver to handle map element sizing lag
-    const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize()
-      // Refit bounds on resize/render to make sure route stays centered
-      try {
-        map.fitBounds(polyline.getBounds(), { padding: [5, 5] })
-      } catch (e) {}
-    })
-    resizeObserver.observe(mapRef.current)
-
-    return () => {
-      resizeObserver.disconnect()
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove()
-        mapInstanceRef.current = null
-      }
-    }
-  }, [coordinates])
-
-  if (!coordinates || coordinates.length === 0) return null
-
-  return (
-    <div className={lStyles.miniMapContainer}>
-      <div ref={mapRef} className={lStyles.miniMap} />
-    </div>
-  )
-}
 function getWeeklyScore(workouts, habits, weekIndex = 0) {
   const now = new Date()
   const startMs = now.getTime() - (weekIndex * 7 + 7) * 24 * 60 * 60 * 1000
@@ -4519,12 +4436,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   }, [pendingQuickAction, showMeals, onActionHandled])
 
   const gymSessionOverlay = gymSessionMode.open ? (
-    activeGymSession.key === 'running' ? (
-      <LakasRunningTracker onSave={handleSaveRunningSession} onClose={closeGymSessionMode} />
-    ) : (
-      <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
-        <div className={lStyles.gymModeBackdrop} onClick={closeGymSessionMode} aria-hidden="true" />
-        <section className={`${lStyles.gymModeSheet} ${gymSessionMode.focusMode ? lStyles.gymModeSheetFocus : ''}`}>
+    <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
+      <div className={lStyles.gymModeBackdrop} onClick={closeGymSessionMode} aria-hidden="true" />
+      <section className={`${lStyles.gymModeSheet} ${gymSessionMode.focusMode ? lStyles.gymModeSheetFocus : ''}`}>
         <div className={lStyles.gymModeHeader}>
           <div>
             <div className={lStyles.gymModeEyebrow}>Gym session mode</div>
@@ -4988,7 +4902,6 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
         </div>
       </section>
     </div>
-    )
   ) : null
 
   return (
@@ -5364,19 +5277,6 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                <strong>Record what really happened</strong>
 	                <small>Skip videos and guidance only when you already know the session.</small>
 	              </button>
-	              <button
-	                type="button"
-	                className={lStyles.workoutSecondaryAction}
-	                onClick={() => {
-	                  const runSession = GYM_SESSION_TYPES.find(s => s.key === 'running')
-	                  const runTemplate = { name: 'Outdoor Run', exercises: [{ name: 'Running', sets: 1, reps: 0, weight: 0 }] }
-	                  openGymSessionMode(runTemplate, runSession)
-	                }}
-	              >
-	                <span>Outdoor run</span>
-	                <strong>🏃 Start GPS Run</strong>
-	                <small>Real-time GPS tracking and route map.</small>
-	              </button>
 	            </div>
 	          </div>
 
@@ -5702,9 +5602,6 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   )}
                   {typeof workout.exercises === 'string' && workout.exercises && (
                     <small>{workout.exercises.split('\n').slice(0, 2).join(' | ')}</small>
-                  )}
-                  {workout.routeCoordinates && workout.routeCoordinates.length > 0 && (
-                    <LakasRouteMiniMap coordinates={workout.routeCoordinates} />
                   )}
                 </div>
                 <div className={lStyles.rowActions}>
@@ -6609,41 +6506,6 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             ))}
           </div>
           <div className={lStyles.progressReviewAccordion}>
-            <details className={lStyles.advancedBox}>
-              <summary className={lStyles.advancedSummary}>
-                <span>Annual Consistency</span>
-                <small>Workout and habit frequency over the past year</small>
-              </summary>
-              <div style={{ padding: '0 12px 12px' }}>
-                <ConsistencyHeatmap workouts={workouts} habits={habits} privacyMode={privacyMode} />
-              </div>
-            </details>
-
-            <details className={lStyles.advancedBox}>
-              <summary className={lStyles.advancedSummary}>
-                <span>Tactical Leaderboards</span>
-                <small>Ghost Racer self-podium and anonymous peer consistency ranks</small>
-              </summary>
-              <div style={{ padding: '0 12px 12px' }}>
-                <LakasLeaderboard
-                  workouts={workouts}
-                  habits={habits}
-                  settings={savedLakasSettings}
-                  privacyMode={privacyMode}
-                />
-              </div>
-            </details>
-
-            <details className={lStyles.advancedBox}>
-              <summary className={lStyles.advancedSummary}>
-                <span>Interactive Beginner Roadmap</span>
-                <small>Step-by-step milestones to build your fitness base</small>
-              </summary>
-              <div style={{ padding: '0 12px 12px' }}>
-                <InteractiveRoadmap workouts={workouts} onLakasTabChange={onLakasTabChange} privacyMode={privacyMode} />
-              </div>
-            </details>
-
             <details className={lStyles.advancedBox}>
               <summary className={lStyles.advancedSummary}>
                 <span>7-day trends</span>

@@ -503,130 +503,7 @@ function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pag
   )
 }
 
-function TakdaTodayStrip({
-  netPosition,
-  monthNet,
-  billWatchCount,
-  budgetStatus,
-  savingsProgress,
-  symbol,
-  privacyMode,
-  onNavigate,
-}) {
-  const formatVal = (val) => {
-    if (privacyMode) return '••••'
-    return symbol + Number(val || 0).toLocaleString('en-PH', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })
-  }
 
-  const formatNetVal = (val) => {
-    if (privacyMode) return '••••'
-    const sign = val < 0 ? '−' : '+'
-    return `${sign}${symbol}${Math.abs(Number(val || 0)).toLocaleString('en-PH', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })}`
-  }
-
-  const handleCardClick = (targetPage) => {
-    playTick()
-    onNavigate(targetPage)
-  }
-
-  return (
-    <div className={styles.todayStrip} role="region" aria-label="Today summary strip">
-      <button
-        type="button"
-        className={styles.stripCard}
-        onClick={() => handleCardClick('portfolio')}
-      >
-        <span className={styles.stripLabel}>Net Position</span>
-        <strong className={styles.stripValue}>{formatVal(netPosition)}</strong>
-        <span className={styles.stripMeta}>Portfolio balance</span>
-      </button>
-
-      <button
-        type="button"
-        className={styles.stripCard}
-        onClick={() => handleCardClick('breakdown')}
-      >
-        <span className={styles.stripLabel}>Month Net</span>
-        <strong
-          className={`${styles.stripValue} ${
-            monthNet >= 0 ? styles.stripValuePositive : styles.stripValueNegative
-          }`}
-        >
-          {formatNetVal(monthNet)}
-        </strong>
-        <span className={styles.stripMeta}>Insights view</span>
-      </button>
-
-      <button
-        type="button"
-        className={styles.stripCard}
-        onClick={() => handleCardClick('bills')}
-      >
-        <span className={styles.stripLabel}>Bill Watch</span>
-        <strong
-          className={`${styles.stripValue} ${
-            billWatchCount > 0 ? styles.stripValueWarning : ''
-          }`}
-        >
-          {billWatchCount}
-        </strong>
-        <span className={styles.stripMeta}>
-          {billWatchCount === 1 ? '1 due soon' : `${billWatchCount} due soon`}
-        </span>
-      </button>
-
-      <button
-        type="button"
-        className={styles.stripCard}
-        onClick={() => handleCardClick('budget')}
-      >
-        <span className={styles.stripLabel}>Budgets</span>
-        <strong
-          className={`${styles.stripValue} ${
-            budgetStatus.overCount > 0
-              ? styles.stripValueNegative
-              : budgetStatus.warningCount > 0
-              ? styles.stripValueWarning
-              : ''
-          }`}
-        >
-          {budgetStatus.overCount > 0
-            ? 'Over'
-            : budgetStatus.warningCount > 0
-            ? 'Warn'
-            : 'OK'}
-        </strong>
-        <span className={styles.stripMeta}>
-          {budgetStatus.overCount > 0
-            ? `${budgetStatus.overCount} over limit`
-            : `${budgetStatus.totalBudgets} configured`}
-        </span>
-      </button>
-
-      <button
-        type="button"
-        className={styles.stripCard}
-        onClick={() => handleCardClick('savings')}
-      >
-        <span className={styles.stripLabel}>Savings</span>
-        <strong className={styles.stripValue}>
-          {privacyMode ? '••••' : `${savingsProgress.pct}%`}
-        </strong>
-        <span className={styles.stripMeta}>
-          {savingsProgress.totalGoals === 1
-            ? '1 target'
-            : `${savingsProgress.totalGoals} targets`}
-        </span>
-      </button>
-    </div>
-  )
-}
 
 export default function AppShell({ user }) {
   const [activeSpace, setActiveSpace] = useState('takda')
@@ -834,7 +711,7 @@ export default function AppShell({ user }) {
   }, [user, data.accounts, data.expenses, data.income])
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
-  const privacyMode = Boolean(profile.privacyMode)
+  const privacyMode = false
 
   const netPosition = useMemo(() => {
     const accounts = Array.isArray(data?.accounts) ? data.accounts : []
@@ -1272,7 +1149,7 @@ export default function AppShell({ user }) {
   const { theme, toggle: toggleTheme } = useTheme()
   // Keep the same layout + component styling in both light and dark.
   // The neo palette itself flips via `[data-theme="dark"] .neo` tokens in `index.css`.
-  const neoEnabled = true
+  const neoEnabled = false
 
   function openSpace(nextSpace) {
     setMobileNavMenuOpen(false)
@@ -1337,9 +1214,7 @@ export default function AppShell({ user }) {
     navigateToFinancePage(item.id || DEFAULT_SPACE_PAGES.takda)
   }
 
-  async function handleTogglePrivacy() {
-    await fsSetProfile(user.uid, { privacyMode: !privacyMode })
-  }
+
 
   function toggleQuickAddMenu() {
     if (quickAddSheet.open) return
@@ -1506,7 +1381,7 @@ export default function AppShell({ user }) {
     activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,
     financeToolSelections,
     onFinanceToolSelect: handleFinanceToolSelect,
-    onTogglePrivacy: handleTogglePrivacy,
+    onTogglePrivacy: () => {},
     onSelectedDateChange: setCalendarQuickAddDate,
     actionRequest: activeSpace === 'takda'
       ? (takdaActionRequest?.space === 'takda' ? takdaActionRequest : null)
@@ -1542,7 +1417,6 @@ export default function AppShell({ user }) {
     ? [
         { key: 'meal-log', label: 'Meal Log', meta: 'Log calories, protein, carbs, fat, and notes.', icon: 'ML', className: styles.fabActionMeal, onClick: () => openLakasFabAction('meal-log') },
         { key: 'gym-session', label: 'Start Gym Session', meta: 'Open guided workout mode right away.', icon: 'GS', className: styles.fabActionSession, onClick: () => openLakasFabAction('gym-session') },
-        { key: 'run-session', label: 'Start a Run', meta: 'GPS tracking and live route map.', icon: '🏃', className: styles.fabActionRun, onClick: () => openLakasFabAction('run-session') },
       ]
     : activeSpace === 'tala'
       ? [
@@ -1648,40 +1522,6 @@ export default function AppShell({ user }) {
             </div>
           </div>
           <div className={styles.topBarRight}>
-            <div className={styles.headerSpaceBadges}>
-              {/* Takda (Money Pulse) Badge */}
-              <button
-                type="button"
-                className={`${styles.headerSpaceBadge} ${styles.badgeTakda} ${activeSpace === 'takda' ? styles.activeBadge : ''}`}
-                onClick={() => handleBadgeClick('takda')}
-                title={`Takda: ${takdaPulse.label} pulse status`}
-              >
-                <span className={styles.badgeIndicator} style={{ backgroundColor: takdaPulse.color }}></span>
-                <span className={styles.badgeLabel}>Takda</span>
-              </button>
-
-              {/* Lakas (Consistency Score) Badge */}
-              <button
-                type="button"
-                className={`${styles.headerSpaceBadge} ${styles.badgeLakas} ${activeSpace === 'lakas' ? styles.activeBadge : ''}`}
-                onClick={() => handleBadgeClick('lakas')}
-                title={`Lakas: Weekly Consistency score ${lakasScoreValue} pts`}
-              >
-                <span className={styles.badgeLabel}>Lakas:</span>
-                <strong className={styles.badgeVal}>⚡ {lakasScoreValue}</strong>
-              </button>
-
-              {/* Tala (Weather Climate) Badge */}
-              <button
-                type="button"
-                className={`${styles.headerSpaceBadge} ${styles.badgeTala} ${activeSpace === 'tala' ? styles.activeBadge : ''}`}
-                onClick={() => handleBadgeClick('tala')}
-                title="Tala: Emotional Climate weather status"
-              >
-                <span className={styles.badgeLabel}>Tala:</span>
-                <strong className={styles.badgeVal}>{talaWeatherValue}</strong>
-              </button>
-            </div>
 
             <button
               type="button"
@@ -1758,18 +1598,6 @@ export default function AppShell({ user }) {
           </div>
         )}
         <main ref={mainRef} id="app-main" className={`${styles.main} ${isCalendarPage ? styles.mainCalendar : ''}`}>
-          {activeSpace === 'takda' && page === 'dashboard' && (
-            <TakdaTodayStrip
-              netPosition={netPosition}
-              monthNet={monthNet}
-              billWatchCount={billWatchCount}
-              budgetStatus={budgetStatus}
-              savingsProgress={savingsProgress}
-              symbol={symbol}
-              privacyMode={privacyMode}
-              onNavigate={navigateToFinancePage}
-            />
-          )}
           <PageErrorBoundary key={pageBoundaryKey} onRecover={() => navigateToFinancePage(DEFAULT_SPACE_PAGES.takda)}>
             <Suspense fallback={<PageLoading />}>
               <PageComponent {...pageProps} />

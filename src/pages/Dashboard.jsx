@@ -299,7 +299,6 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   }, [detailsMode, monthExpensePaid, monthIncomePaid])
 
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
-  const privacyHint = privacyMode ? 'Privacy mode on. Tap to reveal values.' : 'Tap to hide values on this page.'
   const accountCountLabel = portfolioIncludedValue
     ? `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} + included portfolio`
     : `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} right now`
@@ -465,13 +464,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
       </div>
 
       <div className={dStyles.topBoard}>
-        <button
-          type="button"
-          className={`${dStyles.heroCard} ${dStyles.privacyCardButton}`}
-          onClick={onTogglePrivacy}
-          aria-pressed={privacyMode}
-          title={privacyHint}
-        >
+        <div className={dStyles.heroCard}>
           <div className={dStyles.heroLabel}>Net position</div>
           <div className={dStyles.heroVal}>{money(netWorth)}</div>
           <div className={dStyles.heroSub}>{accountCountLabel}</div>
@@ -489,8 +482,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
               </strong>
             </div>
           </div>
-          <div className={dStyles.privacyHint}>{privacyHint}</div>
-        </button>
+        </div>
 
         <div className={dStyles.focusCard} style={{ '--focus-tone': focusState.tone }}>
           <div className={dStyles.focusHeader}>

@@ -12,7 +12,6 @@ const STRESS_OPTIONS = ['1', '2', '3', '4', '5']
 const PRIORITIES = ['Low', 'Medium', 'High']
 const LIFE_AREAS = ['Self', 'Family', 'Work', 'School', 'Health', 'Money', 'Faith', 'Creative', 'Custom']
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-const TALA_CALM_BOUNDARIES = ['Tracking, not diagnosis', 'Private by default', 'One small next step']
 const JOURNAL_PROMPTS = [
   {
     title: 'What felt heavy?',
@@ -668,82 +667,7 @@ function MiniTrend({ title, rows, hidden = false }) {
   );
 }
 
-function TalaClimateMap({ calendarData = [], calendarMonth, setCalendarMonth, privacyMode = false }) {
-  return (
-    <div className={tStyles.climateCard}>
-      <div className={tStyles.climateHeader}>
-        <div>
-          <span className={tStyles.climateKicker}>Emotional Weather Forecast</span>
-          <h4>Monthly Mind Climate</h4>
-        </div>
-        <div className={tStyles.monthControls}>
-          <button type="button" aria-label="Previous month" onClick={() => { playTick(); setCalendarMonth(current => addMonths(current, -1)); }}>‹</button>
-          <strong>{formatMonthLabel(calendarMonth)}</strong>
-          <button type="button" aria-label="Next month" onClick={() => { playTick(); setCalendarMonth(current => addMonths(current, 1)); }}>›</button>
-        </div>
-      </div>
-      
-      <div className={tStyles.climateGrid}>
-        {calendarData.filter(d => !d.empty).map(day => {
-          const logged = day.moods && day.moods.length > 0
-          const mLog = logged ? day.moods[0] : null
-          const mName = mLog ? mLog.mood : 'Unlogged'
-          
-          const emojiMap = { Great: '☀️', Good: '🌤️', Okay: '☁️', Low: '🌧️', Heavy: '⛈️', Unlogged: '💨' }
-          const toneClass = mName ? `orb_${mName}` : 'orb_Unlogged'
-          
-          return (
-            <div 
-              key={day.key} 
-              className={`${tStyles.climateOrb} ${tStyles[toneClass]}`}
-              onClick={() => {
-                if (logged) {
-                  playTick()
-                }
-              }}
-            >
-              <span className={tStyles.orbDay}>{day.day}</span>
-              <span className={tStyles.orbEmoji}>{emojiMap[mName] || '💨'}</span>
-              
-              <div className={tStyles.orbTooltip}>
-                <div className={tStyles.tooltipTitle}>
-                  {formatDisplayDate(day.key)}
-                </div>
-                {logged ? (
-                  <div className={tStyles.tooltipBody}>
-                    <div className={tStyles.tooltipMood}>
-                      <strong>Mood: {privacyMode ? '••' : mName}</strong>
-                    </div>
-                    <div className={tStyles.tooltipStats}>
-                      <span>Energy: {privacyMode ? '•' : mLog.energy || '-'}</span>
-                      <span>Stress: {privacyMode ? '•' : mLog.stress || '-'}</span>
-                      <span>Sleep: {privacyMode ? '•' : mLog.sleepQuality || '-'}</span>
-                    </div>
-                    {mLog.notes && !privacyMode && (
-                      <p className={tStyles.tooltipNotes}>"{mLog.notes}"</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className={tStyles.tooltipBody}>
-                    <span>No mood logged for this date.</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-      
-      <div className={tStyles.climateLegend}>
-        <span><i className={`${tStyles.legendDot} ${tStyles.legendGreat}`} /> Sunny (Great)</span>
-        <span><i className={`${tStyles.legendDot} ${tStyles.legendGood}`} /> Calm (Good)</span>
-        <span><i className={`${tStyles.legendDot} ${tStyles.legendOkay}`} /> Overcast (Okay)</span>
-        <span><i className={`${tStyles.legendDot} ${tStyles.legendLow}`} /> Showers (Low)</span>
-        <span><i className={`${tStyles.legendDot} ${tStyles.legendHeavy}`} /> Stormy (Heavy)</span>
-      </div>
-    </div>
-  )
-}
+
 
 export default function Tala({ user, data = {}, profile = {}, privacyMode = false, activeTab = 'journal', actionRequest = null, onActionHandled = () => {} }) {
   const talaSettings = getTalaSettings(profile)
@@ -769,7 +693,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
   const moodQuickActionRef = useRef(null)
   const moodSelectRef = useRef(null)
   const handledActionTokenRef = useRef(null)
-  const [dismissedPrompt, setDismissedPrompt] = useState(false)
 
   const checkins = sortNewest(normalizeRows(data.talaCheckins))
   const journal = sortNewest(normalizeRows(data.talaJournal))
@@ -846,56 +769,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
       return `${y}-${m}-${day}`
     }
 
-    const goodSleepMoods = moods.filter(row => row.sleepQuality && Number(row.sleepQuality) >= 4)
-    const badSleepMoods = moods.filter(row => row.sleepQuality && Number(row.sleepQuality) <= 2)
-    const avgMoodGoodSleep = goodSleepMoods.length
-      ? goodSleepMoods.reduce((sum, row) => sum + moodScore(row.mood), 0) / goodSleepMoods.length
-      : null
-    const avgMoodBadSleep = badSleepMoods.length
-      ? badSleepMoods.reduce((sum, row) => sum + moodScore(row.mood), 0) / badSleepMoods.length
-      : null
-
-    const completedTaskDates = new Set(
-      tasks
-        .filter(t => t.done && t.completedAt)
-        .map(t => getCompletedDate(t.completedAt))
-        .filter(Boolean)
-    )
-    const completedGoalDates = new Set(
-      goals
-        .filter(g => Number(g.progress) >= 100 && g.updatedAt)
-        .map(g => getCompletedDate(g.updatedAt))
-        .filter(Boolean)
-    )
-    const activeActionDates = new Set([...completedTaskDates, ...completedGoalDates])
-    const actionDaysMoods = moods.filter(row => activeActionDates.has(row.date))
-    const nonActionDaysMoods = moods.filter(row => !activeActionDates.has(row.date))
-    const avgStressActionDays = actionDaysMoods.length
-      ? actionDaysMoods.reduce((sum, row) => sum + (Number(row.stress) || 0), 0) / actionDaysMoods.length
-      : null
-    const avgStressNonActionDays = nonActionDaysMoods.length
-      ? nonActionDaysMoods.reduce((sum, row) => sum + (Number(row.stress) || 0), 0) / nonActionDaysMoods.length
-      : null
-
-    const triggerMoodSums = {}
-    const triggerMoodCounts = {}
-    moods.forEach(row => {
-      if (!row.mood) return
-      const rowTriggers = normalizeRows(row.triggers)
-      rowTriggers.forEach(trig => {
-        const score = moodScore(row.mood)
-        triggerMoodSums[trig] = (triggerMoodSums[trig] || 0) + score
-        triggerMoodCounts[trig] = (triggerMoodCounts[trig] || 0) + 1
-      })
-    })
-    const triggerImpacts = Object.entries(triggerMoodCounts).map(([name, count]) => {
-      const avgScore = triggerMoodSums[name] / count
-      return { name, avgScore, count }
-    })
-    const worstTrigger = triggerImpacts.length
-      ? [...triggerImpacts].sort((a, b) => a.avgScore - b.avgScore)[0]
-      : null
-
     return {
       todaysCheckin,
       avgMood,
@@ -913,11 +786,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
       topTriggers: [...new Set(allTriggers)].slice(0, 6),
       sortedTags,
       sortedTriggers,
-      avgMoodGoodSleep,
-      avgMoodBadSleep,
-      avgStressActionDays,
-      avgStressNonActionDays,
-      worstTrigger,
     }
   }, [checkins, goals, journal, moods, tasks])
 
@@ -967,78 +835,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
   const showInsights = currentTab === 'insights'
   const showSettings = currentTab === 'settings'
   const avgMoodLabel = insights.avgMood ? `${formatNumber(insights.avgMood, 1)}/5` : 'No log'
-  const calmPlan = useMemo(() => getTalaCalmPlan(insights, journal, moods), [insights, journal, moods])
-
-  const activeEmotionalClimateState = useMemo(() => {
-    const todayLog = insights.todaysCheckin
-    const lastMood = moods[0]
-    
-    const currentMood = todayLog?.mood || lastMood?.mood || 'Okay'
-    const currentStress = Number(todayLog?.stress || lastMood?.stress || 1)
-    const currentEnergy = Number(todayLog?.energy || lastMood?.energy || 3)
-    
-    if (currentMood === 'Heavy' || currentMood === 'Low' || currentStress >= 4) {
-      return {
-        type: 'grounding',
-        title: 'Grounded Reflection Recommended',
-        description: 'Tala detected high stress or heavy emotions. This gentle prompt is designed to ground you.',
-        prompt: {
-          title: 'A Gentle Grounding Step',
-          tags: 'grounding, self-care',
-          body: `*Grounded Reflection Prompt:*\n> What is one thing you can release control of today, and what is one small physical comfort (a cup of tea, a stretch, fresh air) you can access right now?\n\nMy reflection:\n`,
-        },
-        bannerClass: 'groundingBanner',
-      }
-    }
-    
-    if (currentEnergy <= 2) {
-      return {
-        type: 'recharge',
-        title: 'Recharge Reflection Recommended',
-        description: 'Tala detected low energy. This reflection is focused on resting without guilt.',
-        prompt: {
-          title: 'Recharge & Release',
-          tags: 'rest, boundary',
-          body: `*Recharge Prompt:*\n> Write down what letting go of productivity feels like today, and one way you can rest without apologizing to yourself.\n\nMy reflection:\n`,
-        },
-        bannerClass: 'rechargeBanner',
-      }
-    }
-    
-    if (currentMood === 'Great' || currentMood === 'Good') {
-      return {
-        type: 'momentum',
-        title: 'Focus Your Creative Momentum',
-        description: 'Tala detected high energy and positive mood. Use this momentum for reflection.',
-        prompt: {
-          title: 'Momentum Reflection',
-          tags: 'momentum, growth',
-          body: `*Momentum Prompt:*\n> What is going right today, and how can you use this positive energy to take one step toward your main goal or support someone else?\n\nMy reflection:\n`,
-        },
-        bannerClass: 'momentumBanner',
-      }
-    }
-    
-    return null
-  }, [insights.todaysCheckin, moods])
-
-  useEffect(() => {
-    setDismissedPrompt(false)
-  }, [activeEmotionalClimateState])
-
-  function handleApplyDynamicPrompt(prompt) {
-    playTick()
-    setJournalForm(current => ({
-      ...current,
-      title: prompt.title,
-      tags: prompt.tags,
-      body: prompt.body,
-      private: true,
-    }))
-    if (journalBodyInputRef.current) {
-      journalBodyInputRef.current.focus()
-    }
-  }
 
   useEffect(() => {
     if (!['today', 'mood', 'calendar'].includes(activeTab)) return
@@ -1575,28 +1371,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Keep today simple: current check-in, due tasks, and one gentle next step.</p>
             </div>
           </div>
-          <div className={tStyles.calmPlanTimeline}>
-            <div className={tStyles.calmPlanTop}>
-              <span className={tStyles.calmPlanKicker}>{calmPlan.kicker}</span>
-              <h4 className={tStyles.calmPlanTitle}>{calmPlan.title}</h4>
-              <p className={tStyles.calmPlanBody}>{calmPlan.body}</p>
-            </div>
-            <div className={tStyles.timelineTrack}>
-              {calmPlan.steps.map((step, index) => (
-                <div key={step} className={tStyles.timelineStep}>
-                  <div className={tStyles.timelineNode}>
-                    <span>{index + 1}</span>
-                  </div>
-                  <div className={tStyles.timelineContent}>
-                    <strong>{step}</strong>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className={tStyles.calmBoundaryGrid}>
-              {TALA_CALM_BOUNDARIES.map(boundary => <span key={boundary} className={tStyles.boundaryTag}>{boundary}</span>)}
-            </div>
-          </div>
+
           <div className={tStyles.focusCard}>
             <span>Prompt</span>
             <strong>{talaSettings.promptStyle === 'Direct' ? 'What are you avoiding that deserves a small first step?' : 'What would make today feel a little lighter?'}</strong>
@@ -1634,35 +1409,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               {panicHide ? '👁️ Show Text' : '🔒 Panic Hide'}
             </button>
           </div>
-          {activeEmotionalClimateState && !dismissedPrompt && (
-            <div className={`${tStyles.groundedPromptBanner} ${tStyles[activeEmotionalClimateState.bannerClass]}`}>
-              <div className={tStyles.promptBannerContent}>
-                <span className={tStyles.promptBannerIcon}>
-                  {activeEmotionalClimateState.type === 'grounding' ? '⛈️' : activeEmotionalClimateState.type === 'recharge' ? '💤' : '✨'}
-                </span>
-                <div>
-                  <strong>{activeEmotionalClimateState.title}</strong>
-                  <p>{activeEmotionalClimateState.description}</p>
-                </div>
-              </div>
-              <div className={tStyles.promptBannerActions}>
-                <button 
-                  type="button" 
-                  className={tStyles.applyPromptBtn}
-                  onClick={() => handleApplyDynamicPrompt(activeEmotionalClimateState.prompt)}
-                >
-                  Apply Prompt
-                </button>
-                <button 
-                  type="button" 
-                  className={tStyles.dismissPromptBtn}
-                  onClick={() => { playTick(); setDismissedPrompt(true); }}
-                >
-                  Dismiss
-                </button>
-              </div>
-            </div>
-          )}
           <div className={tStyles.formGrid}>
             <label>
               <span>Date</span>
@@ -2234,96 +1980,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
 
       {showInsights && (
       <div className={tStyles.grid}>
-        <section className={`${tStyles.panel} ${tStyles.fullWidthPanel}`}>
-          <TalaClimateMap
-            calendarData={calendarData}
-            calendarMonth={calendarMonth}
-            setCalendarMonth={setCalendarMonth}
-            privacyMode={privacyMode}
-          />
-        </section>
-
-        <section className={`${tStyles.panel} ${tStyles.fullWidthPanel}`}>
-          <div className={tStyles.sectionHeader}>
-            <div>
-              <div className={tStyles.sectionKicker}>Correlations</div>
-              <h3>Mind-Habit Interactions</h3>
-              <p className={tStyles.sectionHint}>Discovering how your actions, sleep, and environment influence your baseline mood and stress.</p>
-            </div>
-          </div>
-          
-          <div className={tStyles.correlationGrid}>
-            {/* Card 1: Sleep Synergy */}
-            <div className={tStyles.correlationCard}>
-              <div className={tStyles.correlationHeader}>
-                <span className={tStyles.correlationIcon}>💤</span>
-                <h4>Sleep & Mood Synergy</h4>
-              </div>
-              {insights.avgMoodGoodSleep !== null ? (
-                <div className={tStyles.correlationBody}>
-                  <div className={tStyles.correlationMetric}>
-                    <strong>
-                      {insights.avgMoodBadSleep
-                        ? `${(((insights.avgMoodGoodSleep / insights.avgMoodBadSleep) - 1) * 100).toFixed(0)}%`
-                        : 'N/A'}
-                    </strong>
-                    <span>Mood Shift on Restful Days</span>
-                  </div>
-                  <p>Average mood is <strong>{insights.avgMoodGoodSleep.toFixed(1)}/5</strong> after high-quality sleep, vs <strong>{insights.avgMoodBadSleep ? insights.avgMoodBadSleep.toFixed(1) : '0.0'}/5</strong> on restless nights.</p>
-                  <small className={tStyles.coachingTip}>Restorative sleep acts as a mood buffer. Set a strict screen curfew tonight to support your rest.</small>
-                </div>
-              ) : (
-                <div className={tStyles.emptyCorrelation}>
-                  <p>Not enough sleep data. Log mood and sleep details on at least 3 separate days to calculate synergies.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Card 2: Stress vs Task Completion */}
-            <div className={tStyles.correlationCard}>
-              <div className={tStyles.correlationHeader}>
-                <span className={tStyles.correlationIcon}>🎯</span>
-                <h4>Action & Peace of Mind</h4>
-              </div>
-              {insights.avgStressActionDays !== null ? (
-                <div className={tStyles.correlationBody}>
-                  <div className={tStyles.correlationMetric}>
-                    <strong>{insights.avgStressActionDays.toFixed(1)} <small>vs</small> {insights.avgStressNonActionDays ? insights.avgStressNonActionDays.toFixed(1) : '0.0'}</strong>
-                    <span>Stress Level Comparison</span>
-                  </div>
-                  <p>Your stress averages <strong>{insights.avgStressActionDays.toFixed(1)}/5</strong> on days you complete tasks/goals, vs <strong>{insights.avgStressNonActionDays ? insights.avgStressNonActionDays.toFixed(1) : '0.0'}/5</strong> on days without completions.</p>
-                  <small className={tStyles.coachingTip}>Action cuts through anxiety. Complete a small task today to lower stress levels.</small>
-                </div>
-              ) : (
-                <div className={tStyles.emptyCorrelation}>
-                  <p>No action completion data. Add tasks or goals and mark them completed to see stress correlations.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Card 3: Top Emotional Influencer */}
-            <div className={tStyles.correlationCard}>
-              <div className={tStyles.correlationHeader}>
-                <span className={tStyles.correlationIcon}>⚡</span>
-                <h4>Trigger Influence</h4>
-              </div>
-              {insights.worstTrigger ? (
-                <div className={tStyles.correlationBody}>
-                  <div className={tStyles.correlationMetric}>
-                    <strong>"{insights.worstTrigger.name}"</strong>
-                    <span>Mood Drops to {insights.worstTrigger.avgScore.toFixed(1)}</span>
-                  </div>
-                  <p>Entries tagged with the trigger <strong>"{insights.worstTrigger.name}"</strong> correlate with your lowest mood scores (average <strong>{insights.worstTrigger.avgScore.toFixed(1)}/5</strong>).</p>
-                  <small className={tStyles.coachingTip}>Awareness is power. When facing {insights.worstTrigger.name}, take 3 deep belly breaths before responding.</small>
-                </div>
-              ) : (
-                <div className={tStyles.emptyCorrelation}>
-                  <p>No trigger correlations yet. Log specific triggers like 'work', 'money', or 'commute' during mood check-ins.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
 
         <section className={tStyles.panel}>
           <div className={tStyles.sectionHeader}>
@@ -2340,75 +1996,6 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           </div>
         </section>
 
-        <section className={tStyles.panel}>
-          <div className={tStyles.sectionHeader}>
-            <div>
-              <div className={tStyles.sectionKicker}>Themes</div>
-              <h3>Tags and triggers</h3>
-              <p className={tStyles.sectionHint}>Useful for noticing what keeps repeating.</p>
-            </div>
-          </div>
-          <div className={tStyles.tagCloud}>
-            {!insights.sortedTags?.length ? (
-              <span className={tStyles.emptyCloudText}>No journal tags yet</span>
-            ) : (
-              insights.sortedTags.map((tag) => {
-                const maxVal = Math.max(1, ...insights.sortedTags.map(t => t.count));
-                const weight = tag.count / maxVal;
-                const fontSize = 11 + weight * 6;
-                const hue = 260; // Purple theme for journal tags
-                const opacity = 0.5 + weight * 0.5;
-                return (
-                  <span
-                    key={tag.name}
-                    className={tStyles.weightedPill}
-                    style={{
-                      fontSize: `${fontSize}px`,
-                      backgroundColor: `hsla(${hue}, 80%, 60%, ${0.08 + weight * 0.15})`,
-                      color: `hsla(${hue}, 90%, 80%, ${opacity})`,
-                      borderColor: `hsla(${hue}, 80%, 65%, ${0.12 + weight * 0.25})`,
-                      fontWeight: weight > 0.6 ? '900' : '700',
-                    }}
-                    onClick={() => playTick()}
-                  >
-                    {tag.name}
-                    <small className={tStyles.pillCount}>{tag.count}</small>
-                  </span>
-                );
-              })
-            )}
-          </div>
-          <div className={tStyles.tagCloud}>
-            {!insights.sortedTriggers?.length ? (
-              <span className={tStyles.emptyCloudText}>No mood triggers yet</span>
-            ) : (
-              insights.sortedTriggers.map((trig) => {
-                const maxVal = Math.max(1, ...insights.sortedTriggers.map(t => t.count));
-                const weight = trig.count / maxVal;
-                const fontSize = 11 + weight * 6;
-                const hue = 32; // Orange theme for mood triggers
-                const opacity = 0.5 + weight * 0.5;
-                return (
-                  <span
-                    key={trig.name}
-                    className={tStyles.weightedPill}
-                    style={{
-                      fontSize: `${fontSize}px`,
-                      backgroundColor: `hsla(${hue}, 85%, 60%, ${0.08 + weight * 0.15})`,
-                      color: `hsla(${hue}, 90%, 80%, ${opacity})`,
-                      borderColor: `hsla(${hue}, 85%, 65%, ${0.12 + weight * 0.25})`,
-                      fontWeight: weight > 0.6 ? '900' : '700',
-                    }}
-                    onClick={() => playTick()}
-                  >
-                    {trig.name}
-                    <small className={tStyles.pillCount}>{trig.count}</small>
-                  </span>
-                );
-              })
-            )}
-          </div>
-        </section>
       </div>
       )}
 
