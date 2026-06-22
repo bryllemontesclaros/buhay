@@ -244,6 +244,14 @@
   box-shadow: var(--nb-shadow);
 }
 
+:global(.neo) .advancedBox {
+  background: var(--nb-paper-2);
+  border: 3px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 :global(.neo) .dayPanelTop {
   background: transparent;
 }

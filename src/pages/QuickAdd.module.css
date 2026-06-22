@@ -95,6 +95,14 @@
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
   overflow: hidden;
 }
+
+:global(.neo) .advancedBox {
+  background: var(--nb-paper-2);
+  border: 3px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 .advancedSummary {
   display: flex;
   align-items: center;

@@ -612,6 +612,14 @@
   overflow: hidden;
 }
 
+:global(.neo) .advancedBox {
+  background: var(--nb-paper-2);
+  border: 3px solid var(--nb-stroke);
+  box-shadow: var(--nb-shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .advancedSummary {
   display: flex;
   align-items: center;
