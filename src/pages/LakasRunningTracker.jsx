@@ -338,6 +338,40 @@ export default function LakasRunningTracker({ onSave, onClose }) {
     onSave(elapsedSeconds, distance, coordinates)
   }
 
+  const recenterMap = () => {
+    if (coordinates.length > 0) {
+      const lastPoint = coordinates[coordinates.length - 1]
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.setView([lastPoint.lat, lastPoint.lng], 16)
+      }
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.setView([latitude, longitude], 16)
+            
+            // Draw current position circle marker
+            if (markerLayerRef.current) {
+              markerLayerRef.current.setLatLng([latitude, longitude])
+            } else {
+              markerLayerRef.current = L.circleMarker([latitude, longitude], {
+                radius: 8,
+                fillColor: '#00f6ff',
+                color: '#ffffff',
+                weight: 2.5,
+                opacity: 1,
+                fillOpacity: 1,
+              }).addTo(mapInstanceRef.current)
+            }
+          }
+        },
+        err => console.warn('Recenter location fetch failed:', err),
+        { enableHighAccuracy: true, timeout: 6000 }
+      )
+    }
+  }
+
   const paceLabel = isRunning ? getLivePace(currentSpeed, coordinates, elapsedSeconds) : '−:−−'
 
   return (
@@ -357,6 +391,15 @@ export default function LakasRunningTracker({ onSave, onClose }) {
         {/* Live Map Area */}
         <div className={lStyles.runMapWrapper}>
           <div ref={mapRef} className={lStyles.runMap} />
+          <button 
+            type="button" 
+            className={lStyles.mapRecenterBtn} 
+            onClick={recenterMap}
+            aria-label="Recenter map on current location"
+            title="Recenter location"
+          >
+            🎯
+          </button>
           {errorMsg && <div className={lStyles.runMapError}>{errorMsg}</div>}
         </div>
 

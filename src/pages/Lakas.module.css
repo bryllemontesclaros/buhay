@@ -6456,6 +6456,38 @@
   z-index: 1;
 }
 
+.mapRecenterBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.mapRecenterBtn:hover {
+  background: var(--surface3);
+  transform: scale(1.08);
+}
+
+.mapRecenterBtn:active {
+  transform: scale(0.92);
+}
+
 .runMapError {
   position: absolute;
   top: 16px;
