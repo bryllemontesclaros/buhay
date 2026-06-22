@@ -4459,6 +4459,18 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       return () => window.cancelAnimationFrame(frameId)
     }
 
+    if (actionRequest.type === 'run-session') {
+      if (currentTab !== 'workout') return undefined
+      handledActionTokenRef.current = actionRequest.token
+      const runSession = GYM_SESSION_TYPES.find(s => s.key === 'running')
+      const runTemplate = { name: 'Outdoor Run', exercises: [{ name: 'Running', sets: 1, reps: 0, weight: 0 }] }
+      const frameId = window.requestAnimationFrame(() => {
+        openGymSessionMode(runTemplate, runSession)
+        onActionHandled(actionRequest.token)
+      })
+      return () => window.cancelAnimationFrame(frameId)
+    }
+
     if (actionRequest.type === 'meal-log') {
       if (currentTab !== 'body') return undefined
       handledActionTokenRef.current = actionRequest.token
@@ -5328,6 +5340,19 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                <span>Quick log</span>
 	                <strong>Record what really happened</strong>
 	                <small>Skip videos and guidance only when you already know the session.</small>
+	              </button>
+	              <button
+	                type="button"
+	                className={lStyles.workoutSecondaryAction}
+	                onClick={() => {
+	                  const runSession = GYM_SESSION_TYPES.find(s => s.key === 'running')
+	                  const runTemplate = { name: 'Outdoor Run', exercises: [{ name: 'Running', sets: 1, reps: 0, weight: 0 }] }
+	                  openGymSessionMode(runTemplate, runSession)
+	                }}
+	              >
+	                <span>Outdoor run</span>
+	                <strong>🏃 Start GPS Run</strong>
+	                <small>Real-time GPS tracking and route map.</small>
 	              </button>
 	            </div>
 	          </div>

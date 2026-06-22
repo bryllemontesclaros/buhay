@@ -809,6 +809,7 @@
   line-height: 1.3;
   overflow: hidden;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -1447,6 +1448,7 @@
 .fabActionGrocery { --fab-tone: var(--amber); }
 .fabActionMeal { --fab-tone: var(--amber); }
 .fabActionSession { --fab-tone: var(--blue); }
+.fabActionRun { --fab-tone: var(--peach); }
 .fabActionJournal { --fab-tone: var(--purple); }
 .fabActionMood { --fab-tone: var(--text2); }
 .fabActionIcon {

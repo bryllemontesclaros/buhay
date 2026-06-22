@@ -1542,6 +1542,7 @@ export default function AppShell({ user }) {
     ? [
         { key: 'meal-log', label: 'Meal Log', meta: 'Log calories, protein, carbs, fat, and notes.', icon: 'ML', className: styles.fabActionMeal, onClick: () => openLakasFabAction('meal-log') },
         { key: 'gym-session', label: 'Start Gym Session', meta: 'Open guided workout mode right away.', icon: 'GS', className: styles.fabActionSession, onClick: () => openLakasFabAction('gym-session') },
+        { key: 'run-session', label: 'Start a Run', meta: 'GPS tracking and live route map.', icon: '🏃', className: styles.fabActionRun, onClick: () => openLakasFabAction('run-session') },
       ]
     : activeSpace === 'tala'
       ? [
