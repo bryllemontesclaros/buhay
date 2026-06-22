@@ -114,8 +114,8 @@ export default function LakasRunningTracker({ onSave, onClose }) {
     // Standard center coordinates (Manila default)
     const defaultCenter = [14.5995, 120.9842]
     const map = L.map(mapRef.current, {
-      zoomControl: false,
-      attributionControl: false,
+      zoomControl: true,
+      attributionControl: true,
     }).setView(defaultCenter, 15)
 
     // Load OpenStreetMap tiles
