@@ -45,11 +45,48 @@ function formatPace(sec, km) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
+// Compute live rolling pace or speed-based pace to handle stationary state
+function getLivePace(speed, coordinates, elapsedSeconds) {
+  // If GPS speed is provided and valid (greater than a slow walk threshold of 0.5 m/s)
+  if (speed !== null && speed !== undefined) {
+    if (speed < 0.5) return '−:−−' // Standing still or extremely slow movement
+    const paceSeconds = 1000 / speed
+    const m = Math.floor(paceSeconds / 60)
+    const s = Math.round(paceSeconds % 60)
+    if (m > 99) return '−:−−'
+    return `${m}:${String(s).padStart(2, '0')}`
+  }
+
+  // Fallback to a rolling 15-second window
+  if (coordinates.length < 2) return '−:−−'
+  const now = Date.now()
+  const fifteenSecsAgo = now - 15000
+  const recent = coordinates.filter(p => p.timestamp >= fifteenSecsAgo)
+
+  if (recent.length < 2) {
+    const lastPoint = coordinates[coordinates.length - 1]
+    if (now - lastPoint.timestamp > 10000) return '−:−−' // Stopped for >10s
+    return '−:−−'
+  }
+
+  const recentDist = calculateHaversineDistance(recent)
+  const timeDiff = (recent[recent.length - 1].timestamp - recent[0].timestamp) / 1000
+
+  if (recentDist < 0.003 || timeDiff <= 0) return '−:−−' // Less than 3 meters in 15 seconds
+
+  const paceSeconds = Math.round(timeDiff / recentDist)
+  const m = Math.floor(paceSeconds / 60)
+  const s = paceSeconds % 60
+  if (m > 99) return '−:−−'
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
 export default function LakasRunningTracker({ onSave, onClose }) {
   const [isRunning, setIsRunning] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [distance, setDistance] = useState(0)
   const [coordinates, setCoordinates] = useState([])
+  const [currentSpeed, setCurrentSpeed] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
 
   const timerRef = useRef(null)
@@ -90,14 +127,24 @@ export default function LakasRunningTracker({ onSave, onClose }) {
     mapInstanceRef.current = map
     pathLayerRef.current = pathLayer
 
+    // Force map invalidation after small timeouts to ensure size calculation runs after any modal layout transitions complete
+    const t1 = setTimeout(() => {
+      if (mapInstanceRef.current) mapInstanceRef.current.invalidateSize()
+    }, 100)
+    const t2 = setTimeout(() => {
+      if (mapInstanceRef.current) mapInstanceRef.current.invalidateSize()
+    }, 500)
+
     // Attach ResizeObserver to handle element size calculation lag / visibility changes
     const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize()
+      if (mapInstanceRef.current) mapInstanceRef.current.invalidateSize()
     })
     resizeObserver.observe(mapRef.current)
 
     // Clean up
     return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
       resizeObserver.disconnect()
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
@@ -154,11 +201,27 @@ export default function LakasRunningTracker({ onSave, onClose }) {
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords
-        const newPoint = { lat: latitude, lng: longitude, timestamp: Date.now() }
+        const { latitude, longitude, accuracy, speed } = position.coords
+        
+        // Ignore poor accuracy signals (> 20 meters accuracy range) to avoid sudden large jumps
+        if (accuracy !== null && accuracy !== undefined && accuracy > 20) {
+          return
+        }
+
+        setCurrentSpeed(speed)
+        const newPoint = { lat: latitude, longitude, timestamp: Date.now() }
         
         setCoordinates(prev => {
-          const next = [...prev, newPoint]
+          // If we already have coordinates, avoid adding points that have shifted less than 3 meters (GPS Jitter filter)
+          if (prev.length > 0) {
+            const lastPoint = prev[prev.length - 1]
+            const segmentDist = calculateHaversineDistance([lastPoint, newPoint])
+            if (segmentDist < 0.003) {
+              return prev
+            }
+          }
+
+          const next = [...prev, { lat: latitude, lng: longitude, timestamp: newPoint.timestamp }]
           const dist = calculateHaversineDistance(next)
           setDistance(dist)
 
@@ -235,7 +298,7 @@ export default function LakasRunningTracker({ onSave, onClose }) {
     onSave(elapsedSeconds, distance, coordinates)
   }
 
-  const paceLabel = formatPace(elapsedSeconds, distance)
+  const paceLabel = isRunning ? getLivePace(currentSpeed, coordinates, elapsedSeconds) : '−:−−'
 
   return (
     <div className={lStyles.runOverlay} role="dialog" aria-modal="true" aria-labelledby="run-session-title">
