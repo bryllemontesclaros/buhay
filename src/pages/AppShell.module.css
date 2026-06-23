@@ -919,9 +919,9 @@
   min-height: 28px;
   padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
-  background: color-mix(in srgb, var(--accent) 12%, var(--glass-1));
-  color: var(--accent);
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text2);
   font-family: var(--font-ui);
   font-size: var(--type-overline);
   font-weight: 850;
