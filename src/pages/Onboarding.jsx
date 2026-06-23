@@ -670,7 +670,7 @@ export default function Onboarding({ user, onDone, notice = '' }) {
   }
 
   return (
-    <div className={`${styles.screen} neo`}>
+    <div className={styles.screen}>
       {notice && <div className={styles.notice}>{notice}</div>}
       <div className={styles.shell}>
         <aside className={styles.sideRail}>
