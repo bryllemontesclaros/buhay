@@ -410,7 +410,7 @@ export default function LandingPage() {
   const startFocusCopy = START_FOCUS_COPY[startFocus] || START_FOCUS_COPY['one-update']
 
   return (
-    <div className={`${styles.page} neo`}>
+    <div className={styles.page}>
       <RouteMeta
         title="Buhay — Takda, Lakas, and Tala in one calm account"
         description="Track money, fitness, and reflection in three focused spaces inside one account."
