@@ -1272,10 +1272,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   aria-pressed={isSelected}
                   aria-label={dayAriaLabel}
                 >
+                  {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
+
                   <div className={calStyles.cellTop}>
                     <div className={calStyles.dateNum}>{day}</div>
                     {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
                   </div>
+
+                  {(hasIncome || hasExpense) && (
+                    <div className={calStyles.miniVolumeBars}>
+                      {dayVol.income > 0 && (
+                        <div
+                          className={calStyles.miniVolumeBarInc}
+                          style={{ width: `${incPct}%` }}
+                        />
+                      )}
+                      {dayVol.expense > 0 && (
+                        <div
+                          className={calStyles.miniVolumeBarExp}
+                          style={{ width: `${expPct}%` }}
+                        />
+                      )}
+                    </div>
+                  )}
 
                   {!privacyMode && (
                     <div
