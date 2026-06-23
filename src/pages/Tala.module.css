@@ -11,54 +11,14 @@
   padding: var(--layout-surface-pad);
   border-radius: 30px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 34%),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--purple) 14%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-}
-
-:global(.neo) .workspaceBoard {
-  background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-}
-
-:global(.neo) .workspaceBoardTala::before {
-  display: none;
-}
-
-:global(.neo) .boardBadge {
-  border: 3px solid var(--nb-stroke);
-  background: var(--nb-accent-2);
-  color: var(--nb-ribbon-ink);
-  box-shadow: 0 6px 0 rgba(16, 16, 16, 0.14);
-  font-family: var(--nb-font-mono);
-}
-
-:global(.neo) .boardSignature,
-:global(.neo) .boardStreamText {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .boardStream {
-  background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-}
-
-:global(.neo) .boardStreamLabel {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
 }
 
 .workspaceBoardTala {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--purple) 16%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .workspaceBoardTala::before {
@@ -66,11 +26,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 22%, transparent 84%, color-mix(in srgb, var(--glass-highlight) 10%, transparent)),
-    radial-gradient(circle at 82% 0%, color-mix(in srgb, white 14%, transparent), transparent 22%);
+  background: var(--surface);
 }
-
 
 .boardCompanionBar {
   position: relative;
@@ -117,9 +74,7 @@
   padding: 11px 12px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--purple) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -173,66 +128,10 @@
   position: relative;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-}
-
-:global(.neo) .hero,
-:global(.neo) .panel,
-:global(.neo) .statCard {
-  background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .hero::before,
-:global(.neo) .panel::before,
-:global(.neo) .statCard::before {
-  display: none;
-}
-
-:global(.neo) .title {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .sub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .heroCard,
-:global(.neo) .viewSwitchCard,
-:global(.neo) .quickWinCard,
-:global(.neo) .quickEntryPanel,
-:global(.neo) .advancedBox,
-:global(.neo) .settingsSaveNotice,
-:global(.neo) .focusCard,
-:global(.neo) .chartCard,
-:global(.neo) .entryCard,
-:global(.neo) .rowCard,
-:global(.neo) .goalCard,
-:global(.neo) .calmPlanCard,
-:global(.neo) .journalPromptRow,
-:global(.neo) .selectedDayPanel,
-:global(.neo) .boardTodayCard,
-:global(.neo) .storyCard {
-  background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .journalPromptRow {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+  
+  
 }
 
 .hero::before,
@@ -242,7 +141,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
   opacity: 0.8;
 }
 
@@ -253,10 +152,7 @@
   align-items: stretch;
   padding: 17px;
   border-radius: 28px;
-  background:
-    radial-gradient(circle at 12% 10%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 34%),
-    radial-gradient(circle at 88% 22%, color-mix(in srgb, var(--purple) 12%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .eyebrow,
@@ -302,9 +198,7 @@
   padding: 18px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 20%, transparent), transparent 45%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
 }
 
 .heroCardLabel,
@@ -427,9 +321,7 @@
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   padding: 14px;
 }
@@ -439,7 +331,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+  background: var(--surface);
 }
 
 .viewSwitchHeader,
@@ -471,9 +363,7 @@
   padding: 11px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  background: var(--surface);
   color: var(--text2);
   cursor: pointer;
   text-align: left;
@@ -506,9 +396,7 @@
 
 .viewSwitchButtonActive {
   border-color: color-mix(in srgb, var(--accent) 54%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 44%),
-    color-mix(in srgb, var(--accent) 12%, var(--glass-1));
+  background: var(--surface);
 }
 
 .viewSwitchCompact {
@@ -555,9 +443,7 @@
   padding: 12px 13px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 11%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -566,7 +452,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+  background: var(--surface);
 }
 
 .quickWinIndex,
@@ -808,9 +694,7 @@
   padding: 12px 14px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
 }
 
@@ -845,9 +729,7 @@
   padding: 14px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  background: var(--surface);
 }
 
 .settingsActionCopy {
@@ -890,41 +772,6 @@
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 72%, var(--purple) 28%));
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
   white-space: nowrap;
-}
-
-:global(.neo) .primaryBtn,
-:global(.neo) .secondaryBtn,
-:global(.neo) .ghostBtn,
-:global(.neo) .monthControls button,
-:global(.neo) .rowCard button,
-:global(.neo) .entryCard button,
-:global(.neo) .goalTop button,
-:global(.neo) .goalUpdate button {
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .primaryBtn {
-  background: var(--nb-accent-2);
-  color: var(--nb-ribbon-ink);
-}
-
-:global(.neo) .secondaryBtn {
-  border-style: dashed;
-}
-
-:global(.neo) .primaryBtn:hover,
-:global(.neo) .primaryBtn:focus-visible,
-:global(.neo) .secondaryBtn:hover,
-:global(.neo) .ghostBtn:hover,
-:global(.neo) .monthControls button:hover,
-:global(.neo) .rowCard button:hover,
-:global(.neo) .entryCard button:hover,
-:global(.neo) .goalTop button:hover,
-:global(.neo) .goalUpdate button:hover {
-  border-color: var(--nb-stroke);
 }
 
 .primaryBtn:disabled,
@@ -985,9 +832,7 @@
   z-index: 1;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  background: var(--surface);
 }
 
 .focusCard {
@@ -1024,10 +869,7 @@
   padding: 18px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 44%),
-    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--purple) 10%, transparent), transparent 38%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
 }
 
@@ -1108,9 +950,7 @@
   padding: 12px 14px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  background: var(--surface);
   color: var(--text2);
   cursor: pointer;
   font-family: var(--font-body);
@@ -1356,9 +1196,7 @@
   min-width: min(100%, 290px);
   border-radius: 22px;
   border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 72%, transparent);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -1443,16 +1281,12 @@
 
 .calendarToday {
   border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 48%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
 }
 
 .calendarSelected {
   border-color: color-mix(in srgb, var(--accent) 68%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 24%, transparent), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--glass-1)), color-mix(in srgb, var(--surface2) 88%, transparent 12%));
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
     0 14px 28px color-mix(in srgb, var(--accent) 12%, transparent);
@@ -1523,9 +1357,7 @@
   padding: 18px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent),
     0 18px 36px color-mix(in srgb, var(--accent) 10%, transparent);
@@ -1633,9 +1465,7 @@
   padding: 14px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 48%, transparent);
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 70%, transparent);
+  background: var(--surface);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -1855,9 +1685,7 @@
   overflow: hidden;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -1921,25 +1749,6 @@
   border-radius: 24px;
 }
 
-:global(.neo) .panel,
-:global(.neo) .statCard,
-:global(.neo) .viewSwitchCard {
-  border-width: 3px;
-  box-shadow: var(--nb-shadow-sm);
-}
-
-:global(.neo) .focusCard,
-:global(.neo) .chartCard,
-:global(.neo) .entryCard,
-:global(.neo) .rowCard,
-:global(.neo) .goalCard,
-:global(.neo) .calmPlanCard,
-:global(.neo) .selectedDayPanel,
-:global(.neo) .storyCard {
-  border-width: 2px;
-  box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.1);
-}
-
 @media (max-width: 900px) {
   .boardOverview,
   .hero {
@@ -1965,9 +1774,7 @@
   padding: 12px 13px;
   border-radius: 22px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 44%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface2) 26%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -2437,10 +2244,7 @@
   padding: 20px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 44%),
-    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--purple) 10%, transparent), transparent 38%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
 }
 
@@ -2782,9 +2586,7 @@
   z-index: 1;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  background: var(--surface);
   padding: 16px;
 }
 
@@ -3022,8 +2824,8 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  
+  
 }
 
 .climateHeader {
@@ -3180,8 +2982,8 @@
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
   z-index: 100;
   text-align: left;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  
+  
 }
 
 .climateOrb:hover .orbTooltip {
@@ -3375,8 +3177,8 @@
   flex-direction: column;
   gap: 10px;
   background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  
+  
   animation: promptSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -3512,6 +3314,4 @@
   animation: talaRowSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--stagger-delay, 0ms);
 }
-
-
 

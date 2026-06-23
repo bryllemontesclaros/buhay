@@ -16,10 +16,7 @@
   inset: 0 0 auto;
   height: 240px;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 52%),
-    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--accent-glow) 28%, transparent), transparent 34%),
-    radial-gradient(circle at 84% 6%, color-mix(in srgb, var(--blue-dim) 18%, transparent), transparent 30%);
+  background: var(--surface);
   z-index: -1;
 }
 
@@ -34,66 +31,6 @@
   background-size: 26px 26px, auto;
   opacity: 0.22;
   z-index: -1;
-}
-
-:global(.neo) .page::before {
-  display: none;
-}
-
-:global(.neo) .page {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .page::after {
-  opacity: 0.18;
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
-    repeating-linear-gradient(135deg, transparent 0 26px, var(--nb-texture-line) 26px 27px);
-  background-size: 24px 24px, auto;
-}
-
-:global(.neo) .title {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .sub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .header,
-:global(.neo) .trustCard,
-:global(.neo) .stat,
-:global(.neo) .card,
-:global(.neo) .formCard,
-:global(.neo) .goalCard {
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
-    repeating-linear-gradient(135deg, transparent 0 24px, var(--nb-texture-line) 24px 25px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 22px 22px, auto, auto;
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .header::before,
-:global(.neo) .trustCard::before,
-:global(.neo) .stat::before,
-:global(.neo) .card::before,
-:global(.neo) .formCard::before,
-:global(.neo) .goalCard::before {
-  display: none;
-}
-
-:global(.neo) .trustCard span,
-:global(.neo) .trustCard small {
-  color: var(--nb-ink-3);
-}
-
-:global(.neo) .trustCard strong {
-  color: var(--nb-ink);
 }
 
 @keyframes fadeIn {
@@ -117,13 +54,10 @@
   margin-bottom: 0;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
   border-radius: var(--bento-radius-xl);
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 26%, transparent), transparent 42%),
-    radial-gradient(circle at 18% 110%, color-mix(in srgb, var(--peach-dim) 22%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -135,7 +69,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 26%, transparent), transparent 22%, transparent 88%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
 }
 
 .title {
@@ -198,12 +132,10 @@
   padding: var(--layout-surface-pad);
   border-radius: 26px;
   border: 1px solid color-mix(in srgb, var(--blue) 14%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue-dim) 20%, transparent), transparent 44%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 62%, var(--surface) 38%), color-mix(in srgb, var(--surface2) 88%, transparent 12%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(136%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(136%);
+  
+  
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -215,7 +147,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 24%, transparent), transparent 42%);
+  background: var(--surface);
 }
 
 .trustCard span,
@@ -257,12 +189,10 @@
   contain-intrinsic-size: 220px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 14%, transparent), transparent 38%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 66%, var(--surface) 34%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -283,10 +213,6 @@
   border-color: color-mix(in srgb, var(--accent) 18%, var(--glass-border));
 }
 
-:global(.neo) .stat:hover {
-  border-color: var(--nb-stroke);
-}
-
 .stat::before,
 .card::before,
 .formCard::before,
@@ -295,7 +221,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
   opacity: 0.82;
 }
 
@@ -429,8 +355,7 @@
   padding: 12px 14px;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 48%, var(--surface2) 52%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
   color: var(--text);
   font-size: 16px;
@@ -510,8 +435,7 @@
   box-sizing: border-box;
   min-height: 48px;
   padding: 12px 46px 12px 14px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
   border-radius: 18px;
@@ -612,14 +536,6 @@
   overflow: hidden;
 }
 
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
 .advancedSummary {
   display: flex;
   align-items: center;
@@ -645,14 +561,7 @@
     box-shadow: var(--glass-shadow);
   }
 
-  :global(.neo) .header:hover,
-  :global(.neo) .trustCard:hover,
-  :global(.neo) .card:hover,
-  :global(.neo) .formCard:hover,
-  :global(.neo) .goalCard:hover {
-    border-color: var(--nb-stroke);
-    box-shadow: var(--nb-shadow);
-  }
+  
 }
 
 .advancedSummary::-webkit-details-marker {
@@ -723,8 +632,7 @@
 .presetToggleActive {
   border-color: color-mix(in srgb, var(--accent) 44%, var(--glass-border));
   color: var(--accent);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--glass-2)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+  background: var(--surface);
 }
 
 .presetHint {
@@ -834,8 +742,8 @@ th {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: color-mix(in srgb, var(--surface) 86%, transparent);
-  backdrop-filter: blur(var(--glass-blur-md));
-  -webkit-backdrop-filter: blur(var(--glass-blur-md));
+  
+  
 }
 
 td {
@@ -1014,12 +922,10 @@ tbody tr:hover td {
   margin-bottom: 1rem;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--amber) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--amber) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--amber-dim) 74%, var(--glass-1) 26%), color-mix(in srgb, var(--surface) 86%, transparent 14%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+  
+  
   color: var(--amber);
   font-size: 13px;
   line-height: 1.55;

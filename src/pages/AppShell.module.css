@@ -6,162 +6,8 @@
   height: 100dvh;
   overflow: hidden;
   padding: 18px;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--border2) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(180deg, color-mix(in srgb, var(--border2) 16%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--accent-glow) 52%, transparent), transparent 28%),
-    radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--blue-dim) 32%, transparent), transparent 26%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, var(--nb-surface-card-strong) 5%), var(--bg));
-  background-size: 92px 92px, 92px 92px, auto, auto, auto;
+  background: var(--bg);
   isolation: isolate;
-}
-
-:global(.neo).shell {
-  background: var(--nb-paper);
-}
-
-:global(.neo).shell::before {
-  opacity: 0.25;
-  background:
-    radial-gradient(circle at 12% 22%, var(--nb-ambient-hot), transparent 38%),
-    radial-gradient(circle at 88% 18%, var(--nb-ambient-cool), transparent 44%),
-    radial-gradient(circle, var(--nb-ambient-dot) 1px, transparent 1px),
-    repeating-linear-gradient(135deg, transparent 0 30px, var(--nb-paper-fiber) 30px 31px);
-  background-size: auto, auto, 28px 28px, auto;
-}
-
-:global(.neo) .sidebar {
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.85px, transparent 0.85px),
-    repeating-linear-gradient(135deg, transparent 0 24px, var(--nb-texture-line) 24px 25px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 22px 22px, auto, auto;
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .sidebar::before {
-  display: none;
-}
-
-:global(.neo) .logo {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-  text-shadow: none;
-}
-
-:global(.neo) .topBarKicker {
-  font-family: var(--nb-font-mono);
-  color: var(--nb-ink-3);
-}
-
-:global(.neo) .topBarLogo {
-  font-family: var(--font-brutal);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .topBarContextPill {
-  border: 3px solid var(--nb-stroke);
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper) 98%, white 2%), color-mix(in srgb, var(--nb-paper) 99%, black 1%));
-  background-size: 18px 18px, auto;
-  box-shadow: var(--nb-shadow-sm);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .topBarStream {
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.75px, transparent 0.75px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 18px 18px, auto;
-}
-
-:global(.neo) .topBarStreamLabel {
-  font-family: var(--nb-font-mono);
-  color: var(--nb-ink-3);
-}
-
-:global(.neo) .topBarStreamText {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .navItem,
-:global(.neo) .spaceButton,
-:global(.neo) .btnLogout {
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .navItem:hover,
-:global(.neo) .spaceButton:hover,
-:global(.neo) .btnLogout:hover {
-  transform: translateY(-1px);
-  /* Keep neo-brutal stroke consistent on hover (base hover rules otherwise soften it). */
-  border-color: var(--nb-stroke);
-  background: var(--nb-paper-2);
-}
-
-:global(.neo) .navItem:active,
-:global(.neo) .spaceButton:active,
-:global(.neo) .btnLogout:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 0 rgba(16, 16, 16, 0.14);
-}
-
-:global(.neo) .navItem.active,
-:global(.neo) .spaceButtonActive {
-  border-color: var(--nb-stroke);
-}
-
-:global(.neo) .topBar {
-  /* The outer shell draws the stroke. The chrome only draws the divider. */
-  border: none;
-  /* Use inset shadow instead of border to avoid 1px gaps on some devices. */
-  box-shadow: inset 0 -4px 0 var(--nb-stroke);
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.75px, transparent 0.75px),
-    repeating-linear-gradient(135deg, transparent 0 26px, var(--nb-texture-line) 26px 27px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 22px 22px, auto, auto;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .topBar::after {
-  display: none;
-}
-
-:global(.neo) .mainWrap {
-  border: 4px solid var(--nb-stroke);
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.75px, transparent 0.75px),
-    repeating-linear-gradient(135deg, transparent 0 30px, var(--nb-texture-line) 30px 31px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 24px 24px, auto, auto;
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .mainWrap::before {
-  display: none;
-}
-
-:global(.neo) .main {
-  background: transparent;
-}
-
-:global(.neo) .topBar {
-  border-bottom-color: var(--nb-stroke);
 }
 
 .shellLakas {
@@ -189,26 +35,16 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 24%),
-    radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 28%),
-    radial-gradient(circle at 66% 82%, color-mix(in srgb, var(--rose) 10%, transparent), transparent 24%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
-  opacity: 0.75;
+  background: var(--bg);
+  opacity: 1;
 }
 
 .shellLakas::before {
-  background:
-    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 24%),
-    radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
+  background: var(--bg);
 }
 
 .shellTala::before {
-  background:
-    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--purple) 15%, transparent), transparent 24%),
-    radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
+  background: var(--bg);
 }
 
 /* SIDEBAR — desktop */
@@ -222,13 +58,10 @@
   overflow-y: auto;
   border: 1px solid color-mix(in srgb, var(--glass-border) 68%, var(--border) 32%);
   border-radius: 34px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)),
-    radial-gradient(circle at 24% 88%, color-mix(in srgb, var(--blue-dim) 18%, transparent), transparent 28%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 44%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(146%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(146%);
+  
+  
 }
 
 .sidebar::before {
@@ -236,7 +69,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 82%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
   opacity: 0.8;
 }
 
@@ -292,10 +125,7 @@
   padding: 12px 13px;
   border-radius: 22px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 40%),
-    radial-gradient(circle at bottom left, color-mix(in srgb, var(--peach-dim) 18%, transparent), transparent 34%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
     0 10px 28px rgba(2, 8, 16, 0.08);
@@ -415,10 +245,7 @@
   padding: 11px 11px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    radial-gradient(circle at 18% 92%, color-mix(in srgb, var(--blue-dim) 10%, transparent), transparent 28%),
-    color-mix(in srgb, var(--glass-1) 74%, transparent);
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
     0 10px 24px rgba(2, 8, 16, 0.08);
@@ -487,9 +314,7 @@
 .spaceButtonActive {
   color: var(--text);
   border-color: color-mix(in srgb, var(--text2) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--text) 4%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--text) 5%, var(--glass-1)), color-mix(in srgb, var(--text) 2%, var(--surface2)));
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
     0 12px 28px rgba(4, 10, 20, 0.08);
@@ -589,8 +414,7 @@
 
 .navItem.active {
   color: var(--text);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--glass-1)), color-mix(in srgb, var(--accent) 6%, var(--surface2)));
+  background: var(--surface);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent),
@@ -618,9 +442,7 @@
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border) 42%);
   border-radius: 22px;
   padding: 13px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
@@ -643,8 +465,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, var(--glass-1)), color-mix(in srgb, var(--accent) 10%, var(--surface2)));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--glass-border));
   display: flex;
   align-items: center;
@@ -722,9 +543,7 @@
   padding: 16px;
   border-radius: 28px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface2) 82%, transparent 18%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
@@ -816,9 +635,7 @@
 .financeGroupTabActive {
   color: var(--text);
   border-color: color-mix(in srgb, var(--accent) 46%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 44%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 17%, var(--glass-1)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 48%, transparent),
     0 14px 26px rgba(4, 10, 20, 0.12);
@@ -833,13 +650,10 @@
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border) 48%);
   border-radius: 32px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 26%, transparent), transparent 16%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--peach-dim) 18%, transparent), transparent 24%),
-    linear-gradient(180deg, color-mix(in srgb, var(--surface) 68%, var(--bg)) 0%, color-mix(in srgb, var(--surface2) 44%, transparent) 100%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-sm)) saturate(122%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(122%);
+  
+  
   animation: shellFrameIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 
@@ -848,7 +662,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 26%, transparent), transparent 16%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 8%, transparent));
+  background: var(--surface);
   opacity: 0.85;
 }
 
@@ -856,17 +670,15 @@
   position: relative;
   z-index: 2;
   min-height: 80px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 82%, var(--surface) 18%), color-mix(in srgb, var(--surface2) 84%, transparent 16%)),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--blue) 5%, transparent), transparent 20%);
+  background: var(--surface);
   border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 22px;
   flex-shrink: 0;
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
   animation: shellChromeIn var(--motion-duration-slow) var(--motion-ease-out) both;
   transition:
     min-height var(--motion-duration) var(--motion-ease-standard),
@@ -981,18 +793,6 @@
   background: color-mix(in srgb, var(--accent) 15%, var(--glass-1));
 }
 
-:global(.neo) .mobileSpaceButton {
-  border: 3px solid var(--nb-stroke);
-  background: var(--nb-paper-2);
-  box-shadow: var(--nb-shadow-sm);
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .mobileSpaceButtonActive {
-  color: var(--nb-ink);
-  border-color: var(--nb-stroke);
-  background: color-mix(in srgb, var(--accent) 16%, var(--nb-paper-2));
-}
 .topBarRight { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .topBarStatus {
   display: flex;
@@ -1003,9 +803,7 @@
   padding: 7px 9px 7px 7px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--accent) 24%);
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface2) 32%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   overflow: hidden;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
 }
@@ -1053,9 +851,7 @@
 .mainWrapScrolled .topBar {
   min-height: 66px;
   padding: 10px 18px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 90%, var(--surface) 10%), color-mix(in srgb, var(--surface2) 88%, transparent 12%)),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 20%);
+  background: var(--surface);
 }
 
 .mainWrapScrolled .topBarLogo {
@@ -1130,12 +926,10 @@
   padding: 10px 12px;
   border-radius: 22px;
   border: 1px solid color-mix(in srgb, var(--amber) 36%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--amber) 14%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  
+  
 }
 .syncBannerIcon {
   width: 34px;
@@ -1215,12 +1009,10 @@
   padding: 12px 40px 14px 14px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+  
+  
   animation: toastIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .levelToastDismiss {
@@ -1280,12 +1072,10 @@
   padding: 15px 16px;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--amber) 38%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--amber) 14%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
+  
+  
 }
 .verifyBannerEyebrow {
   font-size: var(--type-overline);
@@ -1358,8 +1148,8 @@
   position: fixed;
   inset: 0;
   background: rgba(8, 12, 18, 0.22);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  
+  
   z-index: 280;
   animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
@@ -1394,12 +1184,10 @@
   padding: 10px;
   border-radius: 28px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(155%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(155%);
+  
+  
   animation: takdaFloatIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .fabMenuContextual {
@@ -1419,7 +1207,7 @@
   padding: 11px 12px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--fab-tone) 18%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 70%, var(--surface2) 30%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 14px;
@@ -1430,7 +1218,7 @@
 .fabAction:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--fab-tone) 38%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--fab-tone) 10%, var(--glass-2)), color-mix(in srgb, var(--fab-tone) 6%, var(--surface2)));
+  background: var(--surface);
   box-shadow: 0 14px 28px rgba(8, 12, 18, 0.12);
 }
 
@@ -1550,15 +1338,13 @@
   box-sizing: border-box;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 74%, var(--border));
   border-radius: 30px;
   padding: 1rem;
   box-shadow: var(--glass-shadow-strong);
-  backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  
+  
   pointer-events: auto;
   animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
 }
@@ -1676,8 +1462,8 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    
+    
     position: relative !important;
   }
   .mainWrap::before {
@@ -1692,10 +1478,7 @@
     z-index: 5 !important;
     pointer-events: none !important;
   }
-  :global(.neo) .mainWrap::before {
-    background: var(--nb-paper) !important;
-    height: 92px !important;
-  }
+  
   .mainWrapCalendar { overflow: visible; }
   .main {
     flex: 1;
@@ -1990,12 +1773,10 @@
     z-index: 3;
     margin: 0 0 6px;
     padding: 12px 10px 10px;
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 44%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+    background: var(--surface);
     border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+    
+    
   }
   .bottomNav {
     display: flex;
@@ -2003,16 +1784,15 @@
     left: 12px;
     right: 12px;
     bottom: calc(12px + env(safe-area-inset-bottom));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 86%, var(--surface) 14%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+    background: var(--surface);
     border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
     border-radius: 26px;
     z-index: 100;
     min-height: 62px;
     padding: 6px;
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--glass-blur-lg)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(160%);
+    
+    
     transition:
       opacity var(--motion-duration) var(--motion-ease-standard),
       transform var(--motion-duration) var(--motion-ease-out);
@@ -2045,8 +1825,7 @@
   }
   .bottomNavItem.active {
     color: var(--text);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, var(--glass-1)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+    background: var(--surface);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
       0 10px 20px rgba(4, 10, 20, 0.12);
@@ -2060,8 +1839,8 @@
     background: rgba(8, 12, 18, 0.22);
     border: none;
     z-index: 98;
-    backdrop-filter: blur(18px) saturate(130%);
-    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    
+    
     animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
   }
   .mobileNavSheet {
@@ -2076,11 +1855,10 @@
     padding: 10px 14px 14px;
     border-radius: 28px;
     border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 84%, var(--surface) 16%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+    background: var(--surface);
     box-shadow: var(--glass-shadow-strong);
-    backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+    
+    
     animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
   }
   .mobileNavSheetHandle {
@@ -2134,7 +1912,7 @@
     padding: 10px 14px;
     border-radius: 18px;
     border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-    background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface2) 32%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+    background: var(--surface);
     color: var(--text);
     font-family: var(--font-body);
     text-align: left;
@@ -2151,8 +1929,7 @@
   }
   .mobileNavLinkActive {
     border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--glass-2)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+    background: var(--surface);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
       0 10px 20px rgba(4, 10, 20, 0.12);
@@ -2201,21 +1978,9 @@
 
 /* Mobile neo: avoid double strokes + odd arcs caused by desktop neo rules (higher specificity). */
 @media (max-width: 768px) {
-  :global(.neo) .mainWrap {
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
+  
 
-  :global(.neo) .topBar {
-    /* On mobile, the top bar is the card. Give it the stroke and shadow. */
-    margin: 10px 12px 0;
-    border: 4px solid var(--nb-stroke);
-    border-radius: 24px;
-    background: var(--nb-paper-2);
-    box-shadow: var(--nb-shadow);
-  }
+  
 }
 
 @media (max-width: 768px) and (max-height: 760px) {
@@ -2354,111 +2119,10 @@
 }
 
 @media (max-width: 768px) {
-  :global(.neo) .topBar {
-    margin: 12px 12px 0;
-    border-radius: 28px;
-  }
+  
 }
 
 /* Visible app redesign layer: shared chrome should look new across Takda, Lakas, and Tala. */
-:global(.neo).shell {
-  padding: 22px;
-  gap: 22px;
-  background:
-    radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 26%),
-    radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--nb-sun) 20%, transparent), transparent 28%),
-    radial-gradient(circle at 76% 86%, color-mix(in srgb, var(--space-reflection) 12%, transparent), transparent 30%),
-    linear-gradient(135deg, var(--nb-paper), color-mix(in srgb, var(--nb-paper) 82%, #fff0d4 18%));
-}
-
-:global(.neo) .sidebar {
-  width: 252px;
-  min-width: 252px;
-  padding: 22px 0 18px;
-  border-width: 5px;
-  border-radius: 38px;
-  box-shadow: 12px 12px 0 var(--nb-stroke);
-}
-
-:global(.neo) .logo {
-  font-family: var(--font-brutal);
-  font-size: 31px;
-  letter-spacing: 0;
-}
-
-:global(.neo) .spaceSwitcher {
-  gap: 12px;
-  padding-inline: 16px;
-}
-
-:global(.neo) .spaceButton {
-  min-height: 76px;
-  border-width: 4px;
-  border-radius: 24px;
-  box-shadow: 6px 6px 0 rgba(16, 16, 16, 0.16);
-}
-
-:global(.neo) .spaceButtonActive {
-  background:
-    radial-gradient(circle at 92% 12%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 18%, var(--nb-paper-2)), var(--nb-paper-2));
-  box-shadow: 7px 7px 0 var(--nb-stroke);
-}
-
-:global(.neo) .navItem {
-  min-height: 50px;
-  border-radius: 18px;
-}
-
-:global(.neo) .mainWrap {
-  border-width: 5px;
-  border-radius: 38px;
-  box-shadow: 14px 14px 0 var(--nb-stroke);
-  background:
-    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 30%),
-    radial-gradient(circle at 94% 10%, color-mix(in srgb, var(--nb-sun) 14%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper) 96%, black 4%));
-}
-
-:global(.neo) .topBar {
-  min-height: 82px;
-  padding: 16px 22px;
-  box-shadow: inset 0 -4px 0 var(--nb-stroke);
-}
-
-:global(.neo) .topBarLogo {
-  font-size: 30px;
-  letter-spacing: 0;
-  line-height: 0.95;
-}
-
-:global(.neo) .topBarKicker {
-  color: var(--accent);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-}
-
-:global(.neo) .topBarContextPill,
-:global(.neo) .topBarStatus,
-:global(.neo) .themeBtn,
-:global(.neo) .notificationButton {
-  border-width: 3px;
-  box-shadow: 5px 5px 0 rgba(16, 16, 16, 0.12);
-}
-
-:global(.neo) .topBarContextPill {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 18%, var(--nb-paper-2)), var(--nb-paper-2));
-}
-
-:global(.neo) .main {
-  padding: 22px;
-}
-
-:global(.neo) .fabButton {
-  border: 4px solid var(--nb-stroke);
-  box-shadow: 8px 8px 0 rgba(16, 16, 16, 0.2);
-}
 
 .mainWrapScrolled,
 .mainWrapChromeHidden {
@@ -2475,168 +2139,64 @@
 }
 
 @media (max-width: 768px) {
-  :global(.neo).shell {
-    padding: 0;
-    gap: 0;
-  }
+  
 
-  :global(.neo) .topBar {
-    min-height: auto;
-    margin: 12px 12px 0;
-    padding: 14px;
-    border-width: 4px;
-    border-radius: 28px;
-    box-shadow: 6px 6px 0 rgba(16, 16, 16, 0.14);
-  }
+  
 
-  :global(.neo) .topBarLogo {
-    font-size: 30px;
-  }
+  
 
-  :global(.neo) .mobileSpaceSwitch {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
+  
 
-  :global(.neo) .mobileSpaceButton {
-    min-height: 38px;
-    min-width: 78px;
-    border: 3px solid var(--nb-stroke);
-    border-radius: 999px;
-    background: var(--nb-paper-2);
-    box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.14);
-    color: var(--nb-ink);
-    font-size: 13px;
-    font-weight: 900;
-  }
+  
 
-  :global(.neo) .mobileSpaceButtonActive {
-    background: color-mix(in srgb, var(--accent) 22%, var(--nb-paper-2));
-    box-shadow: 5px 5px 0 var(--nb-stroke);
-  }
+  
 
-  :global(.neo) .main {
-    padding: 16px 0px calc(122px + env(safe-area-inset-bottom));
-  }
+  
 
-  :global(.neo) .bottomNav {
-    border: 3px solid color-mix(in srgb, var(--nb-stroke) 42%, transparent);
-    box-shadow: 0 12px 32px rgba(16, 16, 16, 0.22);
-  }
+  
 
-  :global(.neo) .bottomNavItem {
-    border-radius: 22px;
-  }
+  
 }
 
 /* Final mobile shell correction: prevent the header and space switch from overflowing phones. */
 @media (max-width: 768px) {
-  :global(.neo) .main {
-    padding-inline: 0px;
-  }
+  
 
-  :global(.neo) .topBar {
-    width: calc(100% - 24px);
-    max-width: calc(100vw - 24px);
-    margin: 8px 12px 0;
-    padding: 12px;
-    border-width: 3px;
-    border-radius: 24px;
-    box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.12);
-    overflow: hidden;
-    box-sizing: border-box;
-  }
+  
 
-  :global(.neo) .topBarLeft {
-    min-width: 0;
-    overflow: hidden;
-  }
+  
 
-  :global(.neo) .topBarHeadingRow {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  
 
-  :global(.neo) .topBarLogo {
-    max-width: 8ch;
-    font-size: 28px;
-  }
+  
 
-  :global(.neo) .topBarContextPill {
-    min-height: 26px;
-    padding: 4px 9px;
-    border-width: 2px;
-    font-size: 9px;
-    box-shadow: 2px 2px 0 rgba(16, 16, 16, 0.1);
-  }
+  
 
-  :global(.neo) .topBarRight {
-    gap: 8px;
-  }
+  
 
-  :global(.neo) .topBarStatus,
-  :global(.neo) .themeBtn {
-    min-width: 40px;
-    min-height: 40px;
-    border-width: 2px;
-    box-shadow: 2px 2px 0 rgba(16, 16, 16, 0.1);
-  }
+  
 
-  :global(.neo) .topBarStatusBadge {
-    min-width: 38px;
-    min-height: 28px;
-    padding-inline: 8px;
-  }
+  
 
-  :global(.neo) .mobileSpaceSwitch {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 100%;
-    gap: 6px;
-    overflow: visible;
-  }
+  
 
-  :global(.neo) .mobileSpaceButton {
-    min-width: 0;
-    width: 100%;
-    min-height: 36px;
-    padding: 7px 8px;
-    border-width: 3px;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  
 
-  :global(.neo) .mobileSpaceButtonActive {
-    box-shadow: 3px 3px 0 var(--nb-stroke);
-  }
+  
 
 }
 
 @media (max-width: 390px) {
-  :global(.neo) .topBarLogo {
-    font-size: 25px;
-  }
+  
 
-  :global(.neo) .topBarStatus,
-  :global(.neo) .themeBtn {
-    min-width: 36px;
-    min-height: 36px;
-  }
+  
 
-  :global(.neo) .mobileSpaceButton {
-    min-height: 34px;
-    padding-inline: 6px;
-    font-size: 11px;
-  }
+  
 }
 
 /* Final mobile navigation model: top chooses space, bottom chooses page. */
 @media (max-width: 768px) {
-  .topBar,
-  :global(.neo) .topBar {
+  .topBar{
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
@@ -2648,27 +2208,23 @@
     overflow: visible;
   }
 
-  .topBarLeft,
-  :global(.neo) .topBarLeft {
+  .topBarLeft{
     display: contents;
     min-width: 0;
   }
 
-  .topBarTitleBlock,
-  :global(.neo) .topBarTitleBlock {
+  .topBarTitleBlock{
     grid-column: 1;
     grid-row: 1;
     min-width: 0;
   }
 
-  .topBarHeadingRow,
-  :global(.neo) .topBarHeadingRow {
+  .topBarHeadingRow{
     display: block;
     min-width: 0;
   }
 
-  .topBarLogo,
-  :global(.neo) .topBarLogo {
+  .topBarLogo{
     max-width: calc(100vw - 170px);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2677,13 +2233,11 @@
     line-height: 0.95;
   }
 
-  .topBarContextPill,
-  :global(.neo) .topBarContextPill {
+  .topBarContextPill{
     display: none;
   }
 
-  .topBarRight,
-  :global(.neo) .topBarRight {
+  .topBarRight{
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
@@ -2693,21 +2247,17 @@
     min-width: max-content;
   }
 
-  .topBarStatusMain,
-  :global(.neo) .topBarStatusMain {
+  .topBarStatusMain{
     display: none;
   }
 
   .topBarStatus,
-  .themeBtn,
-  :global(.neo) .topBarStatus,
-  :global(.neo) .themeBtn {
+  .themeBtn{
     min-width: 42px;
     min-height: 42px;
   }
 
-  .mobileSpaceSwitch,
-  :global(.neo) .mobileSpaceSwitch {
+  .mobileSpaceSwitch{
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
@@ -2719,8 +2269,7 @@
     padding-top: 0;
   }
 
-  .mobileSpaceButton,
-  :global(.neo) .mobileSpaceButton {
+  .mobileSpaceButton{
     width: 100%;
     min-width: 0;
     min-height: 42px;
@@ -2730,18 +2279,15 @@
     white-space: nowrap;
   }
 
-  .bottomNav,
-  :global(.neo) .bottomNav {
+  .bottomNav{
     display: flex;
   }
 
-  .bottomNavItem,
-  :global(.neo) .bottomNavItem {
+  .bottomNavItem{
     min-width: 0;
   }
 
-  .bottomNavLabel,
-  :global(.neo) .bottomNavLabel {
+  .bottomNavLabel{
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2750,34 +2296,28 @@
 }
 
 @media (max-width: 390px) {
-  .topBarLogo,
-  :global(.neo) .topBarLogo {
+  .topBarLogo{
     max-width: calc(100vw - 148px);
     font-size: clamp(26px, 9vw, 34px);
   }
 
   .topBarStatus,
-  .themeBtn,
-  :global(.neo) .topBarStatus,
-  :global(.neo) .themeBtn {
+  .themeBtn{
     min-width: 38px;
     min-height: 38px;
   }
 
-  .mobileSpaceSwitch,
-  :global(.neo) .mobileSpaceSwitch {
+  .mobileSpaceSwitch{
     gap: 6px;
   }
 
-  .mobileSpaceButton,
-  :global(.neo) .mobileSpaceButton {
+  .mobileSpaceButton{
     min-height: 38px;
     padding-inline: 4px;
     font-size: 11px;
   }
 
-  .bottomNavLabel,
-  :global(.neo) .bottomNavLabel {
+  .bottomNavLabel{
     font-size: 9px;
   }
 }
@@ -2797,7 +2337,7 @@
 .stripCard {
   appearance: none;
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   border-radius: 20px;
   padding: 14px 16px;
   display: flex;
@@ -2806,8 +2346,8 @@
   text-align: left;
   cursor: pointer;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
+  
+  
   transition: transform 0.15s var(--motion-ease-out), border-color 0.15s ease, background 0.15s ease;
   min-width: 0;
   width: 100%;
@@ -2817,7 +2357,7 @@
 .stripCard:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 40%, var(--surface2) 60%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .stripCard:active {
@@ -2912,8 +2452,8 @@
   color: var(--text3);
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  
+  
 }
 
 .headerSpaceBadge:hover {

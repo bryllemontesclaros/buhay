@@ -23,47 +23,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-:global(.neo).screen {
-  background:
-    radial-gradient(circle at 12% 22%, rgba(255, 91, 79, 0.18), transparent 38%),
-    radial-gradient(circle at 88% 18%, rgba(70, 103, 255, 0.16), transparent 44%),
-    radial-gradient(circle, rgba(16, 16, 16, 0.04) 1px, transparent 1px),
-    var(--nb-paper);
-  background-size: auto, auto, 28px 28px, auto;
-  color: var(--nb-ink);
-}
-
-:global(.neo) .brandBlock,
-:global(.neo) .progressCard,
-:global(.neo) .liveCard,
-:global(.neo) .tipCard,
-:global(.neo) .card,
-:global(.neo) .sectionCard,
-:global(.neo) .dynamicCard,
-:global(.neo) .summaryCard,
-:global(.neo) .insightCard {
-  background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
-  border-radius: var(--nb-radius);
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-:global(.neo) .logo {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-  background: none;
-  -webkit-background-clip: initial;
-  background-clip: initial;
-}
-
-:global(.neo) .sideKicker,
-:global(.neo) .progressLabel {
-  font-family: var(--nb-font-mono);
-  color: var(--nb-ink-2);
-}
-
 :global([data-theme="light"]) .screen {
   --takda-accent: #16b88a;
   --takda-glow: rgba(22, 184, 138, 0.14);
@@ -115,14 +74,12 @@
 .dynamicCard,
 .summaryCard,
 .insightCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 16%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
   border-radius: var(--bento-radius-lg);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .brandBlock,
@@ -133,21 +90,15 @@
 }
 
 .progressCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .liveCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-info) 10%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .tipCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-ok) 10%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .logo {
@@ -408,13 +359,10 @@
   padding: 1.1rem;
   border-radius: var(--bento-radius-lg);
   border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
-    radial-gradient(circle at bottom left, color-mix(in srgb, var(--blue) 10%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .guideCluster {
@@ -561,11 +509,7 @@
   padding: 1rem;
   border-radius: var(--bento-radius);
   border: 1px solid color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 36%),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 36%),
-    radial-gradient(circle at 82% 100%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -614,9 +558,7 @@
   padding: 1rem 1.05rem;
   border-radius: var(--bento-radius);
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 56%, var(--surface2) 44%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .welcomeStat:first-child { grid-column: span 6; }
@@ -684,9 +626,7 @@
   overflow: hidden;
   border-radius: var(--bento-radius);
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -702,9 +642,7 @@
 .setupScopeCard {
   grid-column: span 4;
   padding: 1rem;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .setupScopeCard:first-child { grid-column: span 3; }
@@ -738,34 +676,24 @@
 .spaceCardTakda,
 .choiceCardTakda {
   border-color: color-mix(in srgb, var(--takda-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--takda-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceCardLakas,
 .choiceCardLakas {
   border-color: color-mix(in srgb, var(--lakas-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceCardTala,
 .choiceCardTala {
   border-color: color-mix(in srgb, var(--tala-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .choiceCardBuhay {
   border-color: color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 38%),
-    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 38%),
-    radial-gradient(circle at 72% 92%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceIcon,
@@ -892,16 +820,12 @@
 
 .quickStartLakas {
   border-color: color-mix(in srgb, var(--lakas-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .quickStartTala {
   border-color: color-mix(in srgb, var(--tala-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .quickStartActive {
@@ -956,9 +880,7 @@
   padding: 0.95rem 1rem;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .setupPromiseItem strong {
@@ -1074,8 +996,7 @@
   width: 100%;
   min-height: 48px;
   padding: 12px 14px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
   border-radius: 16px;
   color: var(--text);
@@ -1290,9 +1211,7 @@
 }
 
 .insightCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .insightLabel {
@@ -1329,9 +1248,7 @@
   padding: 1.15rem;
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .finalSaveLabel {
@@ -1474,12 +1391,10 @@
     padding: 12px 13px;
     border-radius: 20px;
     border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface) 32%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+    background: var(--surface);
     box-shadow: var(--glass-shadow-soft);
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+    
+    
   }
 
   .mobileGuide {
@@ -1489,9 +1404,7 @@
     padding: 12px 13px;
     border-radius: 20px;
     border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
-      color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+    background: var(--surface);
     box-shadow: var(--glass-shadow-soft);
   }
 
@@ -1710,8 +1623,7 @@
   padding: 0.4rem;
   border-radius: 34px;
   border: 1px solid color-mix(in srgb, var(--bento-border) 76%, transparent);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 70%, var(--surface) 30%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
 }
 
@@ -1742,9 +1654,7 @@
 .card {
   padding: 1.35rem;
   border-radius: 34px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-strong);
 }
 
@@ -1923,12 +1833,10 @@
 .insightCard {
   border-radius: 30px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)),
-    radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 26%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
 }
 
 .brandBlock,
@@ -1954,9 +1862,7 @@
 }
 
 .liveCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue-dim) 24%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .liveTitle {

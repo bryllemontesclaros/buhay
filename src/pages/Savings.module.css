@@ -18,14 +18,12 @@
 .emptyCard {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
   border-radius: 18px;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .heroCopy {
@@ -143,12 +141,10 @@
   margin-bottom: 0.85rem;
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 28%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .quickContributionCopy {
@@ -183,8 +179,7 @@
   padding: 0 14px;
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   color: var(--text);
   font-size: 16px;
@@ -198,7 +193,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .summaryValue {
@@ -264,14 +259,6 @@
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
   overflow: hidden;
-}
-
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 .advancedSummary {
@@ -354,8 +341,7 @@
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   color: var(--text);
   font-size: 16px;
@@ -370,7 +356,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .dateFieldWrap {
@@ -382,7 +368,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .dateFieldDisplay {
@@ -571,7 +557,7 @@
   padding: 0 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   color: var(--text3);
   font-size: 10px;
   font-weight: 700;
@@ -654,8 +640,7 @@
   padding: 0 14px;
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   color: var(--text);
   font-size: 16px;
@@ -669,7 +654,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .contributionBtn {
@@ -680,7 +665,7 @@
   padding: 0 14px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
   color: var(--accent);
   font-size: 12px;
   font-weight: 700;

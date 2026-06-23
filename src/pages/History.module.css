@@ -19,28 +19,12 @@
 .modal {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
   border-radius: 18px;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-}
-
-:global(.neo) .heroCopy,
-:global(.neo) .heroAside,
-:global(.neo) .summaryCard,
-:global(.neo) .searchShell,
-:global(.neo) .dateGroupCard,
-:global(.neo) .emptyCard,
-:global(.neo) .modal {
-  background: var(--nb-surface-card);
-  border: 4px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 .heroCopy {
@@ -322,7 +306,7 @@
   min-width: 0;
   min-height: 46px;
   padding: 0 42px 0 14px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   border-radius: 14px;
@@ -338,7 +322,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .clearSearch {
@@ -374,7 +358,7 @@
 .filterBtn {
   min-height: 46px;
   padding: 0 16px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
   border-radius: 999px;
   color: var(--text2);
@@ -388,7 +372,7 @@
 .filterBtnActive {
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
   color: var(--accent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
 }
 
 .filterPanel {
@@ -422,7 +406,7 @@
   box-sizing: border-box;
   min-height: 44px;
   padding: 10px 12px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   border-radius: 14px;
@@ -457,7 +441,7 @@
   padding: 0 12px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
   border-radius: 999px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   color: var(--text2);
   font-size: 11px;
   font-weight: 700;
@@ -798,7 +782,7 @@
   padding: 0 16px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   color: var(--text2);
   font-size: 13px;
   font-weight: 600;

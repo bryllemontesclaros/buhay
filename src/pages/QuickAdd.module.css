@@ -96,13 +96,6 @@
   overflow: hidden;
 }
 
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
 .advancedSummary {
   display: flex;
   align-items: center;
@@ -303,7 +296,7 @@ select.fieldControl {
   padding: 10px 1rem calc(1rem + env(safe-area-inset-bottom));
   background:
     linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 97%, #ffffff 3%) 26%);
-  backdrop-filter: blur(10px);
+  
   z-index: 2;
   box-sizing: border-box;
 }

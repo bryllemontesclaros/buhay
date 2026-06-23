@@ -89,11 +89,11 @@
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --font-body: 'Plus Jakarta Sans', sans-serif;
-  --font-brutal: 'Fredoka', system-ui, sans-serif;
-  --font-editorial: 'Fraunces', serif;
+  --font-brutal: 'Plus Jakarta Sans', sans-serif;
+  --font-editorial: 'Plus Jakarta Sans', sans-serif;
   --font-ui: 'Plus Jakarta Sans', sans-serif;
 
   --type-overline: 10px;
@@ -235,13 +235,7 @@ body {
 body {
   position: relative;
   min-height: 100%;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--border2) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(180deg, color-mix(in srgb, var(--border2) 18%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 50% -8%, color-mix(in srgb, var(--accent-glow) 78%, transparent), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 94%, #02060d 6%), var(--bg));
-  background-size: 88px 88px, 88px 88px, auto, auto;
-  background-attachment: fixed;
+  background: var(--bg);
   isolation: isolate;
 }
 
@@ -255,20 +249,12 @@ body::after {
 
 body::before {
   z-index: -2;
-  background:
-    radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--blue-dim) 34%, transparent), transparent 24%),
-    radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--peach-dim) 34%, transparent), transparent 26%),
-    radial-gradient(circle at 50% 82%, color-mix(in srgb, var(--accent-glow) 24%, transparent), transparent 28%);
-  filter: blur(62px);
-  opacity: 0.72;
+  background: var(--bg);
 }
 
 body::after {
   z-index: -1;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, white 4%, transparent), transparent 18%, transparent 82%, color-mix(in srgb, white 2%, transparent)),
-    linear-gradient(135deg, color-mix(in srgb, white 4%, transparent), transparent 28%),
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 28%);
+  background: transparent;
 }
 
 @keyframes floatDrift {
