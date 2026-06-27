@@ -176,6 +176,31 @@
 [data-theme="light"] {
   color-scheme: light;
 
+  --bg: #f8f9fa;
+  --bg-deep: #e9ecef;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface2: rgba(255, 255, 255, 0.9);
+  --surface3: rgba(255, 255, 255, 0.95);
+  --surface-solid: #ffffff;
+  --surface-solid-2: #f8f9fa;
+  --surface-solid-3: #e9ecef;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --border2: rgba(0, 0, 0, 0.12);
+  
+  --glass-1: rgba(0, 0, 0, 0.02);
+  --glass-2: rgba(0, 0, 0, 0.04);
+  --glass-3: rgba(0, 0, 0, 0.06);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.8);
+  --glass-shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.04);
+  --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+  --glass-shadow-strong: 0 38px 100px rgba(0, 0, 0, 0.12);
+
+  --text: #1a1e23;
+  --text2: #4a5568;
+  --text3: #718096;
+
   --accent: #1a8f72;
   --accent-dim: #106850;
   --accent-glow: rgba(26, 143, 114, 0.12);
