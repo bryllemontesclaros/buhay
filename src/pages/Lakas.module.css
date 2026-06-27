@@ -10,17 +10,14 @@
   gap: var(--layout-card-gap);
   padding: var(--layout-surface-pad);
   border-radius: 30px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34%),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--blue) 12%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
 :global(.neo) .workspaceBoard {
   background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
 }
 
@@ -29,7 +26,7 @@
 }
 
 :global(.neo) .boardBadge {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-sun);
   color: var(--nb-ink);
   box-shadow: 0 6px 0 rgba(16, 16, 16, 0.14);
@@ -43,7 +40,7 @@
 
 :global(.neo) .boardStream {
   background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
 }
 
@@ -55,10 +52,7 @@
 .workspaceBoardLakas {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 32%),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .workspaceBoardLakas::before {
@@ -66,9 +60,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 22%, transparent 84%, color-mix(in srgb, var(--glass-highlight) 10%, transparent)),
-    radial-gradient(circle at 82% 0%, color-mix(in srgb, white 16%, transparent), transparent 22%);
+  background: var(--surface);
 }
 
 .workspaceBoardCompact {
@@ -96,7 +88,7 @@
   min-height: 28px;
   padding: 0 11px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--glass-1) 30%);
   color: var(--accent);
   font-size: 10px;
@@ -119,10 +111,8 @@
   gap: 4px;
   padding: 11px 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -163,7 +153,7 @@
   align-items: center;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   font-size: 11px;
@@ -175,23 +165,21 @@
 .statCard {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 :global(.neo) .hero,
 :global(.neo) .panel,
 :global(.neo) .statCard {
   background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .hero::before,
@@ -253,10 +241,10 @@
 :global(.neo) .mealPhotoBox,
 :global(.neo) .progressPhotoBox {
   background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .workoutSecondaryAction:hover {
@@ -272,7 +260,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
   opacity: 0.8;
 }
 
@@ -283,10 +271,7 @@
   align-items: stretch;
   padding: var(--layout-surface-pad);
   border-radius: 30px;
-  background:
-    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
-    radial-gradient(circle at 84% 24%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .heroCompact {
@@ -348,10 +333,8 @@
   min-height: 148px;
   padding: 18px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 45%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .heroCardLabel,
@@ -386,7 +369,7 @@
   align-items: start;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border-top: 1px solid var(--border2);
 }
 
 .heroCompanionAvatar {
@@ -476,11 +459,9 @@
 .viewSwitchCard {
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   padding: 14px;
 }
@@ -490,7 +471,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+  background: var(--surface);
 }
 
 .viewSwitchHeader,
@@ -536,10 +517,8 @@
   min-width: 0;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .bodyOverviewCard span,
@@ -574,10 +553,8 @@
   min-height: 72px;
   padding: 11px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
   cursor: pointer;
   text-align: left;
@@ -610,9 +587,7 @@
 
 .viewSwitchButtonActive {
   border-color: color-mix(in srgb, var(--accent) 54%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 44%),
-    color-mix(in srgb, var(--accent) 12%, var(--glass-1));
+  background: var(--surface);
 }
 
 .bodyQuickStartButtonWide {
@@ -625,10 +600,8 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .bodyQuickStartNote span,
@@ -679,10 +652,8 @@
   min-height: 58px;
   padding: 12px 13px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -691,7 +662,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 22%, transparent), transparent 56%);
+  background: var(--surface);
 }
 
 .quickWinIndex,
@@ -770,11 +741,8 @@
   margin-bottom: 12px;
   padding: 14px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 42%),
-    radial-gradient(circle at 86% 10%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 38%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
 }
 
@@ -833,7 +801,7 @@
   min-width: 0;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
 }
 
@@ -868,7 +836,7 @@
   align-items: center;
   padding: 7px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 56%, var(--glass-1) 44%);
   color: var(--text2);
   font-size: 11px;
@@ -880,10 +848,8 @@
 .phaseCard,
 .formGuideCard {
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   padding: 12px;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
@@ -953,10 +919,8 @@
   position: relative;
   z-index: 1;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -1076,7 +1040,7 @@
   min-height: 34px;
   padding: 8px 10px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
   color: var(--text2);
   font-size: 12px;
@@ -1114,27 +1078,19 @@
   min-height: 210px;
   padding: 18px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
 .workoutPrimaryCard {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-  background:
-    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 12%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  background: var(--surface);
 }
 
 .workoutRecommendationCard {
   border-color: color-mix(in srgb, var(--accent) 38%, var(--glass-border));
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
-    radial-gradient(circle at bottom right, color-mix(in srgb, var(--blue) 9%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 75%, var(--surface2) 25%);
+  background: var(--surface);
 }
 
 .workoutLaunchCard span,
@@ -1170,7 +1126,7 @@
   min-height: 28px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
   color: var(--text2);
   font-size: var(--type-caption);
@@ -1254,10 +1210,8 @@
   min-height: 0;
   padding: 14px 16px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: inherit;
   cursor: pointer;
   text-align: left;
@@ -1303,7 +1257,7 @@
   margin: 10px 0 14px;
   padding: 8px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 42%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 46%, transparent);
 }
 
@@ -1311,7 +1265,7 @@
   min-height: 48px;
   padding: 8px 10px;
   border-radius: 15px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 44%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 52%, var(--surface2) 48%);
   color: var(--text2);
   cursor: pointer;
@@ -1345,9 +1299,7 @@
 
 .sessionChipActive {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--accent) 8%, var(--glass-1));
+  background: var(--surface);
 }
 
 .todayGuidanceGrid {
@@ -1365,7 +1317,7 @@
   margin-top: 10px;
   margin-bottom: 14px;
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   overflow: hidden;
 }
@@ -1405,10 +1357,8 @@
   gap: 12px;
   padding: 18px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -1431,7 +1381,7 @@
   gap: 4px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
 }
 
@@ -1478,10 +1428,8 @@
   margin-bottom: 14px;
   padding: 16px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
 }
 
@@ -1568,7 +1516,7 @@
   gap: 6px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
 }
 
@@ -1597,10 +1545,8 @@
 .gymExerciseCard,
 .gymSessionSafety {
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 46%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -1647,7 +1593,7 @@
   align-items: center;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   color: var(--text3);
   font-size: var(--type-caption);
@@ -1680,7 +1626,7 @@
   grid-column: 1 / -1;
   padding: 12px 14px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
 }
 
@@ -1771,7 +1717,7 @@
 .gymExerciseDetails {
   margin-top: 10px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 62%, transparent);
   overflow: hidden;
 }
@@ -1850,7 +1796,7 @@
 
 .gymKnowledgeSection {
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 66%, transparent);
   overflow: hidden;
 }
@@ -1920,8 +1866,8 @@
   background:
     radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 34%),
     color-mix(in srgb, var(--bg) 72%, rgba(3, 8, 12, 0.72));
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  
+  
 }
 
 .gymModeSheet {
@@ -1932,11 +1878,8 @@
   overflow: auto;
   padding: 18px;
   border-radius: 34px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 74%, var(--accent) 26%);
-  background:
-    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
-    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--blue) 13%, transparent), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 86%, var(--surface) 14%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
 }
 
@@ -1974,7 +1917,7 @@
 .gymModeClose {
   min-height: 42px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
   color: var(--text2);
   padding: 8px 13px;
@@ -1994,7 +1937,7 @@
 .gymModeProgress > div:not(.gymModeProgressTrack) {
   padding: 11px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
 }
 
@@ -2054,17 +1997,13 @@
   margin: 0 0 14px;
   padding: 13px;
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--amber) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--amber) 15%, transparent), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--amber-dim) 62%, var(--glass-1) 38%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .gymModePrepCardDone {
   border-color: color-mix(in srgb, var(--accent) 36%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 13%, transparent), transparent 48%),
-    color-mix(in srgb, var(--accent-glow) 58%, var(--glass-1) 42%);
+  background: var(--surface);
 }
 
 .gymModePrepCard span,
@@ -2108,7 +2047,7 @@
   justify-content: center;
   padding: 8px 9px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   text-align: center;
@@ -2129,10 +2068,8 @@
 .gymModeSupport {
   overflow: hidden;
   border-radius: 26px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 9%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
 }
 
@@ -2163,7 +2100,7 @@
 }
 
 .gymModeSupport[open] .gymModeSupportSummary {
-  border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border-bottom: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 66%, transparent);
 }
 
@@ -2231,7 +2168,7 @@
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--surface2) 30%);
   color: var(--space-fitness-ink);
   font-family: var(--font-body);
@@ -2327,16 +2264,14 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--amber) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--amber) 16%, transparent), transparent 52%),
-    color-mix(in srgb, var(--amber-dim) 64%, var(--glass-1) 36%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   position: sticky;
   top: 10px;
   z-index: 10;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(12px) saturate(130%);
-  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  
+  
 }
 
 .gymModeRestCard span {
@@ -2382,8 +2317,8 @@
   min-height: 46px;
   padding: 10px 15px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 94%, transparent 6%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
   cursor: pointer;
   font-family: var(--font-body);
@@ -2406,7 +2341,7 @@
 
 .gymModeSetButtonDone {
   border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 80%, var(--glass-1) 20%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
   color: var(--accent);
 }
 
@@ -2416,10 +2351,8 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .gymModeCue strong {
@@ -2445,10 +2378,8 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--blue) 28%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .gymModeControls {
@@ -2475,11 +2406,11 @@
   gap: 10px;
   margin: 14px -14px -14px;
   padding: 12px 14px 14px;
-  border-top: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border-top: 1px solid var(--border2);
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--surface) 74%, transparent), color-mix(in srgb, var(--surface) 96%, transparent 4%));
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  
+  
 }
 
 .gymModeSaveBar span,
@@ -2510,7 +2441,7 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 72%, var(--glass-1) 28%);
 }
 
@@ -2542,7 +2473,7 @@
   min-width: 164px;
   padding: 11px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   text-align: left;
@@ -2577,9 +2508,7 @@
 
 .gymModeExerciseChipActive {
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 17%, transparent), transparent 48%),
-    color-mix(in srgb, var(--accent) 12%, var(--glass-1));
+  background: var(--surface);
 }
 
 .gymModeExerciseChipDone {
@@ -2678,9 +2607,7 @@
 }
 
 .settingsSecondaryPanel {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  background: var(--surface);
 }
 
 .progressReviewStack {
@@ -2693,7 +2620,7 @@
   display: grid;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border-top: 1px solid var(--border2);
 }
 
 .progressReviewBlock:first-child {
@@ -2727,11 +2654,8 @@
   display: grid;
   gap: 12px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
-  background:
-    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    radial-gradient(circle at 86% 8%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 38%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
 }
 
@@ -2751,9 +2675,7 @@
 .workoutFollowupBox {
   grid-column: 1 / -1;
   border-color: color-mix(in srgb, var(--glass-border) 52%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 5%, transparent), transparent 48%),
-    color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
+  background: var(--surface);
 }
 
 .workoutFollowupBox .advancedSummary {
@@ -2853,7 +2775,7 @@
   min-width: 0;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   transition:
     transform var(--motion-duration-fast) var(--motion-ease-out),
@@ -2915,10 +2837,8 @@
   margin-top: 14px;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .settingsSaveNotice strong {
@@ -2950,10 +2870,8 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .sessionCoachInlineTop {
@@ -2996,7 +2914,7 @@
   min-height: 30px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
   color: var(--text3);
   font-size: 11px;
@@ -3069,7 +2987,7 @@
   width: 100%;
   min-height: 44px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
   color: var(--text);
   padding: 10px 12px;
@@ -3094,7 +3012,7 @@
   position: relative;
   z-index: 1;
   margin-top: 10px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
@@ -3166,7 +3084,7 @@
   gap: 10px;
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid color-mix(in srgb, var(--glass-border) 48%, transparent);
+  border-top: 1px solid var(--border2);
 }
 
 .inlineSectionHeader {
@@ -3207,7 +3125,7 @@
   justify-content: center;
   min-height: 42px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border: 1px solid var(--border2);
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 800;
@@ -3235,7 +3153,7 @@
 :global(.neo) .mealRow button,
 :global(.neo) .goalTop button,
 :global(.neo) .goalUpdate button {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
   background: var(--nb-paper-2);
   color: var(--nb-ink);
@@ -3283,11 +3201,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 22px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
+  background: var(--surface);
 }
 
 .exerciseRowTop {
@@ -3350,10 +3266,8 @@
   margin-top: 10px;
   padding: 11px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 9%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .previousValueCard strong {
@@ -3378,7 +3292,7 @@
   align-items: center;
   padding: 11px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
 }
 
@@ -3527,10 +3441,8 @@
   gap: 12px;
   padding: 13px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .routineSpotlightCard span,
@@ -3591,10 +3503,8 @@
   min-height: 96px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
   cursor: pointer;
   text-align: left;
@@ -3604,9 +3514,7 @@
 
 .templateCardBeginner {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  background: var(--surface);
 }
 
 .templateCard strong,
@@ -3642,7 +3550,7 @@
   gap: 8px;
   padding: 4px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 50%, transparent);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 68%, transparent);
 }
 
@@ -3681,7 +3589,7 @@
   justify-content: space-between;
   padding: 9px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 46%, transparent);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
 }
 
@@ -3696,9 +3604,7 @@
 
 .calendarToday {
   border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 48%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
 }
 
 .calendarDots,
@@ -3767,7 +3673,7 @@
   align-items: center;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
 }
 
@@ -3800,10 +3706,8 @@
   gap: 6px;
   padding: 11px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .formGuide strong {
@@ -3840,7 +3744,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   font-size: 13px;
@@ -3857,9 +3761,7 @@
 
 .habitPillActive {
   border-color: color-mix(in srgb, var(--accent) 54%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 18%, transparent), transparent 48%),
-    color-mix(in srgb, var(--accent) 14%, var(--glass-1));
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -3872,9 +3774,7 @@
   border-radius: 22px;
   overflow: hidden;
   border: 1px dashed color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--surface2) 76%, transparent);
+  background: var(--surface);
 }
 
 .mealPhotoBox img,
@@ -3931,7 +3831,7 @@
   gap: 12px;
   padding: 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   margin-top: 10px;
 }
@@ -3974,7 +3874,7 @@
   flex-shrink: 0;
   border-radius: 18px;
   object-fit: cover;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
 }
 
@@ -4032,7 +3932,7 @@
   padding: 14px;
   border-radius: 18px;
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, transparent);
+  border: 1px solid var(--border2);
   font-size: 13px;
 }
 
@@ -4372,10 +4272,8 @@
   position: relative;
   overflow: hidden;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
 }
 
@@ -4808,7 +4706,7 @@
     align-items: start;
     padding: 14px;
     border-radius: 24px 24px 18px 18px;
-    backdrop-filter: blur(18px);
+    
   }
 
   .gymModeHeader h3 {
@@ -4892,7 +4790,7 @@
   }
 
   .gymModeVideoMeta a {
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+    border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--accent-glow) 45%, transparent);
     font-size: 13px;
     font-weight: 900;
@@ -5022,7 +4920,7 @@
 .focusModeBtn {
   min-height: 42px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 34%, var(--surface2) 66%);
   color: var(--accent);
   padding: 8px 14px;
@@ -5155,7 +5053,7 @@
   margin-top: 4px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 20%, transparent);
   color: var(--accent);
   font-size: 11px;
@@ -5199,7 +5097,7 @@
   flex: 1;
   min-width: 150px;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
   overflow: hidden;
   transition: all 0.2s ease;
@@ -5251,7 +5149,7 @@
   width: 100%;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface) 80%, transparent);
   color: var(--text);
   font-size: 11px;
@@ -5286,7 +5184,7 @@
   align-items: center;
   gap: 2px;
   padding: 0 4px;
-  border-left: 3px solid #37474f; /* collar */
+  border-left: 1px solid var(--border2); /* collar */
 }
 
 .plateVisualObj {
@@ -5297,7 +5195,7 @@
   font-weight: 900;
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  border: 1px solid rgba(0,0,0,0.15);
+  border: 1px solid var(--border2);
 }
 
 /* Warmup list styling */
@@ -5310,7 +5208,7 @@
 .warmupTable th, .warmupTable td {
   padding: 6px;
   text-align: left;
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--border2);
   font-size: 11px;
 }
 
@@ -5332,11 +5230,11 @@
   align-items: center;
   gap: 20px;
   background: color-mix(in srgb, var(--surface) 20%, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 20px;
-  backdrop-filter: blur(10px);
+  
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
 }
 
@@ -5360,22 +5258,22 @@
   height: 8px;
   background: linear-gradient(135deg, #a1a1a1, #616161);
   border-radius: 4px 4px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border2);
 }
 
 .waterBottleNeck {
   width: 14px;
   height: 10px;
   background: rgba(255, 255, 255, 0.15);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid var(--border2);
+  border-right: 1px solid var(--border2);
 }
 
 .waterBottleBody {
   width: 44px;
   height: 90px;
   background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--border2);
   border-radius: 10px 10px 14px 14px;
   position: relative;
   overflow: hidden;
@@ -5450,7 +5348,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
   font-size: 18px;
@@ -5490,11 +5388,11 @@
   align-items: center;
   gap: 24px;
   background: color-mix(in srgb, var(--surface) 20%, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   border-radius: 16px;
   padding: 16px 20px;
   margin-bottom: 20px;
-  backdrop-filter: blur(10px);
+  
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
 }
 
@@ -5569,7 +5467,7 @@
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border2);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   font-size: 12px;
@@ -5658,11 +5556,8 @@
   align-items: center;
   gap: 0;
   padding: 12px 20px;
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--glass-2) 88%, transparent 12%),
-      color-mix(in srgb, var(--surface) 94%, transparent 6%));
-  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 20px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -5675,7 +5570,7 @@
 
 :global(.neo) .todayStrip {
   background: var(--nb-paper-2);
-  border: 2px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   border-radius: 16px;
 }
 
@@ -5927,7 +5822,7 @@
   gap: 6px;
   padding: 12px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: 8px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -5951,7 +5846,7 @@
   height: 16px;
   border-radius: 50%;
   background: var(--bg-muted);
-  border: 3px solid var(--bg);
+  border: 1px solid var(--border2);
   box-shadow: 0 0 0 1px var(--border);
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   z-index: 3;
@@ -6064,7 +5959,7 @@
 
 .gymModeActiveLogger {
   background: color-mix(in srgb, var(--accent) 4%, var(--bg-card));
-  border: 1px solid color-mix(in srgb, var(--accent) 15%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 8px;
   padding: 12px;
   margin: 12px 0;
@@ -6089,7 +5984,7 @@
 .gymModeCopyLastBtn {
   font-size: 11px;
   background: color-mix(in srgb, var(--accent) 12%, var(--bg-muted));
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  border: 1px solid var(--border2);
   color: var(--accent);
   padding: 3px 8px;
   border-radius: 4px;
@@ -6123,7 +6018,7 @@
 
 .gymModeLoggerGrid label input {
   background: var(--bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   color: var(--text1);
   padding: 6px;
   border-radius: 4px;
@@ -6151,7 +6046,7 @@
 
 .gymModeLoggerNotes label input {
   background: var(--bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   color: var(--text1);
   padding: 6px;
   border-radius: 4px;
@@ -6168,7 +6063,7 @@
 .prBadgeInline {
   background: rgba(255, 193, 7, 0.15);
   color: #ffb300;
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  border: 1px solid var(--border2);
   font-size: 10px;
   font-weight: 700;
   padding: 2px 5px;
@@ -6234,7 +6129,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -6250,7 +6145,7 @@
 
 .celebrationContent {
   background: var(--bg-card);
-  border: 2px solid var(--accent);
+  border: 1px solid var(--border2);
   box-shadow: 0 0 30px rgba(33, 150, 243, 0.3), 0 10px 25px rgba(0, 0, 0, 0.4);
   border-radius: 16px;
   width: 90%;
@@ -6421,7 +6316,7 @@
   bottom: 0;
   z-index: 1100;
   background: color-mix(in srgb, var(--surface1) 90%, transparent);
-  backdrop-filter: blur(10px);
+  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6434,7 +6329,7 @@
   height: calc(100% - 32px);
   max-height: 760px;
   background: color-mix(in srgb, var(--surface2) 85%, var(--glass-1));
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   border-radius: 28px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -6447,7 +6342,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--border2);
 }
 
 .runTrackerEyebrow {
@@ -6508,9 +6403,9 @@
   height: 40px;
   border-radius: 50%;
   background: var(--surface);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border2);
+  
+  
   color: var(--text);
   font-size: 18px;
   display: flex;
@@ -6549,7 +6444,7 @@
 .runDash {
   padding: 24px;
   background: color-mix(in srgb, var(--surface1) 60%, var(--surface2) 40%);
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid var(--border2);
 }
 
 .runStatGrid {
@@ -6561,7 +6456,7 @@
 
 .runStat {
   background: color-mix(in srgb, var(--surface2) 80%, transparent);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   padding: 16px 8px;
   border-radius: 16px;
   text-align: center;
@@ -6642,7 +6537,7 @@
 .runResumeBtn {
   background: var(--surface3);
   color: var(--text);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
 }
 
 .runResumeBtn:hover {
@@ -6673,7 +6568,7 @@
   height: 140px;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   background: var(--surface3);
   z-index: 10;
 }
@@ -6807,7 +6702,7 @@
   margin: 16px 0 0;
   padding: 12px;
   background: color-mix(in srgb, var(--surface2) 80%, transparent);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   border-radius: 16px;
   line-height: 1.45;
 }
@@ -6826,7 +6721,7 @@
   justify-content: space-between;
   padding: 12px 16px;
   border-radius: 16px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 85%, var(--surface) 15%);
   transition: all 0.2s ease;
 }

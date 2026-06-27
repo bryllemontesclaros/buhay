@@ -20,14 +20,12 @@
 .emptyCard {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 18px;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .heroCopy {
@@ -168,8 +166,8 @@
 }
 
 .navBtn {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   color: var(--text2);
   border-radius: 999px;
   padding: 0;
@@ -182,7 +180,7 @@
 .navBtn:hover {
   border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
   color: var(--text);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 42%, var(--surface2) 58%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .monthLabel {
@@ -289,9 +287,8 @@
   min-height: 48px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
   color: var(--text);
   font-size: 16px;
@@ -306,7 +303,7 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
     0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 46%, var(--surface2) 54%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 select.fieldInput {
@@ -334,7 +331,7 @@ select.fieldInput {
 
 .primaryButton {
   width: 100%;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), color-mix(in srgb, var(--accent) 90%, black 10%));
   color: #07110d;
   font-size: 13px;
@@ -394,7 +391,7 @@ select.fieldInput {
 .deleteBtn {
   min-height: 30px;
   padding: 0 10px;
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border: 1px solid var(--border2);
   background: transparent;
   color: var(--text3);
   font-size: 10px;
@@ -455,7 +452,7 @@ select.fieldInput {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+  border-bottom: 1px solid var(--border2);
 }
 
 .unbudgetedRow:last-child {

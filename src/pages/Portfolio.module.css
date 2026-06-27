@@ -25,10 +25,8 @@
 .emptyState,
 .disclaimer,
 .balanceNote {
-  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 13%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -40,7 +38,7 @@
 :global(.neo) .emptyState,
 :global(.neo) .balanceNote {
   background: var(--nb-surface-card);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
 }
 
@@ -186,7 +184,7 @@
   display: grid;
   gap: 4px;
   padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--surface2) 76%, #ffffff 24%);
 }
@@ -207,9 +205,7 @@
   grid-template-columns: minmax(220px, 0.45fr) minmax(0, 1fr);
   align-items: center;
   border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
-  background:
-    radial-gradient(circle at 12% 20%, color-mix(in srgb, var(--accent-glow) 44%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  background: var(--surface);
 }
 
 .balanceNote strong {
@@ -250,7 +246,7 @@
 .primaryBtn {
   min-height: 46px;
   padding: 0 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 88%, white 12%);
   color: #08110d;
@@ -261,7 +257,7 @@
 .ghostBtn {
   min-height: 44px;
   padding: 0 16px;
-  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface2) 86%, #ffffff 14%);
   color: var(--text);
@@ -276,7 +272,7 @@
   width: 42px;
   height: 42px;
   flex: 0 0 auto;
-  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface2) 86%, #ffffff 14%);
   color: var(--text2);
@@ -330,7 +326,7 @@
 .formGrid textarea {
   width: 100%;
   min-height: 48px;
-  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
   color: var(--text);
@@ -356,7 +352,7 @@
   align-items: flex-start;
   gap: 12px !important;
   padding: 13px;
-  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 18px;
   background: color-mix(in srgb, var(--accent-glow) 46%, var(--surface2) 54%);
 }
@@ -390,7 +386,7 @@
   gap: 10px;
   padding: 13px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 82%, #ffffff 18%);
 }
 
@@ -444,11 +440,9 @@
   align-items: center;
   gap: 14px;
   padding: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    color-mix(in srgb, var(--surface2) 84%, #ffffff 16%);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent);
 }
 
@@ -465,10 +459,8 @@
   width: 48px;
   height: 48px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
-  background:
-    radial-gradient(circle at 30% 20%, color-mix(in srgb, white 28%, transparent), transparent 28%),
-    color-mix(in srgb, var(--accent-glow) 78%, var(--surface2) 22%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--accent);
   font-family: var(--font-mono);
   font-size: var(--type-support);
@@ -493,7 +485,7 @@
 
 .holdingMeta span {
   padding: 5px 8px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 999px;
   background: color-mix(in srgb, var(--glass-1) 72%, transparent);
   color: var(--text2);
@@ -558,7 +550,7 @@
 .rowActions button {
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface) 88%, #ffffff 12%);
   color: var(--text2);
@@ -585,10 +577,9 @@
   align-items: center;
   gap: 12px;
   padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 20px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface2) 86%, #ffffff 14%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .allocationRow div:first-child {
@@ -699,8 +690,8 @@
     z-index: 310;
     border: 0;
     background: rgba(8, 12, 18, 0.28);
-    backdrop-filter: blur(14px) saturate(130%);
-    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    
+    
   }
 
   .formCard {
@@ -721,12 +712,10 @@
     z-index: 2;
     margin: -14px -14px 0;
     padding: 14px 14px 10px;
-    border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 86%, var(--surface) 14%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+    border-bottom: 1px solid var(--border2);
+    background: var(--surface);
+    
+    
   }
 
   .formActions {
@@ -736,10 +725,10 @@
     flex-direction: column;
     margin: 0 -14px -14px;
     padding: 10px 14px 14px;
-    border-top: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+    border-top: 1px solid var(--border2);
     background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 82%, transparent), color-mix(in srgb, var(--surface) 96%, transparent 4%));
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+    
+    
   }
 
   .formGrid,

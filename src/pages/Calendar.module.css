@@ -45,10 +45,8 @@
   min-height: 96px;
   padding: 14px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface2) 32%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
 }
 
@@ -83,10 +81,7 @@
 
 .balanceRail {
   border-radius: 20px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 18%, transparent), transparent 46%),
-    radial-gradient(circle at 16% 84%, color-mix(in srgb, var(--blue-dim) 18%, transparent), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .dayPanel {
@@ -94,9 +89,7 @@
 }
 
 .dayPanelTop {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface2) 24%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .dayBalanceCard {
@@ -122,7 +115,7 @@
   margin: 0 0 16px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 66%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface) 26%);
   color: var(--text2);
   font-size: var(--type-caption);
@@ -131,7 +124,7 @@
 
 .daySection {
   padding: 12px 0;
-  border-top: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+  border-top: 1px solid var(--border2);
 }
 
 .daySection:first-of-type {
@@ -223,7 +216,7 @@
 
 :global(.neo) .monthStoryCard {
   background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   border-radius: var(--nb-radius-sm);
   box-shadow: var(--nb-shadow-sm);
 }
@@ -233,23 +226,23 @@
 :global(.neo) .monthStoryCard small { color: var(--nb-ink-2); }
 
 :global(.neo) .balanceRail {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow-sm);
 }
 
 :global(.neo) .dayPanel {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow);
 }
 
 :global(.neo) .advancedBox {
   background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .dayPanelTop {
@@ -257,24 +250,24 @@
 }
 
 :global(.neo) .daySection {
-  border-top: 3px solid var(--nb-stroke-soft);
+  border-top: 1px solid var(--border2);
 }
 
 :global(.neo) .daySystemNote {
   background: var(--nb-paper-2);
-  border: 2px solid var(--nb-stroke-soft);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
 }
 
 :global(.neo) .calHeader {
   background: var(--nb-paper-2);
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   border-radius: var(--nb-radius-sm);
   box-shadow: var(--nb-shadow);
 }
 
 :global(.neo) .navBtn {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow-sm);
 }
@@ -287,7 +280,7 @@
 :global(.neo) .addBtnIncome,
 :global(.neo) .addBtnExpense,
 :global(.neo) .addBtnImport {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow-sm);
 }
@@ -304,12 +297,12 @@
 }
 
 :global(.neo) .cell {
-  border: 2px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   border-radius: 18px;
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow-sm);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .cell:hover {
@@ -355,10 +348,7 @@
   margin-bottom: 0;
   padding: 0.9rem;
   border-radius: var(--bento-radius-lg);
-  background:
-    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--accent-glow) 34%, transparent), transparent 32%),
-    radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--blue-dim) 24%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 /* CALENDAR HEADER */
@@ -367,11 +357,9 @@
   margin-bottom: 0.9rem;
   gap: 10px;
   padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 68%, var(--border));
+  border: 1px solid var(--border2);
   border-radius: 20px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 18%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 .nav {
@@ -431,18 +419,18 @@
   margin: 0;
   cursor: pointer;
 }
-.navBtn { background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border)); color: var(--text2); border-radius: 999px; padding: 0; cursor: pointer; font-size: var(--type-body-lg); min-width: var(--control-h-icon); min-height: var(--control-h-icon); flex-shrink: 0; transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
+.navBtn { background: var(--surface); border: 1px solid var(--border2); color: var(--text2); border-radius: 999px; padding: 0; cursor: pointer; font-size: var(--type-body-lg); min-width: var(--control-h-icon); min-height: var(--control-h-icon); flex-shrink: 0; transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
 .navBtn:first-child { justify-self: start; }
 .navBtn:last-child { justify-self: end; }
-.navBtn:hover { border-color: color-mix(in srgb, var(--accent) 24%, var(--glass-border)); color: var(--text); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 42%, var(--surface2) 58%), color-mix(in srgb, var(--surface) 92%, transparent 8%)); transform: translateY(-1px); }
+.navBtn:hover { border-color: color-mix(in srgb, var(--accent) 24%, var(--glass-border)); color: var(--text); background: var(--surface); transform: translateY(-1px); }
 
 /* ADD BUTTONS */
 .addBtns { display: flex; gap: 6px; }
-.addBtnIncome { padding: 8px 14px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border)); color: var(--accent); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.addBtnIncome { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--accent); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .addBtnIncome:hover { opacity: 0.92; transform: translateY(-1px); }
-.addBtnExpense { padding: 8px 14px; background: linear-gradient(180deg, color-mix(in srgb, var(--red-dim) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)); border: 1px solid color-mix(in srgb, var(--red) 30%, var(--glass-border)); color: var(--red); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.addBtnExpense { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--red); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .addBtnExpense:hover { opacity: 0.92; transform: translateY(-1px); }
-.addBtnImport { padding: 8px 14px; background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border2)); color: var(--text); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, border-color 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
+.addBtnImport { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, border-color 0.15s, transform 0.15s ease; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
 .addBtnImport:hover { opacity: 0.96; border-color: var(--accent); transform: translateY(-1px); }
 
 /* DAY NAMES + GRID */
@@ -471,12 +459,10 @@
   appearance: none;
   min-height: 5.5rem;
   height: auto;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 60%, var(--surface) 40%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 14px;
-  padding: 7px;
+  padding: 10px;
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   overflow: hidden;
@@ -485,15 +471,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 4px;
+  gap: 6px;
   text-align: left;
   font-family: var(--font-body);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent);
-  backdrop-filter: blur(var(--glass-blur-sm)) saturate(135%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(135%);
 }
-.cell:hover { border-color: color-mix(in srgb, var(--border2) 88%, var(--glass-border)); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 36%, var(--surface2) 64%), color-mix(in srgb, var(--surface) 92%, transparent 8%)); transform: translateY(-1px); }
-.today { border-color: color-mix(in srgb, var(--accent) 56%, var(--glass-border)) !important; background: radial-gradient(circle at top right, color-mix(in srgb, var(--accent-glow) 88%, transparent 12%), transparent 46%), linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 60%, var(--surface) 40%), color-mix(in srgb, var(--surface) 90%, transparent 10%)) !important; }
+.cell:hover { border-color: color-mix(in srgb, var(--border2) 88%, var(--glass-border)); background: var(--surface); transform: translateY(-1px); }
+.today { border-color: color-mix(in srgb, var(--accent) 56%, var(--glass-border)) !important; background: var(--surface); }
 .otherMonth { opacity: 0.2; pointer-events: none; }
 .selectedCell { border-color: color-mix(in srgb, var(--accent) 76%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent); background: color-mix(in srgb, var(--accent-glow) 12%, var(--surface) 88%); }
 .hasData { border-color: color-mix(in srgb, var(--border2) 88%, transparent); }
@@ -504,13 +488,14 @@
 .cellBalance {
   font-size: var(--type-caption);
   line-height: 1.18;
-  color: var(--text3);
+  color: var(--text2);
   font-family: var(--font-mono);
   font-weight: 600;
   min-width: 0;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: normal;
   overflow-wrap: anywhere;
@@ -584,10 +569,8 @@
   padding: 14px 16px;
   min-height: 66px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 68%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 16%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -599,13 +582,13 @@
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .balanceRail:hover {
   border-color: color-mix(in srgb, var(--accent) 22%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 38%, var(--surface2) 62%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
   transform: translateY(-1px);
 }
 
@@ -652,8 +635,8 @@
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border2));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 48%, var(--surface3) 52%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
   font-family: var(--font-body);
   font-size: 11px;
@@ -684,7 +667,7 @@
   margin-bottom: 14px;
   border-radius: 0;
   border: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-bottom: 1px solid var(--border2);
   background: none;
 }
 .dayBalanceHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -709,7 +692,7 @@
   gap: 14px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
+  border-top: 1px solid var(--border2);
 }
 .dayBalanceStat {
   min-width: 0;
@@ -772,8 +755,8 @@
 }
 .dayBalanceEditBtn,
 .dayBalanceGhostBtn {
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
 }
 .dayBalanceEditBtn:hover,
@@ -782,8 +765,8 @@
   color: var(--text);
 }
 .dayBalanceSaveBtn {
-  border: 1px solid color-mix(in srgb, var(--blue) 28%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--blue-dim) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--blue);
 }
 .dayBalanceEditBtn:disabled,
@@ -796,8 +779,8 @@
   gap: 8px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid color-mix(in srgb, var(--blue) 30%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
 }
 .dayBalanceInputWrap span {
@@ -825,7 +808,7 @@
   background:
     radial-gradient(circle at top right, color-mix(in srgb, var(--feedback-tone) 18%, transparent), transparent 42%),
     linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, #ffffff 4%), var(--surface));
-  border: 1px solid color-mix(in srgb, var(--feedback-tone) 28%, var(--border));
+  border: 1px solid var(--border2);
 }
 .feedbackEyebrow {
   font-size: 10px;
@@ -851,8 +834,8 @@
   justify-content: center;
   padding: 16px;
   background: rgba(7, 12, 18, 0.58);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  
+  
 }
 .daySheet {
   margin-top: 0;
@@ -879,16 +862,14 @@
   margin-top: 18px;
   width: 100%;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 22px;
   box-sizing: border-box;
   scroll-margin-top: 18px;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 .dayPanelHandle {
   display: none;
@@ -897,7 +878,7 @@
   position: relative;
   padding: 14px 18px 12px;
   background: transparent;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+  border-bottom: 1px solid var(--border2);
 }
 .dayPanelBody {
   padding: 14px 18px 22px;
@@ -909,10 +890,10 @@
 .dayPanelTodayBadge { padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .dayPanelTitle { font-family: var(--font-display); font-size: 18px; line-height: 1.05; color: var(--text); }
 .dayPanelHeaderRight { display: flex; align-items: flex-start; justify-content: flex-end; }
-.dayPanelClose { background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border)); color: var(--text3); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; min-width: 0; min-height: 28px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 999px; }
+.dayPanelClose { background: var(--surface); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; min-width: 0; min-height: 28px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 999px; }
 .dayPanelClose:hover { border-color: color-mix(in srgb, var(--accent) 22%, var(--border)); color: var(--text); }
 .dayPanelHeaderMeta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
-.dayPanelHeaderStat { border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border)); border-radius: var(--radius-sm); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); padding: 10px 12px; min-width: 0; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent); }
+.dayPanelHeaderStat { border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); padding: 10px 12px; min-width: 0; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent); }
 .dayPanelHeaderStatLabel { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
 .dayPanelHeaderStatValue { display: block; font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dayPanelHeaderStatPositive { color: var(--blue); }
@@ -923,19 +904,19 @@
 .daySectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
 .daySectionLabel { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; }
 .daySectionHeader .daySectionLabel { margin-bottom: 0; }
-.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); border: 1px solid color-mix(in srgb, var(--border) 72%, transparent); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-.daySummary { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--border) 66%, transparent); font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; }
+.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.daySummary { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border2); font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; }
 .dayPanelActions { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-.dayPanelAction { min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border)); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; }
+.dayPanelAction { min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; }
 .dayPanelAction:hover { opacity: 1; transform: none; }
 .dayPanelAction:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.dayPanelActionIncome { background: linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)); border-color: color-mix(in srgb, var(--accent) 28%, var(--glass-border)); color: var(--accent); }
-.dayPanelActionExpense { background: linear-gradient(180deg, color-mix(in srgb, var(--red-dim) 92%, var(--glass-2) 8%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)); border-color: color-mix(in srgb, var(--red) 24%, var(--glass-border)); color: var(--red); }
+.dayPanelActionIncome { background: var(--surface); border-color: color-mix(in srgb, var(--accent) 28%, var(--glass-border)); color: var(--accent); }
+.dayPanelActionExpense { background: var(--surface); border-color: color-mix(in srgb, var(--red) 24%, var(--glass-border)); color: var(--red); }
 .planNote {
   margin: -2px 0 14px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--amber-dim) 72%, var(--surface) 28%);
   color: var(--amber);
   font-size: 12px;
@@ -943,7 +924,7 @@
 }
 
 /* TX ROWS */
-.txRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--border) 66%, transparent); }
+.txRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
 .txRow:last-child { border-bottom: none; }
 .txRowUnpaid { opacity: 0.88; }
 .projectedTxRow {
@@ -957,9 +938,9 @@
 .txIcon { width: 24px; height: 24px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 .txDesc { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
 .txMeta { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
-.accountBadge { background: transparent; color: var(--blue); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--blue) 20%, var(--border)); }
-.recurBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--purple) 22%, var(--border)); }
-.projBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--purple) 22%, var(--border)); }
+.accountBadge { background: transparent; color: var(--blue); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
+.recurBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
+.projBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
 .txRight { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .projectedTxRight {
   width: 100%;
@@ -984,7 +965,7 @@
   min-height: 30px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border: 1px solid var(--border2);
   background: transparent;
   color: var(--text3);
   cursor: pointer;
@@ -1047,13 +1028,13 @@
   overflow: visible;
 }
 .editBtn,
-.statusBtn { background: transparent; border: 1px solid color-mix(in srgb, var(--border) 76%, transparent); color: var(--text3); border-radius: 999px; padding: 0 8px; font-size: 10px; cursor: pointer; font-family: var(--font-body); min-height: 26px; }
+.statusBtn { background: transparent; border: 1px solid var(--border2); color: var(--text3); border-radius: 999px; padding: 0 8px; font-size: 10px; cursor: pointer; font-family: var(--font-body); min-height: 26px; }
 .logBtn,
 .recurBtn {
   display: inline-flex;
   align-items: center;
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border: 1px solid var(--border2);
   color: var(--text3);
   border-radius: 999px;
   padding: 0 12px;
@@ -1092,15 +1073,15 @@
 .editBtn:hover { border-color: color-mix(in srgb, var(--accent) 20%, var(--border)); color: var(--accent); }
 .statusBtnPaid { border-color: color-mix(in srgb, var(--accent) 24%, var(--border)); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .statusBtnUnpaid { border-color: color-mix(in srgb, var(--amber) 28%, var(--border)); color: var(--amber); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
-.delBtnSm { background: transparent; border: 1px solid transparent; color: var(--text3); cursor: pointer; font-size: 12px; padding: 0 7px; border-radius: 999px; min-height: 26px; min-width: 26px; }
+.delBtnSm { background: transparent; border: 1px solid var(--border2); color: var(--text3); cursor: pointer; font-size: 12px; padding: 0 7px; border-radius: 999px; min-height: 26px; min-width: 26px; }
 .delBtnSm:hover { color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); border-color: color-mix(in srgb, var(--red) 16%, transparent); }
 .editBtn:disabled,
 .statusBtn:disabled,
 .delBtnSm:disabled { opacity: 0.55; cursor: not-allowed; }
-.statusBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--border) 76%, transparent); }
+.statusBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
 .statusPaid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 22%, var(--border)); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .statusUnpaid { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 28%, var(--border)); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
-.impactBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--border) 76%, transparent); }
+.impactBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
 .impactLinked { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 18%, var(--border)); background: color-mix(in srgb, var(--blue) 8%, transparent); }
 .impactOn { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 18%, var(--border)); background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .impactDue { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 18%, var(--border)); background: color-mix(in srgb, var(--amber) 10%, transparent); }
@@ -1111,7 +1092,7 @@
 .goalDisclosure {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+  border-top: 1px solid var(--border2);
 }
 .goalDisclosureSummary {
   list-style: none;
@@ -1145,8 +1126,8 @@
   height: 22px;
   padding: 0 7px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text2);
   font-size: 10px;
   letter-spacing: 0;
@@ -1160,7 +1141,7 @@
 /* MODAL */
 .modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 540; display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
 @media (min-width: 640px) { .modalOverlay { align-items: center; } }
-.modal { background: radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%), linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; width: min(520px, 100%); max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; box-shadow: var(--glass-shadow-strong); backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%); -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%); }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; width: min(520px, 100%); max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; box-shadow: var(--glass-shadow-strong);   }
 @media (min-width: 640px) { .modal { border-radius: var(--radius-lg); max-width: 500px; max-height: unset; } }
 .modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.25rem; }
 .modalTitle { font-family: var(--font-display); font-size: 20px; color: var(--text); min-width: 0; }
@@ -1174,12 +1155,12 @@
   cursor: not-allowed;
 }
 .typeToggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1.25rem; }
-.typeBtn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px; border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border)); border-radius: var(--radius); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); color: var(--text3); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; min-height: 52px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
+.typeBtn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text3); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; min-height: 52px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
 .typeBtn:hover { border-color: var(--border2); color: var(--text); }
 .typeBtnIncome { border-color: var(--accent) !important; background: var(--accent-glow) !important; color: var(--accent) !important; }
 .typeBtnExpense { border-color: var(--red) !important; background: var(--red-dim) !important; color: var(--red) !important; }
 .typeBtnSign { font-size: 18px; font-weight: 700; line-height: 1; }
-.amountField { display: flex; align-items: center; gap: 4px; margin-bottom: 1.25rem; padding: 12px 16px; background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border)); border-radius: var(--radius); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent); transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard); }
+.amountField { display: flex; align-items: center; gap: 4px; margin-bottom: 1.25rem; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent); transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard); }
 .amountField:focus-within {
   border-color: color-mix(in srgb, var(--accent) 76%, var(--glass-border));
   box-shadow:
@@ -1192,21 +1173,21 @@
 .amountInput { flex: 1; background: none; border: none; outline: none; font-size: 26px; font-weight: 600; font-family: var(--font-mono); min-width: 0; }
 .modalSectionLabel { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
 .quickCats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.quickCat { display: flex; align-items: center; gap: 5px; min-height: 34px; padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border)); border-radius: 20px; background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; max-width: 100%; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.quickCat { display: flex; align-items: center; gap: 5px; min-height: 34px; padding: 6px 12px; border: 1px solid var(--border2); border-radius: 20px; background: var(--surface); color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; max-width: 100%; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .quickCat:hover { border-color: var(--border2); color: var(--text); }
 .quickCatActive { font-weight: 600; }
 .presetActions { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.presetToggle { display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border)); border-radius: var(--radius-sm); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 50%, var(--surface2) 50%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: 42px; white-space: nowrap; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.presetToggle { display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: 42px; white-space: nowrap; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .presetToggleActive { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
 .modalFields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .modalFieldFull { grid-column: 1 / -1; }
 .presetHint { margin-bottom: 12px; color: var(--text3); font-size: 12px; line-height: 1.45; }
-.accountHint { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid color-mix(in srgb, var(--blue) 28%, var(--border)); background: color-mix(in srgb, var(--blue) 12%, var(--surface2)); color: var(--text2); font-size: 12px; line-height: 1.5; }
+.accountHint { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: color-mix(in srgb, var(--blue) 12%, var(--surface2)); color: var(--text2); font-size: 12px; line-height: 1.5; }
 .balanceImpactCard {
   padding: 10px 12px;
   margin-bottom: 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
 }
@@ -1241,8 +1222,8 @@
   line-height: 1.5;
   color: var(--text2);
 }
-.formError { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--red); background: var(--red-dim); color: var(--red); font-size: 13px; line-height: 1.5; }
-.advancedBox { margin-bottom: 12px; border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border)); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent); overflow: hidden; }
+.formError { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--red-dim); color: var(--red); font-size: 13px; line-height: 1.5; }
+.advancedBox { margin-bottom: 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent); overflow: hidden; }
 .advancedSummary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; color: var(--text2); font-size: 13px; font-weight: 800; cursor: pointer; list-style: none; }
 .advancedSummary::-webkit-details-marker { display: none; }
 .advancedSummary::after { content: '+'; width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 78%, white 22%); color: var(--text3); font-family: var(--font-mono); font-size: 16px; line-height: 1; }
@@ -1251,10 +1232,10 @@
 .advancedGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 12px 12px; }
 .advancedFull { grid-column: 1 / -1; }
 .recurGrid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border)); background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 48%, var(--surface2) 52%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); color: var(--text2); font-size: 11px; cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
+.recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-size: 11px; cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
 .recurChipActive { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
 .modalActions { display: flex; gap: 8px; margin-top: 1.25rem; }
-.btnCancel { flex: 1; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)); border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border)); color: var(--text2); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 14px; min-height: 48px; }
+.btnCancel { flex: 1; padding: 12px; background: var(--surface); border: 1px solid var(--border2); color: var(--text2); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 14px; min-height: 48px; }
 .btnSave { flex: 2; padding: 12px; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 600; min-height: 48px; }
 .btnSave:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -1310,6 +1291,7 @@
     font-size: 10px;
     line-height: 1.1;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
   .balanceRail {
     padding: 10px 12px;
@@ -1443,6 +1425,7 @@
     font-size: 10px;
     line-height: 1.18;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
   .dots {
     gap: 3px;
@@ -1685,7 +1668,7 @@
   .delBtnSm {
     min-height: 36px;
     width: 100%;
-    border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+    border: 1px solid var(--border2);
   }
   .dayPanelEmpty {
     padding: 10px 0;
@@ -1700,7 +1683,7 @@
     padding: 10px 1rem calc(1rem + env(safe-area-inset-bottom));
     background:
       linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 97%, #ffffff 3%) 28%);
-    backdrop-filter: blur(10px);
+    
     z-index: 2;
     box-sizing: border-box;
   }
@@ -1775,7 +1758,7 @@
     top: -16px;
     margin: -16px -16px 14px;
     padding: 14px 16px 12px;
-    border-bottom: 1px solid rgba(16, 16, 16, 0.1);
+    border-bottom: 1px solid var(--border2);
   }
 
   .dayPanelTitle {

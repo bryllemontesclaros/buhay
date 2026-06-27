@@ -350,18 +350,12 @@ const FAQ_ITEMS = [
   },
 ]
 
-const START_FOCUS_COPY = {
-  'one-update': 'Open one space and finish the one real thing you have been avoiding.',
-  'catch-up': 'Use the saved timeline, totals, and history to catch up without guessing.',
-  'build-routine': 'Stay with one space long enough for the habit to feel automatic, not dramatic.',
-}
+
 
 export default function LandingPage() {
   const navigate = useNavigate()
   const [authReady, setAuthReady] = useState(() => Boolean(auth.currentUser))
   const [isSignedIn, setIsSignedIn] = useState(() => Boolean(auth.currentUser))
-  const [startSpace, setStartSpace] = useState('takda')
-  const [startFocus, setStartFocus] = useState('one-update')
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, currentUser => {
@@ -382,7 +376,7 @@ export default function LandingPage() {
    * @param {string} [spaceOverride] - Explicit space ID (e.g., 'takda', 'lakas', 'tala') to override default selection.
    */
   const openPrimary = (spaceOverride) => {
-    const intended = spaceOverride || startSpace || 'explore'
+    const intended = spaceOverride || 'explore'
     setStartSpaceIntent(intended)
     navigate(isSignedIn ? '/app' : '/login', { state: { startSpace: intended } })
   }
@@ -406,11 +400,10 @@ export default function LandingPage() {
     return styles[key] || ''
   }
 
-  const activeHeroSpace = HERO_SPACES.find(space => space.label.toLowerCase() === startSpace) || HERO_SPACES[0]
-  const startFocusCopy = START_FOCUS_COPY[startFocus] || START_FOCUS_COPY['one-update']
+
 
   return (
-    <div className={`${styles.page} neo`}>
+    <div className={styles.page}>
       <RouteMeta
         title="Buhay — Takda, Lakas, and Tala in one calm account"
         description="Track money, fitness, and reflection in three focused spaces inside one account."
@@ -494,34 +487,14 @@ export default function LandingPage() {
               <div className={styles.heroCard} aria-label="Choose how to start Buhay">
                 <div className={styles.heroStartHeader}>
                   <div>
-                    <div className={styles.fieldLabel}>Start where the pressure is</div>
-                    <h2 className={styles.heroStartTitle}>Choose one space. Do one honest thing.</h2>
+                    <h2 className={styles.heroStartTitle}>Start your journey.</h2>
                   </div>
-                  <p className={styles.heroStartLead}>{startFocusCopy}</p>
+                  <p className={styles.heroStartLead}>Track what matters, simply and privately.</p>
                 </div>
 
                 <div className={styles.heroCardRow}>
-                  <div className={styles.field}>
-                    <div className={styles.fieldLabel}>Where to start</div>
-                    <select className={styles.select} value={startSpace} onChange={event => setStartSpace(event.target.value)}>
-                      <option value="takda">Takda (Money)</option>
-                      <option value="lakas">Lakas (Fitness)</option>
-                      <option value="tala">Tala (Mind)</option>
-                      <option value="explore">Explore all</option>
-                    </select>
-                  </div>
-
-                  <div className={styles.field}>
-                    <div className={styles.fieldLabel}>What you want today</div>
-                    <select className={styles.select} value={startFocus} onChange={event => setStartFocus(event.target.value)}>
-                      <option value="one-update">One real update</option>
-                      <option value="catch-up">Catch up on the month</option>
-                      <option value="build-routine">Build consistency</option>
-                    </select>
-                  </div>
-
-                  <button type="button" className={`${styles.btnPrimary} ${styles.heroStartButton}`} onClick={() => openPrimary(startSpace)}>
-                    {isSignedIn ? 'Open now' : 'Start free'}
+                  <button type="button" className={`${styles.btnPrimary} ${styles.heroStartButton}`} onClick={() => openPrimary()}>
+                    {isSignedIn ? 'Open the app' : 'Start free now'}
                   </button>
                 </div>
 
@@ -530,22 +503,6 @@ export default function LandingPage() {
                   <span>Three clear jobs.</span>
                   <button type="button" className={styles.metaLink} onClick={goLogin}>Already have an account?</button>
                 </div>
-
-                <article className={`${styles.heroSpotlight} ${styles.heroSpaceCard} ${toneClass(activeHeroSpace.tone)}`}>
-                  <div className={styles.heroSpotlightTop}>
-                    <div>
-                      <span className={styles.heroSpaceLabel}>{activeHeroSpace.label}</span>{' '}
-                      <span className={styles.heroSpaceTitle}>{activeHeroSpace.title}</span>
-                    </div>
-                    <span className={styles.heroSpotlightBadge}>{startFocus.replace('-', ' ')}</span>
-                  </div>
-                  <p className={styles.heroSpaceDesc}>{activeHeroSpace.desc}</p>
-                  <div className={styles.heroSpaceMeta}>
-                    {activeHeroSpace.tone === 'takda' && 'Balances · bills · forecast · budgets'}
-                    {activeHeroSpace.tone === 'lakas' && 'Workout · meals · body logs · progress'}
-                    {activeHeroSpace.tone === 'tala' && 'Journal · moods · tasks · focus'}
-                  </div>
-                </article>
 
                 <div className={styles.heroSharedStrip}>
                   <strong>Buhay account layer</strong>

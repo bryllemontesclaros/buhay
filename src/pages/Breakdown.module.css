@@ -17,14 +17,12 @@
 .surfaceCard {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 18px;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 :global(.neo) .heroCopy,
@@ -33,10 +31,10 @@
 :global(.neo) .toolbar,
 :global(.neo) .surfaceCard {
   background: var(--nb-surface-card);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .pageTitle {
@@ -206,7 +204,7 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 65%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface) 28%);
 }
 
@@ -285,8 +283,8 @@
 }
 
 .navBtn {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   color: var(--text2);
   border-radius: 999px;
   padding: 0;
@@ -299,7 +297,7 @@
 .navBtn:hover {
   border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
   color: var(--text);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 42%, var(--surface2) 58%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .monthLabel {
@@ -315,8 +313,8 @@
   gap: 4px;
   padding: 3px;
   border-radius: 999px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 52%, var(--surface2) 48%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
 }
 
@@ -336,7 +334,7 @@
 }
 
 .tabBtnActive {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 52%, var(--surface) 48%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  background: var(--surface);
   color: var(--text);
   box-shadow: var(--glass-shadow-soft);
 }
@@ -481,7 +479,7 @@
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 4px;
-  border-top: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+  border-top: 1px solid var(--border2);
   padding-top: 12px;
 }
 
@@ -663,7 +661,7 @@
   gap: 16px;
   padding: 16px 20px;
   border-radius: 24px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   box-shadow: var(--glass-shadow-soft);
   margin-bottom: 1.25rem;

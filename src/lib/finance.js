@@ -122,10 +122,18 @@ export function getAccountBalanceDelta(account = {}, txType, amount = 0) {
   if (!normalizedAmount) return 0
 
   const isCreditCard = String(account?.type || '').toLowerCase() === 'credit card'
-  if (txType === 'income') {
-    return isCreditCard ? -normalizedAmount : normalizedAmount
+  if (isCreditCard) {
+    const isStoredNegative = (Number(account?.balance) || 0) < 0
+    if (txType === 'income') {
+      return isStoredNegative ? normalizedAmount : -normalizedAmount
+    }
+    return isStoredNegative ? -normalizedAmount : normalizedAmount
   }
-  return isCreditCard ? normalizedAmount : -normalizedAmount
+
+  if (txType === 'income') {
+    return normalizedAmount
+  }
+  return -normalizedAmount
 }
 
 export function isLinkedTransaction(tx = {}) {
@@ -297,23 +305,9 @@ export function getBalanceAtDate(accounts = [], income = [], expenses = [], targ
 export function getBalanceAtDateWithOverrides(accounts = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
   const target = normalizeDate(targetDate)
   if (!target) return getCurrentBalance(accounts)
-  const normalizedOverrides = normalizeDailyBalanceOverrides(balanceOverrides)
-
-  const latestOverrideDate = Object.keys(normalizedOverrides)
-    .filter(date => date <= target)
-    .sort()
-    .pop()
-
-  if (!latestOverrideDate) return getBalanceAtDate(accounts, income, expenses, target)
-
-  return getBalanceFromAnchor(
-    accounts,
-    income,
-    expenses,
-    latestOverrideDate,
-    normalizedOverrides[latestOverrideDate],
-    target,
-  )
+  
+  // Ignore overrides to ensure the Calendar is strictly linked to live Accounts.
+  return getBalanceAtDate(accounts, income, expenses, target)
 }
 
 export function getMonthStartBalance(accounts = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
@@ -331,8 +325,8 @@ export function getMonthForecast(
   month,
   balanceOverrides = {},
 ) {
-  const normalizedOverrides = normalizeDailyBalanceOverrides(balanceOverrides)
-  const startingBalance = getMonthStartBalance(accounts, income, expenses, year, month, normalizedOverrides)
+  // Ignore overrides
+  const startingBalance = getMonthStartBalance(accounts, income, expenses, year, month, {})
   const allIncome = [
     ...getPaidTransactions(getMonthTransactions(income, year, month)),
     ...getMonthTransactions(projectedIncome, year, month),
@@ -342,7 +336,7 @@ export function getMonthForecast(
     ...getMonthTransactions(projectedExpenses, year, month),
   ]
   const baseForecast = buildForecast(allIncome, allExpenses, year, month, startingBalance)
-  return applyBalanceOverridesToForecast(baseForecast, year, month, normalizedOverrides, startingBalance)
+  return baseForecast
 }
 
 export function getMonthEndBalanceForView(

@@ -50,7 +50,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--text2);
   cursor: pointer;
@@ -63,19 +63,15 @@
 .itemsCard {
   padding: 14px;
   border-radius: var(--radius);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 18%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .summaryCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  background: var(--surface);
 }
 
 .summaryTop {
@@ -109,7 +105,7 @@
   min-width: 76px;
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 84%, var(--surface) 16%);
   text-align: center;
 }
@@ -142,17 +138,17 @@
   line-height: 1.55;
 }
 .accountNote {
-  border: 1px solid color-mix(in srgb, var(--blue) 28%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--blue) 12%, var(--surface));
   color: var(--text2);
 }
 .planNote {
-  border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--amber-dim) 72%, var(--surface) 28%);
   color: var(--amber);
 }
 .formError {
-  border: 1px solid var(--red);
+  border: 1px solid var(--border2);
   background: var(--red-dim);
   color: var(--red);
 }
@@ -186,7 +182,7 @@
   min-height: 46px;
   padding: 11px 13px;
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 16px;
@@ -229,7 +225,7 @@
   min-height: 46px;
   padding: 11px 44px 11px 13px;
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 16px;
@@ -289,7 +285,7 @@
 .secondaryBtn,
 .ghostBtn,
 .inlineBtn {
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--text2);
 }
@@ -327,7 +323,7 @@
 .importBtn {
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 92%, black 8%));
   color: #08110d;
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  border: 1px solid var(--border2);
 }
 
 .itemsHeader {
@@ -355,7 +351,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border2);
 }
 .itemRow > * {
   min-width: 0;

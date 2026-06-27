@@ -49,6 +49,14 @@
   --purple: #b8afff;
   --purple-dim: rgba(184, 175, 255, 0.14);
 
+  --space-fitness: #f1909d;
+  --space-fitness-dim: rgba(241, 144, 157, 0.13);
+  --space-fitness-ink: #f1909d;
+
+  --space-reflection: #9ca5ff;
+  --space-reflection-dim: rgba(156, 165, 255, 0.14);
+  --space-reflection-ink: #9ca5ff;
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -89,11 +97,11 @@
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --font-body: 'Plus Jakarta Sans', sans-serif;
-  --font-brutal: 'Fredoka', system-ui, sans-serif;
-  --font-editorial: 'Fraunces', serif;
+  --font-brutal: 'Plus Jakarta Sans', sans-serif;
+  --font-editorial: 'Plus Jakarta Sans', sans-serif;
   --font-ui: 'Plus Jakarta Sans', sans-serif;
 
   --type-overline: 10px;
@@ -168,30 +176,6 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg: #f4f0e8;
-  --bg-deep: #ebe3d7;
-  --surface: rgba(255, 251, 245, 0.86);
-  --surface2: rgba(251, 247, 241, 0.8);
-  --surface3: rgba(244, 238, 229, 0.78);
-  --surface-solid: #fffdf9;
-  --surface-solid-2: #f8f2e9;
-  --surface-solid-3: #efe6d9;
-
-  --border: rgba(120, 134, 150, 0.16);
-  --border2: rgba(120, 134, 150, 0.26);
-  --glass-1: rgba(255, 255, 255, 0.62);
-  --glass-2: rgba(255, 255, 255, 0.76);
-  --glass-3: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(255, 255, 255, 0.72);
-  --glass-highlight: rgba(255, 255, 255, 0.94);
-  --glass-shadow-soft: 0 16px 34px rgba(90, 93, 102, 0.08);
-  --glass-shadow: 0 26px 56px rgba(90, 93, 102, 0.12);
-  --glass-shadow-strong: 0 36px 82px rgba(90, 93, 102, 0.15);
-
-  --text: #192532;
-  --text2: rgba(25, 37, 50, 0.74);
-  --text3: rgba(62, 78, 96, 0.62);
-
   --accent: #1a8f72;
   --accent-dim: #106850;
   --accent-glow: rgba(26, 143, 114, 0.12);
@@ -203,6 +187,15 @@
   --blue-dim: rgba(78, 141, 224, 0.12);
   --purple: #7c6ce0;
   --purple-dim: rgba(124, 108, 224, 0.12);
+  
+  --space-fitness: #d66c7e;
+  --space-fitness-dim: rgba(214, 108, 126, 0.12);
+  --space-fitness-ink: #d66c7e;
+
+  --space-reflection: #7c6ce0;
+  --space-reflection-dim: rgba(124, 108, 224, 0.12);
+  --space-reflection-ink: #7c6ce0;
+  
   --bento-surface: rgba(255, 252, 247, 0.9);
   --bento-surface-soft: rgba(248, 242, 234, 0.88);
   --bento-border: rgba(120, 134, 150, 0.18);
@@ -235,13 +228,7 @@ body {
 body {
   position: relative;
   min-height: 100%;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--border2) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(180deg, color-mix(in srgb, var(--border2) 18%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 50% -8%, color-mix(in srgb, var(--accent-glow) 78%, transparent), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg) 94%, #02060d 6%), var(--bg));
-  background-size: 88px 88px, 88px 88px, auto, auto;
-  background-attachment: fixed;
+  background: var(--bg);
   isolation: isolate;
 }
 
@@ -255,20 +242,12 @@ body::after {
 
 body::before {
   z-index: -2;
-  background:
-    radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--blue-dim) 34%, transparent), transparent 24%),
-    radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--peach-dim) 34%, transparent), transparent 26%),
-    radial-gradient(circle at 50% 82%, color-mix(in srgb, var(--accent-glow) 24%, transparent), transparent 28%);
-  filter: blur(62px);
-  opacity: 0.72;
+  background: var(--bg);
 }
 
 body::after {
   z-index: -1;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, white 4%, transparent), transparent 18%, transparent 82%, color-mix(in srgb, white 2%, transparent)),
-    linear-gradient(135deg, color-mix(in srgb, white 4%, transparent), transparent 28%),
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 28%);
+  background: transparent;
 }
 
 @keyframes floatDrift {

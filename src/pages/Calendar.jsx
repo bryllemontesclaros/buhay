@@ -965,9 +965,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       : 'Forecast close · paid entries only'
   const balanceRailLabel = formatBalanceDate(balanceFocusDate)
   const balanceRailCompactLabel = balanceRailMeta
-  const balanceRailHint = privacyMode
-    ? 'Privacy mode on. Tap to reveal values.'
-    : 'Calendar close uses paid entries. Linked paid items update account balances.'
+
   const selectedDateLocked = false
   const legacyMonthStartKeyForSelectedDay = selected ? getLegacyMonthStartKeyForDate(selected, monthStartBalances) : ''
   const hasManualBalanceOnSelectedDay = Boolean(
@@ -1296,22 +1294,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           </div>
         </div>
 
-        <button
-          type="button"
+        <div
           className={calStyles.balanceRail}
-          onClick={onTogglePrivacy}
-          aria-pressed={privacyMode}
-          aria-label={`${balanceRailLabel}. ${privacyMode ? 'Balance hidden.' : `${formatRoundedBalance(balanceFocusValue, s)}.`} ${balanceRailHint}`}
+          aria-label={`${balanceRailLabel}. ${formatRoundedBalance(balanceFocusValue, s)}.`}
         >
           <div className={calStyles.balanceRailCopy}>
             <div className={calStyles.balanceRailLabel}>{balanceRailLabel}</div>
             <div className={calStyles.balanceRailLabelCompact}>{balanceRailCompactLabel}</div>
-            <div className={calStyles.balanceRailMeta}>
-              {privacyMode ? 'Privacy mode on' : balanceRailMeta}
-            </div>
           </div>
-          <div className={`${calStyles.balanceRailValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(balanceFocusValue)}</div>
-        </button>
+          <div className={calStyles.balanceRailValue}>{balanceMoney(balanceFocusValue)}</div>
+        </div>
       </div>
 
       {selected && typeof document !== 'undefined'

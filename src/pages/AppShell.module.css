@@ -36,10 +36,10 @@
     repeating-linear-gradient(135deg, transparent 0 24px, var(--nb-texture-line) 24px 25px),
     linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
   background-size: 22px 22px, auto, auto;
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .sidebar::before {
@@ -63,7 +63,7 @@
 }
 
 :global(.neo) .topBarContextPill {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background:
     radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
     linear-gradient(180deg, color-mix(in srgb, var(--nb-paper) 98%, white 2%), color-mix(in srgb, var(--nb-paper) 99%, black 1%));
@@ -73,7 +73,7 @@
 }
 
 :global(.neo) .topBarStream {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
   background:
     radial-gradient(circle, var(--nb-texture-dot) 0.75px, transparent 0.75px),
@@ -93,12 +93,12 @@
 :global(.neo) .navItem,
 :global(.neo) .spaceButton,
 :global(.neo) .btnLogout {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: var(--nb-shadow-sm);
   background: var(--nb-paper-2);
   color: var(--nb-ink);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .navItem:hover,
@@ -132,8 +132,8 @@
     repeating-linear-gradient(135deg, transparent 0 26px, var(--nb-texture-line) 26px 27px),
     linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
   background-size: 22px 22px, auto, auto;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .topBar::after {
@@ -141,15 +141,15 @@
 }
 
 :global(.neo) .mainWrap {
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background:
     radial-gradient(circle, var(--nb-texture-dot) 0.75px, transparent 0.75px),
     repeating-linear-gradient(135deg, transparent 0 30px, var(--nb-texture-line) 30px 31px),
     linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
   background-size: 24px 24px, auto, auto;
   box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .mainWrap::before {
@@ -220,15 +220,12 @@
   flex-direction: column;
   padding: 1.15rem 0 1rem;
   overflow-y: auto;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 68%, var(--border) 32%);
+  border: 1px solid var(--border2);
   border-radius: 34px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface2) 90%, transparent 10%)),
-    radial-gradient(circle at 24% 88%, color-mix(in srgb, var(--blue-dim) 18%, transparent), transparent 28%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 44%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(146%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(146%);
+  
+  
 }
 
 .sidebar::before {
@@ -236,7 +233,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 28%, transparent), transparent 18%, transparent 82%, color-mix(in srgb, var(--glass-highlight) 10%, transparent));
+  background: var(--surface);
   opacity: 0.8;
 }
 
@@ -258,7 +255,7 @@
   min-height: 28px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
   color: var(--text2);
   font-size: var(--type-overline);
@@ -291,11 +288,8 @@
   margin: 0 10px 12px;
   padding: 12px 13px;
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 40%),
-    radial-gradient(circle at bottom left, color-mix(in srgb, var(--peach-dim) 18%, transparent), transparent 34%),
-    color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
     0 10px 28px rgba(2, 8, 16, 0.08);
@@ -340,7 +334,7 @@
   height: 28px;
   margin-left: -6px;
   border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -385,7 +379,7 @@
 .sidebarGuideTag {
   padding: 5px 9px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 84%, var(--nb-surface-card-strong) 16%);
   color: var(--text2);
   font-size: var(--type-overline);
@@ -414,11 +408,8 @@
   min-height: 76px;
   padding: 11px 11px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    radial-gradient(circle at 18% 92%, color-mix(in srgb, var(--blue-dim) 10%, transparent), transparent 28%),
-    color-mix(in srgb, var(--glass-1) 74%, transparent);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
     0 10px 24px rgba(2, 8, 16, 0.08);
@@ -464,7 +455,7 @@
   min-height: 56px;
   padding: 10px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   color: var(--text2);
   cursor: pointer;
@@ -487,9 +478,7 @@
 .spaceButtonActive {
   color: var(--text);
   border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--glass-1)), color-mix(in srgb, var(--accent) 6%, var(--surface2)));
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
     0 12px 28px rgba(4, 10, 20, 0.12);
@@ -569,7 +558,7 @@
     background var(--motion-duration) var(--motion-ease-standard),
     color var(--motion-duration) var(--motion-ease-standard),
     box-shadow var(--motion-duration) var(--motion-ease-standard);
-  border: 1px solid transparent;
+  border: 1px solid var(--border2);
   border-radius: 16px;
   background: transparent;
   text-align: left;
@@ -589,8 +578,7 @@
 
 .navItem.active {
   color: var(--text);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--glass-1)), color-mix(in srgb, var(--accent) 6%, var(--surface2)));
+  background: var(--surface);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent),
@@ -615,12 +603,10 @@
 }
 .userCard {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border) 42%);
+  border: 1px solid var(--border2);
   border-radius: 22px;
   padding: 13px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface2) 90%, transparent 10%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
@@ -643,9 +629,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, var(--glass-1)), color-mix(in srgb, var(--accent) 10%, var(--surface2)));
-  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--glass-border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -670,7 +655,7 @@
   justify-content: center;
   min-height: 42px;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border) 46%);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   font-size: 12px;
@@ -721,10 +706,8 @@
   margin: 14px 18px 0;
   padding: 16px;
   border-radius: 28px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface2) 82%, transparent 18%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
@@ -773,7 +756,7 @@
   min-height: 66px;
   padding: 10px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, transparent);
   color: var(--text2);
   cursor: pointer;
@@ -816,9 +799,7 @@
 .financeGroupTabActive {
   color: var(--text);
   border-color: color-mix(in srgb, var(--accent) 46%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 44%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 17%, var(--glass-1)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+  background: var(--surface);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 48%, transparent),
     0 14px 26px rgba(4, 10, 20, 0.12);
@@ -831,15 +812,12 @@
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border) 48%);
+  border: 1px solid var(--border2);
   border-radius: 32px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 26%, transparent), transparent 16%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--peach-dim) 18%, transparent), transparent 24%),
-    linear-gradient(180deg, color-mix(in srgb, var(--surface) 68%, var(--bg)) 0%, color-mix(in srgb, var(--surface2) 44%, transparent) 100%);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-sm)) saturate(122%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(122%);
+  
+  
   animation: shellFrameIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 
@@ -848,7 +826,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-highlight) 26%, transparent), transparent 16%, transparent 86%, color-mix(in srgb, var(--glass-highlight) 8%, transparent));
+  background: var(--surface);
   opacity: 0.85;
 }
 
@@ -856,17 +834,15 @@
   position: relative;
   z-index: 2;
   min-height: 80px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 82%, var(--surface) 18%), color-mix(in srgb, var(--surface2) 84%, transparent 16%)),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--blue) 5%, transparent), transparent 20%);
-  border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  background: var(--surface);
+  border-bottom: 1px solid var(--border2);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 22px;
   flex-shrink: 0;
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
   animation: shellChromeIn var(--motion-duration-slow) var(--motion-ease-out) both;
   transition:
     min-height var(--motion-duration) var(--motion-ease-standard),
@@ -919,7 +895,7 @@
   min-height: 28px;
   padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent) 12%, var(--glass-1));
   color: var(--accent);
   font-family: var(--font-ui);
@@ -946,7 +922,7 @@
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 84%, var(--nb-surface-card-strong) 16%);
   max-width: 44ch;
   transition:
@@ -967,7 +943,7 @@
   min-height: 32px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border2);
   background: transparent;
   color: var(--text3);
   cursor: pointer;
@@ -982,7 +958,7 @@
 }
 
 :global(.neo) .mobileSpaceButton {
-  border: 3px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   background: var(--nb-paper-2);
   box-shadow: var(--nb-shadow-sm);
   color: var(--nb-ink-2);
@@ -1002,10 +978,8 @@
   min-height: 46px;
   padding: 7px 9px 7px 7px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--accent) 24%);
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface2) 32%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   overflow: hidden;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
 }
@@ -1053,9 +1027,7 @@
 .mainWrapScrolled .topBar {
   min-height: 66px;
   padding: 10px 18px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 90%, var(--surface) 10%), color-mix(in srgb, var(--surface2) 88%, transparent 12%)),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 20%);
+  background: var(--surface);
 }
 
 .mainWrapScrolled .topBarLogo {
@@ -1088,7 +1060,7 @@
 
 .themeBtn {
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   color: var(--text2);
   cursor: pointer;
   padding: 8px;
@@ -1129,13 +1101,11 @@
   min-height: 58px;
   padding: 10px 12px;
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--amber) 36%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--amber) 14%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  
+  
 }
 .syncBannerIcon {
   width: 34px;
@@ -1166,7 +1136,7 @@
 }
 .syncBannerAction,
 .syncBannerDismiss {
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   color: var(--text2);
   cursor: pointer;
@@ -1214,13 +1184,11 @@
   max-width: min(320px, calc(100vw - 32px));
   padding: 12px 40px 14px 14px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+  
+  
   animation: toastIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .levelToastDismiss {
@@ -1279,13 +1247,11 @@
   gap: 16px;
   padding: 15px 16px;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--amber) 38%, var(--glass-border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--amber) 14%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
+  
+  
 }
 .verifyBannerEyebrow {
   font-size: var(--type-overline);
@@ -1316,12 +1282,12 @@
 .verifyBannerStatusOk {
   background: var(--accent-glow);
   color: var(--accent);
-  border: 1px solid var(--accent);
+  border: 1px solid var(--border2);
 }
 .verifyBannerStatusWarn {
   background: var(--amber-dim);
   color: var(--amber);
-  border: 1px solid var(--amber);
+  border: 1px solid var(--border2);
 }
 .verifyBannerActions {
   display: flex;
@@ -1341,12 +1307,12 @@
 }
 .verifyBannerGhost {
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 50%, var(--border));
+  border: 1px solid var(--border2);
   color: var(--text2);
 }
 .verifyBannerPrimary {
   background: linear-gradient(180deg, color-mix(in srgb, var(--amber) 82%, white 18%), color-mix(in srgb, var(--amber) 88%, black 12%));
-  border: 1px solid color-mix(in srgb, var(--amber) 64%, var(--glass-border));
+  border: 1px solid var(--border2);
   color: var(--nb-accent-ink);
 }
 .verifyBannerGhost:disabled,
@@ -1358,8 +1324,8 @@
   position: fixed;
   inset: 0;
   background: rgba(8, 12, 18, 0.22);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  
+  
   z-index: 280;
   animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
@@ -1393,13 +1359,11 @@
   min-width: 228px;
   padding: 10px;
   border-radius: 28px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(155%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(155%);
+  
+  
   animation: takdaFloatIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .fabMenuContextual {
@@ -1418,8 +1382,8 @@
   min-height: 56px;
   padding: 11px 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--fab-tone) 18%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 70%, var(--surface2) 30%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 14px;
@@ -1430,7 +1394,7 @@
 .fabAction:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--fab-tone) 38%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--fab-tone) 10%, var(--glass-2)), color-mix(in srgb, var(--fab-tone) 6%, var(--surface2)));
+  background: var(--surface);
   box-shadow: 0 14px 28px rgba(8, 12, 18, 0.12);
 }
 
@@ -1493,16 +1457,14 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--glass-border));
-  background:
-    radial-gradient(circle at 30% 24%, color-mix(in srgb, white 38%, transparent), transparent 26%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white 18%), color-mix(in srgb, var(--accent) 74%, var(--blue) 26%));
-  color: var(--nb-accent-ink);
+  border: 1px solid var(--border2);
+  background: var(--accent);
+  color: #fff;
   font-size: 34px;
   line-height: 1;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 22px 50px rgba(9, 18, 14, 0.3);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 30%, transparent);
   transition:
     transform var(--motion-duration-slow) var(--motion-ease-out),
     box-shadow var(--motion-duration) var(--motion-ease-standard),
@@ -1512,7 +1474,7 @@
   display: grid;
   place-items: center;
 }
-.fabButton:hover { --fab-lift: -1px; box-shadow: 0 26px 56px color-mix(in srgb, var(--accent) 30%, transparent); }
+.fabButton:hover { --fab-lift: -1px; box-shadow: 0 8px 16px color-mix(in srgb, var(--accent) 40%, transparent); }
 .fabButton:active { --fab-lift: 0px; }
 .fabButtonGlyph {
   display: inline-block;
@@ -1521,10 +1483,8 @@
 }
 .fabButtonOpen {
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
-  background:
-    radial-gradient(circle at 30% 24%, color-mix(in srgb, white 26%, transparent), transparent 26%),
-    linear-gradient(180deg, color-mix(in srgb, var(--accent) 70%, white 10%), color-mix(in srgb, var(--accent) 86%, var(--blue) 14%));
-  box-shadow: 0 24px 56px color-mix(in srgb, var(--accent) 28%, transparent);
+  background: var(--accent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 .fabButtonOpen .fabButtonGlyph {
   transform: scale(0.98);
@@ -1550,15 +1510,13 @@
   box-sizing: border-box;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 74%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 30px;
   padding: 1rem;
   box-shadow: var(--glass-shadow-strong);
-  backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+  
+  
   pointer-events: auto;
   animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
 }
@@ -1593,7 +1551,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   color: var(--text2);
   cursor: pointer;
@@ -1676,8 +1634,8 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    
+    
     position: relative !important;
   }
   .mainWrap::before {
@@ -1767,8 +1725,9 @@
     min-height: auto;
     margin: 10px 12px 0;
     padding: 12px 12px 12px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+    border: 1px solid var(--border2);
     border-radius: 24px;
+    background: var(--bg);
     box-shadow: var(--glass-shadow-soft);
     flex-shrink: 0;
     gap: 10px;
@@ -1990,12 +1949,10 @@
     z-index: 3;
     margin: 0 0 6px;
     padding: 12px 10px 10px;
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 44%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
-    border-bottom: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    
+    
   }
   .bottomNav {
     display: flex;
@@ -2003,16 +1960,15 @@
     left: 12px;
     right: 12px;
     bottom: calc(12px + env(safe-area-inset-bottom));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 86%, var(--surface) 14%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
-    border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+    background: var(--surface);
+    border: 1px solid var(--border2);
     border-radius: 26px;
     z-index: 100;
     min-height: 62px;
     padding: 6px;
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--glass-blur-lg)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(160%);
+    
+    
     transition:
       opacity var(--motion-duration) var(--motion-ease-standard),
       transform var(--motion-duration) var(--motion-ease-out);
@@ -2045,8 +2001,7 @@
   }
   .bottomNavItem.active {
     color: var(--text);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, var(--glass-1)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+    background: var(--surface);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
       0 10px 20px rgba(4, 10, 20, 0.12);
@@ -2060,8 +2015,8 @@
     background: rgba(8, 12, 18, 0.22);
     border: none;
     z-index: 98;
-    backdrop-filter: blur(18px) saturate(130%);
-    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    
+    
     animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
   }
   .mobileNavSheet {
@@ -2075,12 +2030,11 @@
     z-index: 101;
     padding: 10px 14px 14px;
     border-radius: 28px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 84%, var(--surface) 16%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
+    border: 1px solid var(--border2);
+    background: var(--surface);
     box-shadow: var(--glass-shadow-strong);
-    backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(160%);
+    
+    
     animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
   }
   .mobileNavSheetHandle {
@@ -2112,7 +2066,7 @@
     width: 36px;
     height: 36px;
     border-radius: 14px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+    border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
     color: var(--text2);
     display: inline-flex;
@@ -2133,8 +2087,8 @@
     min-height: 58px;
     padding: 10px 14px;
     border-radius: 18px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 54%, var(--border));
-    background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface2) 32%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+    border: 1px solid var(--border2);
+    background: var(--surface);
     color: var(--text);
     font-family: var(--font-body);
     text-align: left;
@@ -2151,8 +2105,7 @@
   }
   .mobileNavLinkActive {
     border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, var(--glass-2)), color-mix(in srgb, var(--accent) 8%, var(--surface2)));
+    background: var(--surface);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
       0 10px 20px rgba(4, 10, 20, 0.12);
@@ -2211,7 +2164,7 @@
   :global(.neo) .topBar {
     /* On mobile, the top bar is the card. Give it the stroke and shadow. */
     margin: 10px 12px 0;
-    border: 4px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     border-radius: 24px;
     background: var(--nb-paper-2);
     box-shadow: var(--nb-shadow);
@@ -2456,7 +2409,7 @@
 }
 
 :global(.neo) .fabButton {
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   box-shadow: 8px 8px 0 rgba(16, 16, 16, 0.2);
 }
 
@@ -2502,7 +2455,7 @@
   :global(.neo) .mobileSpaceButton {
     min-height: 38px;
     min-width: 78px;
-    border: 3px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     border-radius: 999px;
     background: var(--nb-paper-2);
     box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.14);
@@ -2521,7 +2474,7 @@
   }
 
   :global(.neo) .bottomNav {
-    border: 3px solid color-mix(in srgb, var(--nb-stroke) 42%, transparent);
+    border: 1px solid var(--border2);
     box-shadow: 0 12px 32px rgba(16, 16, 16, 0.22);
   }
 
@@ -2796,8 +2749,8 @@
 
 .stripCard {
   appearance: none;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   border-radius: 20px;
   padding: 14px 16px;
   display: flex;
@@ -2806,8 +2759,8 @@
   text-align: left;
   cursor: pointer;
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(140%);
+  
+  
   transition: transform 0.15s var(--motion-ease-out), border-color 0.15s ease, background 0.15s ease;
   min-width: 0;
   width: 100%;
@@ -2817,7 +2770,7 @@
 .stripCard:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
-  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-3) 40%, var(--surface2) 60%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .stripCard:active {
@@ -2904,7 +2857,7 @@
   align-items: center;
   gap: 6px;
   background: color-mix(in srgb, var(--surface1) 20%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 10%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 14px;
   padding: 4px 10px;
   font-size: 11px;
@@ -2912,8 +2865,8 @@
   color: var(--text3);
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  
+  
 }
 
 .headerSpaceBadge:hover {

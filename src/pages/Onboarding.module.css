@@ -43,11 +43,11 @@
 :global(.neo) .summaryCard,
 :global(.neo) .insightCard {
   background: var(--nb-paper-2);
-  border: 4px solid var(--nb-stroke);
+  border: 1px solid var(--border2);
   border-radius: var(--nb-radius);
   box-shadow: var(--nb-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  
+  
 }
 
 :global(.neo) .logo {
@@ -81,7 +81,7 @@
   margin: 0 auto 1rem;
   padding: 12px 16px;
   border-radius: 18px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--border2);
   background: var(--accent-glow);
   color: var(--accent);
   font-size: var(--type-body-sm);
@@ -115,14 +115,12 @@
 .dynamicCard,
 .summaryCard,
 .insightCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 16%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: var(--bento-radius-lg);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .brandBlock,
@@ -133,21 +131,15 @@
 }
 
 .progressCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .liveCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-info) 10%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .tipCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--trust-ok) 10%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .logo {
@@ -204,7 +196,7 @@
 .spacePulse {
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 82%, #ffffff 18%);
   color: var(--text3);
   font-size: var(--type-overline);
@@ -282,7 +274,7 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
 }
 
@@ -304,7 +296,7 @@
   justify-content: center;
   border-radius: 50%;
   background: color-mix(in srgb, var(--surface) 84%, #ffffff 16%);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   font-family: var(--font-mono);
   font-size: var(--type-support);
   font-weight: 700;
@@ -356,7 +348,7 @@
   margin-top: 0.9rem;
   padding: 11px 12px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
 }
 
@@ -377,7 +369,7 @@
 .liveMetric {
   padding: 10px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 86%, #ffffff 14%);
 }
 
@@ -407,14 +399,11 @@
 .guideCard {
   padding: 1.1rem;
   border-radius: var(--bento-radius-lg);
-  border: 1px solid color-mix(in srgb, var(--bento-border) 80%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
-    radial-gradient(circle at bottom left, color-mix(in srgb, var(--blue) 10%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(150%);
+  
+  
 }
 
 .guideCluster {
@@ -429,7 +418,7 @@
   height: 56px;
   margin-left: -9px;
   border-radius: 18px 18px 18px 12px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
   animation: floatDrift 5.8s var(--ease-fluid) infinite;
 }
@@ -481,7 +470,7 @@
   width: 16px;
   height: 8px;
   transform: translateX(-50%);
-  border-bottom: 2px solid rgba(7, 10, 22, 0.62);
+  border-bottom: 1px solid var(--border2);
   border-radius: 0 0 14px 14px;
 }
 
@@ -560,12 +549,8 @@
   align-items: center;
   padding: 1rem;
   border-radius: var(--bento-radius);
-  border: 1px solid color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 36%),
-    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 36%),
-    radial-gradient(circle at 82% 100%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -595,7 +580,7 @@
   display: block;
   padding: 9px 11px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface2) 84%, #ffffff 16%);
   color: var(--text2);
   font-size: var(--type-support);
@@ -613,10 +598,8 @@
   grid-column: span 4;
   padding: 1rem 1.05rem;
   border-radius: var(--bento-radius);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 56%, var(--surface2) 44%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .welcomeStat:first-child { grid-column: span 6; }
@@ -683,10 +666,8 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--bento-radius);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--glass-highlight) 12%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
 }
 
@@ -702,9 +683,7 @@
 .setupScopeCard {
   grid-column: span 4;
   padding: 1rem;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .setupScopeCard:first-child { grid-column: span 3; }
@@ -738,34 +717,24 @@
 .spaceCardTakda,
 .choiceCardTakda {
   border-color: color-mix(in srgb, var(--takda-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--takda-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceCardLakas,
 .choiceCardLakas {
   border-color: color-mix(in srgb, var(--lakas-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceCardTala,
 .choiceCardTala {
   border-color: color-mix(in srgb, var(--tala-accent) 30%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 14%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .choiceCardBuhay {
   border-color: color-mix(in srgb, var(--buhay-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--takda-accent) 8%, transparent), transparent 38%),
-    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--lakas-accent) 8%, transparent), transparent 38%),
-    radial-gradient(circle at 72% 92%, color-mix(in srgb, var(--tala-accent) 10%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .spaceIcon,
@@ -876,7 +845,7 @@
   padding: 5px 8px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--takda-glow) 86%, var(--surface) 14%);
-  border: 1px solid color-mix(in srgb, var(--takda-accent) 30%, var(--border));
+  border: 1px solid var(--border2);
   color: var(--takda-accent);
   font-size: 10px;
   font-weight: 800;
@@ -892,16 +861,12 @@
 
 .quickStartLakas {
   border-color: color-mix(in srgb, var(--lakas-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--lakas-accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .quickStartTala {
   border-color: color-mix(in srgb, var(--tala-accent) 28%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--tala-accent) 12%, transparent), transparent 44%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  background: var(--surface);
 }
 
 .quickStartActive {
@@ -931,7 +896,7 @@
   min-height: 38px;
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
   color: var(--accent);
   font-family: var(--font-body);
@@ -955,10 +920,8 @@
 .setupPromiseItem {
   padding: 0.95rem 1rem;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
-    color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .setupPromiseItem strong {
@@ -982,7 +945,7 @@
   padding: 0.95rem 1rem;
   border-radius: 20px;
   background: color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 56%, var(--border));
+  border: 1px solid var(--border2);
   font-size: 14px;
   line-height: 1.6;
   color: var(--text2);
@@ -1061,7 +1024,7 @@
 .stepHint {
   padding: 12px 14px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--blue) 22%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--blue-dim) 78%, var(--surface) 22%);
   color: var(--text2);
   font-size: var(--type-body-sm);
@@ -1074,9 +1037,8 @@
   width: 100%;
   min-height: 48px;
   padding: 12px 14px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 54%, var(--surface2) 46%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 16px;
   color: var(--text);
   font-size: var(--type-title-sm);
@@ -1190,7 +1152,7 @@
   gap: 4px;
   min-height: 76px;
   padding: 12px 8px;
-  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  border: 1px solid var(--border2);
   border-radius: 18px;
   background: color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
   cursor: pointer;
@@ -1239,7 +1201,7 @@
 
 .addRowBtn,
 .removeBtn {
-  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  border: 1px solid var(--border2);
   background: none;
   color: var(--text2);
 }
@@ -1290,9 +1252,7 @@
 }
 
 .insightCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .insightLabel {
@@ -1328,10 +1288,8 @@
   align-items: center;
   padding: 1.15rem;
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 72%, var(--surface) 28%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
 }
 
 .finalSaveLabel {
@@ -1359,7 +1317,7 @@
 .finalSaveBadge {
   padding: 12px 14px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 86%, var(--surface) 14%);
   color: var(--accent);
   font-size: var(--type-support);
@@ -1374,7 +1332,7 @@
   padding: 13px 14px;
   border-radius: 18px;
   background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
-  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  border: 1px solid var(--border2);
 }
 
 .actionBar {
@@ -1389,7 +1347,7 @@
   min-height: 50px;
   padding: 12px 14px;
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
+  border: 1px solid var(--border2);
   color: var(--text2);
   font-size: var(--type-body);
   font-weight: 600;
@@ -1401,7 +1359,7 @@
   padding: 12px 18px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%));
   color: #08110d;
-  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--glass-border));
+  border: 1px solid var(--border2);
   font-size: var(--type-body);
   font-weight: 800;
   box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent);
@@ -1473,13 +1431,11 @@
     margin-bottom: 0.85rem;
     padding: 12px 13px;
     border-radius: 20px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 64%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 44%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 68%, var(--surface) 32%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+    border: 1px solid var(--border2);
+    background: var(--surface);
     box-shadow: var(--glass-shadow-soft);
-    backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
+    
+    
   }
 
   .mobileGuide {
@@ -1488,10 +1444,8 @@
     margin-bottom: 0.85rem;
     padding: 12px 13px;
     border-radius: 20px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--peach) 10%, transparent), transparent 40%),
-      color-mix(in srgb, var(--surface2) 88%, #ffffff 12%);
+    border: 1px solid var(--border2);
+    background: var(--surface);
     box-shadow: var(--glass-shadow-soft);
   }
 
@@ -1709,9 +1663,8 @@
   gap: 12px;
   padding: 0.4rem;
   border-radius: 34px;
-  border: 1px solid color-mix(in srgb, var(--bento-border) 76%, transparent);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 70%, var(--surface) 30%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
 }
 
@@ -1742,9 +1695,7 @@
 .card {
   padding: 1.35rem;
   border-radius: 34px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue) 8%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+  background: var(--surface);
   box-shadow: var(--glass-shadow-strong);
 }
 
@@ -1789,7 +1740,7 @@
   min-height: 38px;
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
   color: var(--accent);
   font-family: var(--font-mono);
@@ -1836,7 +1787,7 @@
 .actionBar {
   margin-top: 1.4rem;
   padding-top: 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+  border-top: 1px solid var(--border2);
 }
 
 @media (max-width: 980px) {
@@ -1922,13 +1873,11 @@
 .summaryCard,
 .insightCard {
   border-radius: 30px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface2) 92%, transparent 8%)),
-    radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--glass-highlight) 10%, transparent), transparent 26%);
+  border: 1px solid var(--border2);
+  background: var(--surface);
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(138%);
+  
+  
 }
 
 .brandBlock,
@@ -1954,9 +1903,7 @@
 }
 
 .liveCard {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--blue-dim) 24%, transparent), transparent 40%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 74%, var(--surface) 26%), color-mix(in srgb, var(--surface2) 92%, transparent 8%));
+  background: var(--surface);
 }
 
 .liveTitle {
@@ -1977,7 +1924,7 @@
 .liveStep {
   padding: 11px 12px;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 48%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 78%, transparent);
   color: var(--text2);
   font-size: 12px;
@@ -2026,7 +1973,7 @@
 .stageFacts span {
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--glass-border) 52%, var(--border));
+  border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 78%, transparent);
   color: var(--text2);
   font-size: 11px;

@@ -19,17 +19,15 @@
     gap: 12px;
     padding: 16px;
     border-radius: 20px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
-    background:
-      radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-      linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 94%, transparent 6%));
+    border: 1px solid var(--border2);
+    background: var(--surface);
     box-shadow: var(--glass-shadow-soft);
     transition: transform var(--motion-duration) var(--motion-ease-out), box-shadow var(--motion-duration) var(--motion-ease-standard);
   }
 
   :global(.neo) .billCard {
     background: var(--nb-surface-card);
-    border: 3px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     box-shadow: var(--nb-shadow-sm);
   }
 
@@ -71,7 +69,7 @@
     padding: 10px 12px;
     border-radius: 12px;
     background: color-mix(in srgb, var(--glass-1) 50%, var(--surface2) 50%);
-    border: 1px solid color-mix(in srgb, var(--glass-border) 40%, transparent);
+    border: 1px solid var(--border2);
   }
 
   :global(.neo) .billCardDetails {
@@ -143,14 +141,14 @@
     font-size: 12px;
     font-weight: 800;
     border-radius: 12px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+    border: 1px solid var(--border2);
     background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
     color: var(--space-finance-ink);
     cursor: pointer;
   }
 
   :global(.neo) .payBtn {
-    border: 3px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     background: var(--nb-mint);
     color: var(--nb-ink);
     box-shadow: 2px 2px 0 var(--nb-stroke);
@@ -162,14 +160,14 @@
     font-size: 12px;
     font-weight: 800;
     border-radius: 12px;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
+    border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
     color: var(--text2);
     cursor: pointer;
   }
 
   :global(.neo) .undoBtn {
-    border: 3px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     background: var(--nb-paper-2);
     color: var(--nb-ink);
     box-shadow: 2px 2px 0 var(--nb-stroke);
@@ -182,7 +180,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--glass-border) 50%, var(--border));
+    border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
     color: var(--text3);
     cursor: pointer;
@@ -191,7 +189,7 @@
   }
 
   :global(.neo) .delBtn {
-    border: 3px solid var(--nb-stroke);
+    border: 1px solid var(--border2);
     background: var(--nb-paper-2);
     color: var(--nb-ink);
     box-shadow: 2px 2px 0 var(--nb-stroke);
