@@ -161,7 +161,7 @@ export default function AuthScreen() {
         : 'Create one private account, choose where to start, and add the rest later.'
       : 'Sign in and go straight back to the part of life you were already tracking.'
   return (
-    <div className={`${styles.screen} neo`}>
+    <div className={styles.screen}>
       <RouteMeta
         title="Log in or create your account — Buhay"
         description="Access Buhay to track money, fitness, reflection, tasks, goals, and everyday patterns in one account."
