@@ -689,9 +689,9 @@
     /* Must sit above the global FAB (AppShell: 290) on mobile. */
     z-index: 310;
     border: 0;
-    background: rgba(8, 12, 18, 0.28);
-    
-    
+    background: var(--glass-3);
+    backdrop-filter: blur(var(--glass-blur-sm));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   }
 
   .formCard {

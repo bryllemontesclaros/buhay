@@ -223,9 +223,9 @@
   border: 1px solid var(--border2);
   border-radius: 34px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
-  
-  
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur-lg));
+    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
 }
 
 .sidebar::before {
@@ -1967,8 +1967,8 @@
     min-height: 62px;
     padding: 6px;
     box-shadow: var(--glass-shadow);
-    
-    
+    backdrop-filter: blur(var(--glass-blur-lg));
+    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
     transition:
       opacity var(--motion-duration) var(--motion-ease-standard),
       transform var(--motion-duration) var(--motion-ease-out);
