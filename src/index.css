@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root, .force-dark-theme {
+:root {
   color-scheme: dark;
 
   --bg: #071018;
@@ -173,7 +173,7 @@
 
 
 
-[data-theme="light"] {
+[data-theme="light"], .force-light-theme {
   color-scheme: light;
 
   --bg: #f8f9fa;

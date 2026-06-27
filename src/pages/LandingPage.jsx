@@ -403,7 +403,7 @@ export default function LandingPage() {
 
 
   return (
-    <div className={`${styles.page} force-dark-theme`}>
+    <div className={`${styles.page} force-light-theme`}>
       <RouteMeta
         title="Buhay — Takda, Lakas, and Tala in one calm account"
         description="Track money, fitness, and reflection in three focused spaces inside one account."
