@@ -1831,7 +1831,7 @@
     padding: 8px;
     border-width: 3px;
     border-radius: 22px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .calHeader {
@@ -1968,15 +1968,14 @@
 @media (max-width: 768px) {
   .monthBoard {
     flex-direction: column;
-    height: 100%;
+    height: auto;
   }
   .grid {
     grid-template-rows: none;
     grid-auto-rows: auto;
-    height: 100%;
+    height: auto;
     min-height: 0;
-    overflow-y: auto;
-    padding-bottom: 24px; /* extra space at bottom for scrolling */
+    overflow-y: visible;
   }
   .cell {
     min-height: 5rem;
