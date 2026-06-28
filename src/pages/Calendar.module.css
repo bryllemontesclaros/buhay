@@ -874,6 +874,8 @@
 .dayPanel {
   position: relative;
   margin-top: 18px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   overflow: hidden;
   background: var(--surface);

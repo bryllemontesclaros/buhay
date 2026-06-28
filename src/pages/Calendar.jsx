@@ -1211,7 +1211,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     <section
                 ref={selectedDayRef}
                 tabIndex={-1}
-                className={`${calStyles.dayPanel} ${calStyles.daySheet}`}
+                className={calStyles.dayPanel}
                 aria-labelledby="calendar-day-panel-title"
                 aria-modal="true"
                 role="dialog"
