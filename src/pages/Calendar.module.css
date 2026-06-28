@@ -1764,16 +1764,12 @@
 
   .dayPanel {
     width: 100%;
-    max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));
-    padding: 16px;
-    border-width: 3px;
+    max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));border-width: 3px;
     border-radius: 24px;
     box-shadow: 0 20px 60px rgba(16, 16, 16, 0.24);
   }
 
-  .dayPanelTop {
-    top: -16px;
-    margin: -16px -16px 14px;
+  .dayPanelTop { margin-bottom: 14px;
     padding: 14px 16px 12px;
     border-bottom: 1px solid var(--border2);
   }
