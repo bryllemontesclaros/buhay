@@ -1966,12 +1966,15 @@
 @media (max-width: 768px) {
   .monthBoard {
     flex-direction: column;
-    height: auto;
+    height: 100%;
   }
   .grid {
     grid-template-rows: none;
     grid-auto-rows: auto;
-    height: auto;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 24px; /* extra space at bottom for scrolling */
   }
   .cell {
     min-height: 5rem;
@@ -1979,7 +1982,7 @@
   .grid > .dayPanel {
     grid-column: 1 / -1;
     width: 100%;
-    max-height: none;
+    max-height: 70vh;
     height: auto;
     margin-top: 4px;
     margin-bottom: 4px;
