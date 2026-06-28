@@ -704,6 +704,8 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     box-shadow: var(--glass-shadow-strong);
+    backdrop-filter: blur(var(--glass-blur-xl));
+    -webkit-backdrop-filter: blur(var(--glass-blur-xl));
   }
 
   .formHeader {

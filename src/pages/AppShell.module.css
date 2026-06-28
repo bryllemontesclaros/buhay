@@ -1489,6 +1489,16 @@
 .fabButtonOpen .fabButtonGlyph {
   transform: scale(0.98);
 }
+.quickAddBackdrop {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: var(--glass-3);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  z-index: 299;
+  animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
+}
 .quickAddLayer {
   position: fixed;
   inset: 0;
@@ -1515,8 +1525,8 @@
   border-radius: 30px;
   padding: 1rem;
   box-shadow: var(--glass-shadow-strong);
-  
-  
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
   pointer-events: auto;
   animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
 }

@@ -1642,7 +1642,9 @@ export default function AppShell({ user }) {
         </div>
       )}
       {activeSpace === 'takda' && quickAddSheet.open && (
-        <div className={styles.quickAddLayer}>
+        <>
+          <div className={styles.quickAddBackdrop} onClick={closeQuickAdd} aria-hidden="true" />
+          <div className={styles.quickAddLayer}>
           <div
             className={styles.quickAddSheet}
             role="dialog"
@@ -1671,6 +1673,7 @@ export default function AppShell({ user }) {
             />
           </div>
         </div>
+        </>
       )}
       {mobileNavMenuOpen && (
         <>
