@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, Fragment } from 'react'
 import {
   getBalanceAtDate,
   getBalanceAtDateWithOverrides,
@@ -1197,138 +1197,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return () => window.removeEventListener('keydown', handleKeyDownGlobal)
   }, [selected, showModal, recurringDateTarget, recurringDateSaving, editingDayBalance, dayBalanceSaving, defaultAccountId, formSaving])
 
-  return (
-    <div className={`${styles.page} ${calStyles.page}`}>
-      {entryFeedback && (
-        <div className={`${styles.card} ${calStyles.feedbackBanner} ${calStyles.feedbackDock}`} style={{ '--feedback-tone': entryFeedback.tone }}>
-          <div className={calStyles.feedbackEyebrow}>{entryFeedback.eyebrow || 'Entry saved'}</div>
-          <div className={calStyles.feedbackTitle}>{entryFeedback.title}</div>
-          <div className={calStyles.feedbackBody}>{entryFeedback.body}</div>
-        </div>
-      )}
 
-      <div className={`${styles.card} ${calStyles.calendarCard}`}>
-        <div className={calStyles.calHeader}>
-          <div className={calStyles.nav}>
-            <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">←</button>
-            <label className={calStyles.monthJumpWrap} aria-label={`Jump to another date. Currently showing ${label}.`}>
-              <span className={calStyles.monthLabel} id="calendar-month-label">{label}</span>
-              <input
-                type="date"
-                className={calStyles.monthJumpInput}
-                value={selected || balanceFocusDate || todayStr}
-                onChange={handleJumpToDate}
-                aria-label="Jump to any date"
-              />
-            </label>
-            <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">→</button>
-          </div>
-        </div>
-
-        <div className={calStyles.monthBoard}>
-          <div className={calStyles.dayNames}>
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <div key={index} className={calStyles.dayName}>{day}</div>)}
-          </div>
-
-          <div
-            key={`${year}-${month}`}
-            className={`${calStyles.grid} ${calStyles.gridAnimated}`}
-            aria-label={`${label} calendar`}
-          >
-            {Array.from({ length: firstDay }, (_, index) => (
-              <div key={`p${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
-                <div className={calStyles.dateNum}>{prevDays - firstDay + 1 + index}</div>
-              </div>
-            ))}
-            {Array.from({ length: daysInMonth }, (_, index) => {
-              const day = index + 1
-              const ds = dateStr(day)
-              const { income, expenses } = getDayData(day)
-              const hasIncome = income.length > 0
-              const hasExpense = expenses.length > 0
-              const hasManualBalance = Object.prototype.hasOwnProperty.call(balanceOverrides, ds)
-              const isSelected = selected === ds
-              const isToday = ds === todayStr
-              const forecast = forecastMap[ds]
-              const balanceLabel = forecast ? formatCellBalance(forecast.runningBalance) : ''
-              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
-              
-              const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
-              const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
-              const expPct = dailyVolumes.maxExp > 0 && dayVol.expense > 0 ? Math.max(15, Math.min(100, (dayVol.expense / dailyVolumes.maxExp) * 100)) : 0
-              const overdueBills = unpaidBillsByDateKey[ds] || []
-
-              return (
-                <button
-                  type="button"
-                  key={day}
-                  className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense) ? calStyles.hasData : ''}`}
-                  onClick={() => {
-                    playTick()
-                    setSelected(ds)
-                  }}
-                  aria-pressed={isSelected}
-                  aria-label={dayAriaLabel}
-                >
-                  {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
-
-                  <div className={calStyles.cellTop}>
-                    <div className={calStyles.dateNum}>{day}</div>
-                    {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
-                  </div>
-
-                  {(hasIncome || hasExpense) && (
-                    <div className={calStyles.miniVolumeBars}>
-                      {dayVol.income > 0 && (
-                        <div
-                          className={calStyles.miniVolumeBarInc}
-                          style={{ width: `${incPct}%` }}
-                        />
-                      )}
-                      {dayVol.expense > 0 && (
-                        <div
-                          className={calStyles.miniVolumeBarExp}
-                          style={{ width: `${expPct}%` }}
-                        />
-                      )}
-                    </div>
-                  )}
-
-                  {!privacyMode && (
-                    <div
-                      className={calStyles.cellBalance}
-                      title={formatRoundedBalance(forecast?.runningBalance || 0, s)}
-                    >
-                      {balanceLabel}
-                    </div>
-                  )}
-                </button>
-              )
-            })}
-            {Array.from({ length: trailingDayCount }, (_, index) => (
-              <div key={`n${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
-                <div className={calStyles.dateNum}>{index + 1}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div
-          className={calStyles.balanceRail}
-          aria-label={`${balanceRailLabel}. ${formatRoundedBalance(balanceFocusValue, s)}.`}
-        >
-          <div className={calStyles.balanceRailCopy}>
-            <div className={calStyles.balanceRailLabel}>{balanceRailLabel}</div>
-            <div className={calStyles.balanceRailLabelCompact}>{balanceRailCompactLabel}</div>
-          </div>
-          <div className={calStyles.balanceRailValue}>{balanceMoney(balanceFocusValue)}</div>
-        </div>
-      </div>
-
-      {selected && typeof document !== 'undefined'
-        ? createPortal(
-            <div className={calStyles.daySheetOverlay} onClick={closeSelectedDay} role="presentation">
-              <section
+  const renderedDayPanel = selected ? (
+    <section
                 ref={selectedDayRef}
                 tabIndex={-1}
                 className={`${calStyles.dayPanel} ${calStyles.daySheet}`}
@@ -1603,10 +1474,158 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   )}
                 </div>
               </section>
-            </div>,
-            document.body,
-          )
-        : null}
+  ) : null;
+
+  return (
+    <div className={`${styles.page} ${calStyles.page}`}>
+      {entryFeedback && (
+        <div className={`${styles.card} ${calStyles.feedbackBanner} ${calStyles.feedbackDock}`} style={{ '--feedback-tone': entryFeedback.tone }}>
+          <div className={calStyles.feedbackEyebrow}>{entryFeedback.eyebrow || 'Entry saved'}</div>
+          <div className={calStyles.feedbackTitle}>{entryFeedback.title}</div>
+          <div className={calStyles.feedbackBody}>{entryFeedback.body}</div>
+        </div>
+      )}
+
+      <div className={`${styles.card} ${calStyles.calendarCard}`}>
+        <div className={calStyles.calHeader}>
+          <div className={calStyles.nav}>
+            <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">←</button>
+            <label className={calStyles.monthJumpWrap} aria-label={`Jump to another date. Currently showing ${label}.`}>
+              <span className={calStyles.monthLabel} id="calendar-month-label">{label}</span>
+              <input
+                type="date"
+                className={calStyles.monthJumpInput}
+                value={selected || balanceFocusDate || todayStr}
+                onChange={handleJumpToDate}
+                aria-label="Jump to any date"
+              />
+            </label>
+            <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">→</button>
+          </div>
+        </div>
+
+        <div className={calStyles.monthBoard}>
+          <div className={calStyles.calendarMain}>
+          <div className={calStyles.dayNames}>
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <div key={index} className={calStyles.dayName}>{day}</div>)}
+          </div>
+
+          <div
+            key={`${year}-${month}`}
+            className={`${calStyles.grid} ${calStyles.gridAnimated}`}
+            aria-label={`${label} calendar`}
+          >
+            {Array.from({ length: firstDay }, (_, index) => (
+              <div key={`p${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
+                <div className={calStyles.dateNum}>{prevDays - firstDay + 1 + index}</div>
+              </div>
+            ))}
+            {Array.from({ length: daysInMonth }, (_, index) => {
+              const day = index + 1
+              const ds = dateStr(day)
+              const { income, expenses } = getDayData(day)
+              const hasIncome = income.length > 0
+              const hasExpense = expenses.length > 0
+              const hasManualBalance = Object.prototype.hasOwnProperty.call(balanceOverrides, ds)
+              const isSelected = selected === ds
+              const isToday = ds === todayStr
+              const forecast = forecastMap[ds]
+              const balanceLabel = forecast ? formatCellBalance(forecast.runningBalance) : ''
+              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
+              
+              const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
+              const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
+              const expPct = dailyVolumes.maxExp > 0 && dayVol.expense > 0 ? Math.max(15, Math.min(100, (dayVol.expense / dailyVolumes.maxExp) * 100)) : 0
+              const overdueBills = unpaidBillsByDateKey[ds] || []
+
+              let isEndOfSelectedWeek = false;
+              if (isMobile && selected) {
+                const [sY, sM, sD] = selected.split('-');
+                if (parseInt(sY, 10) === year && parseInt(sM, 10) === month + 1) {
+                  const selectedDayInt = parseInt(sD, 10);
+                  const selectedGridIndex = firstDay + selectedDayInt - 1;
+                  const endOfWeekGridIndex = selectedGridIndex + (6 - (selectedGridIndex % 7));
+                  const currentGridIndex = firstDay + index;
+                  if (currentGridIndex === endOfWeekGridIndex || (currentGridIndex === firstDay + daysInMonth - 1 && currentGridIndex < endOfWeekGridIndex)) {
+                    isEndOfSelectedWeek = true;
+                  }
+                }
+              }
+
+              return (
+                <Fragment key={day}>
+                    <button
+                      type="button"
+                      key={day}
+                      className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense) ? calStyles.hasData : ''}`}
+                      onClick={() => {
+                        playTick()
+                        setSelected(ds)
+                      }}
+                      aria-pressed={isSelected}
+                      aria-label={dayAriaLabel}
+                    >
+                      {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
+    
+                      <div className={calStyles.cellTop}>
+                        <div className={calStyles.dateNum}>{day}</div>
+                        {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
+                      </div>
+    
+                      {(hasIncome || hasExpense) && (
+                        <div className={calStyles.miniVolumeBars}>
+                          {dayVol.income > 0 && (
+                            <div
+                              className={calStyles.miniVolumeBarInc}
+                              style={{ width: `${incPct}%` }}
+                            />
+                          )}
+                          {dayVol.expense > 0 && (
+                            <div
+                              className={calStyles.miniVolumeBarExp}
+                              style={{ width: `${expPct}%` }}
+                            />
+                          )}
+                        </div>
+                      )}
+    
+                      {!privacyMode && (
+                        <div
+                          className={calStyles.cellBalance}
+                          title={formatRoundedBalance(forecast?.runningBalance || 0, s)}
+                        >
+                          {balanceLabel}
+                        </div>
+                      )}
+                    </button>
+ 
+                  {isEndOfSelectedWeek && isMobile && renderedDayPanel}
+                </Fragment>
+              )
+            })}
+            })}
+            {Array.from({ length: trailingDayCount }, (_, index) => (
+              <div key={`n${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
+                <div className={calStyles.dateNum}>{index + 1}</div>
+              </div>
+            ))}
+          </d
+          {!isMobile && renderedDayPanel}iv>
+        </div>
+
+        <div
+          className={calStyles.balanceRail}
+          aria-label={`${balanceRailLabel}. ${formatRoundedBalance(balanceFocusValue, s)}.`}
+        >
+          <div className={calStyles.balanceRailCopy}>
+            <div className={calStyles.balanceRailLabel}>{balanceRailLabel}</div>
+            <div className={calStyles.balanceRailLabelCompact}>{balanceRailCompactLabel}</div>
+          </div>
+          <div className={calStyles.balanceRailValue}>{balanceMoney(balanceFocusValue)}</div>
+        </div>
+      </div>
+
+}
 
       {recurringDateTarget && typeof document !== 'undefined'
         ? createPortal(
