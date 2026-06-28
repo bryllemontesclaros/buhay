@@ -542,7 +542,7 @@
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 .btnGoogle { width: 100%; min-height: 46px; padding: 10px; background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: var(--type-body-sm); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s, transform 0.16s ease; }
 .btnGoogle:hover { border-color: var(--border2); transform: translateY(-1px); }
-.forgotLink { background: none; border: none; color: color-mix(in srgb, var(--text) 72%, var(--accent) 28%); font-size: var(--type-support); cursor: pointer; font-family: var(--font-body); padding: 0; margin-bottom: 12px; display: block; text-align: right; width: 100%; text-decoration: underline; text-underline-offset: 2px; }
+.forgotLink { background: none; border: none; color: var(--text3); font-size: var(--type-support); cursor: pointer; font-family: var(--font-body); padding: 0; margin-bottom: 12px; display: block; text-align: right; width: 100%; }
 .forgotLink:hover { color: var(--accent); }
 .forgotTitle { font-family: var(--font-display); font-size: var(--type-title-lg); color: var(--text); margin-bottom: 6px; }
 .forgotSub { font-size: var(--type-body-sm); color: var(--text3); margin-bottom: 1.5rem; }
