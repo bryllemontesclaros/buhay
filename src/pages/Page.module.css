@@ -108,6 +108,7 @@
 .header {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   display: grid;
   gap: var(--layout-card-gap);
   padding: var(--layout-surface-pad-lg);
@@ -130,6 +131,7 @@
   inset: 0;
   pointer-events: none;
   background: var(--surface);
+  z-index: -1;
 }
 
 .title {
