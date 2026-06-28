@@ -1349,7 +1349,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     </div>
                     <div className={calStyles.dayPanelHeaderRight}>
                       <button type="button" onClick={closeSelectedDay} className={calStyles.dayPanelClose} aria-label="Close day details">
-                        Done
+                        ✕
                       </button>
                     </div>
                   </div>
@@ -1485,10 +1485,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         </div>
                         <div className={calStyles.dayBalanceMeta}>
                           {hasManualBalanceOnSelectedDay
-                            ? 'Pinned from this day forward. It anchors the calendar close for later days and does not rewrite individual account balances.'
+                            ? 'Manual balance override active.'
                             : selectedDayUnpaidCount > 0
-                              ? `Day close uses paid entries only. ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y stays' : 'ies stay'} visible without counting yet.`
-                              : 'Day close uses paid entries only and updates as you record real activity.'}
+                              ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
+                              : 'Day close includes paid entries only.'}
                           {latestOverrideEvent?.createdAt && (
                             <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                               Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
@@ -1545,7 +1545,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
                   {!editingDayBalance && (
                     <div className={calStyles.daySystemNote}>
-                      Paid linked entries update account balances and this calendar close. Unpaid stays visible without counting yet. Forecast rows are upcoming recurring items until you record them.
+                      Forecast rows are upcoming recurring items. Paid linked entries update account balances.
                     </div>
                   )}
 

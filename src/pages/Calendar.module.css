@@ -116,7 +116,7 @@
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface) 26%);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
   color: var(--text2);
   font-size: var(--type-caption);
   line-height: 1.55;
@@ -833,9 +833,9 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: rgba(7, 12, 18, 0.58);
-  
-  
+  background: var(--glass-3);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
 }
 .daySheet {
   margin-top: 0;
@@ -863,13 +863,13 @@
   width: 100%;
   overflow: hidden;
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
   border: 1px solid var(--border2);
   border-radius: 22px;
   box-sizing: border-box;
   scroll-margin-top: 18px;
   box-shadow: var(--glass-shadow-soft);
-  
-  
 }
 .dayPanelHandle {
   display: none;
@@ -890,8 +890,8 @@
 .dayPanelTodayBadge { padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .dayPanelTitle { font-family: var(--font-display); font-size: 18px; line-height: 1.05; color: var(--text); }
 .dayPanelHeaderRight { display: flex; align-items: flex-start; justify-content: flex-end; }
-.dayPanelClose { background: var(--surface); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; min-width: 0; min-height: 28px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 999px; }
-.dayPanelClose:hover { border-color: color-mix(in srgb, var(--accent) 22%, var(--border)); color: var(--text); }
+.dayPanelClose { background: var(--surface); border: 1px solid var(--border2); color: var(--text3); font-size: 16px; font-weight: 400; cursor: pointer; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
+.dayPanelClose:hover { background: color-mix(in srgb, var(--glass-1) 80%, var(--surface)); color: var(--text); border-color: var(--border); }
 .dayPanelHeaderMeta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
 .dayPanelHeaderStat { border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); padding: 10px 12px; min-width: 0; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent); }
 .dayPanelHeaderStatLabel { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
@@ -906,12 +906,14 @@
 .daySectionHeader .daySectionLabel { margin-bottom: 0; }
 .daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .daySummary { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border2); font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; }
-.dayPanelActions { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-.dayPanelAction { min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; }
+.dayPanelActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+.dayPanelAction { min-height: 38px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border2); background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; text-align: center; }
 .dayPanelAction:hover { opacity: 1; transform: none; }
 .dayPanelAction:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.dayPanelActionIncome { background: var(--surface); border-color: color-mix(in srgb, var(--accent) 28%, var(--glass-border)); color: var(--accent); }
-.dayPanelActionExpense { background: var(--surface); border-color: color-mix(in srgb, var(--red) 24%, var(--glass-border)); color: var(--red); }
+.dayPanelActionIncome { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 24%, transparent); color: var(--accent); }
+.dayPanelActionIncome:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.dayPanelActionExpense { background: color-mix(in srgb, var(--red) 10%, transparent); border-color: color-mix(in srgb, var(--red) 20%, transparent); color: var(--red); }
+.dayPanelActionExpense:hover { background: color-mix(in srgb, var(--red) 16%, transparent); }
 .planNote {
   margin: -2px 0 14px;
   padding: 10px 12px;
