@@ -124,6 +124,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [editingDayBalance, setEditingDayBalance] = useState(false)
   const [dayBalanceDraft, setDayBalanceDraft] = useState('')
   const [dayBalanceSaving, setDayBalanceSaving] = useState(false)
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
+
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
   const selectedDayRef = useRef(null)
@@ -1058,6 +1060,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       meta,
     }
   }, [accountHint, accountLookup, editTx, form.accountId, form.paymentStatus, selected, todayStr])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     setEditingDayBalance(false)
