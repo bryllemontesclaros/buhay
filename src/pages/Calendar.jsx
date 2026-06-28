@@ -1444,7 +1444,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
                     return (
                       <div key={goal._id} style={{ marginBottom: 14 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justify-content: 'space-between', marginBottom: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                           <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{goal.name}</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>{money(goal.current || 0)}</span>
