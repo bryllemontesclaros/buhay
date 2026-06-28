@@ -1603,14 +1603,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 </Fragment>
               )
             })}
-            })}
             {Array.from({ length: trailingDayCount }, (_, index) => (
               <div key={`n${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
                 <div className={calStyles.dateNum}>{index + 1}</div>
               </div>
             ))}
-          </d
-          {!isMobile && renderedDayPanel}iv>
+          </div>
+          </div>
+          {!isMobile && renderedDayPanel}
         </div>
 
         <div
@@ -1624,8 +1624,6 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           <div className={calStyles.balanceRailValue}>{balanceMoney(balanceFocusValue)}</div>
         </div>
       </div>
-
-}
 
       {recurringDateTarget && typeof document !== 'undefined'
         ? createPortal(
