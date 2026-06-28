@@ -223,15 +223,26 @@
   box-shadow: none;
 }
 
+.hero,
+.panel,
+.statCard,
+.viewSwitchCard,
+.quickWinCard {
+  isolation: isolate;
+}
+
 .hero::before,
 .panel::before,
-.statCard::before {
+.statCard::before,
+.viewSwitchCard::before,
+.quickWinCard::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: var(--surface);
   opacity: 0.8;
+  z-index: -1;
 }
 
 .hero {

@@ -223,9 +223,8 @@
   border: 1px solid var(--border2);
   border-radius: 34px;
   background: var(--surface);
-    box-shadow: var(--glass-shadow);
-    
-    
+  box-shadow: var(--glass-shadow);
+  isolation: isolate;
 }
 
 .sidebar::before {
@@ -235,6 +234,7 @@
   pointer-events: none;
   background: var(--surface);
   opacity: 0.8;
+  z-index: -1;
 }
 
 .sidebarTop {
@@ -2928,5 +2928,16 @@
   .headerSpaceBadges {
     display: none;
   }
+}
+
+/* Light theme high-contrast space accents */
+:global([data-theme="light"]) .shellLakas,
+:global(.force-light-theme) .shellLakas {
+  --accent: var(--space-fitness-ink);
+}
+
+:global([data-theme="light"]) .shellTala,
+:global(.force-light-theme) .shellTala {
+  --accent: var(--space-reflection-ink);
 }
 

@@ -253,15 +253,26 @@
   box-shadow: var(--nb-shadow);
 }
 
+.hero,
+.panel,
+.statCard,
+.viewSwitchCard,
+.quickWinCard {
+  isolation: isolate;
+}
+
 .hero::before,
 .panel::before,
-.statCard::before {
+.statCard::before,
+.viewSwitchCard::before,
+.quickWinCard::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: var(--surface);
   opacity: 0.8;
+  z-index: -1;
 }
 
 .hero {
@@ -6809,6 +6820,19 @@
 .gymModeRestCard,
 .gymModeNextCard {
   animation: gymCardSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Light Theme overrides for Lakas Visuals */
+:global([data-theme="light"]) .macroRingContainer,
+:global(.force-light-theme) .macroRingContainer,
+:global([data-theme="light"]) .waterBottleSection,
+:global(.force-light-theme) .waterBottleSection {
+  background: var(--surface);
+}
+
+:global([data-theme="light"]) .ringBg,
+:global(.force-light-theme) .ringBg {
+  stroke: rgba(0, 0, 0, 0.06);
 }
 
 

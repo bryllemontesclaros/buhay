@@ -195,8 +195,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   box-shadow: var(--glass-shadow-soft);
-  
-  
+  isolation: isolate;
 }
 
 .analyticsBoard::before {
@@ -205,6 +204,7 @@
   inset: 0;
   pointer-events: none;
   background: var(--surface);
+  z-index: -1;
 }
 
 .analyticsHeader {

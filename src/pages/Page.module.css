@@ -245,6 +245,7 @@
 .goalCard {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   content-visibility: auto;
   contain-intrinsic-size: 220px;
   border: 1px solid var(--border2);
@@ -287,6 +288,7 @@
   pointer-events: none;
   background: var(--surface);
   opacity: 0.82;
+  z-index: -1;
 }
 
 .stat,
