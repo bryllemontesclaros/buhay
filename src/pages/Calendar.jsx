@@ -1327,7 +1327,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
       {selected && typeof document !== 'undefined'
         ? createPortal(
-            <div className={calStyles.daySheetOverlay}>
+            <div className={calStyles.daySheetOverlay} onClick={closeSelectedDay} role="presentation">
               <section
                 ref={selectedDayRef}
                 tabIndex={-1}
