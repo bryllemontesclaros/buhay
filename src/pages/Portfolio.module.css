@@ -254,6 +254,11 @@
   font-weight: 800;
 }
 
+:global([data-theme="light"]) .primaryBtn,
+:global(.force-light-theme) .primaryBtn {
+  color: #ffffff;
+}
+
 .ghostBtn {
   min-height: 44px;
   padding: 0 16px;

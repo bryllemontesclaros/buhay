@@ -3139,10 +3139,15 @@
   width: 100%;
   margin-top: 12px;
   padding: 10px 18px;
-  color: var(--space-fitness-ink);
+  color: #071018;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
   white-space: nowrap;
+}
+
+:global([data-theme="light"]) .primaryBtn,
+:global(.force-light-theme) .primaryBtn {
+  color: #ffffff;
 }
 
 :global(.neo) .primaryBtn,
@@ -3390,7 +3395,14 @@
 .primaryBtn:focus-visible {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
-  color: var(--space-fitness-ink);
+  color: #071018;
+}
+
+:global([data-theme="light"]) .primaryBtn:hover,
+:global([data-theme="light"]) .primaryBtn:focus-visible,
+:global(.force-light-theme) .primaryBtn:hover,
+:global(.force-light-theme) .primaryBtn:focus-visible {
+  color: #ffffff;
 }
 
 .secondaryBtn:hover,

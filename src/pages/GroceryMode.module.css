@@ -326,6 +326,13 @@
   border: 1px solid var(--border2);
 }
 
+:global([data-theme="light"]) .primaryBtn,
+:global([data-theme="light"]) .importBtn,
+:global(.force-light-theme) .primaryBtn,
+:global(.force-light-theme) .importBtn {
+  color: #ffffff;
+}
+
 .itemsHeader {
   display: flex;
   align-items: baseline;
