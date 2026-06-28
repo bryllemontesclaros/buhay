@@ -353,10 +353,10 @@
 .heroTitle {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(62px, 7.5vw, 108px);
+  font-size: clamp(44px, 5.5vw, 84px);
   letter-spacing: -0.04em;
-  line-height: 0.9;
-  max-width: 11ch;
+  line-height: 0.95;
+  max-width: 12ch;
   text-wrap: pretty;
 }
 
@@ -368,8 +368,9 @@
   border-radius: 28px;
   background: var(--surface);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
-  max-width: min(100%, 780px);
-  width: max-content;
+  max-width: 100%;
+  width: fit-content;
+  box-sizing: border-box;
 }
 
 .heroSub {
