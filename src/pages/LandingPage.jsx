@@ -14,19 +14,19 @@ const HERO_SPACES = [
   {
     label: 'Takda',
     title: 'Money',
-    desc: 'Balances, bills, savings sparklines, budgets, and the Financial Pulse Evaluator keep your financial health green.',
+    desc: 'Balances, bills, savings target progress, budgets, and the Financial Pulse Evaluator keep your financial health green.',
     tone: 'takda',
   },
   {
     label: 'Lakas',
     title: 'Fitness',
-    desc: 'Workouts, habits, outdoor runs with live GPS trail maps, and Ghost Racer comparison leaderboards make fitness fun.',
+    desc: 'Workouts, habits, manual outdoor run logging, and Ghost Racer comparison leaderboards make fitness fun.',
     tone: 'lakas',
   },
   {
     label: 'Tala',
     title: 'Mind',
-    desc: 'Journal entries, mood check-ins, monthly Mind Climate maps, and dynamic grounding prompts support quiet reflection.',
+    desc: 'Journal entries, mood check-ins, mood distribution wheels, and dynamic grounding prompts support quiet reflection.',
     tone: 'tala',
   },
 ]
@@ -34,17 +34,17 @@ const HERO_SPACES = [
 const SPACE_FEATURES = [
   {
     title: 'Takda',
-    desc: 'Track cash flow day-by-day with dynamic balances, savings sparklines, pulsing overdue bill alerts, and the Financial Pulse Evaluator for automated coaching insights.',
+    desc: 'Track cash flow day-by-day with dynamic balances, savings target tracking, pulsing overdue bill alerts, and the Financial Pulse Evaluator for automated coaching insights.',
     tone: 'takda',
   },
   {
     title: 'Lakas',
-    desc: 'Log sessions, check off daily habits, map outdoor run routes using high-accuracy live GPS trails, and compete against your best averages via the Ghost Racer Leaderboard.',
+    desc: 'Log sessions, check off daily habits, record outdoor running distance and duration, and compete against your best averages via the Ghost Racer Leaderboard.',
     tone: 'lakas',
   },
   {
     title: 'Tala',
-    desc: 'Reflect with stepped range inputs, tag clouds, a visual Monthly Mind Climate Map (weather-themed HSL glowing orbs), and context-aware Grounded Reflection Prompts.',
+    desc: 'Reflect with stepped range inputs, tag clouds, a visual Mood Distribution Wheel (donut chart breakdown), and context-aware Grounded Reflection Prompts.',
     tone: 'tala',
   },
   {
@@ -118,19 +118,19 @@ const TRUST_POINTS = [
 const SPACE_PROMISES = [
   {
     label: 'Takda',
-    promise: 'Includes savings sparklines, dynamic budgets, and Financial Pulse evaluations.',
+    promise: 'Includes savings target trackers, dynamic budgets, and Financial Pulse evaluations.',
     meta: 'Pulse Ring first',
     tone: 'takda',
   },
   {
     label: 'Lakas',
-    promise: 'Features real-time GPS Outdoor Run mapping and the Ghost Racer self-competition podium.',
+    promise: 'Features cardio run logging and the Ghost Racer self-competition podium.',
     meta: 'Ghost Racer first',
     tone: 'lakas',
   },
   {
     label: 'Tala',
-    promise: 'Visualizes your Monthly Mind Climate weather map and unlocks Grounding Prompts.',
+    promise: 'Visualizes your weekly mood distribution wheel and unlocks Grounding Prompts.',
     meta: 'Climate weather first',
     tone: 'tala',
   },
@@ -236,7 +236,7 @@ function LakasMockup() {
           </div>
           
           <div className={styles.mockSets}>
-            <div className={styles.mockSetItemDone}>🗺️ GPS Run: 5.2 km Live Trail</div>
+            <div className={styles.mockSetItemDone}>🗺️ Outdoor Run: 5.2 km logged</div>
             <div className={styles.mockSetItemActive}>⚡ Consistency Score: Active</div>
           </div>
         </div>
