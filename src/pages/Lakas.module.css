@@ -1866,8 +1866,8 @@
   background:
     radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 34%),
     color-mix(in srgb, var(--bg) 72%, rgba(3, 8, 12, 0.72));
-  
-  
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
 }
 
 .gymModeSheet {
@@ -1881,6 +1881,8 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
 }
 
 .gymModeHeader {
@@ -6316,7 +6318,8 @@
   bottom: 0;
   z-index: 1100;
   background: color-mix(in srgb, var(--surface1) 90%, transparent);
-  
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   display: flex;
   justify-content: center;
   align-items: center;

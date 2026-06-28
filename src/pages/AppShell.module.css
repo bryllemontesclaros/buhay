@@ -2022,7 +2022,9 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(8, 12, 18, 0.22);
+    background: var(--glass-3);
+    backdrop-filter: blur(var(--glass-blur-sm));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
     border: none;
     z-index: 98;
     
@@ -2043,8 +2045,8 @@
     border: 1px solid var(--border2);
     background: var(--surface);
     box-shadow: var(--glass-shadow-strong);
-    
-    
+    backdrop-filter: blur(var(--glass-blur-xl));
+    -webkit-backdrop-filter: blur(var(--glass-blur-xl));
     animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
   }
   .mobileNavSheetHandle {
