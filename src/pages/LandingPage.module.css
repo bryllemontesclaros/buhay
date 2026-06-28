@@ -983,7 +983,8 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.trustGrid .beatCard {
+.trustGrid .beatCard,
+.faqGrid .beatCard {
   min-height: 0;
 }
 
