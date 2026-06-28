@@ -1950,6 +1950,12 @@
 
 /* Desktop Side Panel */
 @media (min-width: 769px) {
+  .page {
+    height: 100%;
+  }
+  .calendarCard {
+    height: 100%;
+  }
   .monthBoard > .dayPanel {
     flex: 0 0 380px;
     width: 380px;
@@ -1957,6 +1963,13 @@
     min-height: 0;
     margin-top: 0;
     box-shadow: none;
+  }
+  .dayPanelBody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
