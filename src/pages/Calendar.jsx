@@ -1207,283 +1207,306 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [selected, showModal, recurringDateTarget, recurringDateSaving, editingDayBalance, dayBalanceSaving, defaultAccountId, formSaving])
 
 
-  const renderedDayPanel = selected ? (
+  const renderedDayPanel = (
     <section
-                ref={selectedDayRef}
-                tabIndex={-1}
-                className={calStyles.dayPanel}
-                aria-labelledby="calendar-day-panel-title"
-                aria-modal="true"
-                role="dialog"
-                onClick={event => event.stopPropagation()}
-              >
-                <div className={calStyles.dayPanelHandle} aria-hidden="true" />
-                <div className={calStyles.dayPanelTop}>
-                  <div className={calStyles.dayPanelHeader}>
-                    <div className={calStyles.dayPanelHeaderMain}>
-                      <div className={calStyles.dayPanelEyebrowRow}>
-                        <span className={calStyles.dayPanelEyebrow}>{formatDayPanelEyebrow(selected)}</span>
-                        {selected === todayStr && <span className={calStyles.dayPanelTodayBadge}>Today</span>}
-                      </div>
-                      <div id="calendar-day-panel-title" className={calStyles.dayPanelTitle}>{formatBalanceDate(selected)}</div>
+      ref={selectedDayRef}
+      tabIndex={-1}
+      className={calStyles.dayPanel}
+      aria-labelledby="calendar-day-panel-title"
+      aria-modal="true"
+      role="dialog"
+      onClick={event => event.stopPropagation()}
+    >
+      {selected ? (
+        <>
+          <div className={calStyles.dayPanelHandle} aria-hidden="true" />
+          <div className={calStyles.dayPanelTop}>
+            <div className={calStyles.dayPanelHeader}>
+              <div className={calStyles.dayPanelHeaderMain}>
+                <div className={calStyles.dayPanelEyebrowRow}>
+                  <span className={calStyles.dayPanelEyebrow}>{formatDayPanelEyebrow(selected)}</span>
+                  {selected === todayStr && <span className={calStyles.dayPanelTodayBadge}>Today</span>}
+                </div>
+                <div id="calendar-day-panel-title" className={calStyles.dayPanelTitle}>{formatBalanceDate(selected)}</div>
+              </div>
+              <div className={calStyles.dayPanelHeaderRight}>
+                <button type="button" onClick={closeSelectedDay} className={calStyles.dayPanelClose} aria-label="Close day details">
+                  ✕
+                </button>
+              </div>
+            </div>
+            {!editingDayBalance && (
+              <div className={calStyles.dayPanelActions} style={{ marginTop: '12px' }}>
+                <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
+                  Record income
+                </button>
+                <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionExpense}`} onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
+                  Record expense
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={calStyles.dayPanelBody}>
+
+            {selectedIncome.length > 0 && (
+              <div className={calStyles.daySection}>
+                <div className={calStyles.daySectionHeader}>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
+                  <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
+                </div>
+                {selectedIncome.map((tx, index) => (
+                  <DayTxRow
+                    key={tx._id}
+                    t={tx}
+                    s={s}
+                    privacyMode={privacyMode}
+                    onEdit={openEdit}
+                    onDelete={handleDelete}
+                    onTogglePaymentStatus={handleTogglePaymentStatus}
+                    onSettleProjectedNow={handleSettleProjectedNow}
+                    onOpenRecurringDateEditor={openRecurringDateEditor}
+                    onLogProjected={handleLogProjected}
+                    onEditRecurrence={handleEditRecurrence}
+                    recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
+                    locked={selectedDateLocked}
+                    accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                    animationDelay={`${index * 40}ms`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {selectedExpenses.length > 0 && (
+              <div className={calStyles.daySection}>
+                <div className={calStyles.daySectionHeader}>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--red)' }}>Expenses</div>
+                  <div className={calStyles.daySectionCount}>{selectedExpenses.length}</div>
+                </div>
+                {selectedExpenses.map((tx, index) => (
+                  <DayTxRow
+                    key={tx._id}
+                    t={tx}
+                    s={s}
+                    privacyMode={privacyMode}
+                    onEdit={openEdit}
+                    onDelete={handleDelete}
+                    onTogglePaymentStatus={handleTogglePaymentStatus}
+                    onSettleProjectedNow={handleSettleProjectedNow}
+                    onOpenRecurringDateEditor={openRecurringDateEditor}
+                    onLogProjected={handleLogProjected}
+                    onEditRecurrence={handleEditRecurrence}
+                    recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
+                    locked={selectedDateLocked}
+                    accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
+                    animationDelay={`${(selectedIncome.length + index) * 40}ms`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {selectedIncome.length === 0 && selectedExpenses.length === 0 && (
+              <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
+            )}
+
+            <div className={calStyles.dayBalanceCard}>
+              {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
+                privacyMode ? (
+                  <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
+                    Totals are hidden while privacy mode is on.
+                  </div>
+                ) : (
+                  <div className={calStyles.daySummary}>
+                    <span style={{ color: 'var(--accent)' }}>
+                      {`+${fmt(selectedDayIncome, s)}`}
+                    </span>
+                    <span style={{ color: 'var(--text3)' }}>·</span>
+                    <span style={{ color: 'var(--red)' }}>
+                      {`−${fmt(selectedDayExpense, s)}`}
+                    </span>
+                    <span style={{ color: 'var(--text3)' }}>·</span>
+                    <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
+                      {`Net ${fmt(selectedDayNet, s)}`}
+                    </span>
+                  </div>
+                )
+              )}
+
+              {!editingDayBalance ? (
+                <>
+                  <div className={calStyles.dayBalanceHeader}>
+                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
+                    <button type="button" className={calStyles.dayBalanceEditBtn} onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
+                      Edit balance
+                    </button>
+                  </div>
+                  <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
+                  <div className={calStyles.dayBalanceStats}>
+                    <div className={calStyles.dayBalanceStat}>
+                      <span className={calStyles.dayBalanceStatLabel}>Entries</span>
+                      <span className={calStyles.dayBalanceStatValue}>{selectedDayCount}</span>
                     </div>
-                    <div className={calStyles.dayPanelHeaderRight}>
-                      <button type="button" onClick={closeSelectedDay} className={calStyles.dayPanelClose} aria-label="Close day details">
-                        ✕
-                      </button>
+                    <div className={calStyles.dayBalanceStat}>
+                      <span className={calStyles.dayBalanceStatLabel}>Income</span>
+                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatPositive}`}>
+                        {privacyMode ? 'Hidden' : `+${fmt(selectedDayIncome, s)}`}
+                      </span>
+                    </div>
+                    <div className={calStyles.dayBalanceStat}>
+                      <span className={calStyles.dayBalanceStatLabel}>Expenses</span>
+                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatNegative}`}>
+                        {privacyMode ? 'Hidden' : `−${fmt(selectedDayExpense, s)}`}
+                      </span>
+                    </div>
+                    <div className={calStyles.dayBalanceStat}>
+                      <span className={calStyles.dayBalanceStatLabel}>Net</span>
+                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : (selectedDayNet >= 0 ? calStyles.dayBalanceStatPositive : calStyles.dayBalanceStatNegative)}`}>
+                        {privacyMode ? 'Hidden' : `${selectedDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(selectedDayNet), s)}`}
+                      </span>
                     </div>
                   </div>
-                  {!editingDayBalance && (
-                    <div className={calStyles.dayPanelActions} style={{ marginTop: '12px' }}>
-                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
-                        Record income
-                      </button>
-                      <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionExpense}`} onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
-                        Record expense
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <div className={calStyles.dayPanelBody}>
-
-                  {selectedIncome.length > 0 && (
-                    <div className={calStyles.daySection}>
-                      <div className={calStyles.daySectionHeader}>
-                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
-                        <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
+                  <div className={calStyles.dayBalanceMeta}>
+                    {hasManualBalanceOnSelectedDay
+                      ? 'Manual balance override active.'
+                      : selectedDayUnpaidCount > 0
+                        ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
+                        : 'Day close includes paid entries only.'}
+                    {latestOverrideEvent?.createdAt && (
+                      <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
+                        Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
                       </div>
-                      {selectedIncome.map((tx, index) => (
-                        <DayTxRow
-                          key={tx._id}
-                          t={tx}
-                          s={s}
-                          privacyMode={privacyMode}
-                          onEdit={openEdit}
-                          onDelete={handleDelete}
-                          onTogglePaymentStatus={handleTogglePaymentStatus}
-                          onSettleProjectedNow={handleSettleProjectedNow}
-                          onOpenRecurringDateEditor={openRecurringDateEditor}
-                          onLogProjected={handleLogProjected}
-                          onEditRecurrence={handleEditRecurrence}
-                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
-                          locked={selectedDateLocked}
-                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
-                          animationDelay={`${index * 40}ms`}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedExpenses.length > 0 && (
-                    <div className={calStyles.daySection}>
-                      <div className={calStyles.daySectionHeader}>
-                        <div className={calStyles.daySectionLabel} style={{ color: 'var(--red)' }}>Expenses</div>
-                        <div className={calStyles.daySectionCount}>{selectedExpenses.length}</div>
-                      </div>
-                      {selectedExpenses.map((tx, index) => (
-                        <DayTxRow
-                          key={tx._id}
-                          t={tx}
-                          s={s}
-                          privacyMode={privacyMode}
-                          onEdit={openEdit}
-                          onDelete={handleDelete}
-                          onTogglePaymentStatus={handleTogglePaymentStatus}
-                          onSettleProjectedNow={handleSettleProjectedNow}
-                          onOpenRecurringDateEditor={openRecurringDateEditor}
-                          onLogProjected={handleLogProjected}
-                          onEditRecurrence={handleEditRecurrence}
-                          recurringActionPending={Boolean(pendingRecurringActions[getRecurringActionKey(tx)])}
-                          locked={selectedDateLocked}
-                          accountLabel={tx.accountId ? (accountLookup[tx.accountId]?.name || 'Missing account') : ''}
-                          animationDelay={`${(selectedIncome.length + index) * 40}ms`}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {selectedIncome.length === 0 && selectedExpenses.length === 0 && (
-                    <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
-                  )}
-
-                  <div className={calStyles.dayBalanceCard}>
-                    {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
-                      privacyMode ? (
-                        <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
-                          Totals are hidden while privacy mode is on.
-                        </div>
-                      ) : (
-                        <div className={calStyles.daySummary}>
-                          <span style={{ color: 'var(--accent)' }}>
-                            {`+${fmt(selectedDayIncome, s)}`}
-                          </span>
-                          <span style={{ color: 'var(--text3)' }}>·</span>
-                          <span style={{ color: 'var(--red)' }}>
-                            {`−${fmt(selectedDayExpense, s)}`}
-                          </span>
-                          <span style={{ color: 'var(--text3)' }}>·</span>
-                          <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
-                            {`Net ${fmt(selectedDayNet, s)}`}
-                          </span>
-                        </div>
-                      )
                     )}
+                    {hasManualBalanceOnSelectedDay && (
+                      <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid color-mix(in srgb, var(--border) 32%, transparent)', color: 'var(--text2)', fontSize: 11, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <span>Ledger calculation: <strong style={{ color: 'var(--text)' }}>{balanceMoney(selectedDayAutoBalance)}</strong></span>
+                        <span style={{ color: 'var(--text3)' }}>·</span>
+                        <span>Adjustment: <strong style={{ color: selectedDayBalance - selectedDayAutoBalance >= 0 ? 'var(--accent)' : 'var(--red)' }}>{selectedDayBalance - selectedDayAutoBalance >= 0 ? '+' : ''}{balanceMoney(selectedDayBalance - selectedDayAutoBalance)}</strong></span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label className={calStyles.dayBalanceField}>
+                    <span className={calStyles.dayBalanceLabel}>Day closing balance for {selected}</span>
+                    <div className={calStyles.dayBalanceInputWrap}>
+                      <span>{s}</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={dayBalanceDraft}
+                        onChange={event => setDayBalanceDraft(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key === 'Enter') handleSaveDayBalance()
+                          if (event.key === 'Escape') closeDayBalanceEditor()
+                        }}
+                        placeholder="0.00"
+                        disabled={dayBalanceSaving}
+                      />
+                    </div>
+                  </label>
+                  <div className={calStyles.dayBalanceMeta}>
+                    This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
+                  </div>
+                  <div className={calStyles.dayBalanceActions}>
+                    <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
+                      Cancel
+                    </button>
+                    {hasManualBalanceOnSelectedDay && (
+                      <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
+                        Reset to auto
+                      </button>
+                    )}
+                    <button type="button" className={calStyles.dayBalanceSaveBtn} onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
+                      {dayBalanceSaving ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
-                    {!editingDayBalance ? (
-                      <>
-                        <div className={calStyles.dayBalanceHeader}>
-                          <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
-                          <button type="button" className={calStyles.dayBalanceEditBtn} onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
-                            Edit balance
-                          </button>
+            {!editingDayBalance && (
+              <div className={calStyles.daySystemNote}>
+                Forecast rows are upcoming recurring items. Paid linked entries update account balances.
+              </div>
+            )}
+
+            {data.goals.length > 0 && (
+              <details className={calStyles.goalDisclosure}>
+                <summary className={calStyles.goalDisclosureSummary}>
+                  <span>Savings goals</span>
+                  <span className={calStyles.goalDisclosureCount}>{data.goals.length}</span>
+                </summary>
+                <div className={calStyles.goalDisclosureBody}>
+                  {data.goals.map(goal => {
+                    const pct = Math.min(100, Math.round(((goal.current || 0) / (goal.target || 1)) * 100))
+                    const isEditing = editGoalId === goal._id
+
+                    return (
+                      <div key={goal._id} style={{ marginBottom: 14 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justify-content: 'space-between', marginBottom: 4 }}>
+                          <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{goal.name}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>{money(goal.current || 0)}</span>
+                            <span style={{ fontSize: 11, color: 'var(--text3)' }}>/ {money(goal.target)}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditGoalId(isEditing ? null : goal._id)
+                                setGoalInput(String(goal.current || 0))
+                              }}
+                              style={{ background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text2)', borderRadius: 'var(--radius-sm)', padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                            >
+                              {isEditing ? 'Cancel' : 'Edit'}
+                            </button>
+                          </div>
                         </div>
-                        <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
-                        <div className={calStyles.dayBalanceStats}>
-                          <div className={calStyles.dayBalanceStat}>
-                            <span className={calStyles.dayBalanceStatLabel}>Entries</span>
-                            <span className={calStyles.dayBalanceStatValue}>{selectedDayCount}</span>
-                          </div>
-                          <div className={calStyles.dayBalanceStat}>
-                            <span className={calStyles.dayBalanceStatLabel}>Income</span>
-                            <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatPositive}`}>
-                              {privacyMode ? 'Hidden' : `+${fmt(selectedDayIncome, s)}`}
-                            </span>
-                          </div>
-                          <div className={calStyles.dayBalanceStat}>
-                            <span className={calStyles.dayBalanceStatLabel}>Expenses</span>
-                            <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatNegative}`}>
-                              {privacyMode ? 'Hidden' : `−${fmt(selectedDayExpense, s)}`}
-                            </span>
-                          </div>
-                          <div className={calStyles.dayBalanceStat}>
-                            <span className={calStyles.dayBalanceStatLabel}>Net</span>
-                            <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : (selectedDayNet >= 0 ? calStyles.dayBalanceStatPositive : calStyles.dayBalanceStatNegative)}`}>
-                              {privacyMode ? 'Hidden' : `${selectedDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(selectedDayNet), s)}`}
-                            </span>
-                          </div>
+                        <div style={{ height: 5, background: 'var(--surface3)', borderRadius: 3, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${pct}%`, background: pct >= 80 ? 'var(--amber)' : 'var(--accent)', borderRadius: 3, transition: 'width 0.4s' }} />
                         </div>
-                        <div className={calStyles.dayBalanceMeta}>
-                          {hasManualBalanceOnSelectedDay
-                            ? 'Manual balance override active.'
-                            : selectedDayUnpaidCount > 0
-                              ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
-                              : 'Day close includes paid entries only.'}
-                          {latestOverrideEvent?.createdAt && (
-                            <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
-                              Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
-                            </div>
-                          )}
-                          {hasManualBalanceOnSelectedDay && (
-                            <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid color-mix(in srgb, var(--border) 32%, transparent)', color: 'var(--text2)', fontSize: 11, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                              <span>Ledger calculation: <strong style={{ color: 'var(--text)' }}>{balanceMoney(selectedDayAutoBalance)}</strong></span>
-                              <span style={{ color: 'var(--text3)' }}>·</span>
-                              <span>Adjustment: <strong style={{ color: selectedDayBalance - selectedDayAutoBalance >= 0 ? 'var(--accent)' : 'var(--red)' }}>{selectedDayBalance - selectedDayAutoBalance >= 0 ? '+' : ''}{balanceMoney(selectedDayBalance - selectedDayAutoBalance)}</strong></span>
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <label className={calStyles.dayBalanceField}>
-                          <span className={calStyles.dayBalanceLabel}>Day closing balance for {selected}</span>
-                          <div className={calStyles.dayBalanceInputWrap}>
-                            <span>{s}</span>
+                        {isEditing && (
+                          <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                             <input
                               type="number"
-                              step="0.01"
-                              value={dayBalanceDraft}
-                              onChange={event => setDayBalanceDraft(event.target.value)}
-                              onKeyDown={event => {
-                                if (event.key === 'Enter') handleSaveDayBalance()
-                                if (event.key === 'Escape') closeDayBalanceEditor()
-                              }}
-                              placeholder="0.00"
-                              disabled={dayBalanceSaving}
+                              min="0"
+                              value={goalInput}
+                              onChange={event => setGoalInput(event.target.value)}
+                              placeholder="Updated saved total"
+                              style={{ flex: 1, padding: '6px 10px', background: 'var(--surface2)', border: '1px solid var(--accent)', borderRadius: 'var(--radius-sm)', color: 'var(--text)', fontSize: 16, outline: 'none', fontFamily: 'var(--font-body)' }}
                             />
+                            <button type="button" onClick={() => handleGoalUpdate(goal)} style={{ padding: '6px 12px', background: 'var(--accent)', color: '#0a0a0f', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Save</button>
                           </div>
-                        </label>
-                        <div className={calStyles.dayBalanceMeta}>
-                          This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
-                        </div>
-                        <div className={calStyles.dayBalanceActions}>
-                          <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
-                            Cancel
-                          </button>
-                          {hasManualBalanceOnSelectedDay && (
-                            <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
-                              Reset to auto
-                            </button>
-                          )}
-                          <button type="button" className={calStyles.dayBalanceSaveBtn} onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
-                            {dayBalanceSaving ? 'Saving...' : 'Save'}
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {!editingDayBalance && (
-                    <div className={calStyles.daySystemNote}>
-                      Forecast rows are upcoming recurring items. Paid linked entries update account balances.
-                    </div>
-                  )}
-
-                  {data.goals.length > 0 && (
-                    <details className={calStyles.goalDisclosure}>
-                      <summary className={calStyles.goalDisclosureSummary}>
-                        <span>Savings goals</span>
-                        <span className={calStyles.goalDisclosureCount}>{data.goals.length}</span>
-                      </summary>
-                      <div className={calStyles.goalDisclosureBody}>
-                        {data.goals.map(goal => {
-                          const pct = Math.min(100, Math.round(((goal.current || 0) / (goal.target || 1)) * 100))
-                          const isEditing = editGoalId === goal._id
-
-                          return (
-                            <div key={goal._id} style={{ marginBottom: 14 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{goal.name}</span>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>{money(goal.current || 0)}</span>
-                                  <span style={{ fontSize: 11, color: 'var(--text3)' }}>/ {money(goal.target)}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setEditGoalId(isEditing ? null : goal._id)
-                                      setGoalInput(String(goal.current || 0))
-                                    }}
-                                    style={{ background: 'var(--surface2)', border: '1px solid var(--border)', color: 'var(--text2)', borderRadius: 'var(--radius-sm)', padding: '2px 8px', fontSize: 11, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
-                                  >
-                                    {isEditing ? 'Cancel' : 'Edit'}
-                                  </button>
-                                </div>
-                              </div>
-                              <div style={{ height: 5, background: 'var(--surface3)', borderRadius: 3, overflow: 'hidden' }}>
-                                <div style={{ height: '100%', width: `${pct}%`, background: pct >= 80 ? 'var(--amber)' : 'var(--accent)', borderRadius: 3, transition: 'width 0.4s' }} />
-                              </div>
-                              {isEditing && (
-                                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={goalInput}
-                                    onChange={event => setGoalInput(event.target.value)}
-                                    placeholder="Updated saved total"
-                                    style={{ flex: 1, padding: '6px 10px', background: 'var(--surface2)', border: '1px solid var(--accent)', borderRadius: 'var(--radius-sm)', color: 'var(--text)', fontSize: 16, outline: 'none', fontFamily: 'var(--font-body)' }}
-                                  />
-                                  <button type="button" onClick={() => handleGoalUpdate(goal)} style={{ padding: '6px 12px', background: 'var(--accent)', color: '#0a0a0f', border: 'none', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Save</button>
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
+                        )}
                       </div>
-                    </details>
-                  )}
+                    )
+                  })}
                 </div>
-              </section>
-  ) : null;
+              </details>
+            )}
+          </div>
+        </>
+      ) : (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          minHeight: '320px',
+          color: 'var(--text3)',
+          textAlign: 'center',
+          padding: '24px',
+          gap: '12px'
+        }}>
+          <div style={{ fontSize: '32px' }}>📅</div>
+          <div style={{ fontWeight: '600', color: 'var(--text2)', fontSize: '15px' }}>No Date Selected</div>
+          <div style={{ fontSize: '12px', maxWidth: '240px', lineHeight: '1.5' }}>
+            Select a day on the calendar to view, add, or edit transactions and balances.
+          </div>
+        </div>
+      )}
+    </section>
+  );
 
   return (
     <div className={`${styles.page} ${calStyles.page}`}>

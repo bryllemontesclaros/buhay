@@ -224,8 +224,8 @@
   border-radius: 34px;
   background: var(--surface);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--glass-blur-lg));
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+    
+    
 }
 
 .sidebar::before {
@@ -1494,8 +1494,8 @@
   position: fixed;
   inset: 0;
   background: var(--glass-3);
-  backdrop-filter: blur(var(--glass-blur-sm));
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  
+  
   z-index: 299;
   animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
@@ -1525,8 +1525,8 @@
   border-radius: 30px;
   padding: 1rem;
   box-shadow: var(--glass-shadow-strong);
-  backdrop-filter: blur(var(--glass-blur-xl));
-  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+  
+  
   pointer-events: auto;
   animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
 }
@@ -1977,8 +1977,8 @@
     min-height: 62px;
     padding: 6px;
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--glass-blur-lg));
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+    
+    
     transition:
       opacity var(--motion-duration) var(--motion-ease-standard),
       transform var(--motion-duration) var(--motion-ease-out);
@@ -2023,8 +2023,8 @@
     position: fixed;
     inset: 0;
     background: var(--glass-3);
-    backdrop-filter: blur(var(--glass-blur-sm));
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    
+    
     border: none;
     z-index: 98;
     
@@ -2045,8 +2045,8 @@
     border: 1px solid var(--border2);
     background: var(--surface);
     box-shadow: var(--glass-shadow-strong);
-    backdrop-filter: blur(var(--glass-blur-xl));
-    -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+    
+    
     animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
   }
   .mobileNavSheetHandle {

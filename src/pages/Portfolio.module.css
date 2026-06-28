@@ -690,8 +690,8 @@
     z-index: 310;
     border: 0;
     background: var(--glass-3);
-    backdrop-filter: blur(var(--glass-blur-sm));
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    
+    
   }
 
   .formCard {
@@ -704,8 +704,8 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     box-shadow: var(--glass-shadow-strong);
-    backdrop-filter: blur(var(--glass-blur-xl));
-    -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+    
+    
   }
 
   .formHeader {
