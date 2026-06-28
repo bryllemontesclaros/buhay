@@ -93,8 +93,13 @@
 }
 
 .dayBalanceCard {
-  padding: 0 0 16px;
-  margin-bottom: 16px;
+  padding: 16px;
+  margin: 16px 0;
+  background: color-mix(in srgb, var(--surface2) 40%, transparent);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .dayBalanceStats {
@@ -124,7 +129,6 @@
 
 .daySection {
   padding: 12px 0;
-  border-top: 1px solid var(--border2);
 }
 
 .daySection:first-of-type {
@@ -878,7 +882,6 @@
   position: relative;
   padding: 14px 18px 12px;
   background: transparent;
-  border-bottom: 1px solid var(--border2);
 }
 .dayPanelBody {
   padding: 14px 18px 22px;
@@ -890,8 +893,8 @@
 .dayPanelTodayBadge { padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .dayPanelTitle { font-family: var(--font-display); font-size: 18px; line-height: 1.05; color: var(--text); }
 .dayPanelHeaderRight { display: flex; align-items: flex-start; justify-content: flex-end; }
-.dayPanelClose { background: var(--surface); border: 1px solid var(--border2); color: var(--text3); font-size: 16px; font-weight: 400; cursor: pointer; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
-.dayPanelClose:hover { background: color-mix(in srgb, var(--glass-1) 80%, var(--surface)); color: var(--text); border-color: var(--border); }
+.dayPanelClose { background: transparent; border: none; color: var(--text3); font-size: 16px; font-weight: 400; cursor: pointer; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; transition: color 0.2s ease, background 0.2s ease; }
+.dayPanelClose:hover { background: color-mix(in srgb, var(--surface) 60%, transparent); color: var(--text); }
 .dayPanelHeaderMeta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
 .dayPanelHeaderStat { border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); padding: 10px 12px; min-width: 0; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent); }
 .dayPanelHeaderStatLabel { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
@@ -904,15 +907,15 @@
 .daySectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
 .daySectionLabel { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; }
 .daySectionHeader .daySectionLabel { margin-bottom: 0; }
-.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); border: 1px solid var(--border2); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-.daySummary { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border2); font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; }
+.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.daySummary { display: flex; align-items: center; gap: 10px; font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--border) 20%, transparent); margin-bottom: 4px; }
 .dayPanelActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
-.dayPanelAction { min-height: 38px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border2); background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease; text-align: center; }
+.dayPanelAction { min-height: 38px; padding: 0 12px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: color 0.15s ease, background 0.15s ease; text-align: center; }
 .dayPanelAction:hover { opacity: 1; transform: none; }
 .dayPanelAction:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.dayPanelActionIncome { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 24%, transparent); color: var(--accent); }
+.dayPanelActionIncome { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .dayPanelActionIncome:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
-.dayPanelActionExpense { background: color-mix(in srgb, var(--red) 10%, transparent); border-color: color-mix(in srgb, var(--red) 20%, transparent); color: var(--red); }
+.dayPanelActionExpense { background: color-mix(in srgb, var(--red) 10%, transparent); color: var(--red); }
 .dayPanelActionExpense:hover { background: color-mix(in srgb, var(--red) 16%, transparent); }
 .planNote {
   margin: -2px 0 14px;
@@ -940,9 +943,9 @@
 .txIcon { width: 24px; height: 24px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 .txDesc { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
 .txMeta { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
-.accountBadge { background: transparent; color: var(--blue); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
-.recurBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
-.projBadge { background: transparent; color: var(--purple); border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
+.accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; margin-left: 6px; }
 .txRight { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .projectedTxRight {
   width: 100%;
@@ -1030,7 +1033,7 @@
   overflow: visible;
 }
 .editBtn,
-.statusBtn { background: transparent; border: 1px solid var(--border2); color: var(--text3); border-radius: 999px; padding: 0 8px; font-size: 10px; cursor: pointer; font-family: var(--font-body); min-height: 26px; }
+.statusBtn { background: transparent; border: none; color: var(--text3); border-radius: 8px; padding: 0 10px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: var(--font-body); min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
 .logBtn,
 .recurBtn {
   display: inline-flex;
@@ -1072,23 +1075,23 @@
 .recurBtn:hover { border-color: color-mix(in srgb, var(--purple) 20%, var(--border)); color: var(--purple); }
 .logBtn:disabled,
 .recurBtn:disabled { opacity: 0.55; cursor: not-allowed; }
-.editBtn:hover { border-color: color-mix(in srgb, var(--accent) 20%, var(--border)); color: var(--accent); }
-.statusBtnPaid { border-color: color-mix(in srgb, var(--accent) 24%, var(--border)); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.statusBtnUnpaid { border-color: color-mix(in srgb, var(--amber) 28%, var(--border)); color: var(--amber); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
-.delBtnSm { background: transparent; border: 1px solid var(--border2); color: var(--text3); cursor: pointer; font-size: 12px; padding: 0 7px; border-radius: 999px; min-height: 26px; min-width: 26px; }
-.delBtnSm:hover { color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); border-color: color-mix(in srgb, var(--red) 16%, transparent); }
+.editBtn:hover { color: var(--accent); background: color-mix(in srgb, var(--glass-1) 80%, transparent); }
+.statusBtnPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.statusBtnUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
+.delBtnSm { background: transparent; border: none; color: var(--text3); cursor: pointer; font-size: 11px; font-weight: 500; padding: 0 10px; border-radius: 8px; min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
+.delBtnSm:hover { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
 .editBtn:disabled,
 .statusBtn:disabled,
 .delBtnSm:disabled { opacity: 0.55; cursor: not-allowed; }
-.statusBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
-.statusPaid { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 22%, var(--border)); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.statusUnpaid { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 28%, var(--border)); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
-.impactBadge { background: transparent; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 600; border: 1px solid var(--border2); }
-.impactLinked { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 18%, var(--border)); background: color-mix(in srgb, var(--blue) 8%, transparent); }
-.impactOn { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 18%, var(--border)); background: color-mix(in srgb, var(--accent) 8%, transparent); }
-.impactDue { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 18%, var(--border)); background: color-mix(in srgb, var(--amber) 10%, transparent); }
-.impactFuture { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 18%, var(--border)); background: color-mix(in srgb, var(--purple) 8%, transparent); }
-.impactOff { color: var(--text3); border-color: color-mix(in srgb, var(--border) 60%, transparent); background: color-mix(in srgb, var(--surface2) 42%, transparent); }
+.statusBadge { border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.statusPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.statusUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, transparent); }
+.impactBadge { border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.impactLinked { color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, transparent); }
+.impactOn { color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.impactDue { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
+.impactFuture { color: var(--purple); background: color-mix(in srgb, var(--purple) 8%, transparent); }
+.impactOff { color: var(--text3); background: color-mix(in srgb, var(--surface2) 42%, transparent); }
 .dayPanelEmpty { padding: 12px 0; border-radius: 0; border: none; color: var(--text3); line-height: 1.55; }
 
 .goalDisclosure {

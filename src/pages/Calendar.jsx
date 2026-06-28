@@ -1427,29 +1427,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
                   )}
 
-                  {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
-                    privacyMode ? (
-                      <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
-                        Totals are hidden while privacy mode is on.
-                      </div>
-                    ) : (
-                      <div className={calStyles.daySummary}>
-                        <span style={{ color: 'var(--accent)' }}>
-                          {`+${fmt(selectedDayIncome, s)}`}
-                        </span>
-                        <span style={{ color: 'var(--text3)' }}>·</span>
-                        <span style={{ color: 'var(--red)' }}>
-                          {`−${fmt(selectedDayExpense, s)}`}
-                        </span>
-                        <span style={{ color: 'var(--text3)' }}>·</span>
-                        <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
-                          {`Net ${fmt(selectedDayNet, s)}`}
-                        </span>
-                      </div>
-                    )
-                  )}
-
                   <div className={calStyles.dayBalanceCard}>
+                    {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
+                      privacyMode ? (
+                        <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
+                          Totals are hidden while privacy mode is on.
+                        </div>
+                      ) : (
+                        <div className={calStyles.daySummary}>
+                          <span style={{ color: 'var(--accent)' }}>
+                            {`+${fmt(selectedDayIncome, s)}`}
+                          </span>
+                          <span style={{ color: 'var(--text3)' }}>·</span>
+                          <span style={{ color: 'var(--red)' }}>
+                            {`−${fmt(selectedDayExpense, s)}`}
+                          </span>
+                          <span style={{ color: 'var(--text3)' }}>·</span>
+                          <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
+                            {`Net ${fmt(selectedDayNet, s)}`}
+                          </span>
+                        </div>
+                      )
+                    )}
+
                     {!editingDayBalance ? (
                       <>
                         <div className={calStyles.dayBalanceHeader}>
