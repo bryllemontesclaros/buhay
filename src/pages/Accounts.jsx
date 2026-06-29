@@ -24,7 +24,7 @@ const COLORS = [
 
 const EMPTY_FORM = { name: '', type: 'Cash', balance: '', color: '#22d87a', notes: '' }
 
-export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {} }) {
+export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, exchangeRates = null }) {
   const s = symbol || '₱'
   const accounts = data.accounts || []
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
@@ -111,8 +111,8 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       isDebt: signedBalance < 0,
     }
   })
-  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [])
-  const totalBalance = getTakdaTotalBalanceNow(accounts, data.portfolioHoldings || [], data.debts || [])
+  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [], exchangeRates)
+  const totalBalance = getTakdaTotalBalanceNow(accounts, data.portfolioHoldings || [], data.debts || [], exchangeRates)
   const liquidTotal = accountsWithMeta
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
     .reduce((sum, account) => sum + account.signedBalance, 0)

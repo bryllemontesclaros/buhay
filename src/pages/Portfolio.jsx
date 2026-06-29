@@ -44,7 +44,7 @@ function toFormValue(value) {
   return value === 0 ? '0' : String(value || '')
 }
 
-export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱', privacyMode = false, portfolioActionRequest = null, onPortfolioActionHandled }) {
+export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱', privacyMode = false, portfolioActionRequest = null, onPortfolioActionHandled, exchangeRates = null }) {
   const defaultCurrency = String(profile.currency || 'PHP').toUpperCase()
   const [form, setForm] = useState(() => getEmptyHolding(defaultCurrency))
   const [editingHolding, setEditingHolding] = useState(null)
@@ -52,7 +52,7 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   const [saving, setSaving] = useState(false)
   const formRef = useRef(null)
   const [isMobile, setIsMobile] = useState(false)
-  const summary = getPortfolioSummary(data.portfolioHoldings || [])
+  const summary = getPortfolioSummary(data.portfolioHoldings || [], exchangeRates)
   const holdings = summary.holdings
   const hasHoldings = holdings.length > 0
   const gainTone = summary.gainLoss >= 0 ? pStyles.positive : pStyles.negative

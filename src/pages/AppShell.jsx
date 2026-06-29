@@ -566,6 +566,7 @@ export default function AppShell({ user }) {
   const [syncIssue, setSyncIssue] = useState(null)
   const [billPaymentTarget, setBillPaymentTarget] = useState(null)
   const [chromeMode, setChromeMode] = useState({ compact: false, hidden: false })
+  const [exchangeRates, setExchangeRates] = useState(null)
   const syncingDueTransactionsRef = useRef(false)
   const preferredSpaceAppliedRef = useRef(false)
   const mainRef = useRef(null)
@@ -631,6 +632,23 @@ export default function AppShell({ user }) {
     ]
     return () => unsubs.forEach(u => u())
   }, [user])
+
+  useEffect(() => {
+    if (!profile?.currency) return
+    const base = String(profile.currency).toUpperCase()
+    let active = true
+    fetch(`https://api.exchangerate-api.com/v4/latest/${base}`)
+      .then(res => res.json())
+      .then(json => {
+        if (active && json?.rates) {
+          setExchangeRates(json.rates)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [profile?.currency])
 
   useEffect(() => {
     if (preferredSpaceAppliedRef.current) return
@@ -1397,6 +1415,7 @@ export default function AppShell({ user }) {
     profile,
     symbol,
     privacyMode,
+    exchangeRates,
 
     billPaymentTarget,
     activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,

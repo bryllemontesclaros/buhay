@@ -19,13 +19,24 @@ export function normalizePortfolioAssetType(value = '') {
   return ASSET_TYPE_IDS.has(key) ? key : 'other'
 }
 
-export function normalizePortfolioHolding(holding = {}) {
+export function normalizePortfolioHolding(holding = {}, exchangeRates = null) {
   const quantity = Math.max(0, numberOrZero(holding.quantity))
   const averageBuyPrice = Math.max(0, numberOrZero(holding.averageBuyPrice))
   const currentPrice = Math.max(0, numberOrZero(holding.currentPrice))
   const fees = Math.max(0, numberOrZero(holding.fees))
-  const marketValue = quantity * currentPrice
-  const totalCost = (quantity * averageBuyPrice) + fees
+  
+  let marketValue = quantity * currentPrice
+  let totalCost = (quantity * averageBuyPrice) + fees
+
+  if (exchangeRates && holding.currency) {
+    const holdingCurrency = String(holding.currency).toUpperCase()
+    const rate = Number(exchangeRates[holdingCurrency])
+    if (rate > 0) {
+      marketValue = marketValue / rate
+      totalCost = totalCost / rate
+    }
+  }
+
   const gainLoss = marketValue - totalCost
   const gainLossPct = totalCost > 0 ? (gainLoss / totalCost) * 100 : 0
 
@@ -51,8 +62,8 @@ export function normalizePortfolioHolding(holding = {}) {
   }
 }
 
-export function getPortfolioSummary(holdings = []) {
-  const normalized = holdings.map(normalizePortfolioHolding)
+export function getPortfolioSummary(holdings = [], exchangeRates = null) {
+  const normalized = holdings.map(holding => normalizePortfolioHolding(holding, exchangeRates))
   const totals = normalized.reduce((summary, holding) => {
     summary.marketValue += holding.marketValue
     summary.totalCost += holding.totalCost
@@ -75,6 +86,6 @@ export function getPortfolioSummary(holdings = []) {
   }
 }
 
-export function getIncludedPortfolioValue(holdings = []) {
-  return getPortfolioSummary(holdings).includedValue
+export function getIncludedPortfolioValue(holdings = [], exchangeRates = null) {
+  return getPortfolioSummary(holdings, exchangeRates).includedValue
 }

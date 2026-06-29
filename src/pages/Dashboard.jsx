@@ -126,7 +126,7 @@ function pluralize(count, singular, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`
 }
 
-export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy }) {
+export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy, exchangeRates = null }) {
   const s = symbol || '₱'
   const now = new Date()
   const year = now.getFullYear()
@@ -149,7 +149,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   const expenseChange = lmExpense > 0 ? Math.round(((mExpense - lmExpense) / lmExpense) * 100) : null
 
   const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [])
-  const netWorth = getTakdaTotalBalanceNow(data.accounts, data.portfolioHoldings || [], data.debts || [])
+  const netWorth = getTakdaTotalBalanceNow(data.accounts, data.portfolioHoldings || [], data.debts || [], exchangeRates)
 
   const monthSpending = useMemo(() => {
     const spending = {}

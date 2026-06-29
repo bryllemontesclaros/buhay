@@ -330,6 +330,16 @@ export async function fsDeleteTransaction(uid, col, tx, accounts = []) {
     }
   }
 
+  if (col === 'expenses' && tx.billId && tx.billPeriodKey) {
+    batch.update(doc(db, 'users', uid, 'bills', tx.billId), {
+      [`paidPeriods.${tx.billPeriodKey}`]: deleteField(),
+      paid: false,
+      paidAt: 0,
+      lastPaidPeriod: '',
+      lastPaidExpenseId: '',
+    })
+  }
+
   batch.delete(doc(db, 'users', uid, col, tx._id))
   applyAccountAdjustments(batch, uid, adjustments, accountLookup)
   await batch.commit()
