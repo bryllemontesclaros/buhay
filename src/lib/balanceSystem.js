@@ -5,8 +5,9 @@ export function getTakdaBalanceOverrides(profile = {}) {
   return getBalanceOverrides(profile?.dailyBalanceOverrides || {}, profile?.monthStartBalances || {})
 }
 
-export function getTakdaTotalBalanceNow(accounts = [], portfolioHoldings = []) {
-  return getCurrentBalance(accounts) + getIncludedPortfolioValue(portfolioHoldings)
+export function getTakdaTotalBalanceNow(accounts = [], portfolioHoldings = [], debts = []) {
+  const totalDebt = (debts || []).reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
+  return getCurrentBalance(accounts) + getIncludedPortfolioValue(portfolioHoldings) - totalDebt
 }
 
 export function getTakdaBalanceAsOfDate(data = {}, profile = {}, dateKey) {

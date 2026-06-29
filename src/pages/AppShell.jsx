@@ -17,6 +17,7 @@ import Settings from './Settings'
 import History from './History'
 import Portfolio from './Portfolio'
 import QuickAdd from './QuickAdd'
+import Debts from './Debts'
 import {
   findPresetByLabel,
   getDefaultTransactionDraft,
@@ -179,6 +180,12 @@ const NAV_ICONS = {
   savings: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 3l2.8 5.7 6.2.9-4.5 4.3 1 6.1L12 17l-5.5 3 1-6.1L3 9.6l6.2-.9L12 3z"/>
+    </svg>
+  ),
+  debts: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 17 13.5 8.5 8.5 13.5 2 7"/>
+      <polyline points="16 17 22 17 22 11"/>
     </svg>
   ),
   portfolio: (
@@ -367,6 +374,7 @@ const FINANCE_PAGE_ALIASES = {
   savings: { page: 'savings' },
   bills: { page: 'bills' },
   budget: { page: 'budget' },
+  debts: { page: 'debts' },
 }
 
 const MONEY_TOOLS = [
@@ -408,6 +416,12 @@ const PLAN_TOOLS = [
     label: 'Budget',
     meta: 'Monthly limits',
     Component: Budget,
+  },
+  {
+    id: 'debts',
+    label: 'Debts',
+    meta: 'Payoff simulator & tracking',
+    Component: Debts,
   },
 ]
 
@@ -518,6 +532,7 @@ export default function AppShell({ user }) {
     goals: [],
     accounts: [],
     budgets: [],
+    debts: [],
     receipts: [],
     transfers: [],
     calendarEvents: [],
@@ -589,6 +604,9 @@ export default function AppShell({ user }) {
       listenCol(uid, 'goals', rows => {
         setData(d => ({ ...d, goals: rows }))
       }, error => handleRealtimeError('goals', error)),
+      listenCol(uid, 'debts', rows => {
+        setData(d => ({ ...d, debts: rows }))
+      }, error => handleRealtimeError('debts', error)),
       listenCol(uid, 'accounts', rows => {
         setData(d => ({ ...d, accounts: rows }))
       }, error => handleRealtimeError('accounts', error)),
@@ -896,6 +914,7 @@ export default function AppShell({ user }) {
     { id: 'history', label: 'History', iconKey: 'history', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
     { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
+    { id: 'debts', label: 'Debts', iconKey: 'debts', section: null },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: null },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: null },
@@ -916,6 +935,7 @@ export default function AppShell({ user }) {
   const takdaMoreNav = [
     { id: 'dashboard', label: 'Overview', iconKey: 'home', section: 'Review' },
     { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
+    { id: 'debts', label: 'Debts', iconKey: 'debts', section: 'Review' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: 'Review' },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: 'Review' },
@@ -931,6 +951,7 @@ export default function AppShell({ user }) {
     settings: Settings,
     history: History,
     savings: Savings,
+    debts: Debts,
     accounts: Accounts,
     breakdown: Breakdown,
     budget: Budget,

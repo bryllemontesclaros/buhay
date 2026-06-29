@@ -112,7 +112,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     }
   })
   const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [])
-  const totalBalance = getTakdaTotalBalanceNow(accounts, data.portfolioHoldings || [])
+  const totalBalance = getTakdaTotalBalanceNow(accounts, data.portfolioHoldings || [], data.debts || [])
   const liquidTotal = accountsWithMeta
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
     .reduce((sum, account) => sum + account.signedBalance, 0)
