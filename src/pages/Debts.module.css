@@ -804,3 +804,132 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .debtsPage {
+    padding-bottom: 140px;
+  }
+
+  .heroSection {
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+
+  .heroCopy,
+  .heroAside,
+  .totalCard,
+  .optimizerCard,
+  .toolbar,
+  .editorCard,
+  .debtCard,
+  .emptyCard,
+  .adviceBox,
+  .chartContainer {
+    border-radius: 16px;
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .pageSub {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .heroAsideValue {
+    font-size: 24px;
+  }
+
+  .totalVal {
+    font-size: 30px;
+  }
+
+  .optimizerHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .strategySelectors {
+    width: 100%;
+  }
+
+  .strategyBtn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+  }
+
+  .simulatorGrid {
+    gap: 16px;
+  }
+
+  .sliderVal {
+    font-size: 18px;
+  }
+
+  .adviceMetrics {
+    gap: 12px;
+  }
+
+  .metricNum {
+    font-size: 20px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .debtDetails {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .debtCol {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .detailsLabel {
+    margin-bottom: 0;
+  }
+
+  .debtTop {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .debtActions {
+    justify-content: flex-end;
+  }
+
+  .paymentActions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .paymentInput,
+  .payBtn {
+    height: 38px;
+    width: 100%;
+  }
+}
