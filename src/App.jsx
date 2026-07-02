@@ -2,7 +2,7 @@ import { useEffect, useState, createContext, useContext } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './lib/firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import AuthScreen from './pages/AuthScreen'
 import AppShell from './pages/AppShell'
 import Onboarding from './pages/Onboarding'
@@ -40,19 +40,26 @@ function useAuth() {
   const [state, setState] = useState({ ready: false, user: null, isNew: false })
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async u => {
+    let unsubProfile = null
+    const unsubAuth = onAuthStateChanged(auth, u => {
+      if (unsubProfile) {
+        unsubProfile()
+        unsubProfile = null
+      }
       if (u) {
-        let isNew = false
-        try {
-          const snap = await getDoc(doc(db, 'users', u.uid, 'profile', 'main'))
-          isNew = !snap.exists()
-        } catch {}
-        setState({ ready: true, user: u, isNew })
+        unsubProfile = onSnapshot(doc(db, 'users', u.uid, 'profile', 'main'), snap => {
+          setState({ ready: true, user: u, isNew: !snap.exists() })
+        }, () => {
+          setState({ ready: true, user: u, isNew: false })
+        })
       } else {
         setState({ ready: true, user: null, isNew: false })
       }
     })
-    return unsub
+    return () => {
+      unsubAuth()
+      if (unsubProfile) unsubProfile()
+    }
   }, [])
 
   return state
