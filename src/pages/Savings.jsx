@@ -53,19 +53,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
 
     const goalRef = await fsAdd(user.uid, 'goals', goalData)
 
-    if (form.accountId && current > 0) {
-      await fsAddTransaction(user.uid, 'expenses', {
-        desc: `Savings: ${form.name}`,
-        amount: current,
-        date: today(),
-        cat: 'Savings',
-        subcat: 'Goal contribution',
-        accountId: form.accountId,
-        accountBalanceLinked: true,
-        accountBalanceApplied: true,
-        type: 'expense'
-      }, data.accounts || [])
-    }
+
 
     setForm({ name: '', target: '', current: '', date: '', accountId: '' })
   }
@@ -78,19 +66,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
     }
     const newValue = Math.min(goal.target, (goal.current || 0) + value)
 
-    if (goal.accountId) {
-      await fsAddTransaction(user.uid, 'expenses', {
-        desc: `Savings: ${goal.name}`,
-        amount: value,
-        date: today(),
-        cat: 'Savings',
-        subcat: 'Goal contribution',
-        accountId: goal.accountId,
-        accountBalanceLinked: true,
-        accountBalanceApplied: true,
-        type: 'expense'
-      }, data.accounts || [])
-    }
+
 
     await fsUpdate(user.uid, 'goals', goal._id, { current: newValue })
     setContribs(current => ({ ...current, [goal._id]: '' }))
