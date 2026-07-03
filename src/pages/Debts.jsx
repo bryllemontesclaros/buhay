@@ -240,6 +240,9 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     })
   }, [debts, accounts])
 
+  const creditCards = useMemo(() => mappedDebts.filter(d => d.type === 'Credit Card'), [mappedDebts])
+  const loansAndOthers = useMemo(() => mappedDebts.filter(d => d.type !== 'Credit Card'), [mappedDebts])
+
   async function handlePayment(debt) {
     const value = parseFloat(payments[debt._id] || 0)
     if (!Number.isFinite(value) || value <= 0) {
@@ -331,11 +334,170 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const interestSaved = Math.max(0, (baselineSchedule?.totalInterest || 0) - (schedule?.totalInterest || 0))
   const monthsSaved = Math.max(0, (baselineSchedule?.months || 0) - (schedule?.months || 0))
 
-  useEffect(() => {
-    if (showModal && editorRef.current) {
-      safeScrollIntoView(editorRef.current, { behavior: 'smooth', block: 'start' })
-    }
-  }, [showModal, editDebt?._id])
+  const renderCard = (debt) => {
+    const balance = Number(debt.balance) || 0
+    const original = Number(debt.originalAmount) || balance
+    const pctPaid = original > 0 ? Math.min(100, Math.round(((original - balance) / original) * 100)) : 0
+    const isCleared = balance === 0
+
+    return (
+      <div
+        key={debt._id}
+        className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
+        style={{ '--debt-tone': debt.color || 'var(--red)' }}
+      >
+        <div className={dStyles.debtTop}>
+          <div className={dStyles.debtLeading}>
+            <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
+            <div className={dStyles.debtInfo}>
+              <div className={dStyles.debtName}>
+                {debt.name}
+                {debt.accountId && (
+                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--accent) 30%, var(--border2))', background: 'color-mix(in srgb, var(--accent) 8%, var(--surface2))' }}>
+                    🔗 Linked
+                  </span>
+                )}
+              </div>
+              <div className={dStyles.debtMeta}>
+                {debt.type} · {debt.interestRate}% APR
+                {debt.contactName && ` · Contact: ${debt.contactName}`}
+              </div>
+            </div>
+          </div>
+          <div className={dStyles.debtActions}>
+            <button type="button" className={dStyles.cardAction} onClick={() => openEdit(debt)}>Edit</button>
+            <button type="button" className={`${dStyles.cardAction} ${dStyles.cardActionDanger}`} onClick={() => handleDel(debt._id, debt.name)}>Delete</button>
+          </div>
+        </div>
+
+        <div className={dStyles.debtDetails}>
+          <div className={dStyles.debtCol}>
+            <div className={dStyles.detailsLabel}>Remaining</div>
+            <div className={dStyles.detailsValue}>{money(balance)}</div>
+          </div>
+          <div className={dStyles.debtCol}>
+            <div className={dStyles.detailsLabel}>Min Payment</div>
+            <div className={dStyles.detailsValue}>{money(debt.minPayment)}</div>
+          </div>
+          <div className={dStyles.debtCol}>
+            <div className={dStyles.detailsLabel}>Due Day</div>
+            <div className={dStyles.detailsValue}>{debt.dueDate ? `Day ${debt.dueDate}` : '—'}</div>
+          </div>
+
+          {debt.type === 'Credit Card' && (
+            <>
+              <div className={dStyles.debtCol}>
+                <div className={dStyles.detailsLabel}>Limit</div>
+                <div className={dStyles.detailsValue}>
+                  {(() => {
+                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                    return money(limit)
+                  })()}
+                </div>
+              </div>
+              <div className={dStyles.debtCol}>
+                <div className={dStyles.detailsLabel}>Available</div>
+                <div className={dStyles.detailsValue}>
+                  {(() => {
+                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                    return money(Math.max(0, limit - balance))
+                  })()}
+                </div>
+              </div>
+              <div className={dStyles.debtCol}>
+                <div className={dStyles.detailsLabel}>Utilization</div>
+                <div className={dStyles.detailsValue}>
+                  {(() => {
+                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                    const util = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
+                    return `${util}%`
+                  })()}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Progress bar / Utilization Bar */}
+        {!isCleared && (
+          debt.type === 'Credit Card' ? (
+            (() => {
+              const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+              const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+              const utilization = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
+              
+              const barColor = utilization < 30
+                ? 'var(--accent)'
+                : utilization <= 70
+                  ? 'var(--amber)'
+                  : 'var(--red)'
+                  
+              return (
+                <div className={dStyles.progressBlock}>
+                  <div className={dStyles.progressMeta}>
+                    <span>Credit Utilization</span>
+                    <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
+                  </div>
+                  <div className={dStyles.progressBar}>
+                    <div
+                      className={dStyles.progressFill}
+                      style={{ width: `${utilization}%`, background: barColor }}
+                    />
+                  </div>
+                </div>
+              )
+            })()
+          ) : (
+            original > 0 && (
+              <div className={dStyles.progressBlock}>
+                <div className={dStyles.progressMeta}>
+                  <span>{pctPaid}% paid off</span>
+                  <span>{money(original - balance)} paid</span>
+                </div>
+                <div className={dStyles.progressBar}>
+                  <div className={dStyles.progressFill} style={{ width: `${pctPaid}%` }} />
+                </div>
+              </div>
+            )
+          )
+        )}
+
+        {/* Payment actions */}
+        {!isCleared && (
+          <div className={dStyles.paymentActions}>
+            <input
+              type="number"
+              className={dStyles.paymentInput}
+              min="0"
+              inputMode="decimal"
+              placeholder={`Payment amount (${s})`}
+              value={payments[debt._id] || ''}
+              onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
+              onKeyDown={event => {
+                if (event.key === 'Enter') handlePayment(debt)
+              }}
+            />
+            <button
+              type="button"
+              className={dStyles.payBtn}
+              onClick={() => { playTick(); handlePayment(debt); }}
+            >
+              Make Payment
+            </button>
+          </div>
+        )}
+
+        {isCleared && (
+          <div className={dStyles.clearedBanner}>
+            <span>🎉 This debt is completely paid off!</span>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className={`${styles.page} ${dStyles.debtsPage}`}>
@@ -700,8 +862,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           </div>
         </div>
       )}
-
-      {/* Debt List / Cards */}
+        {/* Debt List / Cards */}
       {!debts.length ? (
         <div className={dStyles.emptyCard}>
           <div className={dStyles.emptyTitle}>No active debts entered</div>
@@ -710,171 +871,24 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           </div>
         </div>
       ) : (
-        <div className={dStyles.debtsGrid}>
-          {mappedDebts.map(debt => {
-            const balance = Number(debt.balance) || 0
-            const original = Number(debt.originalAmount) || balance
-            const pctPaid = original > 0 ? Math.min(100, Math.round(((original - balance) / original) * 100)) : 0
-            const isCleared = balance === 0
-
-            return (
-               <div
-                 key={debt._id}
-                 className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
-                 style={{ '--debt-tone': debt.color || 'var(--red)' }}
-               >
-                 <div className={dStyles.debtTop}>
-                   <div className={dStyles.debtLeading}>
-                     <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
-                     <div className={dStyles.debtInfo}>
-                       <div className={dStyles.debtName}>
-                         {debt.name}
-                         {debt.accountId && (
-                           <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--accent) 30%, var(--border2))', background: 'color-mix(in srgb, var(--accent) 8%, var(--surface2))' }}>
-                             🔗 Linked
-                           </span>
-                         )}
-                       </div>
-                      <div className={dStyles.debtMeta}>
-                        {debt.type} · {debt.interestRate}% APR
-                        {debt.contactName && ` · Contact: ${debt.contactName}`}
-                      </div>
-                    </div>
-                  </div>
-                  <div className={dStyles.debtActions}>
-                    <button type="button" className={dStyles.cardAction} onClick={() => openEdit(debt)}>Edit</button>
-                    <button type="button" className={`${dStyles.cardAction} ${dStyles.cardActionDanger}`} onClick={() => handleDel(debt._id, debt.name)}>Delete</button>
-                  </div>
-                </div>
-
-                <div className={dStyles.debtDetails}>
-                  <div className={dStyles.debtCol}>
-                    <div className={dStyles.detailsLabel}>Remaining</div>
-                    <div className={dStyles.detailsValue}>{money(balance)}</div>
-                  </div>
-                  <div className={dStyles.debtCol}>
-                    <div className={dStyles.detailsLabel}>Min Payment</div>
-                    <div className={dStyles.detailsValue}>{money(debt.minPayment)}</div>
-                  </div>
-                  <div className={dStyles.debtCol}>
-                    <div className={dStyles.detailsLabel}>Due Day</div>
-                    <div className={dStyles.detailsValue}>{debt.dueDate ? `Day ${debt.dueDate}` : '—'}</div>
-                  </div>
-
-                  {debt.type === 'Credit Card' && (
-                    <>
-                      <div className={dStyles.debtCol}>
-                        <div className={dStyles.detailsLabel}>Limit</div>
-                        <div className={dStyles.detailsValue}>
-                          {(() => {
-                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                            return money(limit)
-                          })()}
-                        </div>
-                      </div>
-                      <div className={dStyles.debtCol}>
-                        <div className={dStyles.detailsLabel}>Available</div>
-                        <div className={dStyles.detailsValue}>
-                          {(() => {
-                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                            return money(Math.max(0, limit - balance))
-                          })()}
-                        </div>
-                      </div>
-                      <div className={dStyles.debtCol}>
-                        <div className={dStyles.detailsLabel}>Utilization</div>
-                        <div className={dStyles.detailsValue}>
-                          {(() => {
-                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                            const util = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
-                            return `${util}%`
-                          })()}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Progress bar / Utilization Bar */}
-                {!isCleared && (
-                  debt.type === 'Credit Card' ? (
-                    (() => {
-                      const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                      const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                      const utilization = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
-                      
-                      const barColor = utilization < 30
-                        ? 'var(--accent)'
-                        : utilization <= 70
-                          ? 'var(--amber)'
-                          : 'var(--red)'
-                          
-                      return (
-                        <div className={dStyles.progressBlock}>
-                          <div className={dStyles.progressMeta}>
-                            <span>Credit Utilization</span>
-                            <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
-                          </div>
-                          <div className={dStyles.progressBar}>
-                            <div
-                              className={dStyles.progressFill}
-                              style={{ width: `${utilization}%`, background: barColor }}
-                            />
-                          </div>
-                        </div>
-                      )
-                    })()
-                  ) : (
-                    original > 0 && (
-                      <div className={dStyles.progressBlock}>
-                        <div className={dStyles.progressMeta}>
-                          <span>{pctPaid}% paid off</span>
-                          <span>{money(original - balance)} paid</span>
-                        </div>
-                        <div className={dStyles.progressBar}>
-                          <div className={dStyles.progressFill} style={{ width: `${pctPaid}%` }} />
-                        </div>
-                      </div>
-                    )
-                  )
-                )}
-
-                {/* Payment actions */}
-                {!isCleared && (
-                  <div className={dStyles.paymentActions}>
-                    <input
-                      type="number"
-                      className={dStyles.paymentInput}
-                      min="0"
-                      inputMode="decimal"
-                      placeholder={`Payment amount (${s})`}
-                      value={payments[debt._id] || ''}
-                      onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
-                      onKeyDown={event => {
-                        if (event.key === 'Enter') handlePayment(debt)
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className={dStyles.payBtn}
-                      onClick={() => { playTick(); handlePayment(debt); }}
-                    >
-                      Make Payment
-                    </button>
-                  </div>
-                )}
-
-                {isCleared && (
-                  <div className={dStyles.clearedBanner}>
-                    <span>🎉 This debt is completely paid off!</span>
-                  </div>
-                )}
+        <div className={dStyles.sectionsWrapper}>
+          {creditCards.length > 0 && (
+            <div className={dStyles.sectionBlock}>
+              <h3 className={dStyles.listSectionTitle}>💳 Credit Cards</h3>
+              <div className={dStyles.debtsGrid}>
+                {creditCards.map(renderCard)}
               </div>
-            )
-          })}
+            </div>
+          )}
+
+          {loansAndOthers.length > 0 && (
+            <div className={dStyles.sectionBlock}>
+              <h3 className={dStyles.listSectionTitle}>📁 Loans & Debts</h3>
+              <div className={dStyles.debtsGrid}>
+                {loansAndOthers.map(renderCard)}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

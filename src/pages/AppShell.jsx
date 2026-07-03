@@ -419,7 +419,7 @@ const PLAN_TOOLS = [
   },
   {
     id: 'debts',
-    label: 'Debts & Cards',
+    label: 'Debts',
     meta: 'CC & loan payoff tracking',
     Component: Debts,
   },
@@ -969,7 +969,7 @@ export default function AppShell({ user }) {
     { id: 'history', label: 'History', iconKey: 'history', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
     { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
-    { id: 'debts', label: 'Debts & Cards', iconKey: 'debts', section: null },
+    { id: 'debts', label: 'Debts', iconKey: 'debts', section: null },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: null },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: null },
@@ -990,7 +990,7 @@ export default function AppShell({ user }) {
   const takdaMoreNav = [
     { id: 'dashboard', label: 'Overview', iconKey: 'home', section: 'Review' },
     { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
-    { id: 'debts', label: 'Debts & Cards', iconKey: 'debts', section: 'Review' },
+    { id: 'debts', label: 'Debts', iconKey: 'debts', section: 'Review' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'budget', label: 'Budget', iconKey: 'budget', section: 'Review' },
     { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: 'Review' },
