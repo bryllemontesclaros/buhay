@@ -102,13 +102,27 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     const minVal = parseFloat(form.minPayment) || 0
     const limitVal = parseFloat(form.creditLimit) || 0
 
-    if (balanceVal <= 0) {
+    if (form.type !== 'Credit Card' && balanceVal <= 0) {
       notifyApp({ title: 'Check balance', message: 'Current balance must be greater than zero.', tone: 'warning' })
       return
     }
-    if (minVal <= 0) {
+    if (form.type === 'Credit Card' && balanceVal < 0) {
+      notifyApp({ title: 'Check balance', message: 'Current amount owed cannot be negative.', tone: 'warning' })
+      return
+    }
+    if (form.type !== 'Credit Card' && minVal <= 0) {
       notifyApp({ title: 'Check minimum payment', message: 'Minimum payment must be greater than zero.', tone: 'warning' })
       return
+    }
+    if (form.type === 'Credit Card') {
+      if (balanceVal > 0 && minVal <= 0) {
+        notifyApp({ title: 'Check minimum payment', message: 'Minimum payment must be greater than zero when you have an outstanding balance.', tone: 'warning' })
+        return
+      }
+      if (minVal < 0) {
+        notifyApp({ title: 'Check minimum payment', message: 'Minimum payment cannot be negative.', tone: 'warning' })
+        return
+      }
     }
 
     try {
