@@ -357,26 +357,34 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               </div>
             </div>
 
-            <div className={dStyles.adviceBox}>
-              <div className={dStyles.adviceRow}>
-                <span className={dStyles.adviceLabel}>Strategy recommendation:</span>
-                <span className={dStyles.adviceValue}>
-                  {avalancheComparison.totalInterest < snowballComparison.totalInterest
-                    ? 'Avalanche is mathematically optimal'
-                    : 'Snowball for quick motivational wins'}
-                </span>
+            {schedule.error ? (
+              <div className={dStyles.deficitWarningCard}>
+                <h4>⚠️ Underfunded Payoff Deficit</h4>
+                <p>Your current monthly minimum payments and extra budget are insufficient to cover interest accumulation.</p>
+                <p>Increase your Extra Monthly Payment slider until the budget exceeds the monthly interest to see your payoff timeline projection.</p>
               </div>
-              <div className={dStyles.adviceMetrics}>
-                <div className={dStyles.metricCol}>
-                  <div className={dStyles.metricNum}>{monthsSaved}</div>
-                  <div className={dStyles.metricLbl}>Months saved</div>
+            ) : (
+              <div className={dStyles.adviceBox}>
+                <div className={dStyles.adviceRow}>
+                  <span className={dStyles.adviceLabel}>Strategy recommendation:</span>
+                  <span className={dStyles.adviceValue}>
+                    {avalancheComparison.totalInterest < snowballComparison.totalInterest
+                      ? 'Avalanche is mathematically optimal'
+                      : 'Snowball for quick motivational wins'}
+                  </span>
                 </div>
-                <div className={dStyles.metricCol}>
-                  <div className={dStyles.metricNum}>{money(interestSaved)}</div>
-                  <div className={dStyles.metricLbl}>Interest saved</div>
+                <div className={dStyles.adviceMetrics}>
+                  <div className={dStyles.metricCol}>
+                    <div className={dStyles.metricNum}>{monthsSaved}</div>
+                    <div className={dStyles.metricLbl}>Months saved</div>
+                  </div>
+                  <div className={dStyles.metricCol}>
+                    <div className={dStyles.metricNum}>{money(interestSaved)}</div>
+                    <div className={dStyles.metricLbl}>Interest saved</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* SVG Payoff Timeline */}

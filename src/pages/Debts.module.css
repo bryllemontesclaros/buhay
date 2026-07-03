@@ -933,3 +933,31 @@
     width: 100%;
   }
 }
+
+.deficitWarningCard {
+  background: var(--red-dim);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, var(--border2));
+  border-radius: 20px;
+  padding: 20px;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.deficitWarningCard h4 {
+  margin: 0 0 8px;
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.deficitWarningCard p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+}
+
+.deficitWarningCard p:last-child {
+  margin-bottom: 0;
+}
