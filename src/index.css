@@ -48,6 +48,8 @@
   --blue-dim: rgba(126, 183, 248, 0.14);
   --purple: #b8afff;
   --purple-dim: rgba(184, 175, 255, 0.14);
+  --teal: #2dd4bf;
+  --teal-dim: rgba(45, 212, 191, 0.14);
 
   --space-fitness: #f1909d;
   --space-fitness-dim: rgba(241, 144, 157, 0.13);
@@ -212,6 +214,14 @@
   --blue-dim: rgba(78, 141, 224, 0.12);
   --purple: #7c6ce0;
   --purple-dim: rgba(124, 108, 224, 0.12);
+  --peach: #c27d3c;
+  --peach-dim: rgba(194, 125, 60, 0.12);
+  --iris: #5d66db;
+  --iris-dim: rgba(93, 102, 219, 0.12);
+  --rose: #c06c9f;
+  --rose-dim: rgba(192, 108, 159, 0.12);
+  --teal: #1fb39f;
+  --teal-dim: rgba(31, 179, 159, 0.12);
   
   --space-fitness: #d66c7e;
   --space-fitness-dim: rgba(214, 108, 126, 0.12);

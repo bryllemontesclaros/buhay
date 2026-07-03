@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsAddTransaction } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, playTick, today } from '../lib/utils'
@@ -10,14 +10,14 @@ import dStyles from './Debts.module.css'
 const DEBT_TYPES = ['Credit Card', 'Loan', 'Informal']
 const DEBT_ICONS = { 'Credit Card': '💳', Loan: '🏦', Informal: '🏷' }
 const COLORS = [
-  { name: 'Red', value: '#ff5370' },
-  { name: 'Amber', value: '#ffb347' },
-  { name: 'Blue', value: '#6eb5ff' },
-  { name: 'Green', value: '#22d87a' },
-  { name: 'Purple', value: '#b48eff' },
-  { name: 'Teal', value: '#2dd4bf' },
-  { name: 'Pink', value: '#f472b6' },
-  { name: 'Gray', value: '#9090b0' },
+  { name: 'Red', value: 'var(--red)' },
+  { name: 'Amber', value: 'var(--amber)' },
+  { name: 'Blue', value: 'var(--blue)' },
+  { name: 'Green', value: 'var(--accent)' },
+  { name: 'Purple', value: 'var(--purple)' },
+  { name: 'Teal', value: 'var(--teal)' },
+  { name: 'Pink', value: 'var(--rose)' },
+  { name: 'Gray', value: 'var(--text3)' },
 ]
 
 const EMPTY_FORM = {
@@ -28,9 +28,10 @@ const EMPTY_FORM = {
   interestRate: '',
   minPayment: '',
   dueDate: '',
-  color: '#ff5370',
+  color: 'var(--red)',
   contactName: '',
   notes: '',
+  accountId: '',
 }
 
 export default function Debts({ user, data, symbol, privacyMode = false }) {
@@ -66,9 +67,10 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       interestRate: debt.interestRate || '',
       minPayment: debt.minPayment || '',
       dueDate: debt.dueDate || '',
-      color: debt.color || '#ff5370',
+      color: debt.color || 'var(--red)',
       contactName: debt.contactName || '',
       notes: debt.notes || '',
+      accountId: debt.accountId || '',
     })
     setShowModal(true)
   }
@@ -80,7 +82,8 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   }
 
   async function handleSave() {
-    if (!form.name || form.balance === '' || form.minPayment === '') {
+    const isCreditCardLinked = form.type === 'Credit Card' && form.accountId
+    if (!form.name || (!isCreditCardLinked && form.balance === '') || form.minPayment === '') {
       notifyApp({
         title: 'Debt needs details',
         message: 'Add a name, balance, and minimum monthly payment before saving.',
@@ -89,7 +92,10 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       return
     }
 
-    const balanceVal = parseFloat(form.balance) || 0
+    const linkedAcc = isCreditCardLinked ? (data.accounts || []).find(a => a._id === form.accountId) : null
+    const balanceVal = isCreditCardLinked && linkedAcc
+      ? Math.abs(parseFloat(linkedAcc.balance) || 0)
+      : (parseFloat(form.balance) || 0)
     const originalVal = parseFloat(form.originalAmount) || balanceVal
     const rateVal = parseFloat(form.interestRate) || 0
     const minVal = parseFloat(form.minPayment) || 0
@@ -114,6 +120,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       color: form.color,
       contactName: form.contactName || '',
       notes: form.notes || '',
+      accountId: form.type === 'Credit Card' ? form.accountId : '',
     }
 
     try {
@@ -147,6 +154,24 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     }
   }
 
+  const accounts = data.accounts || []
+  const creditCardAccounts = accounts.filter(a => a.type === 'Credit Card')
+
+  const mappedDebts = useMemo(() => {
+    return debts.map(d => {
+      if (d.accountId) {
+        const linkedAcc = accounts.find(a => a._id === d.accountId)
+        if (linkedAcc) {
+          return {
+            ...d,
+            balance: Math.abs(Number(linkedAcc.balance) || 0),
+          }
+        }
+      }
+      return d
+    })
+  }, [debts, accounts])
+
   async function handlePayment(debt) {
     const value = parseFloat(payments[debt._id] || 0)
     if (!Number.isFinite(value) || value <= 0) {
@@ -154,13 +179,27 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       return
     }
 
-    const newBalance = Math.max(0, (debt.balance || 0) - value)
     try {
-      await fsUpdate(user.uid, 'debts', debt._id, { balance: newBalance })
+      if (debt.accountId) {
+        await fsAddTransaction(user.uid, 'income', {
+          desc: `CC Payment: ${debt.name}`,
+          amount: value,
+          date: today(),
+          cat: 'Debts',
+          subcat: 'Credit Card Payment',
+          accountId: debt.accountId,
+          accountBalanceLinked: true,
+          accountBalanceApplied: true,
+          type: 'income'
+        }, data.accounts || [])
+      } else {
+        const newBalance = Math.max(0, (debt.balance || 0) - value)
+        await fsUpdate(user.uid, 'debts', debt._id, { balance: newBalance })
+      }
       setPayments(current => ({ ...current, [debt._id]: '' }))
       notifyApp({
-        title: newBalance === 0 ? 'Debt cleared! 🎉' : 'Payment logged',
-        message: newBalance === 0 ? `Congratulations on paying off ${debt.name}!` : `Paid ${fmt(value, s)} toward ${debt.name}.`,
+        title: 'Payment logged',
+        message: `Paid ${fmt(value, s)} toward ${debt.name}.`,
         tone: 'success',
       })
     } catch {
@@ -168,36 +207,36 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     }
   }
 
-  const activeDebtsCount = debts.filter(d => (d.balance || 0) > 0).length
-  const totalDebtOwed = debts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
+  const activeDebtsCount = mappedDebts.filter(d => (d.balance || 0) > 0).length
+  const totalDebtOwed = mappedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
 
   // Calculations for current payoff schedule
   const schedule = useMemo(() => {
-    return calculatePayoffSchedule(debts, extraBudget, strategy)
-  }, [debts, extraBudget, strategy])
+    return calculatePayoffSchedule(mappedDebts, extraBudget, strategy)
+  }, [mappedDebts, extraBudget, strategy])
 
   // Comparison logic (Avalanche vs Snowball)
   const avalancheComparison = useMemo(() => {
-    return calculatePayoffSchedule(debts, extraBudget, 'avalanche')
-  }, [debts, extraBudget])
+    return calculatePayoffSchedule(mappedDebts, extraBudget, 'avalanche')
+  }, [mappedDebts, extraBudget])
 
   const snowballComparison = useMemo(() => {
-    return calculatePayoffSchedule(debts, extraBudget, 'snowball')
-  }, [debts, extraBudget])
+    return calculatePayoffSchedule(mappedDebts, extraBudget, 'snowball')
+  }, [mappedDebts, extraBudget])
 
   // Calculations for baseline (no extra budget payoff)
   const baselineSchedule = useMemo(() => {
-    return calculatePayoffSchedule(debts, 0, strategy)
-  }, [debts, strategy])
+    return calculatePayoffSchedule(mappedDebts, 0, strategy)
+  }, [mappedDebts, strategy])
 
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
 
   // Weighted average interest rate calculations
   const weightedAvgRate = useMemo(() => {
     if (totalDebtOwed === 0) return 0
-    const weightedSum = debts.reduce((sum, d) => sum + (Number(d.balance) || 0) * (Number(d.interestRate) || 0), 0)
+    const weightedSum = mappedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0) * (Number(d.interestRate) || 0), 0)
     return Math.round((weightedSum / totalDebtOwed) * 10) / 10
-  }, [debts, totalDebtOwed])
+  }, [mappedDebts, totalDebtOwed])
 
   // Dynamic SVG line/area calculations for the timeline graph
   const { chartPoints, areaPoints } = useMemo(() => {
@@ -416,11 +455,42 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                 id="debt-type"
                 className={dStyles.fieldInput}
                 value={form.type}
-                onChange={event => set('type', event.target.value)}
+                onChange={event => {
+                  set('type', event.target.value)
+                  if (event.target.value !== 'Credit Card') {
+                    set('accountId', '')
+                  }
+                }}
               >
                 {DEBT_TYPES.map(type => <option key={type}>{type}</option>)}
               </select>
             </div>
+
+            {form.type === 'Credit Card' && (
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-account">Link to Credit Card Account</label>
+                <select
+                  id="debt-account"
+                  className={dStyles.fieldInput}
+                  value={form.accountId}
+                  onChange={event => {
+                    const linkedId = event.target.value
+                    const linkedAcc = creditCardAccounts.find(a => a._id === linkedId)
+                    set('accountId', linkedId)
+                    if (linkedAcc) {
+                      set('balance', Math.abs(Number(linkedAcc.balance) || 0))
+                    }
+                  }}
+                >
+                  <option value="">None (manual entry)</option>
+                  {creditCardAccounts.map(acc => (
+                    <option key={acc._id} value={acc._id}>
+                      {acc.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className={dStyles.field}>
               <label className={dStyles.fieldLabel} htmlFor="debt-balance">Current Balance ({s})</label>
@@ -431,9 +501,15 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                 min="0"
                 inputMode="decimal"
                 placeholder="0.00"
-                value={form.balance}
+                value={form.accountId && form.type === 'Credit Card' ? (creditCardAccounts.find(a => a._id === form.accountId)?.balance || '') : form.balance}
+                disabled={Boolean(form.type === 'Credit Card' && form.accountId)}
                 onChange={event => set('balance', event.target.value)}
               />
+              {form.type === 'Credit Card' && form.accountId && (
+                <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 4 }}>
+                  Balance is automatically synced from your linked credit card account.
+                </div>
+              )}
             </div>
 
             <div className={dStyles.field}>
@@ -562,23 +638,30 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
         </div>
       ) : (
         <div className={dStyles.debtsGrid}>
-          {debts.map(debt => {
+          {mappedDebts.map(debt => {
             const balance = Number(debt.balance) || 0
             const original = Number(debt.originalAmount) || balance
             const pctPaid = original > 0 ? Math.min(100, Math.round(((original - balance) / original) * 100)) : 0
             const isCleared = balance === 0
 
             return (
-              <div
-                key={debt._id}
-                className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
-                style={{ '--debt-tone': debt.color || '#ff5370' }}
-              >
-                <div className={dStyles.debtTop}>
-                  <div className={dStyles.debtLeading}>
-                    <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
-                    <div className={dStyles.debtInfo}>
-                      <div className={dStyles.debtName}>{debt.name}</div>
+               <div
+                 key={debt._id}
+                 className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
+                 style={{ '--debt-tone': debt.color || 'var(--red)' }}
+               >
+                 <div className={dStyles.debtTop}>
+                   <div className={dStyles.debtLeading}>
+                     <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
+                     <div className={dStyles.debtInfo}>
+                       <div className={dStyles.debtName}>
+                         {debt.name}
+                         {debt.accountId && (
+                           <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--accent) 30%, var(--border2))', background: 'color-mix(in srgb, var(--accent) 8%, var(--surface2))' }}>
+                             🔗 Linked
+                           </span>
+                         )}
+                       </div>
                       <div className={dStyles.debtMeta}>
                         {debt.type} · {debt.interestRate}% APR
                         {debt.contactName && ` · Contact: ${debt.contactName}`}

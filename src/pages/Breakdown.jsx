@@ -11,25 +11,25 @@ import bStyles from './Breakdown.module.css'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const CAT_COLORS = {
-  'Food & Dining': '#ff7043',
-  'Transport': '#42a5f5',
-  'Shopping': '#ab47bc',
-  'Health': '#ef5350',
-  'Entertainment': '#ff7043',
-  'Personal Care': '#ec407a',
-  'Education': '#26c6da',
-  Bills: '#ffb347',
-  Other: '#9090b0',
-  Salary: '#22d87a',
-  Freelance: '#6eb5ff',
-  Business: '#b48eff',
-  Investment: '#2dd4bf',
-  '13th Month': '#22d87a',
-  Bonus: '#22d87a',
+  'Food & Dining': 'var(--peach)',
+  'Transport': 'var(--blue)',
+  'Shopping': 'var(--purple)',
+  'Health': 'var(--red)',
+  'Entertainment': 'var(--peach)',
+  'Personal Care': 'var(--rose)',
+  'Education': 'var(--blue)',
+  Bills: 'var(--amber)',
+  Other: 'var(--text3)',
+  Salary: 'var(--accent)',
+  Freelance: 'var(--blue)',
+  Business: 'var(--purple)',
+  Investment: 'var(--teal)',
+  '13th Month': 'var(--accent)',
+  Bonus: 'var(--accent)',
 }
 
 function getCatColor(cat) {
-  return CAT_COLORS[cat] || '#9090b0'
+  return CAT_COLORS[cat] || 'var(--text3)'
 }
 
 function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {

@@ -14,6 +14,7 @@
     linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, var(--nb-surface-card-strong) 5%), var(--bg));
   background-size: 92px 92px, 92px 92px, auto, auto, auto;
   isolation: isolate;
+  transition: background var(--motion-duration-slow) var(--motion-ease-in-out);
 }
 
 :global(.neo).shell {
@@ -470,9 +471,13 @@
 }
 
 .spaceButton:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
   color: var(--text);
   border-color: color-mix(in srgb, var(--glass-highlight) 32%, var(--glass-border));
+}
+
+.spaceButton:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .spaceButtonActive {
@@ -493,6 +498,8 @@
   justify-content: center;
   background: color-mix(in srgb, var(--glass-1) 84%, var(--surface3) 16%);
   color: var(--text2);
+  transition: background var(--motion-duration) var(--ease-fluid),
+              color var(--motion-duration) var(--ease-fluid);
 }
 
 .spaceButtonActive .spaceIcon {
@@ -566,14 +573,14 @@
 }
 
 .navItem:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
   color: var(--text);
   background: color-mix(in srgb, var(--glass-1) 94%, transparent);
   border-color: color-mix(in srgb, var(--glass-border) 50%, transparent);
 }
 
 .navItem:active {
-  transform: translateY(0) scale(0.99);
+  transform: translateY(0) scale(0.97);
 }
 
 .navItem.active {
@@ -667,10 +674,13 @@
   transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 }
 .btnLogout:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
   color: var(--red);
   border-color: color-mix(in srgb, var(--red) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--red-dim) 72%, var(--surface2) 28%);
+}
+.btnLogout:active {
+  transform: translateY(0) scale(0.97);
 }
 .btnLogout:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--red) 48%, white 52%);

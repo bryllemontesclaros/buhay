@@ -637,14 +637,34 @@ export default function AppShell({ user }) {
     if (!profile?.currency) return
     const base = String(profile.currency).toUpperCase()
     let active = true
+
+    try {
+      const cached = localStorage.getItem(`buhay_exchange_rates_${base}`)
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (active && parsed?.rates) {
+          setExchangeRates(parsed.rates)
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load cached exchange rates', e)
+    }
+
     fetch(`https://api.exchangerate-api.com/v4/latest/${base}`)
       .then(res => res.json())
       .then(json => {
         if (active && json?.rates) {
           setExchangeRates(json.rates)
+          try {
+            localStorage.setItem(`buhay_exchange_rates_${base}`, JSON.stringify({
+              rates: json.rates,
+              timestamp: Date.now(),
+            }))
+          } catch (e) {}
         }
       })
       .catch(() => {})
+
     return () => {
       active = false
     }
@@ -738,7 +758,13 @@ export default function AppShell({ user }) {
       document.addEventListener('visibilitychange', handleVisibility)
     }
 
+    // Periodic check running every 60 seconds to auto-apply transactions on date boundary rollover
+    const interval = setInterval(() => {
+      attemptSync('timer')
+    }, 60000)
+
     return () => {
+      clearInterval(interval)
       if (typeof window === 'undefined') return
       window.removeEventListener('focus', handleFocus)
       window.removeEventListener('online', handleOnline)

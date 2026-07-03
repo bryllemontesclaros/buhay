@@ -150,7 +150,7 @@ function TakdaMockup() {
         <div className={styles.mockupUrl}>buhay.app/takda</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard} style={{ borderLeft: '3px solid #00f6ff' }}>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--blue)' }}>
           <div className={styles.mockCardLabel}>Financial Pulse · Healthy</div>
           <div className={styles.mockBalance}>₱45,210.50</div>
         </div>
@@ -214,7 +214,7 @@ function LakasMockup() {
         <div className={styles.mockupUrl}>buhay.app/lakas</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard} style={{ borderLeft: '3px solid #69d4b2' }}>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--accent)' }}>
           <div className={styles.mockCardLabel}>Ghost Racer Leaderboard</div>
           <div className={styles.mockWorkoutTitle}>🏆 1st: You (154 pts)</div>
         </div>
@@ -257,7 +257,7 @@ function TalaMockup() {
         <div className={styles.mockupUrl}>buhay.app/tala</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard} style={{ borderLeft: '3px solid #a855f7' }}>
+        <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--purple)' }}>
           <div className={styles.mockPanicBar}>
             <span className={styles.mockCardLabel}>Grounded Reflection Prompt</span>
             <span className={styles.mockPanicBtn}>🔒 Private default</span>

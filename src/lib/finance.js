@@ -305,8 +305,26 @@ export function getBalanceAtDate(accounts = [], income = [], expenses = [], targ
 export function getBalanceAtDateWithOverrides(accounts = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
   const target = normalizeDate(targetDate)
   if (!target) return getCurrentBalance(accounts)
-  
-  // Ignore overrides to ensure the Calendar is strictly linked to live Accounts.
+
+  const sortedOverrideDates = Object.keys(balanceOverrides)
+    .filter(d => d <= target)
+    .sort((a, b) => b.localeCompare(a))
+
+  const closestOverrideDate = sortedOverrideDates[0]
+  if (closestOverrideDate) {
+    const overrideVal = Number(balanceOverrides[closestOverrideDate])
+    if (Number.isFinite(overrideVal)) {
+      const actualLedger = getActualLedger(income, expenses)
+      const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, closestOverrideDate, target)
+      
+      const deltaUntilTarget = [...actualLedger, ...projectedLedger]
+        .filter(entry => entry.date > closestOverrideDate && entry.date <= target)
+        .reduce((sum, entry) => sum + entry.signedAmount, 0)
+      
+      return overrideVal + deltaUntilTarget
+    }
+  }
+
   return getBalanceAtDate(accounts, income, expenses, target)
 }
 
@@ -325,8 +343,7 @@ export function getMonthForecast(
   month,
   balanceOverrides = {},
 ) {
-  // Ignore overrides
-  const startingBalance = getMonthStartBalance(accounts, income, expenses, year, month, {})
+  const startingBalance = getMonthStartBalance(accounts, income, expenses, year, month, balanceOverrides)
   const allIncome = [
     ...getPaidTransactions(getMonthTransactions(income, year, month)),
     ...getMonthTransactions(projectedIncome, year, month),
@@ -336,7 +353,7 @@ export function getMonthForecast(
     ...getMonthTransactions(projectedExpenses, year, month),
   ]
   const baseForecast = buildForecast(allIncome, allExpenses, year, month, startingBalance)
-  return baseForecast
+  return applyBalanceOverridesToForecast(baseForecast, year, month, balanceOverrides, startingBalance)
 }
 
 export function getMonthEndBalanceForView(

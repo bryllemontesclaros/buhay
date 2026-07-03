@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsAddTransaction } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
-import { displayValue, fmt, formatDisplayDate, maskMoney, playTick } from '../lib/utils'
+import { displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import sStyles from './Savings.module.css'
 
 export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {} }) {
   const s = symbol || '₱'
-  const [form, setForm] = useState({ name: '', target: '', current: '', date: '' })
+  const accounts = data.accounts || []
+  const bankAccounts = accounts.filter(acc => acc.type !== 'Credit Card')
+  const [form, setForm] = useState({ name: '', target: '', current: '', date: '', accountId: '' })
   const [contribs, setContribs] = useState({})
   const handledActionTokenRef = useRef(null)
   const contributionInputRefs = useRef({})
@@ -36,13 +38,36 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
       notifyApp({ title: 'Check current saved', message: 'Current saved cannot be higher than the target amount.', tone: 'warning' })
       return
     }
-    await fsAdd(user.uid, 'goals', {
+
+    const goalData = {
       name: form.name,
       target,
       current,
       date: form.date,
-    })
-    setForm({ name: '', target: '', current: '', date: '' })
+    }
+
+    if (form.accountId) {
+      goalData.accountId = form.accountId
+      goalData.accountBalanceLinked = true
+    }
+
+    const goalRef = await fsAdd(user.uid, 'goals', goalData)
+
+    if (form.accountId && current > 0) {
+      await fsAddTransaction(user.uid, 'expenses', {
+        desc: `Savings: ${form.name}`,
+        amount: current,
+        date: today(),
+        cat: 'Savings',
+        subcat: 'Goal contribution',
+        accountId: form.accountId,
+        accountBalanceLinked: true,
+        accountBalanceApplied: true,
+        type: 'expense'
+      }, data.accounts || [])
+    }
+
+    setForm({ name: '', target: '', current: '', date: '', accountId: '' })
   }
 
   async function handleContrib(goal) {
@@ -52,6 +77,21 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
       return
     }
     const newValue = Math.min(goal.target, (goal.current || 0) + value)
+
+    if (goal.accountId) {
+      await fsAddTransaction(user.uid, 'expenses', {
+        desc: `Savings: ${goal.name}`,
+        amount: value,
+        date: today(),
+        cat: 'Savings',
+        subcat: 'Goal contribution',
+        accountId: goal.accountId,
+        accountBalanceLinked: true,
+        accountBalanceApplied: true,
+        type: 'expense'
+      }, data.accounts || [])
+    }
+
     await fsUpdate(user.uid, 'goals', goal._id, { current: newValue })
     setContribs(current => ({ ...current, [goal._id]: '' }))
   }
@@ -225,7 +265,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
         <details className={sStyles.advancedBox}>
           <summary className={sStyles.advancedSummary} onClick={() => playTick()}>
             <span>More options</span>
-            <small>Target date, starting amount</small>
+            <small>Target date, starting amount, linked account</small>
           </summary>
           <div className={sStyles.advancedGrid}>
             <div className={sStyles.field}>
@@ -261,6 +301,26 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                 onChange={event => set('current', event.target.value)}
               />
             </div>
+
+            <div className={sStyles.field}>
+              <div className={sStyles.fieldLabelRow}>
+                <label className={sStyles.fieldLabel} htmlFor="savings-goal-account">Link to account</label>
+                <span className={sStyles.fieldNote}>Optional</span>
+              </div>
+              <select
+                id="savings-goal-account"
+                className={sStyles.fieldInput}
+                value={form.accountId}
+                onChange={event => set('accountId', event.target.value)}
+              >
+                <option value="">None (virtual tracking only)</option>
+                {bankAccounts.map(acc => (
+                  <option key={acc._id} value={acc._id}>
+                    {acc.name} ({acc.type})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </details>
 
@@ -288,6 +348,11 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                   <div className={sStyles.goalNameRow}>
                     <div className={sStyles.goalName}>{goal.name}</div>
                     {goal.date && <span className={sStyles.goalDateChip}>Target {formatDisplayDate(goal.date)}</span>}
+                    {goal.accountId && (
+                      <span className={sStyles.goalLinkChip}>
+                        🔗 {accounts.find(a => a._id === goal.accountId)?.name || 'Linked Account'}
+                      </span>
+                    )}
                   </div>
                   <div className={sStyles.goalValueRow}>
                     <span className={sStyles.goalSaved}>{displayValue(privacyMode, `${fmt(goal.current, s)} saved`, `${maskMoney(s)} saved`)}</span>
@@ -302,7 +367,22 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                     className={sStyles.goalDelete}
                     onClick={async () => {
                       playTick()
-                      if (await confirmDeleteApp(goal.name)) await fsDel(user.uid, 'goals', goal._id)
+                      if (await confirmDeleteApp(goal.name)) {
+                        if (goal.accountId && goal.current > 0) {
+                          await fsAddTransaction(user.uid, 'income', {
+                            desc: `Savings Refund: ${goal.name}`,
+                            amount: goal.current,
+                            date: today(),
+                            cat: 'Savings',
+                            subcat: 'Goal contribution',
+                            accountId: goal.accountId,
+                            accountBalanceLinked: true,
+                            accountBalanceApplied: true,
+                            type: 'income'
+                          }, data.accounts || [])
+                        }
+                        await fsDel(user.uid, 'goals', goal._id)
+                      }
                     }}
                   >
                     Delete

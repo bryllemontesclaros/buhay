@@ -276,14 +276,14 @@
 .btnPrimary:hover,
 .btnGhost:hover {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 8px 0 rgba(16, 16, 16, 0.13);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
 .btn:active,
 .btnPrimary:active,
 .btnGhost:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 0 rgba(16, 16, 16, 0.14);
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .pillRow {
@@ -352,7 +352,7 @@
 
 .heroTitle {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: clamp(44px, 5.5vw, 84px);
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -371,6 +371,10 @@
   max-width: 100%;
   width: fit-content;
   box-sizing: border-box;
+  background: linear-gradient(135deg, var(--accent) 15%, var(--blue) 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .heroSub {
@@ -721,6 +725,15 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  transition: transform var(--motion-duration) var(--ease-fluid),
+              box-shadow var(--motion-duration) var(--ease-fluid),
+              border-color var(--motion-duration) var(--ease-fluid);
+}
+
+.heroRailCard:hover {
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: var(--glass-shadow-strong);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
 }
 
 .heroRailCard:nth-child(2) {
