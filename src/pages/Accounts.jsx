@@ -22,7 +22,7 @@ const COLORS = [
   { name: 'Gray', value: '#9090b0' },
 ]
 
-const EMPTY_FORM = { name: '', type: 'Cash', balance: '', color: '#22d87a', notes: '' }
+const EMPTY_FORM = { name: '', type: 'Cash', balance: '', creditLimit: '', color: '#22d87a', notes: '' }
 
 export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, exchangeRates = null }) {
   const s = symbol || '₱'
@@ -45,7 +45,14 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
 
   function openEdit(account) {
     setEditAccount(account)
-    setForm({ name: account.name, type: account.type, balance: account.balance, color: account.color || '#22d87a', notes: account.notes || '' })
+    setForm({
+      name: account.name,
+      type: account.type,
+      balance: account.balance,
+      creditLimit: account.creditLimit || '',
+      color: account.color || '#22d87a',
+      notes: account.notes || ''
+    })
     setShowModal(true)
   }
 
@@ -65,7 +72,21 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       notifyApp({ title: 'Check balance', message: amountError, tone: 'warning' })
       return
     }
-    const payload = { name: form.name, type: form.type, balance: parseFloat(form.balance) || 0, color: form.color, notes: form.notes }
+    if (form.type === 'Credit Card' && form.creditLimit !== '') {
+      const limitError = validateAmount(Number(form.creditLimit) || 0, 'Credit Limit')
+      if (limitError && Number(form.creditLimit) !== 0) {
+        notifyApp({ title: 'Check credit limit', message: limitError, tone: 'warning' })
+        return
+      }
+    }
+    const payload = {
+      name: form.name,
+      type: form.type,
+      balance: parseFloat(form.balance) || 0,
+      creditLimit: form.type === 'Credit Card' ? (parseFloat(form.creditLimit) || 0) : 0,
+      color: form.color,
+      notes: form.notes
+    }
     if (editAccount) {
       await fsUpdate(user.uid, 'accounts', editAccount._id, payload)
     } else {
@@ -104,11 +125,18 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   const accountsWithMeta = accounts.map(account => {
     const signedBalance = getAccountSignedBalance(account)
     const tone = account.color || '#22d87a'
+    const limitVal = Number(account.creditLimit) || 0
+    const available = account.type === 'Credit Card' ? Math.max(0, limitVal - Math.abs(signedBalance)) : 0
+    const utilizationRate = account.type === 'Credit Card' && limitVal > 0
+      ? Math.min(100, Math.round((Math.abs(signedBalance) / limitVal) * 100))
+      : 0
     return {
       ...account,
       signedBalance,
       tone,
       isDebt: signedBalance < 0,
+      availableCredit: available,
+      utilization: utilizationRate,
     }
   })
   const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [], exchangeRates)
@@ -313,6 +341,22 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 onChange={event => set('balance', event.target.value)}
               />
             </div>
+
+            {form.type === 'Credit Card' && (
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="account-limit">Credit Limit ({s})</label>
+                <input
+                  id="account-limit"
+                  className={accStyles.fieldInput}
+                  type="number"
+                  min="0"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={form.creditLimit}
+                  onChange={event => set('creditLimit', event.target.value)}
+                />
+              </div>
+            )}
           </div>
 
           <details className={accStyles.advancedBox}>
@@ -396,6 +440,24 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
               <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
                 {money(account.signedBalance)}
               </div>
+
+              {account.type === 'Credit Card' && (Number(account.creditLimit) || 0) > 0 && (
+                <div className={accStyles.creditCardMeta}>
+                  <div className={accStyles.creditLimitRow}>
+                    <span>Limit: {money(account.creditLimit)}</span>
+                    <span>Available: {money(account.availableCredit)}</span>
+                  </div>
+                  <div className={accStyles.creditGaugeTrack}>
+                    <div
+                      className={`${accStyles.creditGaugeFill} ${account.utilization > 80 ? accStyles.gaugeCritical : account.utilization > 40 ? accStyles.gaugeWarning : ''}`}
+                      style={{ width: `${account.utilization}%` }}
+                    />
+                  </div>
+                  <div className={accStyles.creditUtilizationRow}>
+                    <span>Utilization: {account.utilization}%</span>
+                  </div>
+                </div>
+              )}
 
               <div className={accStyles.accountFooter}>
                 <div className={accStyles.accountState}>
