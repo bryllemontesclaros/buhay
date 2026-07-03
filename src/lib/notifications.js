@@ -1,5 +1,6 @@
 import { getCurrencySymbol, getMonthKey, maskMoney, today as todayKey, toMonthKey } from './utils'
 import { getBillPeriodInfo } from './bills'
+import { getAccountSignedBalance } from './finance'
 
 // Notification engine — generates in-app alerts based on user data
 
@@ -125,6 +126,24 @@ export function getAlerts(data, profile, privacyMode = false) {
       priority: 2,
     })
   }
+
+  // 5. Credit card utilization alerts
+  const accountsList = data.accounts || []
+  accountsList.filter(a => a.type === 'Credit Card' && (Number(a.creditLimit) || 0) > 0).forEach(a => {
+    const signedBalance = Math.abs(getAccountSignedBalance(a))
+    const limit = Number(a.creditLimit) || 0
+    const pct = signedBalance / limit
+    if (pct >= 0.9) {
+      alerts.push({
+        id: `credit-utilization-critical-${a._id}`,
+        type: 'danger',
+        icon: '💳',
+        title: `Max utilization warning — ${a.name}`,
+        body: `${a.name} is at ${Math.round(pct * 100)}% utilization. Only ${formatOver(limit - signedBalance, privacyMode, symbol)} available credit remains.`,
+        priority: 1,
+      })
+    }
+  })
 
   return alerts.sort((a, b) => a.priority - b.priority)
 }

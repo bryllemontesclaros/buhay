@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { getBillPeriodInfo } from '../lib/bills'
-import { getBalanceOverrides, getMonthEndBalanceForView, getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
+import { getAccountSignedBalance, getBalanceOverrides, getMonthEndBalanceForView, getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
 import { getIncludedPortfolioValue } from '../lib/portfolio'
 import { getProjectedTransactions } from '../lib/recurrence'
@@ -216,6 +216,21 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
         return a.remaining - b.remaining
       })[0] || null
   }, [data.goals])
+
+  const creditCardAccounts = useMemo(() => {
+    return (data.accounts || []).filter(acc => acc.type === 'Credit Card')
+  }, [data.accounts])
+
+  const creditCardStats = useMemo(() => {
+    if (!creditCardAccounts.length) return null
+    const totalCreditLimit = creditCardAccounts.reduce((sum, acc) => sum + (Number(acc.creditLimit) || 0), 0)
+    const totalCreditOwed = Math.abs(creditCardAccounts.reduce((sum, acc) => sum + (getAccountSignedBalance(acc)), 0))
+    const totalAvailableCredit = Math.max(0, totalCreditLimit - totalCreditOwed)
+    const aggregateUtilization = totalCreditLimit > 0
+      ? Math.min(100, Math.round((totalCreditOwed / totalCreditLimit) * 100))
+      : 0
+    return { totalCreditLimit, totalCreditOwed, totalAvailableCredit, aggregateUtilization }
+  }, [creditCardAccounts])
 
   const projected = useMemo(() => getProjectedTransactions(data.income, data.expenses, year, month), [data.income, data.expenses, year, month])
   const projectedIncome = useMemo(() => projected.filter(t => t.type === 'income'), [projected])
@@ -573,6 +588,38 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
               </>
             )}
           </div>
+
+          {creditCardStats && (
+            <div className={dStyles.missionCard} style={{ '--mission-tone': creditCardStats.aggregateUtilization > 80 ? 'var(--red)' : creditCardStats.aggregateUtilization > 30 ? 'var(--amber)' : 'var(--accent)' }}>
+              <div className={dStyles.missionTop}>
+                <div className={dStyles.missionTitle}>Credit utilization</div>
+                <div className={dStyles.missionStat}>{creditCardAccounts.length} card{creditCardAccounts.length === 1 ? '' : 's'}</div>
+              </div>
+              {creditCardStats.totalCreditLimit > 0 ? (
+                <>
+                  <div className={dStyles.miniVal} style={{ color: creditCardStats.aggregateUtilization > 80 ? 'var(--red)' : creditCardStats.aggregateUtilization > 30 ? 'var(--amber)' : 'var(--accent)' }}>
+                    {creditCardStats.aggregateUtilization}%
+                  </div>
+                  <div className={dStyles.goalSummaryTrack} style={{ marginBlock: '8px', height: '4px' }}>
+                    <div
+                      className={dStyles.goalSummaryFill}
+                      style={{
+                        width: `${creditCardStats.aggregateUtilization}%`,
+                        background: creditCardStats.aggregateUtilization > 80 ? 'var(--red)' : creditCardStats.aggregateUtilization > 30 ? 'var(--amber)' : 'var(--accent)'
+                      }}
+                    />
+                  </div>
+                  <div className={dStyles.missionBody}>
+                    {money(creditCardStats.totalAvailableCredit)} available credit remaining.
+                  </div>
+                </>
+              ) : (
+                <div className={dStyles.missionBody}>
+                  Add credit limits in Accounts to track aggregate available credit and utilization gauges.
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
