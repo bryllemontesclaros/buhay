@@ -9,8 +9,8 @@ import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import accStyles from './Accounts.module.css'
 
-const ACCOUNT_TYPES = ['Cash', 'Bank', 'E-wallet', 'Credit Card', 'Investment', 'Other']
-const ACCOUNT_ICONS = { Cash: '💵', Bank: '🏦', 'E-wallet': '📱', 'Credit Card': '💳', Investment: '📈', Other: '🏷' }
+const ACCOUNT_TYPES = ['Cash', 'Bank', 'E-wallet', 'Investment', 'Other']
+const ACCOUNT_ICONS = { Cash: '💵', Bank: '🏦', 'E-wallet': '📱', Investment: '📈', Other: '🏷' }
 const COLORS = [
   { name: 'Green', value: '#22d87a' },
   { name: 'Blue', value: '#6eb5ff' },
@@ -26,7 +26,7 @@ const EMPTY_FORM = { name: '', type: 'Cash', balance: '', creditLimit: '', color
 
 export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, exchangeRates = null }) {
   const s = symbol || '₱'
-  const accounts = data.accounts || []
+  const accounts = (data.accounts || []).filter(a => a.type !== 'Credit Card')
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [editAccount, setEditAccount] = useState(null)

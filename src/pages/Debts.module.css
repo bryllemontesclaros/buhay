@@ -457,10 +457,32 @@
 }
 
 .editorGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 20px;
   margin-bottom: 24px;
+}
+
+.formRowFull {
+  width: 100%;
+}
+
+.formRowTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .formRowTwoCol {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.fieldEmptyPlaceholder {
+  display: block;
 }
 
 .field {

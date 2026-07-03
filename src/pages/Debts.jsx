@@ -32,6 +32,7 @@ const EMPTY_FORM = {
   contactName: '',
   notes: '',
   accountId: '',
+  creditLimit: '',
 }
 
 export default function Debts({ user, data, symbol, privacyMode = false }) {
@@ -58,11 +59,14 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   }
 
   function openEdit(debt) {
+    const linkedAcc = debt.accountId ? (data.accounts || []).find(a => a._id === debt.accountId) : null
     setEditDebt(debt)
     setForm({
       name: debt.name || '',
       type: debt.type || 'Credit Card',
-      balance: debt.balance || '',
+      balance: debt.accountId
+        ? Math.abs(Number(linkedAcc?.balance) || 0)
+        : (debt.balance || ''),
       originalAmount: debt.originalAmount || '',
       interestRate: debt.interestRate || '',
       minPayment: debt.minPayment || '',
@@ -71,6 +75,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       contactName: debt.contactName || '',
       notes: debt.notes || '',
       accountId: debt.accountId || '',
+      creditLimit: linkedAcc ? (linkedAcc.creditLimit || '') : '',
     })
     setShowModal(true)
   }
@@ -82,8 +87,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   }
 
   async function handleSave() {
-    const isCreditCardLinked = form.type === 'Credit Card' && form.accountId
-    if (!form.name || (!isCreditCardLinked && form.balance === '') || form.minPayment === '') {
+    if (!form.name || form.balance === '' || form.minPayment === '') {
       notifyApp({
         title: 'Debt needs details',
         message: 'Add a name, balance, and minimum monthly payment before saving.',
@@ -92,13 +96,11 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       return
     }
 
-    const linkedAcc = isCreditCardLinked ? (data.accounts || []).find(a => a._id === form.accountId) : null
-    const balanceVal = isCreditCardLinked && linkedAcc
-      ? Math.abs(parseFloat(linkedAcc.balance) || 0)
-      : (parseFloat(form.balance) || 0)
+    const balanceVal = parseFloat(form.balance) || 0
     const originalVal = parseFloat(form.originalAmount) || balanceVal
     const rateVal = parseFloat(form.interestRate) || 0
     const minVal = parseFloat(form.minPayment) || 0
+    const limitVal = parseFloat(form.creditLimit) || 0
 
     if (balanceVal <= 0) {
       notifyApp({ title: 'Check balance', message: 'Current balance must be greater than zero.', tone: 'warning' })
@@ -109,31 +111,93 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       return
     }
 
-    const payload = {
-      name: form.name,
-      type: form.type,
-      balance: balanceVal,
-      originalAmount: originalVal,
-      interestRate: rateVal,
-      minPayment: minVal,
-      dueDate: form.dueDate,
-      color: form.color,
-      contactName: form.contactName || '',
-      notes: form.notes || '',
-      accountId: form.type === 'Credit Card' ? form.accountId : '',
-    }
-
     try {
-      if (editDebt) {
-        await fsUpdate(user.uid, 'debts', editDebt._id, payload)
-        notifyApp({ title: 'Debt updated', message: `${form.name} changes have been saved.`, tone: 'success' })
+      if (form.type === 'Credit Card') {
+        if (editDebt) {
+          let accId = editDebt.accountId
+          if (!accId) {
+            const accRef = await fsAdd(user.uid, 'accounts', {
+              name: form.name,
+              type: 'Credit Card',
+              balance: -Math.abs(balanceVal),
+              creditLimit: limitVal,
+              color: form.color,
+              notes: form.notes || '',
+            })
+            accId = accRef.id
+          } else {
+            await fsUpdate(user.uid, 'accounts', accId, {
+              name: form.name,
+              balance: -Math.abs(balanceVal),
+              creditLimit: limitVal,
+              color: form.color,
+              notes: form.notes || '',
+            })
+          }
+          await fsUpdate(user.uid, 'debts', editDebt._id, {
+            name: form.name,
+            type: 'Credit Card',
+            balance: balanceVal,
+            originalAmount: originalVal,
+            interestRate: rateVal,
+            minPayment: minVal,
+            dueDate: form.dueDate,
+            color: form.color,
+            notes: form.notes || '',
+            accountId: accId,
+          })
+          notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
+        } else {
+          const accRef = await fsAdd(user.uid, 'accounts', {
+            name: form.name,
+            type: 'Credit Card',
+            balance: -Math.abs(balanceVal),
+            creditLimit: limitVal,
+            color: form.color,
+            notes: form.notes || '',
+          })
+          await fsAdd(user.uid, 'debts', {
+            name: form.name,
+            type: 'Credit Card',
+            balance: balanceVal,
+            originalAmount: originalVal,
+            interestRate: rateVal,
+            minPayment: minVal,
+            dueDate: form.dueDate,
+            color: form.color,
+            notes: form.notes || '',
+            accountId: accRef.id,
+          })
+          notifyApp({ title: 'Credit Card added', message: `${form.name} has been added.`, tone: 'success' })
+        }
       } else {
-        await fsAdd(user.uid, 'debts', payload)
-        notifyApp({ title: 'Debt added', message: `${form.name} has been added to your payoff stack.`, tone: 'success' })
+        const payload = {
+          name: form.name,
+          type: form.type,
+          balance: balanceVal,
+          originalAmount: originalVal,
+          interestRate: rateVal,
+          minPayment: minVal,
+          dueDate: form.dueDate,
+          color: form.color,
+          contactName: form.contactName || '',
+          notes: form.notes || '',
+          accountId: '',
+        }
+        if (editDebt) {
+          if (editDebt.accountId) {
+            await fsDel(user.uid, 'accounts', editDebt.accountId)
+          }
+          await fsUpdate(user.uid, 'debts', editDebt._id, payload)
+          notifyApp({ title: 'Debt updated', message: `${form.name} changes have been saved.`, tone: 'success' })
+        } else {
+          await fsAdd(user.uid, 'debts', payload)
+          notifyApp({ title: 'Debt added', message: `${form.name} has been added.`, tone: 'success' })
+        }
       }
       closeEditor()
     } catch {
-      notifyApp({ title: 'Operation failed', message: 'Could not save debt details. Try again.', tone: 'error' })
+      notifyApp({ title: 'Operation failed', message: 'Could not save details. Try again.', tone: 'error' })
     }
   }
 
@@ -147,7 +211,11 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     })
     if (!confirmed) return
     try {
+      const debt = mappedDebts.find(d => d._id === id)
       await fsDel(user.uid, 'debts', id)
+      if (debt && debt.accountId) {
+        await fsDel(user.uid, 'accounts', debt.accountId)
+      }
       notifyApp({ title: 'Debt deleted', message: `${name} has been removed.`, tone: 'success' })
     } catch {
       notifyApp({ title: 'Delete failed', message: 'Could not remove this debt. Try again.', tone: 'error' })
@@ -446,149 +514,146 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           </div>
 
           <div className={dStyles.editorGrid}>
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-name">Debt Name</label>
-              <input
-                id="debt-name"
-                className={dStyles.fieldInput}
-                placeholder="e.g. UnionBank Credit Card"
-                value={form.name}
-                onChange={event => set('name', event.target.value)}
-              />
-            </div>
-
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-type">Debt Type</label>
-              <select
-                id="debt-type"
-                className={dStyles.fieldInput}
-                value={form.type}
-                onChange={event => {
-                  set('type', event.target.value)
-                  if (event.target.value !== 'Credit Card') {
-                    set('accountId', '')
-                  }
-                }}
-              >
-                {DEBT_TYPES.map(type => <option key={type}>{type}</option>)}
-              </select>
-            </div>
-
-            {form.type === 'Credit Card' && (
+            <div className={dStyles.formRowFull}>
               <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-account">Link to Credit Card Account</label>
-                <select
-                  id="debt-account"
+                <label className={dStyles.fieldLabel} htmlFor="debt-name">Debt Name</label>
+                <input
+                  id="debt-name"
                   className={dStyles.fieldInput}
-                  value={form.accountId}
+                  placeholder="e.g. UnionBank Credit Card"
+                  value={form.name}
+                  onChange={event => set('name', event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={dStyles.formRowTwoCol}>
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-type">Debt Type</label>
+                <select
+                  id="debt-type"
+                  className={dStyles.fieldInput}
+                  value={form.type}
                   onChange={event => {
-                    const linkedId = event.target.value
-                    const linkedAcc = creditCardAccounts.find(a => a._id === linkedId)
-                    set('accountId', linkedId)
-                    if (linkedAcc) {
-                      set('balance', Math.abs(Number(linkedAcc.balance) || 0))
+                    set('type', event.target.value)
+                    if (event.target.value !== 'Credit Card') {
+                      set('accountId', '')
                     }
                   }}
                 >
-                  <option value="">None (manual entry)</option>
-                  {creditCardAccounts.map(acc => (
-                    <option key={acc._id} value={acc._id}>
-                      {acc.name}
-                    </option>
-                  ))}
+                  {DEBT_TYPES.map(type => <option key={type}>{type}</option>)}
                 </select>
               </div>
-            )}
 
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-balance">Current Balance ({s})</label>
-              <input
-                id="debt-balance"
-                className={dStyles.fieldInput}
-                type="number"
-                min="0"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.accountId && form.type === 'Credit Card' ? (creditCardAccounts.find(a => a._id === form.accountId)?.balance || '') : form.balance}
-                disabled={Boolean(form.type === 'Credit Card' && form.accountId)}
-                onChange={event => set('balance', event.target.value)}
-              />
-              {form.type === 'Credit Card' && form.accountId && (
-                <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 4 }}>
-                  Balance is automatically synced from your linked credit card account.
+              {form.type === 'Credit Card' ? (
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-limit">Credit Limit ({s})</label>
+                  <input
+                    id="debt-limit"
+                    className={dStyles.fieldInput}
+                    type="number"
+                    min="0"
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    value={form.creditLimit}
+                    onChange={event => set('creditLimit', event.target.value)}
+                  />
                 </div>
+              ) : form.type === 'Informal' ? (
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-contact">Contact Name</label>
+                  <input
+                    id="debt-contact"
+                    className={dStyles.fieldInput}
+                    placeholder="e.g. John Doe"
+                    value={form.contactName}
+                    onChange={event => set('contactName', event.target.value)}
+                  />
+                </div>
+              ) : (
+                <div className={dStyles.fieldEmptyPlaceholder} />
               )}
             </div>
 
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-original">Original Loan Amount ({s})</label>
-              <input
-                id="debt-original"
-                className={dStyles.fieldInput}
-                type="number"
-                min="0"
-                inputMode="decimal"
-                placeholder="Defaults to current balance"
-                value={form.originalAmount}
-                onChange={event => set('originalAmount', event.target.value)}
-              />
-            </div>
-
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR)</label>
-              <input
-                id="debt-rate"
-                className={dStyles.fieldInput}
-                type="number"
-                min="0"
-                step="0.01"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.interestRate}
-                onChange={event => set('interestRate', event.target.value)}
-              />
-            </div>
-
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-min">Minimum Monthly Payment ({s})</label>
-              <input
-                id="debt-min"
-                className={dStyles.fieldInput}
-                type="number"
-                min="0"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.minPayment}
-                onChange={event => set('minPayment', event.target.value)}
-              />
-            </div>
-
-            <div className={dStyles.field}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-due">Due Day of Month</label>
-              <input
-                id="debt-due"
-                className={dStyles.fieldInput}
-                type="number"
-                min="1"
-                max="31"
-                placeholder="e.g. 15"
-                value={form.dueDate}
-                onChange={event => set('dueDate', event.target.value)}
-              />
-            </div>
-
-            {form.type === 'Informal' && (
+            <div className={dStyles.formRowTwoCol}>
               <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-contact">Contact Name</label>
+                <label className={dStyles.fieldLabel} htmlFor="debt-balance">
+                  {form.type === 'Credit Card' ? `Current Amount Owed (${s})` : `Current Balance (${s})`}
+                </label>
                 <input
-                  id="debt-contact"
+                  id="debt-balance"
                   className={dStyles.fieldInput}
-                  placeholder="e.g. John Doe"
-                  value={form.contactName}
-                  onChange={event => set('contactName', event.target.value)}
+                  type="number"
+                  min="0"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={form.balance}
+                  onChange={event => set('balance', event.target.value)}
                 />
               </div>
-            )}
+
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-original">Original Loan Amount ({s})</label>
+                <input
+                  id="debt-original"
+                  className={dStyles.fieldInput}
+                  type="number"
+                  min="0"
+                  inputMode="decimal"
+                  placeholder="Defaults to current balance"
+                  value={form.originalAmount}
+                  onChange={event => set('originalAmount', event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={dStyles.formRowTwoCol}>
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR)</label>
+                <input
+                  id="debt-rate"
+                  className={dStyles.fieldInput}
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={form.interestRate}
+                  onChange={event => set('interestRate', event.target.value)}
+                />
+              </div>
+
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-min">Minimum Monthly Payment ({s})</label>
+                <input
+                  id="debt-min"
+                  className={dStyles.fieldInput}
+                  type="number"
+                  min="0"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={form.minPayment}
+                  onChange={event => set('minPayment', event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={dStyles.formRowTwoCol}>
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-due">Due Day of Month</label>
+                <input
+                  id="debt-due"
+                  className={dStyles.fieldInput}
+                  type="number"
+                  min="1"
+                  max="31"
+                  placeholder="e.g. 15"
+                  value={form.dueDate}
+                  onChange={event => set('dueDate', event.target.value)}
+                />
+              </div>
+              <div className={dStyles.fieldEmptyPlaceholder} />
+            </div>
           </div>
 
           <details className={dStyles.advancedBox}>
@@ -695,19 +760,86 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                     <div className={dStyles.detailsLabel}>Due Day</div>
                     <div className={dStyles.detailsValue}>{debt.dueDate ? `Day ${debt.dueDate}` : '—'}</div>
                   </div>
+
+                  {debt.type === 'Credit Card' && (
+                    <>
+                      <div className={dStyles.debtCol}>
+                        <div className={dStyles.detailsLabel}>Limit</div>
+                        <div className={dStyles.detailsValue}>
+                          {(() => {
+                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                            return money(limit)
+                          })()}
+                        </div>
+                      </div>
+                      <div className={dStyles.debtCol}>
+                        <div className={dStyles.detailsLabel}>Available</div>
+                        <div className={dStyles.detailsValue}>
+                          {(() => {
+                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                            return money(Math.max(0, limit - balance))
+                          })()}
+                        </div>
+                      </div>
+                      <div className={dStyles.debtCol}>
+                        <div className={dStyles.detailsLabel}>Utilization</div>
+                        <div className={dStyles.detailsValue}>
+                          {(() => {
+                            const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                            const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                            const util = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
+                            return `${util}%`
+                          })()}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
-                {/* Progress bar */}
-                {!isCleared && original > 0 && (
-                  <div className={dStyles.progressBlock}>
-                    <div className={dStyles.progressMeta}>
-                      <span>{pctPaid}% paid off</span>
-                      <span>{money(original - balance)} paid</span>
-                    </div>
-                    <div className={dStyles.progressBar}>
-                      <div className={dStyles.progressFill} style={{ width: `${pctPaid}%` }} />
-                    </div>
-                  </div>
+                {/* Progress bar / Utilization Bar */}
+                {!isCleared && (
+                  debt.type === 'Credit Card' ? (
+                    (() => {
+                      const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+                      const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+                      const utilization = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
+                      
+                      const barColor = utilization < 30
+                        ? 'var(--accent)'
+                        : utilization <= 70
+                          ? 'var(--amber)'
+                          : 'var(--red)'
+                          
+                      return (
+                        <div className={dStyles.progressBlock}>
+                          <div className={dStyles.progressMeta}>
+                            <span>Credit Utilization</span>
+                            <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
+                          </div>
+                          <div className={dStyles.progressBar}>
+                            <div
+                              className={dStyles.progressFill}
+                              style={{ width: `${utilization}%`, background: barColor }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    })()
+                  ) : (
+                    original > 0 && (
+                      <div className={dStyles.progressBlock}>
+                        <div className={dStyles.progressMeta}>
+                          <span>{pctPaid}% paid off</span>
+                          <span>{money(original - balance)} paid</span>
+                        </div>
+                        <div className={dStyles.progressBar}>
+                          <div className={dStyles.progressFill} style={{ width: `${pctPaid}%` }} />
+                        </div>
+                      </div>
+                    )
+                  )
                 )}
 
                 {/* Payment actions */}
