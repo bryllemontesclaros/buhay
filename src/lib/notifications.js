@@ -1,4 +1,4 @@
-import { getMonthKey, maskMoney, today as todayKey, toMonthKey } from './utils'
+import { getCurrencySymbol, getMonthKey, maskMoney, today as todayKey, toMonthKey } from './utils'
 import { getBillPeriodInfo } from './bills'
 
 // Notification engine — generates in-app alerts based on user data
@@ -22,6 +22,7 @@ export function getAlerts(data, profile, privacyMode = false) {
   const now = new Date()
   const ym = toMonthKey(now.getFullYear(), now.getMonth())
   const prefs = getNotificationPrefs(profile)
+  const symbol = getCurrencySymbol(profile?.currency || 'PHP')
 
   // 1. Budget overspending alerts
   const spending = {}
@@ -39,7 +40,7 @@ export function getAlerts(data, profile, privacyMode = false) {
           type: 'danger',
           icon: '⚠',
           title: `Over budget — ${b.cat}`,
-          body: `You've exceeded your ${b.cat} budget by ${formatOver(spent - b.limit, privacyMode)}.`,
+          body: `You've exceeded your ${b.cat} budget by ${formatOver(spent - b.limit, privacyMode, symbol)}.`,
           priority: 1,
         })
       } else if (pct >= 0.8) {
@@ -48,7 +49,7 @@ export function getAlerts(data, profile, privacyMode = false) {
           type: 'warning',
           icon: '⚡',
           title: `Budget warning — ${b.cat}`,
-          body: `${Math.round(pct * 100)}% of your ${b.cat} budget used. ${formatOver(b.limit - spent, privacyMode)} remaining.`,
+          body: `${Math.round(pct * 100)}% of your ${b.cat} budget used. ${formatOver(b.limit - spent, privacyMode, symbol)} remaining.`,
           priority: 2,
         })
       }
@@ -76,7 +77,7 @@ export function getAlerts(data, profile, privacyMode = false) {
           type: 'warning',
           icon: '📄',
           title: `Bill due in ${period.daysUntil === 0 ? 'today' : period.daysUntil + ' day' + (period.daysUntil > 1 ? 's' : '')} — ${b.name}`,
-          body: `${b.name} payment of ${privacyMode ? maskMoney() : formatOver(b.amount || 0, false)} is due ${period.daysUntil === 0 ? 'today' : `in ${period.daysUntil} days`}.`,
+          body: `${b.name} payment of ${privacyMode ? maskMoney(symbol) : formatOver(b.amount || 0, false, symbol)} is due ${period.daysUntil === 0 ? 'today' : `in ${period.daysUntil} days`}.`,
           action: { type: 'payBill', label: 'Mark paid', page: 'bills', billId: b._id },
           priority: 2,
         })
@@ -120,7 +121,7 @@ export function getAlerts(data, profile, privacyMode = false) {
       type: 'warning',
       icon: '💸',
       title: 'High spending today',
-      body: `You've spent ${privacyMode ? maskMoney() : formatOver(todaySpend, false)} today — over 20% of your monthly budget in one day.`,
+      body: `You've spent ${privacyMode ? maskMoney(symbol) : formatOver(todaySpend, false, symbol)} today — over 20% of your monthly budget in one day.`,
       priority: 2,
     })
   }
@@ -128,9 +129,9 @@ export function getAlerts(data, profile, privacyMode = false) {
   return alerts.sort((a, b) => a.priority - b.priority)
 }
 
-function formatOver(n, hidden = false) {
-  if (hidden) return maskMoney()
-  return '₱' + Math.abs(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+function formatOver(n, hidden = false, symbol = '₱') {
+  if (hidden) return maskMoney(symbol)
+  return symbol + Math.abs(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 // Browser push notification request

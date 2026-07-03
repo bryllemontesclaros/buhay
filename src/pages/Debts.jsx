@@ -352,8 +352,8 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                 onChange={event => setExtraBudget(Number(event.target.value))}
               />
               <div className={dStyles.sliderMinMax}>
-                <span>₱0</span>
-                <span>₱50,000+</span>
+                <span>{s}0</span>
+                <span>{s}50,000+</span>
               </div>
             </div>
 
@@ -408,7 +408,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               </div>
               <div className={dStyles.chartFooter}>
                 <span>Now ({money(totalDebtOwed)})</span>
-                <span>{schedule.payoffDate?.toLocaleString('default', { month: 'short', year: 'numeric' })} (₱0)</span>
+                <span>{schedule.payoffDate?.toLocaleString('default', { month: 'short', year: 'numeric' })} ({s}0)</span>
               </div>
             </div>
           )}

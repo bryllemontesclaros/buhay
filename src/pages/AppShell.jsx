@@ -638,12 +638,23 @@ export default function AppShell({ user }) {
     const base = String(profile.currency).toUpperCase()
     let active = true
 
+    const DEFAULT_RATES = {
+      PHP: { PHP: 1, USD: 0.017, EUR: 0.016, SGD: 0.023, HKD: 0.13, GBP: 0.013, JPY: 2.7, AUD: 0.026, CAD: 0.023 },
+      USD: { USD: 1, PHP: 58.5, EUR: 0.92, SGD: 1.35, HKD: 7.8, GBP: 0.79, JPY: 158.2, AUD: 1.5, CAD: 1.37 },
+      EUR: { EUR: 1, USD: 1.09, PHP: 63.6, SGD: 1.47, HKD: 8.5, GBP: 0.86, JPY: 172.0, AUD: 1.63, CAD: 1.49 },
+    }
+
     try {
       const cached = localStorage.getItem(`buhay_exchange_rates_${base}`)
       if (cached) {
         const parsed = JSON.parse(cached)
         if (active && parsed?.rates) {
           setExchangeRates(parsed.rates)
+        }
+      } else {
+        const defaults = DEFAULT_RATES[base] || DEFAULT_RATES.PHP
+        if (active) {
+          setExchangeRates(defaults)
         }
       }
     } catch (e) {
