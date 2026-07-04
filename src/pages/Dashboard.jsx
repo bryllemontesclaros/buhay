@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { getBillPeriodInfo } from '../lib/bills'
 import { getAccountSignedBalance, getBalanceOverrides, getMonthEndBalanceForView, getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
-import { getIncludedPortfolioValue } from '../lib/portfolio'
 import { getProjectedTransactions } from '../lib/recurrence'
 import { displayValue, fmt, isSameMonth, maskMoney } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
@@ -126,7 +125,7 @@ function pluralize(count, singular, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`
 }
 
-export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy, exchangeRates = null }) {
+export default function Dashboard({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy }) {
   const s = symbol || '₱'
   const now = new Date()
   const year = now.getFullYear()
@@ -148,8 +147,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   const lmExpense = useMemo(() => getMonthTotal(data.expenses, ly, lm), [data.expenses, ly, lm])
   const expenseChange = lmExpense > 0 ? Math.round(((mExpense - lmExpense) / lmExpense) * 100) : null
 
-  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [], exchangeRates)
-  const netWorth = getTakdaTotalBalanceNow(data.accounts, data.portfolioHoldings || [], data.debts || [], exchangeRates)
+  const netWorth = getTakdaTotalBalanceNow(data.accounts, data.debts || [])
 
   const monthSpending = useMemo(() => {
     const spending = {}
@@ -314,9 +312,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   }, [detailsMode, monthExpensePaid, monthIncomePaid])
 
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
-  const accountCountLabel = portfolioIncludedValue
-    ? `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} + included portfolio`
-    : `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} right now`
+  const accountCountLabel = `${data.accounts.length} account${data.accounts.length !== 1 ? 's' : ''} right now`
   const activeGoalCount = data.goals.filter(goal => (Number(goal.target) || 0) > 0).length
 
   const actualIncome = useMemo(
@@ -329,7 +325,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
       label: 'Accounts',
       value: pluralize(data.accounts.length, 'account'),
       meta: data.accounts.length
-        ? `${money(netWorth)} across accounts${portfolioIncludedValue ? ' and included portfolio holdings' : ''}`
+        ? `${money(netWorth)} across accounts`
         : 'Add your first account to anchor the month',
       tone: 'var(--blue)',
     },

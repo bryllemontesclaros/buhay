@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
-import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
+import { fsAdd, fsDel } from '../lib/firestore'
+import { notifyApp } from '../lib/appFeedback'
 import { isTransactionPaid } from '../lib/finance'
 import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
@@ -64,11 +64,6 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
     await fsAdd(user.uid, 'budgets', { cat: 'global', limit })
     setForm({ limit: '' })
     notifyApp({ title: 'Budget set', message: 'Your monthly budget has been updated.', tone: 'success' })
-  }
-
-  async function handleDelBudget(id) {
-    if (!(await confirmDeleteApp('this budget'))) return
-    await fsDel(user.uid, 'budgets', id)
   }
 
 

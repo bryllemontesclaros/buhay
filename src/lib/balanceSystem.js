@@ -5,7 +5,7 @@ export function getTakdaBalanceOverrides(profile = {}) {
   return getBalanceOverrides(profile?.dailyBalanceOverrides || {}, profile?.monthStartBalances || {})
 }
 
-export function getTakdaTotalBalanceNow(accounts = [], portfolioHoldings = [], debts = [], exchangeRates = null) {
+export function getTakdaTotalBalanceNow(accounts = [], debts = []) {
   const accountIds = new Set(accounts.map(a => a._id))
   const unlinkedDebts = (debts || []).filter(d => !d.accountId || !accountIds.has(d.accountId))
   const totalDebt = unlinkedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)

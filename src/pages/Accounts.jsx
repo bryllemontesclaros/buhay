@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { fsAdd, fsDeleteAccountAndUnlinkTransactions, fsSyncDueLinkedTransactions, fsUpdate } from '../lib/firestore'
 import { getAccountSignedBalance, shouldAffectCurrentAccountBalance } from '../lib/finance'
 import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
-import { getIncludedPortfolioValue } from '../lib/portfolio'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, validateAmount } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
@@ -24,7 +23,7 @@ const COLORS = [
 
 const EMPTY_FORM = { name: '', type: 'Cash', balance: '', creditLimit: '', color: '#22d87a', notes: '' }
 
-export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, exchangeRates = null }) {
+export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {} }) {
   const s = symbol || '₱'
   const accounts = (data.accounts || []).filter(a => a.type !== 'Credit Card')
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
@@ -139,8 +138,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       utilization: utilizationRate,
     }
   })
-  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [], exchangeRates)
-  const totalBalance = getTakdaTotalBalanceNow(accounts, data.portfolioHoldings || [], data.debts || [], exchangeRates)
+  const totalBalance = getTakdaTotalBalanceNow(accounts, data.debts || [])
   const liquidTotal = accountsWithMeta
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
     .reduce((sum, account) => sum + account.signedBalance, 0)
@@ -159,9 +157,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   const balanceFieldLabel = form.type === 'Credit Card' ? `Current amount owed (${s})` : `Balance now (${s})`
   const privacyHint = privacyMode ? 'Privacy mode on. Tap to reveal values.' : 'Tap to hide values on this page.'
-  const accountCountLabel = portfolioIncludedValue
-    ? `${accounts.length} account${accounts.length !== 1 ? 's' : ''} + included portfolio`
-    : `${accounts.length} account${accounts.length !== 1 ? 's' : ''} right now`
+  const accountCountLabel = `${accounts.length} account${accounts.length !== 1 ? 's' : ''} right now`
 
   const dueLinkedEntries = useMemo(() => {
     if (!user?.uid || !accounts.length) return []
