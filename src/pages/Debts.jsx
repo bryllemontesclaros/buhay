@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fsAdd, fsDel, fsUpdate, fsAddTransaction } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, playTick, today } from '../lib/utils'
@@ -129,7 +129,28 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       if (form.type === 'Credit Card') {
         if (editDebt) {
           let accId = editDebt.accountId
-          if (!accId) {
+          if (editDebt.isSynthesized) {
+            await fsUpdate(user.uid, 'accounts', accId, {
+              name: form.name,
+              balance: -Math.abs(balanceVal),
+              creditLimit: limitVal,
+              color: form.color,
+              notes: form.notes || '',
+            })
+            await fsAdd(user.uid, 'debts', {
+              name: form.name,
+              type: 'Credit Card',
+              balance: balanceVal,
+              originalAmount: originalVal,
+              interestRate: rateVal,
+              minPayment: minVal,
+              dueDate: form.dueDate,
+              color: form.color,
+              notes: form.notes || '',
+              accountId: accId,
+            })
+            notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
+          } else if (!accId) {
             const accRef = await fsAdd(user.uid, 'accounts', {
               name: form.name,
               type: 'Credit Card',
@@ -139,6 +160,19 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               notes: form.notes || '',
             })
             accId = accRef.id
+            await fsUpdate(user.uid, 'debts', editDebt._id, {
+              name: form.name,
+              type: 'Credit Card',
+              balance: balanceVal,
+              originalAmount: originalVal,
+              interestRate: rateVal,
+              minPayment: minVal,
+              dueDate: form.dueDate,
+              color: form.color,
+              notes: form.notes || '',
+              accountId: accId,
+            })
+            notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
           } else {
             await fsUpdate(user.uid, 'accounts', accId, {
               name: form.name,
@@ -147,21 +181,20 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               color: form.color,
               notes: form.notes || '',
             })
+            await fsUpdate(user.uid, 'debts', editDebt._id, {
+              name: form.name,
+              type: 'Credit Card',
+              balance: balanceVal,
+              originalAmount: originalVal,
+              interestRate: rateVal,
+              minPayment: minVal,
+              dueDate: form.dueDate,
+              color: form.color,
+              notes: form.notes || '',
+              accountId: accId,
+            })
+            notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
           }
-          await fsUpdate(user.uid, 'debts', editDebt._id, {
-            name: form.name,
-            type: 'Credit Card',
-            balance: balanceVal,
-            originalAmount: originalVal,
-            interestRate: rateVal,
-            minPayment: minVal,
-            dueDate: form.dueDate,
-            color: form.color,
-            notes: form.notes || '',
-            accountId: accId,
-          })
-          notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
-        } else {
           const accRef = await fsAdd(user.uid, 'accounts', {
             name: form.name,
             type: 'Credit Card',
@@ -226,9 +259,13 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     if (!confirmed) return
     try {
       const debt = mappedDebts.find(d => d._id === id)
-      await fsDel(user.uid, 'debts', id)
-      if (debt && debt.accountId) {
-        await fsDel(user.uid, 'accounts', debt.accountId)
+      if (debt?.isSynthesized) {
+        await fsDeleteAccountAndUnlinkTransactions(user.uid, debt.accountId, data)
+      } else {
+        await fsDel(user.uid, 'debts', id)
+        if (debt && debt.accountId) {
+          await fsDeleteAccountAndUnlinkTransactions(user.uid, debt.accountId, data)
+        }
       }
       notifyApp({ title: 'Debt deleted', message: `${name} has been removed.`, tone: 'success' })
     } catch {
@@ -240,7 +277,9 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const creditCardAccounts = accounts.filter(a => a.type === 'Credit Card')
 
   const mappedDebts = useMemo(() => {
-    return debts.map(d => {
+    const existingDebtAccIds = new Set(debts.map(d => d.accountId).filter(Boolean))
+
+    const baseDebts = debts.map(d => {
       if (d.accountId) {
         const linkedAcc = accounts.find(a => a._id === d.accountId)
         if (linkedAcc) {
@@ -252,6 +291,25 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       }
       return d
     })
+
+    const synthesizedDebts = accounts
+      .filter(a => a.type === 'Credit Card' && !existingDebtAccIds.has(a._id))
+      .map(a => ({
+        _id: `synth_${a._id}`,
+        name: a.name,
+        type: 'Credit Card',
+        balance: Math.abs(Number(a.balance) || 0),
+        originalAmount: Math.abs(Number(a.balance) || 0),
+        interestRate: 0,
+        minPayment: 0,
+        dueDate: '',
+        color: a.color || 'var(--red)',
+        notes: a.notes || '',
+        accountId: a._id,
+        isSynthesized: true,
+      }))
+
+    return [...baseDebts, ...synthesizedDebts]
   }, [debts, accounts])
 
   const creditCards = useMemo(() => mappedDebts.filter(d => d.type === 'Credit Card'), [mappedDebts])
