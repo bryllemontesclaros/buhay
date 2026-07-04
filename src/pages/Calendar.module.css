@@ -956,12 +956,12 @@
 
 .debtRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
 .debtRow:last-child { border-bottom: none; }
-.debtRowMain { display: flex; flex-direction: column; gap: 2px; }
-.debtRowName { font-size: 13px; font-weight: 500; color: var(--text); }
-.debtRowMeta { font-size: 11px; color: var(--text3); }
-.debtRowAmounts { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-.debtRowBalance { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); }
-.debtRowMin { font-family: var(--font-mono); font-size: 11px; color: var(--amber); }
+.debtRowMain { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.debtRowName { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.debtRowMeta { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.debtRowAmounts { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; flex-shrink: 0; padding-left: 8px; }
+.debtRowBalance { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.debtRowMin { font-family: var(--font-mono); font-size: 11px; color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .projectedTxRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1645,6 +1645,17 @@
     align-items: flex-start;
     gap: 8px;
   }
+  .debtRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 10px 0;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .debtRowAmounts {
+    align-items: flex-start;
+    padding-left: 0;
+  }
   .txLeft {
     align-items: flex-start;
     gap: 8px;
@@ -1811,7 +1822,8 @@
     gap: 8px;
   }
 
-  .txRow {
+  .txRow,
+  .debtRow {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 12px 0;
