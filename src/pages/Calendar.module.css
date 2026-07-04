@@ -1782,8 +1782,10 @@
   }
 
   .dayPanel {
+    grid-column: 1 / -1;
     width: 100%;
-    max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));border-width: 3px;
+    max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));
+    border-width: 3px;
     border-radius: 24px;
     box-shadow: 0 20px 60px rgba(16, 16, 16, 0.24);
   }
