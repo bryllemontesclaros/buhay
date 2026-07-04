@@ -344,19 +344,6 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
                     onClick={async () => {
                       playTick()
                       if (await confirmDeleteApp(goal.name)) {
-                        if (goal.accountId && goal.current > 0) {
-                          await fsAddTransaction(user.uid, 'income', {
-                            desc: `Savings Refund: ${goal.name}`,
-                            amount: goal.current,
-                            date: today(),
-                            cat: 'Savings',
-                            subcat: 'Goal contribution',
-                            accountId: goal.accountId,
-                            accountBalanceLinked: true,
-                            accountBalanceApplied: true,
-                            type: 'income'
-                          }, data.accounts || [])
-                        }
                         await fsDel(user.uid, 'goals', goal._id)
                       }
                     }}

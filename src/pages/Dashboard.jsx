@@ -148,7 +148,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   const lmExpense = useMemo(() => getMonthTotal(data.expenses, ly, lm), [data.expenses, ly, lm])
   const expenseChange = lmExpense > 0 ? Math.round(((mExpense - lmExpense) / lmExpense) * 100) : null
 
-  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [])
+  const portfolioIncludedValue = getIncludedPortfolioValue(data.portfolioHoldings || [], exchangeRates)
   const netWorth = getTakdaTotalBalanceNow(data.accounts, data.portfolioHoldings || [], data.debts || [], exchangeRates)
 
   const monthSpending = useMemo(() => {
