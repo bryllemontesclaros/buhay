@@ -15,6 +15,8 @@ import { loadStorageObjectUrl } from '../lib/storageMedia'
 import { formatDisplayDate, today } from '../lib/utils'
 import styles from './Page.module.css'
 import lStyles from './Lakas.module.css'
+import { Button } from '../components/ui/Button'
+import { EmptyState } from '../components/ui/EmptyState'
 
 function getWeeklyScore(workouts, habits, weekIndex = 0) {
   const now = new Date()
@@ -3322,9 +3324,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       <div className={lStyles.exerciseBuilder} aria-label={ariaLabel}>
         {rows.some(row => exerciseHistory[normalizeExerciseKey(row.name)]) && (
           <div className={lStyles.editorGlobalActions}>
-            <button
+            <Button
               type="button"
-              className={lStyles.secondaryBtn}
+              variant="secondary"
               onClick={() => {
                 let copiedCount = 0;
                 formSetter(current => {
@@ -3355,7 +3357,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               style={{ marginBottom: '12px', width: '100%' }}
             >
               ⚡ Prefill All Last Session Values
-            </button>
+            </Button>
           </div>
         )}
         {rows.map((row, index) => {
@@ -3393,14 +3395,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     </button>
                   )}
                 </div>
-                <button
+                <Button
                   type="button"
-                  className={lStyles.ghostBtn}
+                  variant="ghost"
                   onClick={() => removeExerciseRow(formSetter, row.rowId)}
                   disabled={rows.length <= 1}
                 >
                   Remove
-                </button>
+                </Button>
               </div>
               {guide && (
                 <div className={lStyles.formGuide}>
@@ -3513,9 +3515,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <span>{formatPreviousExerciseSummary(previousEntry, savedLakasSettings.units.weight)}</span>
                     <small>{previousEntry.workoutTitle} · {previousEntry.date ? formatDisplayDate(previousEntry.date) : 'Saved workout'} · {previousEntry.count} saved {previousEntry.count === 1 ? 'entry' : 'entries'}</small>
                   </div>
-                  <button type="button" className={lStyles.ghostBtn} onClick={() => applyPreviousExerciseValues(formSetter, row.rowId, previousEntry)}>
+                  <Button type="button" variant="ghost" onClick={() => applyPreviousExerciseValues(formSetter, row.rowId, previousEntry)}>
                     Use last values
-                  </button>
+                  </Button>
                 </div>
               )}
               <label className={lStyles.exerciseNotes}>
@@ -3525,9 +3527,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           )
         })}
-        <button type="button" className={lStyles.secondaryBtn} onClick={() => addExerciseRow(formSetter)}>
+        <Button type="button" variant="secondary" onClick={() => addExerciseRow(formSetter)}>
           Add exercise
-        </button>
+        </Button>
       </div>
     )
   }
@@ -4575,7 +4577,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <strong>{formatDurationClock(activeGymRestRemaining)}</strong>
                   </div>
                 </div>
-                <button type="button" className={lStyles.ghostBtn} onClick={skipGymRest}>Skip rest</button>
+                <Button type="button" variant="ghost" onClick={skipGymRest}>Skip rest</Button>
               </div>
             )}
             <div className={lStyles.gymModeSetTracker} aria-label={`${activeGymExercise.name} set tracker`}>
@@ -4696,15 +4698,15 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               )}
             </div>
             <div className={lStyles.gymModeControls}>
-              <button type="button" className={lStyles.ghostBtn} onClick={() => setGymModeExercise(activeGymExerciseIndex - 1)} disabled={activeGymExerciseIndex === 0}>Previous</button>
-              <button type="button" className={lStyles.secondaryBtn} onClick={completeCurrentGymExercise}>
+              <Button type="button" variant="ghost" onClick={() => setGymModeExercise(activeGymExerciseIndex - 1)} disabled={activeGymExerciseIndex === 0}>Previous</Button>
+              <Button type="button" variant="secondary" onClick={completeCurrentGymExercise}>
                 {gymSessionMode.completed?.[activeGymExerciseIndex]
                   ? 'Undo done'
                   : activeGymExerciseIndex >= activeGymExercises.length - 1
                     ? 'Complete exercise'
                     : 'Complete + next'}
-              </button>
-              <button type="button" className={lStyles.ghostBtn} onClick={() => setGymModeExercise(activeGymExerciseIndex + 1)} disabled={activeGymExerciseIndex >= activeGymExercises.length - 1}>Next</button>
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => setGymModeExercise(activeGymExerciseIndex + 1)} disabled={activeGymExerciseIndex >= activeGymExercises.length - 1}>Next</Button>
             </div>
             {activeGymFinished && (
               <div className={lStyles.gymModeSummaryCard}>
@@ -4717,9 +4719,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <span>{activeGymFinished ? 'Ready to finish' : `${activeGymDoneSetCount}/${activeGymTotalSets} sets done`}</span>
                 <small>{formatDurationClock(activeGymElapsedSeconds)} elapsed</small>
               </div>
-              <button type="button" className={lStyles.primaryBtn} onClick={handleSaveGymSession}>
+              <Button type="button" variant="primary" onClick={handleSaveGymSession}>
                 {activeGymFinished ? 'Finish and save' : 'Save progress'}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -5208,12 +5210,12 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  <p>{coachingSystem.workout.recommendedReason}</p>
 	                </div>
 	                <div className={`${lStyles.workoutLaunchActions} ${lStyles.workoutHeroActions}`}>
-	                  <button type="button" className={lStyles.primaryBtn} onClick={() => openGymSessionMode(featuredWorkoutTemplate, featuredWorkoutSession)}>
+	                  <Button type="button" variant="primary" onClick={() => openGymSessionMode(featuredWorkoutTemplate, featuredWorkoutSession)}>
 	                    Start workout + video
-	                  </button>
-	                  <button type="button" className={lStyles.ghostBtn} onClick={openWorkoutPathChooser}>
+	                  </Button>
+	                  <Button type="button" variant="ghost" onClick={openWorkoutPathChooser}>
 	                    Change today&apos;s program
-	                  </button>
+	                  </Button>
 	                </div>
 	              </article>
 
@@ -5325,9 +5327,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  </div>
 	                </div>
 	                <div className={lStyles.workoutLaunchActions}>
-	                  <button type="button" className={lStyles.ghostBtn} onClick={openProgramsPanel}>
+	                  <Button type="button" variant="ghost" onClick={openProgramsPanel}>
 	                    Open routines library
-	                  </button>
+	                  </Button>
 	                </div>
 	              </article>
 	            </div>
@@ -5407,15 +5409,15 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  </div>
 	                )}
                 <div className={lStyles.gymSessionActions}>
-                  <button type="button" className={lStyles.primaryBtn} onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
+                  <Button type="button" variant="primary" onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
                     Start with video
-                  </button>
-                  <button type="button" className={lStyles.ghostBtn} onClick={() => {
+                  </Button>
+                  <Button type="button" variant="ghost" onClick={() => {
                     openProgramsPanel()
                     editGymSessionAsRoutine(selectedGymTemplate)
                   }}>
                     Edit as routine
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -5534,12 +5536,12 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </small>
             </div>
             <div className={lStyles.guidedHandoffActions}>
-              <button type="button" className={lStyles.secondaryBtn} onClick={() => loadWorkoutTemplate(selectedGymTemplate, selectedGymSession)}>
+              <Button type="button" variant="secondary" onClick={() => loadWorkoutTemplate(selectedGymTemplate, selectedGymSession)}>
                 Load guided log
-              </button>
-              <button type="button" className={lStyles.ghostBtn} onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
                 Start session instead
-              </button>
+              </Button>
             </div>
           </div>
           <div className={lStyles.formGrid}>
@@ -5586,13 +5588,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           </details>
           {renderExerciseEditor(workoutForm.exercises, setWorkoutForm, 'Workout exercises')}
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddWorkout}>Save workout</button>
+          <Button type="button" variant="primary" onClick={handleAddWorkout}>Save workout</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent workouts</strong>
               <span>Keep the last few sessions close while you log the next one.</span>
             </div>
-            {!workouts.length ? <div className={lStyles.empty}>No workouts logged yet.</div> : workouts.slice(0, 2).map(workout => (
+            {!workouts.length ? <EmptyState compact>No workouts logged yet.</EmptyState> : workouts.slice(0, 2).map(workout => (
               <div key={workout._id} className={lStyles.rowCard}>
                 <div>
                   <strong>{workout.title}</strong>
@@ -5645,10 +5647,10 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
             <div className={lStyles.programCalloutActions}>
               {recompStarterTemplates.map(template => (
-                <button
+                <Button
                   key={`callout-${template.name}`}
                   type="button"
-                  className={lStyles.secondaryBtn}
+                  variant="secondary"
                   onClick={() => openGymSessionMode(template, {
                     key: normalizeExerciseKey(template.name),
                     label: template.name,
@@ -5657,7 +5659,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   })}
                 >
                   Start {template.name.replace('Recomp ', '')}
-                </button>
+                </Button>
               ))}
             </div>
           </section>
@@ -5682,7 +5684,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             ))}
           </div>
           {!groupedRoutines.length ? (
-            <div className={lStyles.empty}>No saved routines yet. Use a starter template above or save your own routine below.</div>
+            <EmptyState compact>No saved routines yet. Use a starter template above or save your own routine below.</EmptyState>
           ) : (
             <div className={lStyles.routineGroupList}>
               {groupedRoutines.map(group => (
@@ -5762,7 +5764,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 </label>
               </div>
               {renderExerciseEditor(routineForm.exercises, setRoutineForm, 'Routine exercises')}
-              <button type="button" className={lStyles.primaryBtn} onClick={handleAddRoutine}>Save routine</button>
+              <Button type="button" variant="primary" onClick={handleAddRoutine}>Save routine</Button>
             </div>
           </details>
           </div>
@@ -5821,15 +5823,15 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <small>{bodyQuickStartSummary}</small>
               </div>
               <div className={lStyles.bodyQuickStartActions}>
-                <button type="button" className={lStyles.ghostBtn} onClick={() => setTrackView('meals')}>
+                <Button type="button" variant="ghost" onClick={() => setTrackView('meals')}>
                   Log meal
-                </button>
-                <button type="button" className={lStyles.ghostBtn} onClick={() => setTrackView('body')}>
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => setTrackView('body')}>
                   Body check-in
-                </button>
-                <button type="button" className={lStyles.ghostBtn} onClick={() => setTrackView('recovery')}>
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => setTrackView('recovery')}>
                   Recovery
-                </button>
+                </Button>
               </div>
             </div>
           </section>
@@ -5941,9 +5943,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <span>{RECOMP_NUTRITION_GUIDE.title}</span>
                 <strong>Eat to recover, build, and slowly tighten up.</strong>
               </div>
-              <button type="button" className={lStyles.secondaryBtn} onClick={applyRecompStarterDefaults}>
+              <Button type="button" variant="secondary" onClick={applyRecompStarterDefaults}>
                 Use starter defaults
-              </button>
+              </Button>
             </div>
             <p className={lStyles.nutritionCoachBody}>{RECOMP_NUTRITION_GUIDE.body}</p>
             <div className={lStyles.nutritionCoachGrid}>
@@ -6062,19 +6064,19 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           </details>
           <div className={lStyles.comboActionRow}>
-            <button type="button" className={lStyles.primaryBtn} onClick={handleAddMeal} disabled={savingMeal}>
+            <Button type="button" variant="primary" onClick={handleAddMeal} disabled={savingMeal}>
               {savingMeal ? 'Saving meal...' : 'Save meal'}
-            </button>
-            <button type="button" className={lStyles.secondaryBtn} onClick={handleSaveMealCombo}>
+            </Button>
+            <Button type="button" variant="secondary" onClick={handleSaveMealCombo}>
               Save as quick combo
-            </button>
+            </Button>
           </div>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent meals</strong>
               <span>Saved meals and macro estimates stay right below the form. Older archived images remain private-aware.</span>
             </div>
-            {!meals.length ? <div className={lStyles.empty}>No meals logged yet.</div> : visibleMeals.map(meal => {
+            {!meals.length ? <EmptyState compact>No meals logged yet.</EmptyState> : visibleMeals.map(meal => {
               const mealImage = mealPhotoUrls[meal._id] || meal.photoUrl || ''
               return (
                 <div key={meal._id} className={lStyles.mealRow}>
@@ -6155,13 +6157,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </label>
             </div>
           </details>
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddActivity}>Save activity</button>
+          <Button type="button" variant="primary" onClick={handleAddActivity}>Save activity</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent movement</strong>
               <span>Review the last few entries without leaving the movement log.</span>
             </div>
-            {!activities.length ? <div className={lStyles.empty}>No activity logs yet.</div> : activities.slice(0, 4).map(activity => (
+            {!activities.length ? <EmptyState compact>No activity logs yet.</EmptyState> : activities.slice(0, 4).map(activity => (
               <div key={activity._id} className={lStyles.rowCard}>
                 <div>
                   <strong>{activity.type}</strong>
@@ -6258,13 +6260,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <input value={habitForm.notes} placeholder="Sleep quality, soreness, mood, recovery" onChange={event => setHabitForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddHabit}>Save check-in</button>
+          <Button type="button" variant="primary" onClick={handleAddHabit}>Save check-in</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent check-ins</strong>
               <span>A lightweight recovery trail stays right beside the form.</span>
             </div>
-            {!habits.length ? <div className={lStyles.empty}>No habit check-ins yet.</div> : habits.slice(0, 4).map(habit => (
+            {!habits.length ? <EmptyState compact>No habit check-ins yet.</EmptyState> : habits.slice(0, 4).map(habit => (
               <div key={habit._id} className={lStyles.rowCard}>
                 <div>
                   <strong>{formatDisplayDate(habit.date)} · {getHabitScore(habit)}/{HABIT_OPTIONS.length}</strong>
@@ -6344,15 +6346,15 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </label>
             </div>
           </details>
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddBodyLog} disabled={savingBody}>
+          <Button type="button" variant="primary" onClick={handleAddBodyLog} disabled={savingBody}>
             {savingBody ? 'Saving body log...' : 'Save body log'}
-          </button>
+          </Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent body logs</strong>
               <span>Older archived images still stay hidden in privacy mode.</span>
             </div>
-            {!bodyLogs.length ? <div className={lStyles.empty}>No body logs yet.</div> : visibleBodyLogs.map(log => {
+            {!bodyLogs.length ? <EmptyState compact>No body logs yet.</EmptyState> : visibleBodyLogs.map(log => {
               const bodyImage = bodyPhotoUrls[log._id] || log.photoUrl || ''
               return (
                 <div key={log._id} className={lStyles.mealRow}>
@@ -6403,13 +6405,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <input value={goalForm.unit} placeholder="kg, steps, sessions, days" onChange={event => setGoalForm(current => ({ ...current, unit: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={lStyles.primaryBtn} onClick={handleAddGoal}>Save goal</button>
+          <Button type="button" variant="primary" onClick={handleAddGoal}>Save goal</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Tracked goals</strong>
               <span>Update progress in place without opening another screen.</span>
             </div>
-            {!resolvedGoals.length ? <div className={lStyles.empty}>No goals yet.</div> : resolvedGoals.map(goal => {
+            {!resolvedGoals.length ? <EmptyState compact>No goals yet.</EmptyState> : resolvedGoals.map(goal => {
               const target = numberOrZero(goal.target)
               const current = numberOrZero(goal.current)
               const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0
@@ -6599,7 +6601,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <span>Top exercises stay grouped with estimated 1RM, best load, and set count so you can see where the work is really landing.</span>
                   </div>
                   {!exerciseInsights.mainExercises.length ? (
-                    <div className={lStyles.empty}>Log more workouts to unlock main exercise tracking.</div>
+                    <EmptyState compact>Log more workouts to unlock main exercise tracking.</EmptyState>
                   ) : (
                     <div className={lStyles.exerciseSummaryGrid}>
                       {exerciseInsights.mainExercises.slice(0, 4).map(exercise => (
@@ -6652,7 +6654,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <span>Follow repeated lifts across recent sessions.</span>
                   </div>
                   {!exerciseInsights.historyCharts.length ? (
-                    <div className={lStyles.empty}>Repeat a few exercises more than once to unlock their history charts.</div>
+                    <EmptyState compact>Repeat a few exercises more than once to unlock their history charts.</EmptyState>
                   ) : (
                     <div className={lStyles.chartGrid}>
                       {exerciseInsights.historyCharts.map(chart => (
@@ -6674,7 +6676,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <span>These totals come from your exercise library mapping.</span>
                   </div>
                   {!exerciseInsights.muscleDistribution.length ? (
-                    <div className={lStyles.empty}>Map a few exercises in the library to see muscle-group totals here.</div>
+                    <EmptyState compact>Map a few exercises in the library to see muscle-group totals here.</EmptyState>
                   ) : (
                     <div className={lStyles.muscleGrid}>
                       {exerciseInsights.muscleDistribution.slice(0, 6).map(muscle => (
@@ -6846,9 +6848,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <strong>Pending changes</strong>
                 <span>Changes below stay pending until you save.</span>
               </div>
-              <button type="button" className={lStyles.primaryBtn} onClick={handleSaveLakasSettings} disabled={savingSettings}>
+              <Button type="button" variant="primary" onClick={handleSaveLakasSettings} disabled={savingSettings}>
                 {savingSettings ? 'Saving...' : 'Save Lakas settings'}
-              </button>
+              </Button>
             </div>
           </section>
 
@@ -6983,9 +6985,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   </label>
                 </div>
                 <div className={lStyles.inlineSection}>
-                  <button type="button" className={lStyles.primaryBtn} onClick={handleAddReminder}>Save reminder</button>
+                  <Button type="button" variant="primary" onClick={handleAddReminder}>Save reminder</Button>
                   <div className={lStyles.routineList}>
-                    {!upcomingReminders.length ? <div className={lStyles.empty}>No reminders yet.</div> : upcomingReminders.map(reminder => (
+                    {!upcomingReminders.length ? <EmptyState compact>No reminders yet.</EmptyState> : upcomingReminders.map(reminder => (
                       <div key={reminder._id} className={lStyles.routineCard}>
                         <div>
                           <strong>{reminder.title}</strong>
@@ -7131,14 +7133,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     </label>
                   </div>
                   <div className={lStyles.libraryFormActions}>
-                    <button type="button" className={lStyles.primaryBtn} onClick={handleQueueExerciseLibraryEntry}>
+                    <Button type="button" variant="primary" onClick={handleQueueExerciseLibraryEntry}>
                       {pendingCustomExercises.some(entry => normalizeExerciseKey(entry.name) === normalizeExerciseKey(exerciseLibraryDraft.name))
                         ? 'Update pending exercise'
                         : 'Add to pending library'}
-                    </button>
-                    <button type="button" className={lStyles.ghostBtn} onClick={() => setExerciseLibraryDraft(createExerciseLibraryDraft())}>
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => setExerciseLibraryDraft(createExerciseLibraryDraft())}>
                       Clear
-                    </button>
+                    </Button>
                   </div>
                   <div className={lStyles.inlineSection}>
                     <div className={lStyles.inlineSectionHeader}>
@@ -7146,7 +7148,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                       <span>These stay local to your pending settings until you save Lakas settings.</span>
                     </div>
                     {!pendingCustomExercises.length ? (
-                      <div className={lStyles.empty}>No custom exercises yet. The starter library still powers suggestions and analytics.</div>
+                      <EmptyState compact>No custom exercises yet. The starter library still powers suggestions and analytics.</EmptyState>
                     ) : (
                       <div className={lStyles.customExerciseList}>
                         {pendingCustomExercises.map(entry => (
@@ -7202,16 +7204,16 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 </summary>
                 <div className={lStyles.inlineSection}>
                   <div className={lStyles.settingsActions}>
-                    <button type="button" className={lStyles.secondaryBtn} onClick={handleExportLakasData}>
+                    <Button type="button" variant="secondary" onClick={handleExportLakasData}>
                       Export Lakas data
-                    </button>
-                    <button type="button" className={lStyles.ghostBtn} onClick={handleDeleteLakasData} disabled={deletingLakasData}>
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={handleDeleteLakasData} disabled={deletingLakasData}>
                       {deletingLakasData ? 'Deleting...' : 'Delete Lakas logs'}
-                    </button>
+                    </Button>
                   </div>
-                  <div className={lStyles.empty}>
+                  <EmptyState compact>
                     Your Lakas settings stay. Older saved media tied to older entries is removed too.
-                  </div>
+                  </EmptyState>
                 </div>
               </details>
 
@@ -7221,9 +7223,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   <small>Leave Buhay safely from Lakas</small>
                 </summary>
                 <div className={lStyles.inlineSection}>
-                  <button type="button" className={lStyles.ghostBtn} onClick={handleLogout}>
+                  <Button type="button" variant="ghost" onClick={handleLogout}>
                     Log out
-                  </button>
+                  </Button>
                 </div>
               </details>
             </div>

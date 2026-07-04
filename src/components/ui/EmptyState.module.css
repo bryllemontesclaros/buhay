@@ -1,0 +1,69 @@
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+  background: color-mix(in srgb, var(--glass-1) 70%, transparent);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+}
+
+.compact {
+  padding: 16px 12px;
+  border-radius: var(--radius);
+  background: transparent;
+  border-color: transparent;
+}
+
+.icon {
+  color: var(--text3);
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.compact .icon {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.title {
+  color: var(--text);
+  font-size: var(--type-title-sm);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.description, .content {
+  color: var(--text3);
+  font-size: var(--type-body-sm);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.action {
+  margin-top: 16px;
+}
+
+.compact .action {
+  margin-top: 12px;
+}
+
+/* Neo Theme overrides */
+:global(.neo) .emptyState {
+  background: var(--nb-paper-2);
+  border: 1px dashed var(--nb-ink-2);
+  box-shadow: none;
+}
+
+:global(.neo) .title {
+  color: var(--nb-ink);
+  font-family: var(--nb-font-display);
+}
+
+:global(.neo) .description, 
+:global(.neo) .content,
+:global(.neo) .icon {
+  color: var(--nb-ink-2);
+}

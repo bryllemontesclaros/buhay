@@ -1,0 +1,134 @@
+.btn {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border-radius: 16px;
+  border: 1px solid var(--border2);
+  font-family: var(--font-body);
+  font-size: var(--type-body-sm);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  white-space: nowrap;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.primaryBtn {
+  color: #071018;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 72%, var(--purple) 28%));
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
+}
+
+:global([data-theme="light"]) .primaryBtn,
+:global(.force-light-theme) .primaryBtn {
+  color: #ffffff;
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled,
+.ghostBtn:disabled,
+.dangerBtn:disabled,
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.secondaryBtn,
+.ghostBtn {
+  color: var(--text2);
+  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
+  border-color: color-mix(in srgb, var(--glass-border) 58%, var(--border));
+}
+
+.secondaryBtn:hover,
+.ghostBtn:hover {
+  background: color-mix(in srgb, var(--glass-2) 74%, var(--surface3) 26%);
+  border-color: color-mix(in srgb, var(--glass-highlight) 28%, var(--border2));
+}
+
+.ghostBtn {
+  background: transparent;
+  border-color: transparent;
+}
+
+.ghostBtn:hover {
+  background: var(--glass-1);
+}
+
+.primaryBtn:hover,
+.primaryBtn:focus-visible {
+  transform: scale(1.02);
+  border-color: color-mix(in srgb, var(--accent) 88%, white 12%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 98%, white 12%), color-mix(in srgb, var(--accent) 82%, var(--purple) 38%));
+}
+
+:global([data-theme="light"]) .primaryBtn:hover,
+:global([data-theme="light"]) .primaryBtn:focus-visible,
+:global(.force-light-theme) .primaryBtn:hover,
+:global(.force-light-theme) .primaryBtn:focus-visible {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, black 12%), color-mix(in srgb, var(--accent) 62%, var(--purple) 28%));
+}
+
+.dangerBtn {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 10%, transparent);
+  border-color: color-mix(in srgb, var(--red) 20%, transparent);
+}
+
+.dangerBtn:hover {
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+  border-color: color-mix(in srgb, var(--red) 30%, transparent);
+  color: var(--red);
+}
+
+/* Neo Theme overrides */
+:global(.neo) .btn {
+  border: 1px solid var(--border2);
+  box-shadow: var(--nb-shadow-sm);
+  background: var(--nb-paper-2);
+  color: var(--nb-ink);
+}
+
+:global(.neo) .primaryBtn {
+  background: var(--nb-accent-2);
+  color: var(--nb-ribbon-ink);
+}
+
+:global(.neo) .secondaryBtn {
+  background: var(--nb-paper);
+}
+
+:global(.neo) .btn:hover,
+:global(.neo) .btn:focus-visible {
+  transform: scale(1.01);
+  box-shadow: var(--nb-shadow);
+  border-color: var(--nb-ink-2);
+}
+
+:global(.neo) .btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 0 rgba(16, 16, 16, 0.14);
+}
+
+:global(.neo) .primaryBtn:hover,
+:global(.neo) .primaryBtn:focus-visible {
+  background: var(--nb-accent);
+}
+
+:global(.neo) .dangerBtn {
+  background: var(--nb-paper);
+  color: var(--nb-ink);
+  border-color: var(--nb-red);
+}
+
+:global(.neo) .dangerBtn:hover {
+  background: var(--nb-red);
+  color: white;
+}

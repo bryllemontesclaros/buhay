@@ -91,7 +91,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--glass-1) 30%);
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -101,7 +101,7 @@
   display: block;
   margin-top: 8px;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.35;
   letter-spacing: -0.02em;
 }
@@ -118,7 +118,7 @@
 
 .boardStreamLabel {
   color: var(--text3);
-  font-size: 9px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -126,7 +126,7 @@
 
 .boardStreamText {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.45;
   font-weight: 700;
 }
@@ -156,7 +156,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 850;
 }
 
@@ -361,7 +361,7 @@
   margin-top: 6px;
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 34px;
+  font-size: var(--type-display-md);
   line-height: 0.95;
   letter-spacing: -0.06em;
 }
@@ -369,7 +369,7 @@
 .heroCardMeta {
   margin-top: 8px;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -408,7 +408,7 @@
 
 .heroCompanionCopy strong {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -417,7 +417,7 @@
 .heroCompanionCopy p {
   margin-top: 6px;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.5;
 }
 
@@ -456,7 +456,7 @@
 .statCard small {
   margin-top: 6px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
 }
 
 .quickWins {
@@ -498,7 +498,7 @@
 .viewSwitchHeader h3 {
   margin: 0;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   line-height: 1.15;
   letter-spacing: -0.03em;
 }
@@ -541,7 +541,7 @@
 
 .bodyOverviewCard span {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -550,13 +550,13 @@
 .bodyOverviewCard strong {
   margin-top: 4px;
   color: var(--text);
-  font-size: 15px;
+  font-size: var(--type-body-lg);
   line-height: 1.2;
 }
 
 .bodyOverviewCard small {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -580,14 +580,14 @@
 
 .viewSwitchButton strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.2;
 }
 
 .viewSwitchButton span {
   margin-top: 5px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.35;
 }
 
@@ -623,7 +623,7 @@
 
 .bodyQuickStartNote span {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -632,14 +632,14 @@
 .bodyQuickStartNote strong {
   margin-top: 6px;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
 .bodyQuickStartNote small {
   margin-top: 5px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -650,9 +650,6 @@
   margin-top: 8px;
 }
 
-.bodyQuickStartActions .ghostBtn {
-  margin-top: 0;
-}
 
 .quickWinCard {
   position: relative;
@@ -692,14 +689,14 @@
   border-radius: 999px;
   color: var(--space-fitness-ink);
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 76%, var(--blue) 24%));
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 900;
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
 }
 
 .quickWinText {
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 800;
   line-height: 1.25;
 }
@@ -768,7 +765,7 @@
 .beginnerCoachMetricGrid span {
   display: block;
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -787,7 +784,7 @@
 .beginnerCoachTop p {
   margin: 8px 0 0;
   color: var(--text2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.48;
 }
 
@@ -796,11 +793,6 @@
   gap: 8px;
 }
 
-.beginnerCoachActions .primaryBtn,
-.beginnerCoachActions .ghostBtn {
-  width: 100%;
-  margin-top: 0;
-}
 
 .beginnerCoachMetricGrid {
   display: grid;
@@ -821,7 +813,7 @@
   margin-top: 6px;
   overflow: hidden;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -831,7 +823,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.35;
 }
 
@@ -850,7 +842,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 56%, var(--glass-1) 44%);
   color: var(--text2);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 850;
 }
 
@@ -869,7 +861,7 @@
 .formGuideCard strong {
   display: block;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
@@ -879,7 +871,7 @@
   display: block;
   margin-top: 6px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -887,7 +879,7 @@
 .chartTitle {
   display: block;
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -897,7 +889,7 @@
   display: block;
   margin-top: 8px;
   color: var(--text);
-  font-size: 20px;
+  font-size: var(--type-title-xl);
   line-height: 1;
   letter-spacing: -0.045em;
 }
@@ -906,7 +898,7 @@
   display: block;
   margin-top: 7px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.35;
 }
 
@@ -953,7 +945,7 @@
 .muscleRowTop strong {
   display: block;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
@@ -961,7 +953,7 @@
 .exerciseSummaryHead small,
 .muscleRowTop span {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.4;
 }
 
@@ -973,14 +965,14 @@
 .exerciseSummaryMeta span {
   display: block;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
 .exerciseSummaryCard small,
 .analyticsFooter small {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -1004,7 +996,7 @@
 
 .analyticsFooter span {
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -1018,7 +1010,7 @@
 .yearReviewHero span {
   display: block;
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1038,7 +1030,7 @@
   display: block;
   margin-top: 7px;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -1054,7 +1046,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 68%, var(--surface2) 32%);
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 700;
   letter-spacing: normal;
   text-transform: none;
@@ -1171,11 +1163,6 @@
   margin-top: auto;
 }
 
-.workoutLaunchActions .primaryBtn,
-.workoutLaunchActions .ghostBtn {
-  width: 100%;
-  margin-top: 0;
-}
 
 .workoutHeroCard {
   min-height: 0;
@@ -1299,7 +1286,7 @@
 .sessionChip span {
   margin-top: 3px;
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   line-height: 1.35;
 }
 
@@ -1494,10 +1481,6 @@
   align-content: start;
 }
 
-.programCalloutActions .secondaryBtn {
-  width: 100%;
-  margin-top: 0;
-}
 
 .nutritionCoachHeader {
   display: flex;
@@ -1511,10 +1494,6 @@
   gap: 6px;
 }
 
-.nutritionCoachHeader .secondaryBtn {
-  margin-top: 0;
-  white-space: nowrap;
-}
 
 .nutritionCoachGrid {
   display: grid;
@@ -1619,11 +1598,6 @@
   padding-top: 16px;
 }
 
-.gymSessionActions .primaryBtn,
-.gymSessionActions .ghostBtn {
-  width: 100%;
-  margin-top: 0;
-}
 
 .gymExerciseList {
   display: grid;
@@ -1679,13 +1653,13 @@
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
 }
 
 .gymExerciseTop strong {
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
@@ -1701,7 +1675,7 @@
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface3) 68%, transparent);
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
 }
 
@@ -1710,7 +1684,7 @@
   display: block;
   margin: 9px 0 0;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -1721,7 +1695,7 @@
 
 .gymExerciseCue {
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.5;
 }
 
@@ -1741,7 +1715,7 @@
   min-height: 38px;
   padding: 8px 10px;
   color: var(--accent);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1763,7 +1737,7 @@
   background: color-mix(in srgb, var(--surface2) 76%, white 24%);
   color: var(--text3);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1;
 }
 
@@ -1785,7 +1759,7 @@
 .gymExerciseVideoHint {
   display: inline-flex;
   color: var(--accent);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 800;
 }
 
@@ -1795,7 +1769,7 @@
   margin-top: 12px;
   padding: 12px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -1837,7 +1811,7 @@
 
 .gymKnowledgeSummary small {
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 650;
   line-height: 1.4;
 }
@@ -1853,7 +1827,7 @@
   background: color-mix(in srgb, var(--surface2) 76%, white 24%);
   color: var(--text3);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1;
 }
 
@@ -1905,7 +1879,7 @@
 
 .gymModeEyebrow {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.9px;
   text-transform: uppercase;
@@ -1923,7 +1897,7 @@
 .gymModeHeader p {
   margin: 10px 0 0;
   color: var(--text2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.45;
 }
 
@@ -1935,7 +1909,7 @@
   color: var(--text2);
   padding: 8px 13px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 900;
   cursor: pointer;
 }
@@ -1959,7 +1933,7 @@
 .gymModeCurrentTop span {
   display: block;
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -1969,7 +1943,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   line-height: 1;
 }
 
@@ -2023,7 +1997,7 @@
 .gymModeNextCard span {
   display: block;
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2034,7 +2008,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
@@ -2043,7 +2017,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -2064,7 +2038,7 @@
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   text-align: center;
-  font-size: 11px;
+  font-size: var(--type-caption);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -2093,7 +2067,7 @@
   cursor: pointer;
   list-style: none;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 900;
 }
 
@@ -2107,7 +2081,7 @@
 
 .gymModeSupportSummary small {
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 700;
   line-height: 1.35;
 }
@@ -2143,7 +2117,7 @@
   gap: 10px;
   padding: 11px 13px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 800;
 }
 
@@ -2154,7 +2128,7 @@
 .gymModeVideoMeta small {
   flex: 1;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 700;
   line-height: 1.35;
 }
@@ -2185,7 +2159,7 @@
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--surface2) 30%);
   color: var(--space-fitness-ink);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 900;
   cursor: pointer;
   white-space: nowrap;
@@ -2212,7 +2186,7 @@
 
 .gymModeVideoEmpty span {
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2229,7 +2203,7 @@
 .gymModeVideoEmpty p {
   margin: 0;
   color: var(--text3);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.5;
 }
 
@@ -2266,7 +2240,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text);
-  font-size: 15px;
+  font-size: var(--type-body-lg);
 }
 
 .gymModeRestCard {
@@ -2290,7 +2264,7 @@
 .gymModeRestCard span {
   display: block;
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2300,7 +2274,7 @@
   display: block;
   margin-top: 3px;
   color: var(--text);
-  font-size: 22px;
+  font-size: var(--type-title-lg);
   line-height: 1;
 }
 
@@ -2335,7 +2309,7 @@
   color: var(--text2);
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 850;
   transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
@@ -2370,14 +2344,14 @@
 
 .gymModeCue strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .gymModeCue span,
 .gymModeCue small,
 .gymModeNotes {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -2403,11 +2377,6 @@
   padding-top: 14px;
 }
 
-.gymModeControls .secondaryBtn,
-.gymModeControls .ghostBtn {
-  width: 100%;
-  min-width: 0;
-}
 
 .gymModeSaveBar {
   position: sticky;
@@ -2443,10 +2412,6 @@
   font-size: var(--type-caption);
 }
 
-.gymModeSaveBar .primaryBtn {
-  margin-top: 0;
-  white-space: nowrap;
-}
 
 .gymModeSummaryCard {
   display: grid;
@@ -2460,12 +2425,12 @@
 
 .gymModeSummaryCard strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .gymModeSummaryCard span {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.4;
 }
 
@@ -2502,21 +2467,21 @@
 
 .gymModeExerciseChip span {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
 }
 
 .gymModeExerciseChip strong {
   margin-top: 5px;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.2;
 }
 
 .gymModeExerciseChip small {
   margin-top: 5px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
 }
 
 .gymModeExerciseChipActive {
@@ -2583,7 +2548,7 @@
 .barSlot span,
 .chartMeta {
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
 }
 
 .chartMeta {
@@ -2648,14 +2613,14 @@
 
 .progressReviewHeader strong {
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.25;
 }
 
 .progressReviewHeader span {
   margin-top: 5px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -2759,11 +2724,6 @@
   gap: 8px;
 }
 
-.guidedHandoffActions .secondaryBtn,
-.guidedHandoffActions .ghostBtn {
-  width: 100%;
-  margin-top: 0;
-}
 
 .progressCoachGrid {
   display: grid;
@@ -2813,7 +2773,7 @@
   margin-top: 6px;
   overflow: hidden;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2823,7 +2783,7 @@
   display: block;
   margin-top: 5px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.35;
 }
 
@@ -2857,7 +2817,7 @@
 .settingsSaveNotice strong {
   display: block;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.2;
 }
 
@@ -2865,15 +2825,10 @@
   display: block;
   margin-top: 4px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
-.settingsSaveNotice .primaryBtn {
-  margin-top: 0;
-  width: auto;
-  justify-self: start;
-}
 
 .sessionCoachInline {
   position: relative;
@@ -2894,7 +2849,7 @@
 
 .sessionCoachInlineTop span {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -2902,14 +2857,14 @@
 
 .sessionCoachInlineTop strong {
   color: var(--text);
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   line-height: 1.15;
 }
 
 .sessionCoachInlineTop p {
   margin: 0;
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -2930,7 +2885,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 700;
 }
 
@@ -2952,7 +2907,7 @@
 .sectionHeader h3 {
   margin: 0;
   color: var(--text);
-  font-size: 22px;
+  font-size: var(--type-title-lg);
   line-height: 1.1;
   letter-spacing: -0.03em;
 }
@@ -2961,7 +2916,7 @@
   max-width: var(--layout-copy-measure);
   margin: 8px 0 0;
   color: var(--text3);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.55;
 }
 
@@ -2983,7 +2938,7 @@
 .formGrid label span,
 .advancedGrid label span {
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -3005,7 +2960,7 @@
   color: var(--text);
   padding: 10px 12px;
   outline: none;
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   font-family: var(--font-body);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent);
 }
@@ -3048,7 +3003,7 @@
   min-height: 46px;
   padding: 10px 12px;
   color: var(--text2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 800;
   cursor: pointer;
   list-style: none;
@@ -3069,7 +3024,7 @@
   background: color-mix(in srgb, var(--surface2) 78%, white 22%);
   color: var(--text3);
   font-family: var(--font-mono);
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   line-height: 1;
 }
 
@@ -3079,7 +3034,7 @@
 
 .advancedSummary small {
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 650;
 }
 
@@ -3107,13 +3062,13 @@
 
 .inlineSectionHeader strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.2;
 }
 
 .inlineSectionHeader span {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -3121,89 +3076,13 @@
   grid-column: 1 / -1;
 }
 
-.primaryBtn,
-.secondaryBtn,
-.ghostBtn,
-.chip,
-.monthControls button,
-.routineActions button,
-.rowCard button,
-.mealRow button,
-.goalTop button,
-.goalUpdate button {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  border-radius: 16px;
-  border: 1px solid var(--border2);
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
-}
 
-.primaryBtn {
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px 18px;
-  color: #071018;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
-  border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
-  white-space: nowrap;
-}
 
-:global([data-theme="light"]) .primaryBtn,
-:global(.force-light-theme) .primaryBtn {
-  color: #ffffff;
-}
 
-:global(.neo) .primaryBtn,
-:global(.neo) .secondaryBtn,
-:global(.neo) .ghostBtn,
-:global(.neo) .chip,
-:global(.neo) .monthControls button,
-:global(.neo) .routineActions button,
-:global(.neo) .rowCard button,
-:global(.neo) .mealRow button,
-:global(.neo) .goalTop button,
-:global(.neo) .goalUpdate button {
-  border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
-}
 
-:global(.neo) .primaryBtn {
-  background: var(--nb-sun);
-  color: var(--nb-ink);
-}
 
-:global(.neo) .secondaryBtn {
-  border-style: dashed;
-}
 
-:global(.neo) .primaryBtn:hover,
-:global(.neo) .primaryBtn:focus-visible,
-:global(.neo) .secondaryBtn:hover,
-:global(.neo) .ghostBtn:hover,
-:global(.neo) .chip:hover,
-:global(.neo) .monthControls button:hover,
-:global(.neo) .routineActions button:hover,
-:global(.neo) .rowCard button:hover,
-:global(.neo) .mealRow button:hover,
-:global(.neo) .goalTop button:hover,
-:global(.neo) .goalUpdate button:hover {
-  border-color: var(--nb-stroke);
-}
 
-.primaryBtn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
 
 .exerciseBuilder {
   position: relative;
@@ -3243,7 +3122,7 @@
 .exerciseNotes span,
 .exerciseMetrics span {
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -3268,12 +3147,12 @@
 }
 
 .exerciseHint span {
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 700;
 }
 
 .exerciseHint small {
-  font-size: 11px;
+  font-size: var(--type-caption);
 }
 
 .previousValueCard {
@@ -3291,7 +3170,7 @@
 .previousValueCard strong {
   display: block;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .previousValueCard span,
@@ -3299,7 +3178,7 @@
   display: block;
   margin-top: 4px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.4;
 }
 
@@ -3322,36 +3201,18 @@
 
 .exerciseIdentityCard strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .exerciseIdentityCard span,
 .exerciseIdentityCard small {
   margin-top: 4px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.4;
 }
 
-.secondaryBtn,
-.ghostBtn,
-.chip,
-.monthControls button,
-.routineActions button,
-.rowActions button,
-.rowCard button,
-.mealRow button,
-.goalTop button,
-.goalUpdate button {
-  color: var(--text2);
-  background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
-  padding: 8px 11px;
-}
 
-.secondaryBtn {
-  width: 100%;
-  border-style: dashed;
-}
 
 .settingsActions {
   position: relative;
@@ -3379,7 +3240,7 @@
 
 .exerciseLibrarySummary span {
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 700;
   line-height: 1.4;
 }
@@ -3393,44 +3254,10 @@
   margin-top: 12px;
 }
 
-.ghostBtn {
-  min-width: 86px;
-}
 
-.ghostBtn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
 
-.primaryBtn:hover,
-.primaryBtn:focus-visible {
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
-  color: #071018;
-}
 
-:global([data-theme="light"]) .primaryBtn:hover,
-:global([data-theme="light"]) .primaryBtn:focus-visible,
-:global(.force-light-theme) .primaryBtn:hover,
-:global(.force-light-theme) .primaryBtn:focus-visible {
-  color: #ffffff;
-}
 
-.secondaryBtn:hover,
-.ghostBtn:hover,
-.chip:hover,
-.templateCard:hover,
-.monthControls button:hover,
-.habitPill:hover,
-.routineActions button:hover,
-.rowCard button:hover,
-.mealRow button:hover,
-.goalTop button:hover,
-.goalUpdate button:hover {
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  color: var(--text);
-}
 
 .presetRow {
   position: relative;
@@ -3513,14 +3340,14 @@
 .libraryGroupHeader strong,
 .routineGroupHeader strong {
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.2;
 }
 
 .libraryGroupHeader span,
 .routineGroupHeader span {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -3550,20 +3377,20 @@
 
 .templateCard strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .templateCard span {
   margin-top: 5px;
   color: var(--accent);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 800;
 }
 
 .templateCard small {
   margin-top: 7px;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.4;
 }
 
@@ -3582,7 +3409,7 @@
 .monthControls strong {
   min-width: 82px;
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--type-support);
   text-align: center;
 }
 
@@ -3602,7 +3429,7 @@
 
 .calendarHead {
   color: var(--text3);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   text-align: center;
 }
@@ -3620,7 +3447,7 @@
 
 .calendarDay strong {
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--type-support);
 }
 
 .calendarEmpty {
@@ -3675,7 +3502,7 @@
   align-items: center;
   gap: 6px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
 }
 
 .routineList {
@@ -3705,7 +3532,7 @@
 .routineCard strong {
   display: block;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.2;
 }
 
@@ -3714,7 +3541,7 @@
   display: block;
   margin-top: 4px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.35;
 }
 
@@ -3737,13 +3564,13 @@
 
 .formGuide strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 .formGuide span,
 .formGuide small {
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -3772,7 +3599,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
@@ -3826,14 +3653,14 @@
 .mealPhotoBox strong,
 .progressPhotoBox strong {
   color: var(--text);
-  font-size: 16px;
+  font-size: var(--type-title-sm);
 }
 
 .mealPhotoBox span,
 .progressPhotoBox span {
   max-width: 320px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
 }
 
@@ -3872,7 +3699,7 @@
 .goalCard strong {
   display: block;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--type-body);
   line-height: 1.2;
 }
 
@@ -3884,7 +3711,7 @@
   display: block;
   margin-top: 4px;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.35;
 }
 
@@ -3908,7 +3735,7 @@
   align-items: center;
   justify-content: center;
   color: var(--text3);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 800;
 }
 
@@ -3958,7 +3785,7 @@
   border-radius: 18px;
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   border: 1px solid var(--border2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 @media (max-width: 980px) {
@@ -4197,9 +4024,6 @@
   }
 
   .gymModeRestMeter,
-  .gymModeRestCard .ghostBtn {
-    grid-column: 1 / -1;
-  }
 
   .gymModeControls {
     grid-template-columns: 1fr;
@@ -4209,9 +4033,6 @@
     grid-template-columns: 1fr;
   }
 
-  .gymModeSaveBar .primaryBtn {
-    width: 100%;
-  }
 
   .gymModeExerciseChip {
     min-width: 142px;
@@ -4221,10 +4042,6 @@
     grid-template-columns: 1fr;
   }
 
-  .settingsSaveNotice .primaryBtn {
-    width: 100%;
-    justify-self: stretch;
-  }
 
   .monthControls {
     width: 100%;
@@ -4252,9 +4069,6 @@
 
   .routineActions button,
   .rowActions button,
-  .ghostBtn {
-    width: 100%;
-  }
 
   .rowCard,
   .mealRow {
@@ -4311,7 +4125,7 @@
 
 .boardLeadText {
   color: var(--text2);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   line-height: 1.55;
   max-width: 52ch;
 }
@@ -4325,7 +4139,7 @@
 
 .boardTodayLabel {
   color: var(--accent);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -4341,7 +4155,7 @@
 
 .boardTodayMeta {
   color: var(--text2);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.55;
 }
 
@@ -4461,9 +4275,6 @@
     flex-direction: column;
   }
 
-  .nutritionCoachHeader .secondaryBtn {
-    width: 100%;
-  }
 
   .recordGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4486,9 +4297,6 @@
     grid-template-columns: 1fr;
   }
 
-  .bodyQuickStartActions .ghostBtn {
-    width: 100%;
-  }
 
   .settingsWorkspace {
     gap: 10px;
@@ -4549,15 +4357,9 @@
     align-items: stretch;
   }
 
-  .primaryBtn,
-  .secondaryBtn,
-  .ghostBtn {
-    min-height: 46px;
-    white-space: normal;
-  }
 
   .bodyOverviewCard strong {
-    font-size: 16px;
+    font-size: var(--type-title-sm);
   }
 
   .bodyOverviewCard small {
@@ -4613,7 +4415,7 @@
 
 .workoutPrimaryCard small {
   max-width: 52ch;
-  font-size: 15px;
+  font-size: var(--type-body-lg);
   line-height: 1.5;
 }
 
@@ -4639,7 +4441,7 @@
 }
 
 .workoutSupportCard strong {
-  font-size: 18px;
+  font-size: var(--type-title-md);
   letter-spacing: 0;
 }
 
@@ -4660,7 +4462,7 @@
 .workoutPrimaryActionRow .workoutSecondaryAction {
   min-height: 46px;
   border-radius: 18px;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
 }
 
 @media (max-width: 980px) {
@@ -4688,7 +4490,7 @@
   }
 
   .workoutPrimaryCard strong {
-    font-size: 30px;
+    font-size: var(--type-display-page);
   }
 
   .workoutHeroActions,
@@ -4741,7 +4543,7 @@
   }
 
   .gymModeHeader p {
-    font-size: 14px;
+    font-size: var(--type-body);
     line-height: 1.35;
   }
 
@@ -4750,7 +4552,7 @@
     min-height: 44px;
     padding: 0 16px;
     border-radius: 999px;
-    font-size: 13px;
+    font-size: var(--type-body-sm);
   }
 
   .gymModeBody {
@@ -4770,11 +4572,11 @@
   }
 
   .gymModeSupportSummary span {
-    font-size: 14px;
+    font-size: var(--type-body);
   }
 
   .gymModeSupportSummary small {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
 
   .gymModeSupport .gymModeProgress,
@@ -4796,7 +4598,7 @@
   }
 
   .gymModeVideoMeta small {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
 
   .gymModeVideoActions {
@@ -4817,7 +4619,7 @@
   .gymModeVideoMeta a {
     border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--accent-glow) 45%, transparent);
-    font-size: 13px;
+    font-size: var(--type-body-sm);
     font-weight: 900;
   }
 
@@ -4878,15 +4680,7 @@
     gap: 8px;
   }
 
-  .gymModeControls .secondaryBtn {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-height: 52px;
-  }
 
-  .gymModeControls .ghostBtn {
-    min-height: 46px;
-  }
 
   .gymModeSaveBar {
     position: sticky;
@@ -4899,10 +4693,6 @@
     border-radius: 20px;
   }
 
-  .gymModeSaveBar .primaryBtn {
-    width: 100%;
-    min-height: 50px;
-  }
 
   .gymModeExerciseStrip {
     display: grid;
@@ -4936,9 +4726,6 @@
     grid-template-columns: 1fr;
   }
 
-  .gymModeControls .secondaryBtn {
-    grid-column: auto;
-  }
 }
 
 /* Focus Mode & Visual Rest Ring overrides */
@@ -4950,7 +4737,7 @@
   color: var(--accent);
   padding: 8px 14px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 900;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
@@ -5039,14 +4826,14 @@
 }
 
 .gymModeRestTimeDisplay span {
-  font-size: 9px;
+  font-size: var(--type-overline);
   font-weight: 900;
   text-transform: uppercase;
   color: var(--text3);
 }
 
 .gymModeRestTimeDisplay strong {
-  font-size: 24px;
+  font-size: var(--type-heading-xs);
   font-weight: 800;
   color: var(--text);
   margin-top: 2px;
@@ -5081,7 +4868,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 20%, transparent);
   color: var(--accent);
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease;
@@ -5135,7 +4922,7 @@
 
 .gymModeToolSummary {
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 800;
   color: var(--text2);
   cursor: pointer;
@@ -5163,7 +4950,7 @@
 
 .gymModeToolContent {
   padding: 10px;
-  font-size: 11px;
+  font-size: var(--type-caption);
   color: var(--text3);
   display: flex;
   flex-direction: column;
@@ -5177,7 +4964,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--surface) 80%, transparent);
   color: var(--text);
-  font-size: 11px;
+  font-size: var(--type-caption);
 }
 
 /* Barbell plate visual styles */
@@ -5234,14 +5021,14 @@
   padding: 6px;
   text-align: left;
   border-bottom: 1px solid var(--border2);
-  font-size: 11px;
+  font-size: var(--type-caption);
 }
 
 .warmupTable th {
   color: var(--text3);
   font-weight: 900;
   text-transform: uppercase;
-  font-size: 9px;
+  font-size: var(--type-overline);
   letter-spacing: 0.5px;
 }
 
@@ -5352,12 +5139,12 @@
 }
 
 .waterBottleControls strong {
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   color: var(--text);
 }
 
 .waterBottleControls p {
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text2);
   margin: 0;
 }
@@ -5376,7 +5163,7 @@
   border: 1px solid var(--border2);
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5395,7 +5182,7 @@
 }
 
 .waterCount {
-  font-size: 18px;
+  font-size: var(--type-title-md);
   font-weight: 700;
   color: var(--text);
   min-width: 60px;
@@ -5403,7 +5190,7 @@
 }
 
 .waterProgressKicker {
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 500;
 }
 
@@ -5470,13 +5257,13 @@
 }
 
 .legendItem strong {
-  font-size: 14px;
+  font-size: var(--type-body);
   color: var(--text);
   line-height: 1.2;
 }
 
 .legendItem span {
-  font-size: 12px;
+  font-size: var(--type-support);
   color: var(--text2);
   margin-top: 2px;
 }
@@ -5495,7 +5282,7 @@
   border: 1px solid var(--border2);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -5522,7 +5309,7 @@
 }
 
 .customPresetHeader {
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text2);
   font-weight: 600;
 }
@@ -5545,7 +5332,7 @@
   background: transparent;
   border: none;
   color: var(--text3);
-  font-size: 14px;
+  font-size: var(--type-body);
   font-weight: bold;
   cursor: pointer;
   width: 18px;
@@ -5636,7 +5423,7 @@
 }
 
 .todayStripLabel strong {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 700;
   color: var(--text1);
   line-height: 1.2;
@@ -5644,7 +5431,7 @@
 }
 
 .todayStripLabel span {
-  font-size: 10px;
+  font-size: var(--type-overline);
   color: var(--text3);
   white-space: nowrap;
 }
@@ -5708,10 +5495,10 @@
     gap: 8px;
   }
   .todayStripLabel strong {
-    font-size: 10px;
+    font-size: var(--type-overline);
   }
   .todayStripLabel span {
-    font-size: 9px;
+    font-size: var(--type-overline);
   }
 }
 
@@ -5802,7 +5589,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: var(--type-overline);
   color: var(--text3);
   margin-top: 6px;
 }
@@ -5910,12 +5697,12 @@
 
 .roadmapTitle {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--type-body);
   color: var(--text1);
 }
 
 .roadmapBadge {
-  font-size: 10px;
+  font-size: var(--type-overline);
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 500;
@@ -5938,7 +5725,7 @@
 }
 
 .roadmapDesc {
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text2);
   line-height: 1.4;
 }
@@ -5953,7 +5740,7 @@
 }
 
 .roadmapMilestone {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 500;
   color: var(--accent);
 }
@@ -5961,7 +5748,7 @@
 .roadmapAction {
   margin-top: 6px;
   align-self: flex-start;
-  font-size: 12px;
+  font-size: var(--type-support);
   background: var(--accent);
   color: #fff;
   border: none;
@@ -6002,12 +5789,12 @@
 }
 
 .gymModeLoggerHeader strong {
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text1);
 }
 
 .gymModeCopyLastBtn {
-  font-size: 11px;
+  font-size: var(--type-caption);
   background: color-mix(in srgb, var(--accent) 12%, var(--bg-muted));
   border: 1px solid var(--border2);
   color: var(--accent);
@@ -6036,7 +5823,7 @@
 }
 
 .gymModeLoggerGrid label span {
-  font-size: 11px;
+  font-size: var(--type-caption);
   color: var(--text3);
   font-weight: 500;
 }
@@ -6047,7 +5834,7 @@
   color: var(--text1);
   padding: 6px;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   width: 100%;
   box-sizing: border-box;
 }
@@ -6064,7 +5851,7 @@
 }
 
 .gymModeLoggerNotes label span {
-  font-size: 11px;
+  font-size: var(--type-caption);
   color: var(--text3);
   font-weight: 500;
 }
@@ -6075,7 +5862,7 @@
   color: var(--text1);
   padding: 6px;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   width: 100%;
   box-sizing: border-box;
 }
@@ -6089,7 +5876,7 @@
   background: rgba(255, 193, 7, 0.15);
   color: #ffb300;
   border: 1px solid var(--border2);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 700;
   padding: 2px 5px;
   border-radius: 4px;
@@ -6127,7 +5914,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text1);
 }
 
@@ -6138,7 +5925,7 @@
 }
 
 .goalNudgeIcon {
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   animation: nudge-bounce 1s ease-in-out infinite alternate;
 }
 
@@ -6199,7 +5986,7 @@
 }
 
 .celebrationContent h2 {
-  font-size: 24px;
+  font-size: var(--type-heading-xs);
   margin: 0 0 8px;
   color: var(--accent);
   font-weight: 700;
@@ -6207,20 +5994,20 @@
 
 .celebrationContent p {
   margin: 0 0 6px;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   color: var(--text2);
 }
 
 .celebrationContent strong {
   display: block;
-  font-size: 18px;
+  font-size: var(--type-title-md);
   color: var(--text1);
   margin-bottom: 8px;
 }
 
 .celebrationContent span {
   display: inline-block;
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   font-weight: 600;
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -6231,7 +6018,7 @@
 
 .celebrationContent small {
   display: block;
-  font-size: 11px;
+  font-size: var(--type-caption);
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -6373,7 +6160,7 @@
 
 .runTrackerEyebrow {
   display: block;
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 700;
   text-transform: uppercase;
   color: var(--accent);
@@ -6381,7 +6168,7 @@
 }
 
 .runTrackerTitle {
-  font-size: 18px;
+  font-size: var(--type-title-md);
   font-weight: 700;
   color: var(--text);
   margin: 4px 0 0;
@@ -6391,7 +6178,7 @@
   background: transparent;
   border: none;
   color: var(--text3);
-  font-size: 14px;
+  font-size: var(--type-body);
   font-weight: 600;
   cursor: pointer;
   padding: 8px 12px;
@@ -6433,7 +6220,7 @@
   
   
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6462,7 +6249,7 @@
   color: white;
   padding: 12px 16px;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -6492,7 +6279,7 @@
 }
 
 .runStatLabel {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text3);
@@ -6500,14 +6287,14 @@
 }
 
 .runStatValue {
-  font-size: 20px;
+  font-size: var(--type-title-xl);
   font-weight: 800;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 
 .runStatValue small {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 500;
   color: var(--text3);
 }
@@ -6523,7 +6310,7 @@
 .runSaveBtn {
   width: 100%;
   font-family: inherit;
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   font-weight: 700;
   padding: 16px 24px;
   border-radius: 16px;
@@ -6617,7 +6404,7 @@
 }
 
 .leaderboardSectionTitle {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -6626,7 +6413,7 @@
 }
 
 .leaderboardSubtitle {
-  font-size: 12px;
+  font-size: var(--type-support);
   color: var(--text3);
   margin: 0 0 16px;
   line-height: 1.45;
@@ -6651,7 +6438,7 @@
 
 .podiumVal {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: var(--type-body-lg);
   font-weight: 800;
   color: var(--text);
   margin-bottom: 8px;
@@ -6659,7 +6446,7 @@
 }
 
 .podiumVal small {
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 500;
   color: var(--text3);
 }
@@ -6676,14 +6463,14 @@
 }
 
 .podiumRank {
-  font-size: 20px;
+  font-size: var(--type-title-xl);
   font-weight: 900;
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .podiumLabel {
-  font-size: 11px;
+  font-size: var(--type-caption);
   font-weight: 700;
   color: var(--text3);
   text-align: center;
@@ -6723,7 +6510,7 @@
 
 .leaderboardQuote {
   text-align: center;
-  font-size: 12px;
+  font-size: var(--type-support);
   color: var(--text2);
   margin: 16px 0 0;
   padding: 12px;
@@ -6766,12 +6553,12 @@
 }
 
 .cohortRank span {
-  font-size: 14px;
+  font-size: var(--type-body);
 }
 
 .cohortRank strong {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: var(--type-body);
   font-weight: 800;
   color: var(--text);
 }
@@ -6785,7 +6572,7 @@
 }
 
 .cohortMeta strong {
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 800;
   color: var(--text);
   overflow: hidden;
@@ -6794,13 +6581,13 @@
 }
 
 .cohortMeta span {
-  font-size: 11px;
+  font-size: var(--type-caption);
   color: var(--text3);
 }
 
 .cohortScore {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: var(--type-body);
   font-weight: 850;
   color: var(--text);
 }

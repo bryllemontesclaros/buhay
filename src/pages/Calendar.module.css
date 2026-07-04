@@ -188,7 +188,7 @@
   }
 
   .cellBalance {
-    font-size: 11px;
+    font-size: var(--type-caption);
     line-height: 1.14;
   }
 
@@ -204,7 +204,7 @@
   }
 
   .dayBalanceValue {
-    font-size: 28px;
+    font-size: var(--type-heading-sm);
   }
 
   .dayBalanceHeader {
@@ -625,7 +625,7 @@
 .balanceRailCopy { min-width: 0; }
 
 .balanceRailLabel {
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   line-height: 1.05;
   font-weight: 700;
   color: var(--text);
@@ -638,7 +638,7 @@
 
 .balanceRailMeta {
   margin-top: 5px;
-  font-size: 10px;
+  font-size: var(--type-overline);
   line-height: 1.3;
   color: var(--text3);
   letter-spacing: 0.14em;
@@ -647,7 +647,7 @@
 
 .balanceRailValue {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   line-height: 1;
   font-weight: 700;
   color: var(--text);
@@ -664,7 +664,7 @@
   background: var(--surface);
   color: var(--text2);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -673,7 +673,7 @@
 .privacyValueInline {
   color: var(--text3);
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: var(--type-overline);
   line-height: 1.2;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -682,7 +682,7 @@
 .privacySummary {
   color: var(--text3);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.45;
   font-weight: 600;
 }
@@ -690,7 +690,7 @@
 
 .dayBalanceHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .dayBalanceLabel {
-  font-size: 9px;
+  font-size: var(--type-overline);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -699,7 +699,7 @@
 .dayBalanceValue {
   margin-top: 8px;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--type-display-page);
   line-height: 1.2;
   padding-bottom: 2px;
   color: var(--text);
@@ -722,7 +722,7 @@
 .dayBalanceStatLabel {
   display: block;
   margin-bottom: 2px;
-  font-size: 9px;
+  font-size: var(--type-overline);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -731,7 +731,7 @@
 .dayBalanceStatValue {
   display: block;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--type-body-sm);
   font-weight: 700;
   color: var(--text);
   white-space: normal;
@@ -742,54 +742,15 @@
 .dayBalanceStatNegative { color: var(--red); }
 .dayBalanceMeta {
   margin-top: 10px;
-  font-size: 11px;
+  font-size: var(--type-caption);
   line-height: 1.45;
   color: var(--text3);
-}
-.dayBalanceEditBtn,
-.dayBalanceGhostBtn,
-.dayBalanceSaveBtn {
-  position: relative;
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-.dayBalanceEditBtn::after,
-.dayBalanceGhostBtn::after,
-.dayBalanceSaveBtn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  min-width: 44px;
-  min-height: 44px;
-  width: 100%;
-  height: 100%;
-}
-.dayBalanceEditBtn,
-.dayBalanceGhostBtn {
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  color: var(--text2);
-}
-.dayBalanceEditBtn:hover,
-.dayBalanceGhostBtn:hover {
-  border-color: color-mix(in srgb, var(--accent) 22%, var(--border));
-  color: var(--text);
 }
 .dayBalanceSaveBtn {
   border: 1px solid var(--border2);
   background: var(--surface);
   color: var(--blue);
 }
-.dayBalanceEditBtn:disabled,
-.dayBalanceSaveBtn:disabled,
-.dayBalanceGhostBtn:disabled { opacity: 0.6; cursor: not-allowed; }
 .dayBalanceField { display: flex; flex-direction: column; gap: 6px; }
 .dayBalanceInputWrap {
   display: flex;
@@ -803,7 +764,7 @@
 }
 .dayBalanceInputWrap span {
   font-family: var(--font-mono);
-  font-size: 16px;
+  font-size: var(--type-title-sm);
   font-weight: 700;
   color: var(--blue);
 }
@@ -814,7 +775,7 @@
   outline: none;
   background: none;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--type-title-md);
   font-weight: 600;
   font-family: var(--font-mono);
 }
@@ -829,18 +790,18 @@
   border: 1px solid var(--border2);
 }
 .feedbackEyebrow {
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--feedback-tone);
   margin-bottom: 4px;
 }
-.feedbackTitle { font-family: var(--font-display); font-size: 22px; line-height: 1; color: var(--text); margin-bottom: 6px; }
-.feedbackBody { font-size: 12px; line-height: 1.55; color: var(--text2); }
+.feedbackTitle { font-family: var(--font-display); font-size: var(--type-title-lg); line-height: 1; color: var(--text); margin-bottom: 6px; }
+.feedbackBody { font-size: var(--type-support); line-height: 1.55; color: var(--text2); }
 
 /* IMPACT PREVIEW in modal */
-.impactPreview { border: 1px solid; border-radius: var(--radius-sm); padding: 8px 12px; font-size: 12px; font-weight: 500; margin-bottom: 1rem; }
+.impactPreview { border: 1px solid; border-radius: var(--radius-sm); padding: 8px 12px; font-size: var(--type-support); font-weight: 500; margin-bottom: 1rem; }
 
 /* DAY SHEET + PANEL */
 .daySheetOverlay {
@@ -911,28 +872,28 @@
 .dayPanelHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .dayPanelHeaderMain { min-width: 0; }
 .dayPanelEyebrowRow { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
-.dayPanelEyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); }
-.dayPanelTodayBadge { padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.dayPanelTitle { font-family: var(--font-display); font-size: 18px; line-height: 1.05; color: var(--text); }
+.dayPanelEyebrow { font-size: var(--type-overline); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); }
+.dayPanelTodayBadge { padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-size: var(--type-overline); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.dayPanelTitle { font-family: var(--font-display); font-size: var(--type-title-md); line-height: 1.05; color: var(--text); }
 .dayPanelHeaderRight { display: flex; align-items: flex-start; justify-content: flex-end; }
-.dayPanelClose { background: transparent; border: none; color: var(--text3); font-size: 16px; font-weight: 400; cursor: pointer; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; transition: color 0.2s ease, background 0.2s ease; }
+.dayPanelClose { background: transparent; border: none; color: var(--text3); font-size: var(--type-title-sm); font-weight: 400; cursor: pointer; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; transition: color 0.2s ease, background 0.2s ease; }
 .dayPanelClose:hover { background: color-mix(in srgb, var(--surface) 60%, transparent); color: var(--text); }
 .dayPanelHeaderMeta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
 .dayPanelHeaderStat { border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); padding: 10px 12px; min-width: 0; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent); }
-.dayPanelHeaderStatLabel { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
-.dayPanelHeaderStatValue { display: block; font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dayPanelHeaderStatLabel { display: block; font-size: var(--type-overline); font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+.dayPanelHeaderStatValue { display: block; font-family: var(--font-mono); font-size: var(--type-body-sm); font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dayPanelHeaderStatPositive { color: var(--blue); }
 .dayPanelHeaderStatNegative { color: var(--red); }
 
 /* DAY PANEL SECTIONS */
 .daySection { margin-bottom: 14px; }
 .daySectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.daySectionLabel { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; }
+.daySectionLabel { font-size: var(--type-overline); font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; }
 .daySectionHeader .daySectionLabel { margin-bottom: 0; }
-.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); color: var(--text3); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-.daySummary { display: flex; align-items: center; gap: 10px; font-size: 12px; font-family: var(--font-mono); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--border2); margin-bottom: 4px; }
+.daySectionCount { min-width: 22px; height: 22px; padding: 0 8px; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 88%, transparent); color: var(--text3); font-size: var(--type-overline); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.daySummary { display: flex; align-items: center; gap: 10px; font-size: var(--type-support); font-family: var(--font-mono); flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--border2); margin-bottom: 4px; }
 .dayPanelActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
-.dayPanelAction { min-height: 38px; padding: 0 12px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: color 0.15s ease, background 0.15s ease; text-align: center; }
+.dayPanelAction { min-height: 38px; padding: 0 12px; border-radius: 12px; border: none; font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: color 0.15s ease, background 0.15s ease; text-align: center; }
 .dayPanelAction:hover { opacity: 1; transform: none; }
 .dayPanelAction:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .dayPanelActionIncome { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
@@ -946,7 +907,7 @@
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--amber-dim) 72%, var(--surface) 28%);
   color: var(--amber);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.55;
 }
 
@@ -958,11 +919,11 @@
 .debtRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
 .debtRow:last-child { border-bottom: none; }
 .debtRowMain { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.debtRowName { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.debtRowMeta { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.debtRowName { font-size: var(--type-body-sm); font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.debtRowMeta { font-size: var(--type-caption); color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .debtRowAmounts { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; flex-shrink: 0; padding-left: 8px; }
-.debtRowBalance { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.debtRowMin { font-family: var(--font-mono); font-size: 11px; color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.debtRowBalance { font-family: var(--font-mono); font-size: var(--type-body-sm); font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.debtRowMin { font-family: var(--font-mono); font-size: var(--type-caption); color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .projectedTxRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -971,12 +932,12 @@
 }
 .txLeft { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 .txInfoBlock { min-width: 0; }
-.txIcon { width: 24px; height: 24px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.txDesc { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
-.txMeta { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
-.accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
-.recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
-.projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; margin-left: 6px; }
+.txIcon { width: 24px; height: 24px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: var(--type-support); font-weight: 700; flex-shrink: 0; }
+.txDesc { font-size: var(--type-body-sm); font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.txMeta { font-size: var(--type-overline); color: var(--text3); display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; margin-left: 6px; }
 .txRight { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .projectedTxRight {
   width: 100%;
@@ -984,9 +945,9 @@
   align-items: flex-start;
   gap: 10px;
 }
-.txAmount { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+.txAmount { font-family: var(--font-mono); font-size: var(--type-body-sm); font-weight: 600; }
 .projectedTxAmount {
-  font-size: 20px;
+  font-size: var(--type-title-xl);
   line-height: 1;
 }
 .txActions { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; justify-content: flex-end; }
@@ -1007,7 +968,7 @@
   cursor: pointer;
   list-style: none;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 700;
 }
 .txActionSummary::-webkit-details-marker { display: none; }
@@ -1016,14 +977,14 @@
 }
 .txActionSummary small {
   color: var(--text3);
-  font-size: 9px;
+  font-size: var(--type-overline);
   font-weight: 650;
 }
 .txActionSummary::after {
   content: '+';
   flex: 0 0 auto;
   color: var(--text3);
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1;
 }
 .txActionDetails[open] .txActionSummary::after {
@@ -1064,7 +1025,7 @@
   overflow: visible;
 }
 .editBtn,
-.statusBtn { background: transparent; border: none; color: var(--text3); border-radius: 8px; padding: 0 10px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: var(--font-body); min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
+.statusBtn { background: transparent; border: none; color: var(--text3); border-radius: 8px; padding: 0 10px; font-size: var(--type-caption); font-weight: 500; cursor: pointer; font-family: var(--font-body); min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
 .logBtn,
 .recurBtn {
   display: inline-flex;
@@ -1074,7 +1035,7 @@
   color: var(--text3);
   border-radius: 999px;
   padding: 0 12px;
-  font-size: 12px;
+  font-size: var(--type-support);
   cursor: pointer;
   font-family: var(--font-body);
   min-height: 38px;
@@ -1109,15 +1070,15 @@
 .editBtn:hover { color: var(--accent); background: color-mix(in srgb, var(--glass-1) 80%, transparent); }
 .statusBtnPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .statusBtnUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
-.delBtnSm { background: transparent; border: none; color: var(--text3); cursor: pointer; font-size: 11px; font-weight: 500; padding: 0 10px; border-radius: 8px; min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
+.delBtnSm { background: transparent; border: none; color: var(--text3); cursor: pointer; font-size: var(--type-caption); font-weight: 500; padding: 0 10px; border-radius: 8px; min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
 .delBtnSm:hover { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
 .editBtn:disabled,
 .statusBtn:disabled,
 .delBtnSm:disabled { opacity: 0.55; cursor: not-allowed; }
-.statusBadge { border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.statusBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .statusPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
 .statusUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, transparent); }
-.impactBadge { border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 600; border: none; }
+.impactBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .impactLinked { color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, transparent); }
 .impactOn { color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .impactDue { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
@@ -1137,7 +1098,7 @@
   justify-content: space-between;
   gap: 12px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -1147,7 +1108,7 @@
 .goalDisclosureSummary::after {
   content: '▾';
   margin-left: auto;
-  font-size: 11px;
+  font-size: var(--type-caption);
   letter-spacing: 0;
   transition: transform 0.15s ease;
 }
@@ -1165,7 +1126,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   color: var(--text2);
-  font-size: 10px;
+  font-size: var(--type-overline);
   letter-spacing: 0;
 }
 .goalDisclosureBody {
@@ -1180,22 +1141,18 @@
 .modal { background: var(--surface);   border: 1px solid var(--border2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; width: min(520px, 100%); max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; box-shadow: var(--glass-shadow-strong);   }
 @media (min-width: 640px) { .modal { border-radius: var(--radius-lg); max-width: 500px; max-height: unset; } }
 .modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.25rem; }
-.modalTitle { font-family: var(--font-display); font-size: 20px; color: var(--text); min-width: 0; }
-.modalClose { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; min-width: 36px; min-height: 36px; }
+.modalTitle { font-family: var(--font-display); font-size: var(--type-title-xl); color: var(--text); min-width: 0; }
+.modalClose { background: none; border: none; color: var(--text3); font-size: var(--type-title-xl); cursor: pointer; min-width: 36px; min-height: 36px; }
 .modalClose:disabled,
 .typeBtn:disabled,
 .quickCat:disabled,
 .recurChip:disabled,
-.btnCancel:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
 .typeToggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1.25rem; }
-.typeBtn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text3); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; min-height: 52px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
+.typeBtn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text3); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; min-height: 52px; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent); }
 .typeBtn:hover { border-color: var(--border2); color: var(--text); }
 .typeBtnIncome { border-color: var(--accent) !important; background: var(--accent-glow) !important; color: var(--accent) !important; }
 .typeBtnExpense { border-color: var(--red) !important; background: var(--red-dim) !important; color: var(--red) !important; }
-.typeBtnSign { font-size: 18px; font-weight: 700; line-height: 1; }
+.typeBtnSign { font-size: var(--type-title-md); font-weight: 700; line-height: 1; }
 .amountField { display: flex; align-items: center; gap: 4px; margin-bottom: 1.25rem; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent); transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard); }
 
 .amountField:focus-within {
@@ -1205,21 +1162,21 @@
     0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent),
     0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
 }
-.amountSign { font-size: 26px; font-weight: 700; font-family: var(--font-mono); line-height: 1; min-width: 20px; }
-.amountSymbol { font-size: 20px; font-weight: 600; font-family: var(--font-mono); color: var(--text2); }
-.amountInput { flex: 1; background: none; border: none; outline: none; font-size: 26px; font-weight: 600; font-family: var(--font-mono); min-width: 0; }
-.modalSectionLabel { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.amountSign { font-size: var(--type-heading-md); font-weight: 700; font-family: var(--font-mono); line-height: 1; min-width: 20px; }
+.amountSymbol { font-size: var(--type-title-xl); font-weight: 600; font-family: var(--font-mono); color: var(--text2); }
+.amountInput { flex: 1; background: none; border: none; outline: none; font-size: var(--type-heading-md); font-weight: 600; font-family: var(--font-mono); min-width: 0; }
+.modalSectionLabel { font-size: var(--type-caption); color: var(--text3); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
 .quickCats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.quickCat { display: flex; align-items: center; gap: 5px; min-height: 34px; padding: 6px 12px; border: 1px solid var(--border2); border-radius: 20px; background: var(--surface); color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; max-width: 100%; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.quickCat { display: flex; align-items: center; gap: 5px; min-height: 34px; padding: 6px 12px; border: 1px solid var(--border2); border-radius: 20px; background: var(--surface); color: var(--text2); font-size: var(--type-support); cursor: pointer; font-family: var(--font-body); transition: all 0.15s; max-width: 100%; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .quickCat:hover { border-color: var(--border2); color: var(--text); }
 .quickCatActive { font-weight: 600; }
 .presetActions { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.presetToggle { display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: 42px; white-space: nowrap; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
+.presetToggle { display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text2); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: 42px; white-space: nowrap; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent); }
 .presetToggleActive { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
 .modalFields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .modalFieldFull { grid-column: 1 / -1; }
-.presetHint { margin-bottom: 12px; color: var(--text3); font-size: 12px; line-height: 1.45; }
-.accountHint { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: color-mix(in srgb, var(--blue) 12%, var(--surface2)); color: var(--text2); font-size: 12px; line-height: 1.5; }
+.presetHint { margin-bottom: 12px; color: var(--text3); font-size: var(--type-support); line-height: 1.45; }
+.accountHint { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: color-mix(in srgb, var(--blue) 12%, var(--surface2)); color: var(--text2); font-size: var(--type-support); line-height: 1.5; }
 .balanceImpactCard {
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -1235,14 +1192,14 @@
   align-items: center;
 }
 .balanceImpactLabel {
-  font-size: 10px;
+  font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text3);
 }
 .balanceImpactValue {
-  font-size: 12px;
+  font-size: var(--type-support);
   font-weight: 650;
   color: var(--text);
 }
@@ -1255,32 +1212,23 @@
 .balanceImpactNo { color: var(--amber); }
 .balanceImpactMeta {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: var(--type-support);
   line-height: 1.5;
   color: var(--text2);
 }
-.formError { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--red-dim); color: var(--red); font-size: 13px; line-height: 1.5; }
+.formError { padding: 10px 12px; margin-bottom: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--red-dim); color: var(--red); font-size: var(--type-body-sm); line-height: 1.5; }
 .advancedBox { margin-bottom: 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent); overflow: hidden; }
-.advancedSummary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; color: var(--text2); font-size: 13px; font-weight: 800; cursor: pointer; list-style: none; }
+.advancedSummary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 12px; color: var(--text2); font-size: var(--type-body-sm); font-weight: 800; cursor: pointer; list-style: none; }
 .advancedSummary::-webkit-details-marker { display: none; }
-.advancedSummary::after { content: '+'; width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 78%, white 22%); color: var(--text3); font-family: var(--font-mono); font-size: 16px; line-height: 1; }
+.advancedSummary::after { content: '+'; width: 24px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 999px; background: color-mix(in srgb, var(--surface2) 78%, white 22%); color: var(--text3); font-family: var(--font-mono); font-size: var(--type-title-sm); line-height: 1; }
 .advancedBox[open] .advancedSummary::after { content: '-'; }
-.advancedSummary small { color: var(--text3); font-size: 11px; font-weight: 650; }
+.advancedSummary small { color: var(--text3); font-size: var(--type-caption); font-weight: 650; }
 .advancedGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 12px 12px; }
 .advancedFull { grid-column: 1 / -1; }
 .recurGrid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-size: 11px; cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
+.recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-size: var(--type-caption); cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
 .recurChipActive { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
 .modalActions { display: flex; gap: 8px; margin-top: 1.25rem; }
-.btnCancel { flex: 1; padding: 12px; background: var(--surface); border: 1px solid var(--border2); color: var(--text2); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 14px; min-height: 48px; }
-.btnSave { flex: 2; padding: 12px; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 600; min-height: 48px; }
-.btnSave:disabled { opacity: 0.5; cursor: not-allowed; }
-
-@media (min-width: 1024px) {
-  .daySheetOverlay {
-    align-items: center;
-    justify-content: center;
-  }
   .daySheet {
     width: min(560px, calc(100vw - 48px));
     height: auto;
@@ -1310,7 +1258,7 @@
   }
   .dayName {
     padding: 1px 0;
-    font-size: 9px;
+    font-size: var(--type-overline);
   }
   .grid {
     gap: 4px;
@@ -1322,10 +1270,10 @@
     border-radius: 12px;
   }
   .dateNum {
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .cellBalance {
-    font-size: 10px;
+    font-size: var(--type-overline);
     line-height: 1.1;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -1336,22 +1284,22 @@
     border-radius: 14px;
   }
   .balanceRailLabel {
-    font-size: 15px;
+    font-size: var(--type-body-lg);
   }
   .balanceRailLabelCompact {
     display: none;
   }
   .balanceRailMeta {
     margin-top: 3px;
-    font-size: 9px;
+    font-size: var(--type-overline);
   }
   .balanceRailValue {
-    font-size: 18px;
+    font-size: var(--type-title-md);
   }
   .privacyValuePill {
     min-height: 32px;
     padding: 0 11px;
-    font-size: 10px;
+    font-size: var(--type-overline);
   }
   .dayPanelTop {
     padding-top: 10px;
@@ -1376,7 +1324,7 @@
     display: none;
   }
   .feedbackTitle {
-    font-size: 18px;
+    font-size: var(--type-title-md);
     margin-bottom: 0;
   }
   .feedbackBody {
@@ -1402,7 +1350,7 @@
     gap: 0.25rem;
   }
   .monthLabel {
-    font-size: 18px;
+    font-size: var(--type-title-md);
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -1420,10 +1368,10 @@
     min-width: 44px;
     min-height: 44px;
     padding: 0;
-    font-size: 15px;
+    font-size: var(--type-body-lg);
   }
   .addBtns { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .addBtnIncome, .addBtnExpense, .addBtnImport { width: 100%; min-height: 40px; text-align: center; justify-content: center; padding-inline: 10px; font-size: 12px; }
+  .addBtnIncome, .addBtnExpense, .addBtnImport { width: 100%; min-height: 40px; text-align: center; justify-content: center; padding-inline: 10px; font-size: var(--type-support); }
   .addBtnImport { grid-column: 1 / -1; }
   .monthBoard {
     gap: 6px;
@@ -1435,7 +1383,7 @@
   }
   .dayName {
     padding: 1px 0;
-    font-size: 10px;
+    font-size: var(--type-overline);
   }
   .grid {
     grid-template-rows: repeat(6, minmax(0, 1fr));
@@ -1455,11 +1403,11 @@
     gap: 3px;
   }
   .dateNum {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
   .cellBalance {
     display: -webkit-box;
-    font-size: 10px;
+    font-size: var(--type-overline);
     line-height: 1.18;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -1484,7 +1432,7 @@
   }
   .balanceRailLabelCompact {
     display: block;
-    font-size: 13px;
+    font-size: var(--type-body-sm);
     line-height: 1.1;
     font-weight: 700;
     color: var(--text);
@@ -1493,26 +1441,26 @@
   .balanceRailMeta {
     display: block;
     margin-top: 2px;
-    font-size: 10px;
+    font-size: var(--type-overline);
     line-height: 1.3;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   .balanceRailValue {
-    font-size: 18px;
+    font-size: var(--type-title-md);
     white-space: nowrap;
   }
   .privacyValuePill {
     min-height: 30px;
     padding: 0 10px;
-    font-size: 9px;
+    font-size: var(--type-overline);
     letter-spacing: 0.12em;
   }
   .privacyValueInline {
-    font-size: 9px;
+    font-size: var(--type-overline);
   }
   .privacySummary {
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .modalFields,
   .advancedGrid { grid-template-columns: 1fr; }
@@ -1555,7 +1503,7 @@
   .dayPanelClose {
     min-height: 44px;
     padding: 0 14px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .dayBalanceCard {
     padding: 0 0 14px;
@@ -1566,23 +1514,23 @@
   }
   .dayBalanceValue {
     margin-top: 4px;
-    font-size: 28px;
+    font-size: var(--type-heading-sm);
   }
   .dayBalanceStats {
     gap: 10px;
     margin-top: 10px;
   }
   .dayBalanceStatLabel {
-    font-size: 9px;
+    font-size: var(--type-overline);
   }
   .dayBalanceStatValue {
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .projectedTxRow {
     gap: 12px;
   }
   .projectedTxAmount {
-    font-size: 20px;
+    font-size: var(--type-title-xl);
   }
   .projectedActionStack {
     gap: 8px;
@@ -1600,22 +1548,15 @@
     min-height: 40px;
     padding: 0 14px;
     justify-content: center;
-    font-size: 12px;
+    font-size: var(--type-support);
   }
   .primaryProjectedBtn,
   .secondaryProjectedBtn {
     min-width: 0;
   }
   .dayBalanceMeta {
-    font-size: 11px;
+    font-size: var(--type-caption);
     line-height: 1.4;
-  }
-  .dayBalanceEditBtn,
-  .dayBalanceGhostBtn,
-  .dayBalanceSaveBtn {
-    min-height: 44px;
-    padding: 9px 12px;
-    font-size: 12px;
   }
   .dayBalanceActions {
     margin-top: 8px;
@@ -1629,7 +1570,7 @@
   }
   .dayPanelAction {
     min-height: 44px;
-    font-size: 12px;
+    font-size: var(--type-support);
     padding: 0 12px;
     justify-content: center;
   }
@@ -1664,16 +1605,16 @@
   .txIcon {
     width: 28px;
     height: 28px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .txDesc {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
   .txMeta {
-    font-size: 10px;
+    font-size: var(--type-overline);
   }
   .txAmount {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
   .txRight {
     width: 100%;
@@ -1697,21 +1638,21 @@
   .statusBtn {
     min-height: 36px;
     padding: 0 12px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .txActionSummary {
     min-height: 36px;
     padding: 0 12px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .txActionSummary small {
-    font-size: 10px;
+    font-size: var(--type-overline);
   }
   .logBtn,
   .recurBtn {
     min-height: 36px;
     padding: 0 12px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
   .delBtnSm {
     min-height: 36px;
@@ -1720,7 +1661,7 @@
   }
   .dayPanelEmpty {
     padding: 10px 0;
-    font-size: 12px;
+    font-size: var(--type-support);
   }
   .modalOverlay { padding: 0; }
   .modal { width: 100%; max-height: calc(100dvh - 74px - env(safe-area-inset-bottom)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
@@ -1760,7 +1701,7 @@
   }
 
   .cellBalance {
-    font-size: 11px;
+    font-size: var(--type-caption);
     line-height: 1.12;
     letter-spacing: 0;
   }
@@ -1775,16 +1716,16 @@
   }
 
   .balanceRailLabel {
-    font-size: 15px;
+    font-size: var(--type-body-lg);
   }
 
   .balanceRailMeta {
-    font-size: 10px;
+    font-size: var(--type-overline);
     line-height: 1.25;
   }
 
   .balanceRailValue {
-    font-size: 20px;
+    font-size: var(--type-title-xl);
     white-space: nowrap;
   }
 
@@ -1825,7 +1766,7 @@
   }
 
   .dayPanelTitle {
-    font-size: 26px;
+    font-size: var(--type-heading-md);
   }
 
   .dayBalanceStats {
@@ -1868,7 +1809,7 @@
     width: 100%;
     min-height: 40px;
     padding-inline: 10px;
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
 }
 
@@ -1889,7 +1830,7 @@
   }
 
   .monthTitle {
-    font-size: 20px;
+    font-size: var(--type-title-xl);
   }
 
   .navBtn {
@@ -1905,7 +1846,7 @@
   }
 
   .dayName {
-    font-size: 10px;
+    font-size: var(--type-overline);
     letter-spacing: 0.08em;
   }
 
@@ -1922,13 +1863,13 @@
   }
 
   .dateNum {
-    font-size: 13px;
+    font-size: var(--type-body-sm);
     line-height: 1;
   }
 
   .cellBalance {
     display: block;
-    font-size: 12px;
+    font-size: var(--type-support);
     font-weight: 900;
     line-height: 1;
     white-space: nowrap;
@@ -1961,11 +1902,11 @@
   }
 
   .dateNum {
-    font-size: 12px;
+    font-size: var(--type-support);
   }
 
   .cellBalance {
-    font-size: 11px;
+    font-size: var(--type-caption);
   }
 }
 

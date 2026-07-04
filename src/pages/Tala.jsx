@@ -5,6 +5,8 @@ import { formatDisplayDate, today, playTick } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import tStyles from './Tala.module.css'
+import { Button } from '../components/ui/Button'
+import { EmptyState } from '../components/ui/EmptyState'
 
 const MOOD_OPTIONS = ['Great', 'Good', 'Okay', 'Low', 'Heavy']
 const ENERGY_OPTIONS = ['1', '2', '3', '4', '5']
@@ -422,7 +424,7 @@ function MoodDistributionWheel({ moods, privacyMode }) {
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
   if (total === 0) {
-    return <div className={tStyles.empty}>No moods logged to show breakdown.</div>;
+    return <EmptyState compact>No moods logged to show breakdown.</EmptyState>;
   }
 
   let currentPercent = 0;
@@ -1360,7 +1362,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
             </div>
           </details>
-          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleSaveToday(); }}>Save check-in</button>
+          <Button type="button" variant="primary" onClick={() => { playTick(); handleSaveToday(); }}>Save check-in</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1377,7 +1379,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <strong>{talaSettings.promptStyle === 'Direct' ? 'What are you avoiding that deserves a small first step?' : 'What would make today feel a little lighter?'}</strong>
           </div>
           <div className={tStyles.routineList}>
-            {!insights.dueToday.length ? <div className={tStyles.empty}>No tasks due today.</div> : insights.dueToday.slice(0, 4).map(task => (
+            {!insights.dueToday.length ? <EmptyState compact>No tasks due today.</EmptyState> : insights.dueToday.slice(0, 4).map(task => (
               <div key={task._id} className={tStyles.rowCard}>
                 <div>
                   <strong>{task.title}</strong>
@@ -1472,7 +1474,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
             </div>
           </details>
-          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddJournal(); }}>Save journal</button>
+          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddJournal(); }}>Save journal</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1483,7 +1485,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Private entries are masked when privacy mode is on.</p>
             </div>
           </div>
-          {!journal.length ? <div className={tStyles.empty}>No journal entries yet.</div> : journal.slice(0, 8).map((entry, idx) => (
+          {!journal.length ? <EmptyState compact>No journal entries yet.</EmptyState> : journal.slice(0, 8).map((entry, idx) => (
             <div key={entry._id} className={`${tStyles.entryCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div>
                 <span>{formatDisplayDate(entry.date)} · {entry.mood} · {entry.private ? 'Private' : 'Open'}</span>
@@ -1573,7 +1575,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={moodForm.notes} placeholder="What affected your mood?" onChange={event => setMoodForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddMood(); }}>Save mood</button>
+          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddMood(); }}>Save mood</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1589,7 +1591,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             <MiniTrend title="Energy" rows={insights.energyTrend} hidden={privacyMode || !talaSettings.showMoodInsights} />
           </div>
           <div className={tStyles.routineList}>
-            {!moods.length ? <div className={tStyles.empty}>No mood logs yet.</div> : moods.slice(0, 5).map((row, idx) => (
+            {!moods.length ? <EmptyState compact>No mood logs yet.</EmptyState> : moods.slice(0, 5).map((row, idx) => (
               <div key={row._id} className={`${tStyles.rowCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
                 <div>
                   <strong><span className={`${tStyles.moodDot} ${tStyles[moodTone(row.mood)]}`} /> {row.mood}</strong>
@@ -1644,7 +1646,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={taskForm.notes} placeholder="Optional details" onChange={event => setTaskForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddTask(); }}>Add task</button>
+          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddTask(); }}>Add task</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1655,7 +1657,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Mark done when complete. Finished tasks stay visible for momentum.</p>
             </div>
           </div>
-          {!tasks.length ? <div className={tStyles.empty}>No tasks yet.</div> : tasks.slice(0, 10).map((task, idx) => (
+          {!tasks.length ? <EmptyState compact>No tasks yet.</EmptyState> : tasks.slice(0, 10).map((task, idx) => (
             <div key={task._id} className={`${tStyles.rowCard} ${task.done ? tStyles.rowDone : ''} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div>
                 <strong>{task.title}</strong>
@@ -1716,7 +1718,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={goalForm.notes} placeholder="Why this matters, first step, milestone" onChange={event => setGoalForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleAddGoal(); }}>Save goal</button>
+          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddGoal(); }}>Save goal</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1727,7 +1729,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <p className={tStyles.sectionHint}>Update progress directly from the card.</p>
             </div>
           </div>
-          {!goals.length ? <div className={tStyles.empty}>No Tala goals yet.</div> : goals.map((goal, idx) => (
+          {!goals.length ? <EmptyState compact>No Tala goals yet.</EmptyState> : goals.map((goal, idx) => (
             <div key={goal._id} className={`${tStyles.goalCard} ${tStyles.talaRowStaggered}`} style={{ '--stagger': `${idx * 45}ms` }}>
               <div className={tStyles.goalTop}>
                 <div>
@@ -1880,13 +1882,13 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 {selectedDayTotal ? `${selectedDayTotal} Tala entr${selectedDayTotal === 1 ? 'y' : 'ies'} saved for this day.` : 'No Tala entries saved for this day yet.'}
               </p>
             </div>
-            <button type="button" className={tStyles.ghostBtn} onClick={() => {
+            <Button type="button" variant="ghost" onClick={() => {
               playTick();
               setSelectedTalaDate(today())
               setCalendarMonth(today().slice(0, 7))
             }}>
               Today
-            </button>
+            </Button>
           </div>
           <div className={tStyles.selectedDayGrid}>
             <div className={tStyles.selectedDayMetric}><span>Check-ins</span><strong>{selectedDayData.checkins.length}</strong></div>
@@ -1970,7 +1972,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 ))}
               </div>
             ) : (
-              <div className={tStyles.empty}>Use Today, Journal, Mood, Tasks, or Goals to add something for this date.</div>
+              <EmptyState compact>Use Today, Journal, Mood, Tasks, or Goals to add something for this date.</EmptyState>
             )}
           </div>
         </div>
@@ -2049,9 +2051,9 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 <strong>Pending changes</strong>
                 <span>Update the basics here, then save when you are ready.</span>
               </div>
-              <button type="button" className={tStyles.primaryBtn} onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
+              <Button type="button" variant="primary" onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
                 {savingSettings ? 'Saving...' : 'Save Tala settings'}
-              </button>
+              </Button>
             </div>
           </section>
         </div>
@@ -2071,7 +2073,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Keep a copy</strong>
                   <span>Download your Tala entries before making bigger changes.</span>
                 </div>
-                <button type="button" className={tStyles.secondaryBtn} onClick={() => { playTick(); handleExportTalaData(); }}>Export Tala data</button>
+                <Button type="button" variant="secondary" onClick={() => { playTick(); handleExportTalaData(); }}>Export Tala data</Button>
               </div>
 
               <div className={tStyles.settingsActionBlock}>
@@ -2079,10 +2081,10 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Clear Tala logs</strong>
                   <span>Remove Tala entries from this account while keeping your Tala defaults.</span>
                 </div>
-                <button type="button" className={tStyles.ghostBtn} onClick={() => { playTick(); handleDeleteTalaData(); }} disabled={deletingTalaData}>
+                <Button type="button" variant="ghost" onClick={() => { playTick(); handleDeleteTalaData(); }} disabled={deletingTalaData}>
                   {deletingTalaData ? 'Deleting...' : 'Delete Tala logs'}
-                </button>
-                <div className={tStyles.empty}>Your Tala settings stay if you delete Tala logs.</div>
+                </Button>
+                <EmptyState compact>Your Tala settings stay if you delete Tala logs.</EmptyState>
               </div>
 
               <div className={tStyles.settingsActionBlock}>
@@ -2090,9 +2092,9 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Log out</strong>
                   <span>Leave this account safely without changing your Tala settings.</span>
                 </div>
-                <button type="button" className={tStyles.ghostBtn} onClick={() => { playTick(); handleLogout(); }}>
+                <Button type="button" variant="ghost" onClick={() => { playTick(); handleLogout(); }}>
                   Log out
-                </button>
+                </Button>
               </div>
             </div>
           </section>

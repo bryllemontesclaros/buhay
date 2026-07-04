@@ -37,6 +37,8 @@ import { getBillPeriodInfo } from '../lib/bills'
 import { createPortal } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
+import { Button } from '../components/ui/Button'
+import { EmptyState } from '../components/ui/EmptyState'
 
 function formatRoundedBalance(value, symbol = '') {
   const numericValue = Number(value) || 0
@@ -1257,12 +1259,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             </div>
             {!editingDayBalance && (
               <div className={calStyles.dayPanelActions} style={{ marginTop: '8px' }}>
-                <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
+                <Button type="button" variant="primary" onClick={() => openComposer('income')} disabled={selectedDateLocked}>
                   Record income
-                </button>
-                <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionExpense}`} onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
+                </Button>
+                <Button type="button" variant="danger" onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
                   Record expense
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -1349,7 +1351,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             )}
 
             {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedDebts.length === 0 && (
-              <div className={calStyles.dayPanelEmpty}>No entries on this day yet.</div>
+              <EmptyState compact>No entries on this day yet.</EmptyState>
             )}
 
             <div className={calStyles.dayBalanceCard}>
@@ -1379,9 +1381,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 <>
                   <div className={calStyles.dayBalanceHeader}>
                     <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
-                    <button type="button" className={calStyles.dayBalanceEditBtn} onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
-                      Edit balance
-                    </button>
+                    <Button type="button" variant="secondary" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
+                      Edit
+                    </Button>
                   </div>
                   <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
                   <div className={calStyles.dayBalanceStats}>
@@ -1452,17 +1454,17 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
                   </div>
                   <div className={calStyles.dayBalanceActions}>
-                    <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
+                    <Button type="button" variant="ghost" onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
                       Cancel
-                    </button>
+                    </Button>
                     {hasManualBalanceOnSelectedDay && (
-                      <button type="button" className={calStyles.dayBalanceGhostBtn} onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
-                        Reset to auto
-                      </button>
+                      <Button type="button" variant="ghost" onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
+                        Clear
+                      </Button>
                     )}
-                    <button type="button" className={calStyles.dayBalanceSaveBtn} onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
+                    <Button type="button" variant="primary" onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
                       {dayBalanceSaving ? 'Saving...' : 'Save'}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -1759,15 +1761,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
 
               <div className={calStyles.modalActions}>
-                <button type="button" onClick={() => closeRecurringDateEditor()} className={calStyles.btnCancel} disabled={recurringDateSaving}>Cancel</button>
-                <button
+                <Button type="button" onClick={() => closeRecurringDateEditor()} variant="ghost" disabled={recurringDateSaving}>Cancel</Button>
+                <Button
                   type="button"
                   onClick={handleSaveRecurringDate}
-                  className={calStyles.btnSave}
-                  style={{
-                    background: recurringDateTarget.type === 'income' ? 'var(--accent)' : 'var(--red)',
-                    color: recurringDateTarget.type === 'income' ? '#0a0a0f' : '#fff',
-                  }}
+                  variant={recurringDateTarget.type === 'income' ? 'primary' : 'danger'}
                   disabled={recurringDateSaving || !normalizeDate(recurringDateDraft)}
                 >
                   {recurringDateSaving
@@ -1775,7 +1773,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     : recurringDateTarget.type === 'income'
                       ? 'Save income date'
                       : 'Save payment date'}
-                </button>
+                </Button>
               </div>
             </div>
           </div>,
@@ -1927,7 +1925,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   {balanceImpact.affectsLabel}
                 </div>
                 <div className={calStyles.balanceImpactLabel}>Account used</div>
-                <div className={`${calStyles.balanceImpactValue} ${calStyles.balanceImpactAccount}`}>{balanceImpact.accountLabel}</div>
+                <div className={`${calStyles.balanceImpactValue} ${balanceImpact.affectsLabel ? calStyles.balanceImpactAccount : ''}`}>{balanceImpact.accountLabel}</div>
                 <div className={calStyles.balanceImpactLabel}>Counts in calendar close</div>
                 <div className={`${calStyles.balanceImpactValue} ${String(form.paymentStatus || 'paid').toLowerCase() === 'unpaid' ? calStyles.balanceImpactNo : calStyles.balanceImpactYes}`}>
                   {String(form.paymentStatus || 'paid').toLowerCase() === 'unpaid' ? 'No (until paid)' : 'Yes'}
@@ -1991,16 +1989,15 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             )}
 
             <div className={calStyles.modalActions}>
-              <button type="button" onClick={closeTransactionEditor} className={calStyles.btnCancel} disabled={formSaving}>Cancel</button>
-              <button
+              <Button type="button" onClick={closeTransactionEditor} variant="ghost" disabled={formSaving}>Cancel</Button>
+              <Button
                 type="button"
                 onClick={handleSave}
-                className={calStyles.btnSave}
-                style={{ background: isIncome ? 'var(--accent)' : 'var(--red)', color: isIncome ? '#0a0a0f' : '#fff' }}
+                variant={isIncome ? 'primary' : 'danger'}
                 disabled={formSaving || !Number.isFinite(parseFloat(form.amount)) || parseFloat(form.amount) <= 0}
               >
                 {formSaving ? 'Saving...' : editTx ? 'Save changes' : isIncome ? '+ Add income' : '− Add expense'}
-              </button>
+              </Button>
             </div>
             </div>
           </div>,
