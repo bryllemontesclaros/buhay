@@ -536,6 +536,19 @@
   animation: pulseAlert 1.6s infinite ease-in-out;
 }
 
+.debtDueAlert {
+  position: absolute;
+  top: 6px;
+  right: 15px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber);
+  animation: pulseAlert 1.6s infinite ease-in-out;
+  animation-delay: 0.8s;
+}
+
 @keyframes pulseAlert {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.4); opacity: 0.4; }
@@ -940,6 +953,15 @@
 .txRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
 .txRow:last-child { border-bottom: none; }
 .txRowUnpaid { opacity: 0.88; }
+
+.debtRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
+.debtRow:last-child { border-bottom: none; }
+.debtRowMain { display: flex; flex-direction: column; gap: 2px; }
+.debtRowName { font-size: 13px; font-weight: 500; color: var(--text); }
+.debtRowMeta { font-size: 11px; color: var(--text3); }
+.debtRowAmounts { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.debtRowBalance { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); }
+.debtRowMin { font-family: var(--font-mono); font-size: 11px; color: var(--amber); }
 .projectedTxRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
