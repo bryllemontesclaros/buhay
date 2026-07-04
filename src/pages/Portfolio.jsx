@@ -65,7 +65,6 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
     .filter(row => row.value > 0)
   const formPreview = normalizePortfolioHolding(form)
   const accountOptions = data.accounts || []
-  const includedCount = holdings.filter(holding => holding.includeInTotalBalance).length
 
   useEffect(() => {
     if (formOpen && formRef.current) {
@@ -110,12 +109,6 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
       quantity: toFormValue(holding.quantity),
       averageBuyPrice: toFormValue(holding.averageBuyPrice),
       currentPrice: toFormValue(holding.currentPrice),
-      fees: toFormValue(holding.fees),
-      currency: holding.currency || defaultCurrency,
-      platform: holding.platform || '',
-      accountId: holding.accountId || '',
-      includeInTotalBalance: Boolean(holding.includeInTotalBalance),
-      notes: holding.notes || '',
     })
     setFormOpen(true)
   }
@@ -138,8 +131,8 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
       notifyApp({ title: 'Quantity needed', message: 'Enter how many shares, units, coins, or fund units you hold.', tone: 'warning' })
       return
     }
-    if (next.currentPrice < 0 || next.averageBuyPrice < 0 || next.fees < 0) {
-      notifyApp({ title: 'Check amounts', message: 'Prices and fees cannot be negative.', tone: 'warning' })
+    if (next.currentPrice < 0 || next.averageBuyPrice < 0) {
+      notifyApp({ title: 'Check amounts', message: 'Prices cannot be negative.', tone: 'warning' })
       return
     }
 
@@ -152,9 +145,7 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
       })
       notifyApp({
         title: editingHolding ? 'Holding updated' : 'Holding added',
-        message: next.includeInTotalBalance
-          ? `${next.symbol || next.name} now counts toward Takda Total Balance.`
-          : `${next.symbol || next.name} is tracked in Portfolio only.`,
+        message: `${next.symbol || next.name} is now tracked in your Portfolio.`,
         tone: 'success',
       })
       closeForm()
@@ -216,10 +207,6 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
             </select>
           </label>
           <label>
-            <span>Platform / account</span>
-            <input value={form.platform} onChange={event => setField('platform', event.target.value)} placeholder="Maya, Binance, IBKR" />
-          </label>
-          <label>
             <span>Quantity</span>
             <input type="number" min="0" step="any" value={form.quantity} onChange={event => setField('quantity', event.target.value)} placeholder="0" />
           </label>
@@ -230,38 +217,6 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
           <label>
             <span>Current manual price</span>
             <input type="number" min="0" step="any" value={form.currentPrice} onChange={event => setField('currentPrice', event.target.value)} placeholder="0.00" />
-          </label>
-          <label>
-            <span>Fees</span>
-            <input type="number" min="0" step="any" value={form.fees} onChange={event => setField('fees', event.target.value)} placeholder="0.00" />
-          </label>
-          <label>
-            <span>Currency</span>
-            <input value={form.currency} onChange={event => setField('currency', event.target.value.toUpperCase())} placeholder={defaultCurrency} />
-          </label>
-          <label>
-            <span>Linked Takda account</span>
-            <select value={form.accountId} onChange={event => setField('accountId', event.target.value)}>
-              <option value="">No linked account</option>
-              {accountOptions.map(account => (
-                <option key={account._id} value={account._id}>{account.name} · {account.type}</option>
-              ))}
-            </select>
-          </label>
-          <label className={pStyles.toggleRow}>
-            <input
-              type="checkbox"
-              checked={form.includeInTotalBalance}
-              onChange={event => setField('includeInTotalBalance', event.target.checked)}
-            />
-            <span>
-              Include in Takda Total Balance
-              <small>This adds current market value to current balance, not daily cash-flow forecasts.</small>
-            </span>
-          </label>
-          <label className={pStyles.full}>
-            <span>Notes</span>
-            <textarea value={form.notes} onChange={event => setField('notes', event.target.value)} placeholder="Optional notes, strategy, or reminders" />
           </label>
         </div>
 
@@ -289,57 +244,45 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
   );
 
   return (
-    <div className={`${styles.page} ${pStyles.page}`}>
-      <section className={pStyles.hero}>
-        <div className={pStyles.heroCopy}>
-          <div className={pStyles.eyebrow}>Portfolio</div>
-          <h2>Investments beside your daily money view.</h2>
-          <p>
+    <div className={styles.page}>
+      <div className={styles.pageHero}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageEyebrow}>Portfolio</div>
+          <div className={styles.pageTitle}>Investments beside your daily money view.</div>
+          <div className={styles.pageSub}>
             Track stocks, crypto, funds, and other holdings manually, then choose which assets count toward your Takda Total Balance.
-          </p>
+          </div>
           <div className={pStyles.heroActions}>
             <button type="button" className={pStyles.primaryBtn} onClick={openAdd}>
               Add holding
             </button>
-            <span>Manual prices. You stay in control of what affects your balance.</span>
+            <span style={{ fontSize: '12px', color: 'var(--text3)' }}>Manual prices. You stay in control of what affects your balance.</span>
           </div>
         </div>
         <div className={pStyles.totalCard}>
           <span>Total portfolio value</span>
           <strong>{privacyMode ? 'Hidden' : formatMoney(summary.marketValue, symbol)}</strong>
-          <small>{summary.includedValue ? `${formatMoney(summary.includedValue, symbol)} is included in Takda Total Balance.` : 'Portfolio-only until you include a holding.'}</small>
+          <small>Tracked separately from your main accounts.</small>
           <div className={pStyles.totalSplit}>
             <span>Holdings <strong>{holdings.length}</strong></span>
-            <span>Included <strong>{privacyMode ? 'Hidden' : formatMoney(summary.includedValue, symbol)}</strong></span>
           </div>
         </div>
-      </section>
+      </div>
 
       <section className={pStyles.metricGrid} aria-label="Portfolio summary">
         <div className={pStyles.metricCard}>
           <span>Total cost</span>
           <strong>{privacyMode ? 'Hidden' : formatMoney(summary.totalCost, symbol)}</strong>
-          <small>Quantity x average buy price + fees</small>
+          <small>Quantity x average buy price</small>
         </div>
         <div className={`${pStyles.metricCard} ${gainTone}`}>
           <span>Gain / loss</span>
           <strong>{privacyMode ? 'Hidden' : formatMoney(summary.gainLoss, symbol)}</strong>
           <small>{privacyMode ? 'Private' : formatPercent(summary.gainLossPct)}</small>
         </div>
-        <div className={pStyles.metricCard}>
-          <span>Included in Total Balance</span>
-          <strong>{privacyMode ? 'Hidden' : formatMoney(summary.includedValue, symbol)}</strong>
-          <small>{includedCount ? `${includedCount} holding${includedCount === 1 ? '' : 's'} counted in Takda.` : 'Turn on the toggle per holding when you want it counted.'}</small>
-        </div>
       </section>
 
-      <section className={pStyles.balanceNote} aria-label="Portfolio balance behavior">
-        <div>
-          <span className={pStyles.eyebrow}>Balance behavior</span>
-          <strong>Portfolio can support Total Balance without changing your daily cash flow.</strong>
-        </div>
-        <p>Included holdings add their current value to Takda balance views. Calendar entries, income, expenses, and forecasts stay separate.</p>
-      </section>
+
 
       <section className={pStyles.panel}>
         <div className={pStyles.sectionHeader}>
@@ -373,14 +316,10 @@ export default function Portfolio({ user, data = {}, profile = {}, symbol = '₱
                   <div className={pStyles.holdingCopy}>
                     <span className={pStyles.assetType}>{ASSET_TYPE_LABELS[holding.assetType] || 'Other'}</span>
                     <h3>{holding.symbol || holding.name || 'Holding'}</h3>
-                    <p>{holding.name || holding.platform || 'Manual holding'}</p>
+                    <p>{holding.name || 'Manual holding'}</p>
                     <div className={pStyles.holdingMeta}>
                       <span>{holding.quantity} units</span>
                       <span>{formatMoney(holding.currentPrice, symbol)} each</span>
-                      {holding.platform && <span>{holding.platform}</span>}
-                      <span className={holding.includeInTotalBalance ? pStyles.includedBadge : pStyles.portfolioOnlyBadge}>
-                        {holding.includeInTotalBalance ? 'In Total Balance' : 'Portfolio only'}
-                      </span>
                     </div>
                   </div>
                 </div>

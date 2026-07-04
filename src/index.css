@@ -70,7 +70,7 @@
   --space-9: 64px;
   --space-10: 80px;
   --page-max: 1320px;
-  --page-max-tight: 1160px;
+  --page-max-tight: 1080px;
   --section-space: clamp(24px, 4vw, 48px);
   --grid-gap: 24px;
   --grid-gap-tight: 16px;
@@ -250,14 +250,15 @@ body {
   line-height: 1.5;
   /* Allow pages like the landing screen to manage their own scrolling container.
      The in-app shell still prevents body scroll by owning a fixed-height layout. */
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
 #root {
   min-height: 100%;
-  overflow: visible;
+  overflow-x: hidden;
 }
 
 body {

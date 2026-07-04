@@ -203,12 +203,12 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   }, [showModal, editAccount?._id])
 
   return (
-    <div className={`${styles.page} ${accStyles.accountsPage}`}>
-      <div className={accStyles.heroSection}>
-        <div className={accStyles.heroCopy}>
-          <div className={accStyles.pageEyebrow}>Accounts</div>
-          <div className={accStyles.pageTitle}>Keep each account clear and current.</div>
-          <div className={accStyles.pageSub}>
+    <div className={styles.page}>
+      <div className={styles.pageHero}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageEyebrow}>Accounts</div>
+          <div className={styles.pageTitle}>Keep each account clear and current.</div>
+          <div className={styles.pageSub}>
             Cash, bank, wallet, and credit balances work best when each account has a clear role and only reflects real activity.
           </div>
         </div>

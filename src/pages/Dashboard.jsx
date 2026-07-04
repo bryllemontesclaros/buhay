@@ -443,15 +443,17 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
   }
 
   return (
-    <div className={`${styles.page} ${dStyles.dashboardPage}`}>
-      <div className={dStyles.introBoard}>
-        <div className={dStyles.introCopy}>
-          <div className={dStyles.introEyebrow}>Takda</div>
-          <div className={dStyles.greetingText}>
-            <span className={dStyles.greetingHi}>{greeting}, {name}</span>
-            <span className={dStyles.greetingDate}>{now.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+    <div className={styles.page}>
+      <div className={styles.pageHero}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageEyebrow}>Takda</div>
+          <div className={styles.pageTitle}>
+            {greeting}, {name}
           </div>
-          <div className={dStyles.introSub}>
+          <div className={styles.pageSub}>
+            {now.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </div>
+          <div className={styles.pageSub} style={{ marginTop: '12px' }}>
             Start with what needs money attention today. Takda keeps balances, bills, savings, and recent activity in one clear daily view.
           </div>
         </div>

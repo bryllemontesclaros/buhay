@@ -23,10 +23,9 @@ export function normalizePortfolioHolding(holding = {}, exchangeRates = null) {
   const quantity = Math.max(0, numberOrZero(holding.quantity))
   const averageBuyPrice = Math.max(0, numberOrZero(holding.averageBuyPrice))
   const currentPrice = Math.max(0, numberOrZero(holding.currentPrice))
-  const fees = Math.max(0, numberOrZero(holding.fees))
   
   let marketValue = quantity * currentPrice
-  let totalCost = (quantity * averageBuyPrice) + fees
+  let totalCost = quantity * averageBuyPrice
 
   if (exchangeRates && holding.currency) {
     const holdingCurrency = String(holding.currency).toUpperCase()
@@ -48,12 +47,6 @@ export function normalizePortfolioHolding(holding = {}, exchangeRates = null) {
     quantity,
     averageBuyPrice,
     currentPrice,
-    fees,
-    currency: String(holding.currency || '').trim().toUpperCase(),
-    platform: String(holding.platform || '').trim(),
-    accountId: String(holding.accountId || '').trim(),
-    includeInTotalBalance: Boolean(holding.includeInTotalBalance),
-    notes: String(holding.notes || '').trim(),
     lastPriceUpdatedAt: numberOrZero(holding.lastPriceUpdatedAt),
     marketValue,
     totalCost,
@@ -67,13 +60,11 @@ export function getPortfolioSummary(holdings = [], exchangeRates = null) {
   const totals = normalized.reduce((summary, holding) => {
     summary.marketValue += holding.marketValue
     summary.totalCost += holding.totalCost
-    if (holding.includeInTotalBalance) summary.includedValue += holding.marketValue
     summary.assetTypes[holding.assetType] = (summary.assetTypes[holding.assetType] || 0) + holding.marketValue
     return summary
   }, {
     marketValue: 0,
     totalCost: 0,
-    includedValue: 0,
     assetTypes: {},
   })
 
@@ -86,6 +77,3 @@ export function getPortfolioSummary(holdings = [], exchangeRates = null) {
   }
 }
 
-export function getIncludedPortfolioValue(holdings = [], exchangeRates = null) {
-  return getPortfolioSummary(holdings, exchangeRates).includedValue
-}

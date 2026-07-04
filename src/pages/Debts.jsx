@@ -195,6 +195,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
             })
             notifyApp({ title: 'Credit Card updated', message: `${form.name} changes have been saved.`, tone: 'success' })
           }
+        } else {
           const accRef = await fsAdd(user.uid, 'accounts', {
             name: form.name,
             type: 'Credit Card',
@@ -570,15 +571,14 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       </div>
     )
   }
-
   return (
-    <div className={`${styles.page} ${dStyles.debtsPage}`}>
+    <div className={styles.page}>
       {/* Hero Header */}
-      <div className={dStyles.heroSection}>
-        <div className={dStyles.heroCopy}>
-          <div className={dStyles.pageEyebrow}>Plan · Debts</div>
-          <div className={dStyles.pageTitle}>Take command of what you owe.</div>
-          <div className={dStyles.pageSub}>
+      <div className={styles.pageHero}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageEyebrow}>Plan · Debts</div>
+          <div className={styles.pageTitle}>Take command of what you owe.</div>
+          <div className={styles.pageSub}>
             Visualize payoff dates, simulate Snowball vs. Avalanche strategies, and see exactly when you will reach complete freedom.
           </div>
         </div>

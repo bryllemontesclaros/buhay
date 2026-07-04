@@ -114,12 +114,12 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
   }, [actionRequest, onActionHandled])
 
   return (
-    <div className={`${styles.page} ${sStyles.savingsPage}`}>
-      <div className={sStyles.heroSection}>
-        <div className={sStyles.heroCopy}>
-          <div className={sStyles.pageEyebrow}>Savings</div>
-          <div className={sStyles.pageTitle}>Make goals concrete.</div>
-          <div className={sStyles.pageSub}>
+    <div className={styles.page}>
+      <div className={styles.pageHero}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageEyebrow}>Savings</div>
+          <div className={styles.pageTitle}>Make goals concrete.</div>
+          <div className={styles.pageSub}>
             Keep the target, remaining gap, and next contribution visible without pretending every goal will move on schedule.
           </div>
         </div>
