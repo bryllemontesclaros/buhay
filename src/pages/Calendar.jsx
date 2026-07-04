@@ -1256,7 +1256,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
             </div>
             {!editingDayBalance && (
-              <div className={calStyles.dayPanelActions} style={{ marginTop: '12px' }}>
+              <div className={calStyles.dayPanelActions} style={{ marginTop: '8px' }}>
                 <button type="button" className={`${calStyles.dayPanelAction} ${calStyles.dayPanelActionIncome}`} onClick={() => openComposer('income')} disabled={selectedDateLocked}>
                   Record income
                 </button>

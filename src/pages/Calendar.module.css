@@ -1801,9 +1801,26 @@
     box-shadow: 0 20px 60px rgba(16, 16, 16, 0.24);
   }
 
-  .dayPanelTop { margin-bottom: 14px;
-    padding: 14px 16px 12px;
+  .dayPanelTop {
+    padding: 10px 14px 8px;
     border-bottom: 1px solid var(--border2);
+  }
+  
+  .dayPanelBody {
+    padding: 10px 14px 16px;
+  }
+
+  .daySection {
+    margin-bottom: 12px;
+  }
+  
+  .daySectionHeader {
+    margin-bottom: 6px;
+  }
+  
+  .dayBalanceCard {
+    margin-top: 12px;
+    padding: 12px 14px;
   }
 
   .dayPanelTitle {
@@ -1825,8 +1842,8 @@
   .txRow,
   .debtRow {
     grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 12px 0;
+    gap: 6px;
+    padding: 8px 0;
   }
 
   .txRight,
