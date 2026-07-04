@@ -88,26 +88,10 @@
 }
 
 .dayBalanceCard {
-  padding: 16px;
-  margin: 16px -18px -22px;
-  background: var(--surface);
-  border-top: 1px solid var(--border2);
+  margin: 16px 0 0 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  position: sticky;
-  bottom: -22px;
-  z-index: 10;
-}
-
-.dayBalanceStats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.dayBalanceStat {
-  padding: 10px 10px 0 0;
 }
 
 .dayBalanceMeta {
@@ -1229,6 +1213,12 @@
 .recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-size: var(--type-caption); cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
 .recurChipActive { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
 .modalActions { display: flex; gap: 8px; margin-top: 1.25rem; }
+
+@media (min-width: 1024px) {
+  .daySheetOverlay {
+    align-items: center;
+    justify-content: center;
+  }
   .daySheet {
     width: min(560px, calc(100vw - 48px));
     height: auto;

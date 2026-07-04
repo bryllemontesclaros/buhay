@@ -1257,6 +1257,98 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 </button>
               </div>
             </div>
+            <div className={calStyles.dayBalanceCard}>
+              {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
+                privacyMode ? (
+                  <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
+                    Totals are hidden while privacy mode is on.
+                  </div>
+                ) : (
+                  <div className={calStyles.daySummary}>
+                    <span style={{ color: 'var(--accent)' }}>
+                      {`+${fmt(selectedDayIncome, s)}`}
+                    </span>
+                    <span style={{ color: 'var(--text3)' }}>·</span>
+                    <span style={{ color: 'var(--red)' }}>
+                      {`−${fmt(selectedDayExpense, s)}`}
+                    </span>
+                    <span style={{ color: 'var(--text3)' }}>·</span>
+                    <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
+                      {`Net ${fmt(selectedDayNet, s)}`}
+                    </span>
+                  </div>
+                )
+              )}
+
+              {!editingDayBalance ? (
+                <>
+                  <div className={calStyles.dayBalanceHeader}>
+                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
+                    <Button type="button" variant="secondary" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
+                      Edit
+                    </Button>
+                  </div>
+                  <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
+                  
+                  <div className={calStyles.dayBalanceMeta}>
+                    {hasManualBalanceOnSelectedDay
+                      ? 'Manual balance override active.'
+                      : selectedDayUnpaidCount > 0
+                        ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
+                        : 'Day close includes paid entries only.'}
+                    {latestOverrideEvent?.createdAt && (
+                      <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
+                        Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
+                      </div>
+                    )}
+                    {hasManualBalanceOnSelectedDay && (
+                      <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid color-mix(in srgb, var(--border) 32%, transparent)', color: 'var(--text2)', fontSize: 11, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <span>Ledger calculation: <strong style={{ color: 'var(--text)' }}>{balanceMoney(selectedDayAutoBalance)}</strong></span>
+                        <span style={{ color: 'var(--text3)' }}>·</span>
+                        <span>Adjustment: <strong style={{ color: selectedDayBalance - selectedDayAutoBalance >= 0 ? 'var(--accent)' : 'var(--red)' }}>{selectedDayBalance - selectedDayAutoBalance >= 0 ? '+' : ''}{balanceMoney(selectedDayBalance - selectedDayAutoBalance)}</strong></span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label className={calStyles.dayBalanceField}>
+                    <span className={calStyles.dayBalanceLabel}>Day closing balance for {selected}</span>
+                    <div className={calStyles.dayBalanceInputWrap}>
+                      <span>{s}</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={dayBalanceDraft}
+                        onChange={event => setDayBalanceDraft(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key === 'Enter') handleSaveDayBalance()
+                          if (event.key === 'Escape') closeDayBalanceEditor()
+                        }}
+                        placeholder="0.00"
+                        disabled={dayBalanceSaving}
+                      />
+                    </div>
+                  </label>
+                  <div className={calStyles.dayBalanceMeta}>
+                    This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
+                  </div>
+                  <div className={calStyles.dayBalanceActions}>
+                    <Button type="button" variant="ghost" onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
+                      Cancel
+                    </Button>
+                    {hasManualBalanceOnSelectedDay && (
+                      <Button type="button" variant="ghost" onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
+                        Clear
+                      </Button>
+                    )}
+                    <Button type="button" variant="primary" onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
+                      {dayBalanceSaving ? 'Saving...' : 'Save'}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
             {!editingDayBalance && (
               <div className={calStyles.dayPanelActions} style={{ marginTop: '8px' }}>
                 <Button type="button" variant="primary" onClick={() => openComposer('income')} disabled={selectedDateLocked}>
@@ -1354,121 +1446,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               <EmptyState compact>No entries on this day yet.</EmptyState>
             )}
 
-            <div className={calStyles.dayBalanceCard}>
-              {(selectedIncome.length > 0 || selectedExpenses.length > 0) && (
-                privacyMode ? (
-                  <div className={`${calStyles.daySummary} ${calStyles.privacySummary}`}>
-                    Totals are hidden while privacy mode is on.
-                  </div>
-                ) : (
-                  <div className={calStyles.daySummary}>
-                    <span style={{ color: 'var(--accent)' }}>
-                      {`+${fmt(selectedDayIncome, s)}`}
-                    </span>
-                    <span style={{ color: 'var(--text3)' }}>·</span>
-                    <span style={{ color: 'var(--red)' }}>
-                      {`−${fmt(selectedDayExpense, s)}`}
-                    </span>
-                    <span style={{ color: 'var(--text3)' }}>·</span>
-                    <span style={{ color: selectedDayNet >= 0 ? 'var(--blue)' : 'var(--red)', fontWeight: 600 }}>
-                      {`Net ${fmt(selectedDayNet, s)}`}
-                    </span>
-                  </div>
-                )
-              )}
-
-              {!editingDayBalance ? (
-                <>
-                  <div className={calStyles.dayBalanceHeader}>
-                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
-                    <Button type="button" variant="secondary" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
-                      Edit
-                    </Button>
-                  </div>
-                  <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
-                  <div className={calStyles.dayBalanceStats}>
-                    <div className={calStyles.dayBalanceStat}>
-                      <span className={calStyles.dayBalanceStatLabel}>Entries</span>
-                      <span className={calStyles.dayBalanceStatValue}>{selectedDayCount}</span>
-                    </div>
-                    <div className={calStyles.dayBalanceStat}>
-                      <span className={calStyles.dayBalanceStatLabel}>Income</span>
-                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatPositive}`}>
-                        {privacyMode ? 'Hidden' : `+${fmt(selectedDayIncome, s)}`}
-                      </span>
-                    </div>
-                    <div className={calStyles.dayBalanceStat}>
-                      <span className={calStyles.dayBalanceStatLabel}>Expenses</span>
-                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : calStyles.dayBalanceStatNegative}`}>
-                        {privacyMode ? 'Hidden' : `−${fmt(selectedDayExpense, s)}`}
-                      </span>
-                    </div>
-                    <div className={calStyles.dayBalanceStat}>
-                      <span className={calStyles.dayBalanceStatLabel}>Net</span>
-                      <span className={`${calStyles.dayBalanceStatValue} ${privacyMode ? calStyles.privacyValueInline : (selectedDayNet >= 0 ? calStyles.dayBalanceStatPositive : calStyles.dayBalanceStatNegative)}`}>
-                        {privacyMode ? 'Hidden' : `${selectedDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(selectedDayNet), s)}`}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={calStyles.dayBalanceMeta}>
-                    {hasManualBalanceOnSelectedDay
-                      ? 'Manual balance override active.'
-                      : selectedDayUnpaidCount > 0
-                        ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
-                        : 'Day close includes paid entries only.'}
-                    {latestOverrideEvent?.createdAt && (
-                      <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
-                        Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
-                      </div>
-                    )}
-                    {hasManualBalanceOnSelectedDay && (
-                      <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid color-mix(in srgb, var(--border) 32%, transparent)', color: 'var(--text2)', fontSize: 11, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <span>Ledger calculation: <strong style={{ color: 'var(--text)' }}>{balanceMoney(selectedDayAutoBalance)}</strong></span>
-                        <span style={{ color: 'var(--text3)' }}>·</span>
-                        <span>Adjustment: <strong style={{ color: selectedDayBalance - selectedDayAutoBalance >= 0 ? 'var(--accent)' : 'var(--red)' }}>{selectedDayBalance - selectedDayAutoBalance >= 0 ? '+' : ''}{balanceMoney(selectedDayBalance - selectedDayAutoBalance)}</strong></span>
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <label className={calStyles.dayBalanceField}>
-                    <span className={calStyles.dayBalanceLabel}>Day closing balance for {selected}</span>
-                    <div className={calStyles.dayBalanceInputWrap}>
-                      <span>{s}</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={dayBalanceDraft}
-                        onChange={event => setDayBalanceDraft(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.key === 'Enter') handleSaveDayBalance()
-                          if (event.key === 'Escape') closeDayBalanceEditor()
-                        }}
-                        placeholder="0.00"
-                        disabled={dayBalanceSaving}
-                      />
-                    </div>
-                  </label>
-                  <div className={calStyles.dayBalanceMeta}>
-                    This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
-                  </div>
-                  <div className={calStyles.dayBalanceActions}>
-                    <Button type="button" variant="ghost" onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
-                      Cancel
-                    </Button>
-                    {hasManualBalanceOnSelectedDay && (
-                      <Button type="button" variant="ghost" onClick={handleClearDayBalance} disabled={dayBalanceSaving}>
-                        Clear
-                      </Button>
-                    )}
-                    <Button type="button" variant="primary" onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
-                      {dayBalanceSaving ? 'Saving...' : 'Save'}
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
+            
 
             {!editingDayBalance && (
               <div className={calStyles.daySystemNote}>
