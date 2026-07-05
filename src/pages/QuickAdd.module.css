@@ -24,6 +24,7 @@
 }
 .amountInput[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .utilityRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }

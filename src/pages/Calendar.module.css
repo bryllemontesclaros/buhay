@@ -1170,6 +1170,7 @@
 }
 .amountInput[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 .modalSectionLabel { font-size: var(--type-caption); color: var(--text3); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
 .quickCats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
