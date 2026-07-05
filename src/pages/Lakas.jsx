@@ -3515,7 +3515,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <span>{formatPreviousExerciseSummary(previousEntry, savedLakasSettings.units.weight)}</span>
                     <small>{previousEntry.workoutTitle} · {previousEntry.date ? formatDisplayDate(previousEntry.date) : 'Saved workout'} · {previousEntry.count} saved {previousEntry.count === 1 ? 'entry' : 'entries'}</small>
                   </div>
-                  <Button type="button" variant="ghost" onClick={() => applyPreviousExerciseValues(formSetter, row.rowId, previousEntry)}>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => applyPreviousExerciseValues(formSetter, row.rowId, previousEntry)}>
                     Use last values
                   </Button>
                 </div>
@@ -3527,7 +3527,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           )
         })}
-        <Button type="button" variant="secondary" onClick={() => addExerciseRow(formSetter)}>
+        <Button type="button" variant="secondary" fullWidth onClick={() => addExerciseRow(formSetter)}>
           Add exercise
         </Button>
       </div>
@@ -5213,7 +5213,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  <Button type="button" variant="primary" fullWidth onClick={() => openGymSessionMode(featuredWorkoutTemplate, featuredWorkoutSession)}>
 	                    Start workout + video
 	                  </Button>
-	                  <Button type="button" variant="ghost" onClick={openWorkoutPathChooser}>
+	                  <Button type="button" variant="ghost" fullWidth onClick={openWorkoutPathChooser}>
 	                    Change today&apos;s program
 	                  </Button>
 	                </div>
@@ -5327,7 +5327,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  </div>
 	                </div>
 	                <div className={lStyles.workoutLaunchActions}>
-	                  <Button type="button" variant="ghost" onClick={openProgramsPanel}>
+	                  <Button type="button" variant="ghost" fullWidth onClick={openProgramsPanel}>
 	                    Open routines library
 	                  </Button>
 	                </div>
@@ -5412,7 +5412,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   <Button type="button" variant="primary" fullWidth onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
                     Start with video
                   </Button>
-                  <Button type="button" variant="ghost" onClick={() => {
+                  <Button type="button" variant="ghost" fullWidth onClick={() => {
                     openProgramsPanel()
                     editGymSessionAsRoutine(selectedGymTemplate)
                   }}>
@@ -5536,10 +5536,10 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </small>
             </div>
             <div className={lStyles.guidedHandoffActions}>
-              <Button type="button" variant="secondary" onClick={() => loadWorkoutTemplate(selectedGymTemplate, selectedGymSession)}>
+              <Button type="button" variant="secondary" fullWidth onClick={() => loadWorkoutTemplate(selectedGymTemplate, selectedGymSession)}>
                 Load guided log
               </Button>
-              <Button type="button" variant="ghost" onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
+              <Button type="button" variant="ghost" fullWidth onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
                 Start session instead
               </Button>
             </div>
