@@ -1996,8 +1996,6 @@
   }
 }
 
-:global([data-theme="light"]) .modal,
-:global(.force-light-theme) .modal,
 :global(.neo) .modal {
   background: var(--surface-solid);
   border: 4px solid var(--nb-stroke);

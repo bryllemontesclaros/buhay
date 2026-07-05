@@ -3024,8 +3024,6 @@
   filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 60%, transparent));
 }
 
-:global([data-theme="light"]) .changelogModal,
-:global(.force-light-theme) .changelogModal,
 :global(.neo) .changelogModal {
   background: var(--surface-solid);
   border: 4px solid #1a1a1a;
