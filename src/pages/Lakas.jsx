@@ -4719,7 +4719,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <span>{activeGymFinished ? 'Ready to finish' : `${activeGymDoneSetCount}/${activeGymTotalSets} sets done`}</span>
                 <small>{formatDurationClock(activeGymElapsedSeconds)} elapsed</small>
               </div>
-              <Button type="button" variant="primary" onClick={handleSaveGymSession}>
+              <Button type="button" variant="primary" fullWidth onClick={handleSaveGymSession}>
                 {activeGymFinished ? 'Finish and save' : 'Save progress'}
               </Button>
             </div>
@@ -5210,7 +5210,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  <p>{coachingSystem.workout.recommendedReason}</p>
 	                </div>
 	                <div className={`${lStyles.workoutLaunchActions} ${lStyles.workoutHeroActions}`}>
-	                  <Button type="button" variant="primary" onClick={() => openGymSessionMode(featuredWorkoutTemplate, featuredWorkoutSession)}>
+	                  <Button type="button" variant="primary" fullWidth onClick={() => openGymSessionMode(featuredWorkoutTemplate, featuredWorkoutSession)}>
 	                    Start workout + video
 	                  </Button>
 	                  <Button type="button" variant="ghost" onClick={openWorkoutPathChooser}>
@@ -5409,7 +5409,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  </div>
 	                )}
                 <div className={lStyles.gymSessionActions}>
-                  <Button type="button" variant="primary" onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
+                  <Button type="button" variant="primary" fullWidth onClick={() => openGymSessionMode(selectedGymTemplate, selectedGymSession)}>
                     Start with video
                   </Button>
                   <Button type="button" variant="ghost" onClick={() => {
@@ -5588,7 +5588,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           </details>
           {renderExerciseEditor(workoutForm.exercises, setWorkoutForm, 'Workout exercises')}
-          <Button type="button" variant="primary" onClick={handleAddWorkout}>Save workout</Button>
+          <Button type="button" variant="primary" fullWidth onClick={handleAddWorkout}>Save workout</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent workouts</strong>
@@ -5764,7 +5764,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 </label>
               </div>
               {renderExerciseEditor(routineForm.exercises, setRoutineForm, 'Routine exercises')}
-              <Button type="button" variant="primary" onClick={handleAddRoutine}>Save routine</Button>
+              <Button type="button" variant="primary" fullWidth onClick={handleAddRoutine}>Save routine</Button>
             </div>
           </details>
           </div>
@@ -5943,7 +5943,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <span>{RECOMP_NUTRITION_GUIDE.title}</span>
                 <strong>Eat to recover, build, and slowly tighten up.</strong>
               </div>
-              <Button type="button" variant="secondary" onClick={applyRecompStarterDefaults}>
+              <Button type="button" variant="secondary" onClick={applyRecompStarterDefaults} fullWidth>
                 Use starter defaults
               </Button>
             </div>
@@ -6064,10 +6064,10 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </div>
           </details>
           <div className={lStyles.comboActionRow}>
-            <Button type="button" variant="primary" onClick={handleAddMeal} disabled={savingMeal}>
+            <Button type="button" variant="primary" fullWidth onClick={handleAddMeal} disabled={savingMeal}>
               {savingMeal ? 'Saving meal...' : 'Save meal'}
             </Button>
-            <Button type="button" variant="secondary" onClick={handleSaveMealCombo}>
+            <Button type="button" variant="secondary" onClick={handleSaveMealCombo} fullWidth>
               Save as quick combo
             </Button>
           </div>
@@ -6157,7 +6157,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </label>
             </div>
           </details>
-          <Button type="button" variant="primary" onClick={handleAddActivity}>Save activity</Button>
+          <Button type="button" variant="primary" fullWidth onClick={handleAddActivity}>Save activity</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent movement</strong>
@@ -6260,7 +6260,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <input value={habitForm.notes} placeholder="Sleep quality, soreness, mood, recovery" onChange={event => setHabitForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <Button type="button" variant="primary" onClick={handleAddHabit}>Save check-in</Button>
+          <Button type="button" variant="primary" fullWidth onClick={handleAddHabit}>Save check-in</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Recent check-ins</strong>
@@ -6346,7 +6346,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </label>
             </div>
           </details>
-          <Button type="button" variant="primary" onClick={handleAddBodyLog} disabled={savingBody}>
+          <Button type="button" variant="primary" fullWidth onClick={handleAddBodyLog} disabled={savingBody}>
             {savingBody ? 'Saving body log...' : 'Save body log'}
           </Button>
           <div className={lStyles.inlineSection}>
@@ -6405,7 +6405,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               <input value={goalForm.unit} placeholder="kg, steps, sessions, days" onChange={event => setGoalForm(current => ({ ...current, unit: event.target.value }))} />
             </label>
           </div>
-          <Button type="button" variant="primary" onClick={handleAddGoal}>Save goal</Button>
+          <Button type="button" variant="primary" fullWidth onClick={handleAddGoal}>Save goal</Button>
           <div className={lStyles.inlineSection}>
             <div className={lStyles.inlineSectionHeader}>
               <strong>Tracked goals</strong>
@@ -6848,7 +6848,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 <strong>Pending changes</strong>
                 <span>Changes below stay pending until you save.</span>
               </div>
-              <Button type="button" variant="primary" onClick={handleSaveLakasSettings} disabled={savingSettings}>
+              <Button type="button" variant="primary" fullWidth onClick={handleSaveLakasSettings} disabled={savingSettings}>
                 {savingSettings ? 'Saving...' : 'Save Lakas settings'}
               </Button>
             </div>
@@ -6985,7 +6985,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   </label>
                 </div>
                 <div className={lStyles.inlineSection}>
-                  <Button type="button" variant="primary" onClick={handleAddReminder}>Save reminder</Button>
+                  <Button type="button" variant="primary" fullWidth onClick={handleAddReminder}>Save reminder</Button>
                   <div className={lStyles.routineList}>
                     {!upcomingReminders.length ? <EmptyState compact>No reminders yet.</EmptyState> : upcomingReminders.map(reminder => (
                       <div key={reminder._id} className={lStyles.routineCard}>
@@ -7133,7 +7133,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     </label>
                   </div>
                   <div className={lStyles.libraryFormActions}>
-                    <Button type="button" variant="primary" onClick={handleQueueExerciseLibraryEntry}>
+                    <Button type="button" variant="primary" fullWidth onClick={handleQueueExerciseLibraryEntry}>
                       {pendingCustomExercises.some(entry => normalizeExerciseKey(entry.name) === normalizeExerciseKey(exerciseLibraryDraft.name))
                         ? 'Update pending exercise'
                         : 'Add to pending library'}
@@ -7204,10 +7204,10 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                 </summary>
                 <div className={lStyles.inlineSection}>
                   <div className={lStyles.settingsActions}>
-                    <Button type="button" variant="secondary" onClick={handleExportLakasData}>
+                    <Button type="button" variant="secondary" onClick={handleExportLakasData} fullWidth>
                       Export Lakas data
                     </Button>
-                    <Button type="button" variant="ghost" onClick={handleDeleteLakasData} disabled={deletingLakasData}>
+                    <Button type="button" variant="ghost" onClick={handleDeleteLakasData} fullWidth disabled={deletingLakasData}>
                       {deletingLakasData ? 'Deleting...' : 'Delete Lakas logs'}
                     </Button>
                   </div>
@@ -7223,7 +7223,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   <small>Leave Buhay safely from Lakas</small>
                 </summary>
                 <div className={lStyles.inlineSection}>
-                  <Button type="button" variant="ghost" onClick={handleLogout}>
+                  <Button type="button" variant="ghost" onClick={handleLogout} fullWidth>
                     Log out
                   </Button>
                 </div>

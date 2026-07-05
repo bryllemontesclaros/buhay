@@ -1362,7 +1362,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
             </div>
           </details>
-          <Button type="button" variant="primary" onClick={() => { playTick(); handleSaveToday(); }}>Save check-in</Button>
+          <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleSaveToday(); }}>Save check-in</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1474,7 +1474,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               </label>
             </div>
           </details>
-          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddJournal(); }}>Save journal</Button>
+          <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleAddJournal(); }}>Save journal</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1575,7 +1575,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={moodForm.notes} placeholder="What affected your mood?" onChange={event => setMoodForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddMood(); }}>Save mood</Button>
+          <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleAddMood(); }}>Save mood</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1646,7 +1646,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={taskForm.notes} placeholder="Optional details" onChange={event => setTaskForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddTask(); }}>Add task</Button>
+          <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleAddTask(); }}>Add task</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -1718,7 +1718,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <input value={goalForm.notes} placeholder="Why this matters, first step, milestone" onChange={event => setGoalForm(current => ({ ...current, notes: event.target.value }))} />
             </label>
           </div>
-          <Button type="button" variant="primary" onClick={() => { playTick(); handleAddGoal(); }}>Save goal</Button>
+          <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleAddGoal(); }}>Save goal</Button>
         </section>
 
         <section className={tStyles.panel}>
@@ -2051,7 +2051,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 <strong>Pending changes</strong>
                 <span>Update the basics here, then save when you are ready.</span>
               </div>
-              <Button type="button" variant="primary" onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
+              <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
                 {savingSettings ? 'Saving...' : 'Save Tala settings'}
               </Button>
             </div>
@@ -2073,7 +2073,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Keep a copy</strong>
                   <span>Download your Tala entries before making bigger changes.</span>
                 </div>
-                <Button type="button" variant="secondary" onClick={() => { playTick(); handleExportTalaData(); }}>Export Tala data</Button>
+                <Button type="button" variant="secondary" onClick={() => { playTick(); handleExportTalaData(); }} fullWidth>Export Tala data</Button>
               </div>
 
               <div className={tStyles.settingsActionBlock}>
@@ -2081,7 +2081,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Clear Tala logs</strong>
                   <span>Remove Tala entries from this account while keeping your Tala defaults.</span>
                 </div>
-                <Button type="button" variant="ghost" onClick={() => { playTick(); handleDeleteTalaData(); }} disabled={deletingTalaData}>
+                <Button type="button" variant="ghost" onClick={() => { playTick(); handleDeleteTalaData(); }} fullWidth disabled={deletingTalaData}>
                   {deletingTalaData ? 'Deleting...' : 'Delete Tala logs'}
                 </Button>
                 <EmptyState compact>Your Tala settings stay if you delete Tala logs.</EmptyState>
@@ -2092,7 +2092,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>Log out</strong>
                   <span>Leave this account safely without changing your Tala settings.</span>
                 </div>
-                <Button type="button" variant="ghost" onClick={() => { playTick(); handleLogout(); }}>
+                <Button type="button" variant="ghost" onClick={() => { playTick(); handleLogout(); }} fullWidth>
                   Log out
                 </Button>
               </div>

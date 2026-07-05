@@ -1342,7 +1342,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         Clear
                       </Button>
                     )}
-                    <Button type="button" variant="primary" onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
+                    <Button type="button" variant="primary" fullWidth onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
                       {dayBalanceSaving ? 'Saving...' : 'Save'}
                     </Button>
                   </div>
@@ -1351,10 +1351,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             </div>
             {!editingDayBalance && (
               <div className={calStyles.dayPanelActions} style={{ marginTop: '8px' }}>
-                <Button type="button" variant="primary" onClick={() => openComposer('income')} disabled={selectedDateLocked}>
+                <Button type="button" variant="primary" fullWidth onClick={() => openComposer('income')} disabled={selectedDateLocked}>
                   Record income
                 </Button>
-                <Button type="button" variant="danger" onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
+                <Button type="button" variant="danger" fullWidth onClick={() => openComposer('expense')} disabled={selectedDateLocked}>
                   Record expense
                 </Button>
               </div>
