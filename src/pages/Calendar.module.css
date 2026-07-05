@@ -508,40 +508,41 @@
   flex-shrink: 0;
 }
 
-.overdueBillAlert {
+.cellAlerts {
   position: absolute;
   top: 6px;
   right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.overdueBillAlert {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--red);
   box-shadow: 0 0 6px var(--red);
   animation: pulseAlert 1.6s infinite ease-in-out;
+  flex-shrink: 0;
 }
 
 .debtDueAlert {
-  position: absolute;
-  top: 6px;
-  right: 15px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--amber);
-  box-shadow: 0 0 6px var(--amber);
   animation: pulseAlert 1.6s infinite ease-in-out;
   animation-delay: 0.8s;
+  flex-shrink: 0;
 }
 
 .debtStatementAlert {
-  position: absolute;
-  top: 6px;
-  right: 24px;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: var(--text3);
-  box-shadow: 0 0 6px var(--text3);
+  border: 1.5px solid var(--text3);
+  background: transparent;
+  flex-shrink: 0;
 }
 
 @keyframes pulseAlert {

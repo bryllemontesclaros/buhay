@@ -1729,9 +1729,25 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                               aria-pressed={isSelected}
                               aria-label={dayAriaLabel}
                             >
-                              {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
-                              {dayDueDebts.length > 0 && <div className={calStyles.debtDueAlert} title="Debt payment due" />}
-                              {dayStatementDebts.length > 0 && <div className={calStyles.debtStatementAlert} title="Statement closes" />}
+                              <div className={calStyles.cellAlerts}>
+                                {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
+                                {dayDueDebts.map(debt => (
+                                  <div 
+                                    key={debt._id} 
+                                    className={calStyles.debtDueAlert} 
+                                    style={{ background: debt.color || 'var(--amber)', boxShadow: `0 0 6px ${debt.color || 'var(--amber)'}` }} 
+                                    title={`Payment due: ${debt.name}`} 
+                                  />
+                                ))}
+                                {dayStatementDebts.map(debt => (
+                                  <div 
+                                    key={debt._id} 
+                                    className={calStyles.debtStatementAlert} 
+                                    style={{ borderColor: debt.color || 'var(--text3)' }} 
+                                    title={`Statement closes: ${debt.name}`} 
+                                  />
+                                ))}
+                              </div>
     
                       <div className={calStyles.cellTop}>
                         <div className={calStyles.dateNum}>{day}</div>
