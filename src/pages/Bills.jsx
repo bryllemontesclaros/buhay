@@ -57,13 +57,14 @@ function getMonthlyEquivalent(amount, freq = 'monthly') {
   }
 }
 
+let globalHandledTargetAt = 0
+
 export default function Bills({ user, data, symbol, billPaymentTarget = null }) {
   const s = symbol || '₱'
   const [form, setForm] = useState(createBillForm())
   const [paymentBill, setPaymentBill] = useState(null)
   const [paymentForm, setPaymentForm] = useState({ amount: '', date: today(), accountId: '' })
   const [paymentSaving, setPaymentSaving] = useState(false)
-  const [handledTargetAt, setHandledTargetAt] = useState(0)
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
 
   const accountNameById = useMemo(() => {
@@ -260,12 +261,12 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
 
   useEffect(() => {
     if (!billPaymentTarget?.billId) return
-    if (handledTargetAt === billPaymentTarget.at) return
+    if (globalHandledTargetAt === billPaymentTarget.at) return
     const target = (data?.bills || []).find(bill => bill._id === billPaymentTarget.billId)
     if (!target) return
     openPayment(target)
-    setHandledTargetAt(billPaymentTarget.at)
-  }, [billPaymentTarget?.at, billPaymentTarget?.billId, data?.bills, handledTargetAt])
+    globalHandledTargetAt = billPaymentTarget.at
+  }, [billPaymentTarget?.at, billPaymentTarget?.billId, data?.bills])
 
   const paymentPeriod = paymentBill ? getBillPeriodInfo(paymentBill) : null
   const paymentAccountName = paymentForm.accountId ? accountNameById.get(paymentForm.accountId) || 'Selected account' : ''
