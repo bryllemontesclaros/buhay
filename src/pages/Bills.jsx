@@ -547,6 +547,8 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           )}
         </div>
       </div>
+      </div>
+      
       {paymentBill && (
         <div
           role="dialog"
