@@ -1342,7 +1342,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         Clear
                       </Button>
                     )}
-                    <Button type="button" variant="primary" fullWidth onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
+                    <Button type="button" variant="primary" onClick={handleSaveDayBalance} disabled={dayBalanceSaving}>
                       {dayBalanceSaving ? 'Saving...' : 'Save'}
                     </Button>
                   </div>

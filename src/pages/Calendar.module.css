@@ -763,7 +763,9 @@
   font-weight: 600;
   font-family: var(--font-mono);
 }
-.dayBalanceActions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.dayBalanceActions { display: flex; gap: 8px; margin-top: 12px; }
+.dayBalanceActions > button { flex: 1; }
+.dayBalanceActions > button:last-child { flex: 2; }
 
 /* FEEDBACK */
 .feedbackBanner {
