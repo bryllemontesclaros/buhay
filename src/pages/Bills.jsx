@@ -562,7 +562,9 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
             display: 'grid',
             placeItems: 'center',
             padding: 18,
-            background: 'var(--glass-3)',
+            background: 'rgba(6, 10, 18, 0.42)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
           }}
           onClick={event => {
             if (event.target === event.currentTarget) closePayment()
