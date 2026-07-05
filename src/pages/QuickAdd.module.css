@@ -17,6 +17,14 @@
 .currencySign { font-size: 24px; font-weight: 700; font-family: var(--font-mono); opacity: 0.75; }
 .amountInput { flex: 1; min-width: 0; border: none; background: transparent; color: inherit; font-size: 42px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -1.6px; line-height: 1; outline: none; }
 .amountInput::placeholder { color: currentColor; opacity: 0.35; }
+.amountInput::-webkit-outer-spin-button,
+.amountInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.amountInput[type=number] {
+  -moz-appearance: textfield;
+}
 
 .utilityRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
 .importBtn { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; background: color-mix(in srgb, var(--surface2) 84%, var(--accent-glow)); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: 46px; transition: border-color 0.15s, transform 0.15s; }

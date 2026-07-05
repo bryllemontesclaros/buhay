@@ -437,9 +437,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         </div>
       )}
 
-      <div className={styles.accountNote}>{accountHint}</div>
-
-
 
       {error && <div className={styles.formError}>{error}</div>}
 
