@@ -567,7 +567,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
 
         {/* Payment actions */}
         {!isCleared && (
-          <div className={dStyles.paymentActions} style={{ flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+          <div className={dStyles.paymentActions} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
             {debt.accountId && (
               <select
                 className={dStyles.paymentInput}
