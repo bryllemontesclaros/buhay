@@ -554,6 +554,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           role="dialog"
           aria-modal="true"
           aria-label={`Mark ${paymentBill.name} paid`}
+          className="neo"
           style={{
             position: 'fixed',
             inset: 0,
@@ -561,36 +562,37 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
             display: 'grid',
             placeItems: 'center',
             padding: 18,
-            background: 'rgba(6, 10, 18, 0.42)',
-            backdropFilter: 'blur(14px)',
+            background: 'var(--glass-3)',
           }}
           onClick={event => {
             if (event.target === event.currentTarget) closePayment()
           }}
         >
-          <div className={styles.formCard} style={{ width: 'min(520px, 100%)', margin: 0 }}>
-            <div className={styles.cardTitle}>Mark bill paid</div>
-            <p style={{ color: 'var(--text3)', marginTop: 0 }}>
+          <div className={styles.formCard} style={{ width: 'min(500px, 100%)', margin: 0, padding: 24 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, margin: '0 0 8px', color: 'var(--text)' }}>
+              Mark bill paid
+            </h2>
+            <p style={{ color: 'var(--text3)', marginTop: 0, fontSize: 14, marginBottom: 20 }}>
               This creates a real expense for {paymentBill.name}. If an account is selected, its balance updates too.
             </p>
+
             <div
               style={{
                 display: 'grid',
                 gap: 8,
-                margin: '0 0 16px',
-                padding: 14,
-                border: '1px solid color-mix(in srgb, var(--accent) 20%, var(--glass-border))',
-                borderRadius: 18,
-                background: 'linear-gradient(180deg, color-mix(in srgb, var(--accent-glow) 72%, var(--glass-1) 28%), color-mix(in srgb, var(--surface2) 94%, transparent 6%))',
-                boxShadow: 'inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent)',
+                margin: '0 0 20px',
+                padding: 16,
+                border: '2px solid var(--text3)',
+                borderRadius: 12,
+                background: 'var(--surface2)',
               }}
             >
-              <div style={{ color: 'var(--accent)', fontSize: 11, fontWeight: 850, letterSpacing: 0.8, textTransform: 'uppercase' }}>This payment will</div>
-              <div style={{ display: 'grid', gap: 6, color: 'var(--text2)', fontSize: 13, lineHeight: 1.35 }}>
-                <span>Create exactly one expense in History</span>
-                <span>Mark this bill paid for {formatDisplayDate(paymentPeriod?.dueDate)}</span>
-                <span>{paymentAccountName ? `Subtract from ${paymentAccountName}` : 'No account balance movement'}</span>
-                <span>Undoing paid status will not delete the History expense automatically</span>
+              <div style={{ color: 'var(--text)', fontSize: 12, fontWeight: 800, letterSpacing: 0.5, textTransform: 'uppercase' }}>This payment will</div>
+              <div style={{ display: 'grid', gap: 6, color: 'var(--text2)', fontSize: 13, lineHeight: 1.4 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Create exactly one expense in History</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Mark this bill paid for {formatDisplayDate(paymentPeriod?.dueDate)}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• {paymentAccountName ? `Subtract from ${paymentAccountName}` : 'No account balance movement'}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Undoing paid status will not delete the History expense automatically</span>
               </div>
             </div>
             <div className={styles.formGroup}>
@@ -625,10 +627,10 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
                 ))}
               </select>
             </div>
-            <div className={styles.formRow} style={{ justifyContent: 'flex-end' }}>
-              <button className={styles.btnGhost} onClick={closePayment} disabled={paymentSaving}>Cancel</button>
-              <button className={styles.btnAdd} style={{ width: 'auto' }} onClick={handleMarkPaid} disabled={paymentSaving}>
-                {paymentSaving ? 'Saving...' : 'Save payment + expense'}
+            <div className={styles.formRow} style={{ justifyContent: 'flex-end', marginTop: 24 }}>
+              <button type="button" className={styles.btnGhost} onClick={closePayment} disabled={paymentSaving}>Cancel</button>
+              <button type="button" className={styles.btnAdd} style={{ width: 'auto', padding: '0 24px' }} onClick={handleMarkPaid} disabled={paymentSaving}>
+                {paymentSaving ? 'Saving...' : 'Save payment'}
               </button>
             </div>
           </div>
