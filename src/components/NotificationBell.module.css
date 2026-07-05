@@ -54,10 +54,8 @@
   top: 68px;
   right: 18px;
   width: 336px;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 76%, var(--surface) 24%), color-mix(in srgb, var(--surface) 90%, transparent 10%));
-  border: 1px solid color-mix(in srgb, var(--glass-border) 72%, var(--border));
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 26px;
   z-index: 500;
   box-shadow: var(--glass-shadow);
@@ -155,3 +153,19 @@
   border-radius: 10px;
 }
 .dismissBtn:hover { color: var(--red); }
+
+:global([data-theme="light"]) .dropdown,
+:global(.force-light-theme) .dropdown,
+:global(.neo) .dropdown {
+  background: var(--surface-solid);
+  border: 4px solid var(--nb-stroke);
+  box-shadow: 12px 12px 0 var(--nb-stroke);
+}
+
+:global([data-theme="light"]) .alertItem,
+:global(.force-light-theme) .alertItem,
+:global(.neo) .alertItem {
+  background: var(--surface);
+  border: 2px solid var(--nb-stroke) !important;
+  box-shadow: 4px 4px 0 var(--nb-stroke);
+}
