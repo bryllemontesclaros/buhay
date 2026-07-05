@@ -187,6 +187,17 @@
   --surface-solid-2: #f8f9fa;
   --surface-solid-3: #e9ecef;
 
+  /* Neo Brutalism overrides */
+  --nb-stroke: #1a1a1a;
+  --nb-stroke-soft: #4a4a4a;
+  --nb-paper: #ffffff;
+  --nb-paper-2: #f4f4f5;
+  --nb-paper-fiber: rgba(0, 0, 0, 0.03);
+  --nb-yellow: #fbd34d;
+  --nb-cyan: #67e8f9;
+  --nb-ink: #1a1a1a;
+  --nb-sun: #fbd34d;
+
   --border: rgba(0, 0, 0, 0.08);
   --border2: rgba(0, 0, 0, 0.12);
   
