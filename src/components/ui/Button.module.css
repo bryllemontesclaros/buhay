@@ -4,7 +4,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   min-height: 42px;
+  padding: 0 16px;
   border-radius: 16px;
   border: 1px solid var(--border2);
   font-family: var(--font-body);
@@ -13,6 +15,12 @@
   cursor: pointer;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
   white-space: nowrap;
+}
+
+.btnSm {
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
 }
 
 .fullWidth {

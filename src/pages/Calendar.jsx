@@ -1284,7 +1284,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 <>
                   <div className={calStyles.dayBalanceHeader}>
                     <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
-                    <Button type="button" variant="secondary" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
+                    <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
                       Edit
                     </Button>
                   </div>
