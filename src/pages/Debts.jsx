@@ -28,6 +28,7 @@ const EMPTY_FORM = {
   interestRate: '',
   minPayment: '',
   dueDate: '',
+  statementDate: '',
   color: 'var(--red)',
   contactName: '',
   notes: '',
@@ -71,6 +72,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       interestRate: debt.interestRate || '',
       minPayment: debt.minPayment || '',
       dueDate: debt.dueDate || '',
+      statementDate: debt.statementDate || '',
       color: debt.color || 'var(--red)',
       contactName: debt.contactName || '',
       notes: debt.notes || '',
@@ -145,6 +147,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               interestRate: rateVal,
               minPayment: minVal,
               dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
               accountId: accId,
@@ -168,6 +171,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               interestRate: rateVal,
               minPayment: minVal,
               dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
               accountId: accId,
@@ -189,6 +193,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               interestRate: rateVal,
               minPayment: minVal,
               dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
               accountId: accId,
@@ -212,6 +217,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
             interestRate: rateVal,
             minPayment: minVal,
             dueDate: form.dueDate,
+            statementDate: form.statementDate,
             color: form.color,
             notes: form.notes || '',
             accountId: accRef.id,
@@ -227,6 +233,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           interestRate: rateVal,
           minPayment: minVal,
           dueDate: form.dueDate,
+          statementDate: form.statementDate,
           color: form.color,
           contactName: form.contactName || '',
           notes: form.notes || '',
@@ -304,6 +311,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
         interestRate: 0,
         minPayment: 0,
         dueDate: '',
+        statementDate: '',
         color: a.color || 'var(--red)',
         notes: a.notes || '',
         accountId: a._id,
@@ -451,6 +459,10 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           <div className={dStyles.debtCol}>
             <div className={dStyles.detailsLabel}>Min Payment</div>
             <div className={dStyles.detailsValue}>{money(debt.minPayment)}</div>
+          </div>
+          <div className={dStyles.debtCol}>
+            <div className={dStyles.detailsLabel}>Statement Day</div>
+            <div className={dStyles.detailsValue}>{debt.statementDate ? `Day ${debt.statementDate}` : '—'}</div>
           </div>
           <div className={dStyles.debtCol}>
             <div className={dStyles.detailsLabel}>Due Day</div>
@@ -886,7 +898,19 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                   onChange={event => set('dueDate', event.target.value)}
                 />
               </div>
-              <div className={dStyles.fieldEmptyPlaceholder} />
+              <div className={dStyles.field}>
+                <label className={dStyles.fieldLabel} htmlFor="debt-statement">Statement Day</label>
+                <input
+                  id="debt-statement"
+                  className={dStyles.fieldInput}
+                  type="number"
+                  min="1"
+                  max="31"
+                  placeholder="e.g. 5"
+                  value={form.statementDate}
+                  onChange={event => set('statementDate', event.target.value)}
+                />
+              </div>
             </div>
           </div>
 
