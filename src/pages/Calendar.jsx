@@ -97,7 +97,7 @@ function hasLoggedRecurringCycle(entries = [], tx = {}) {
   return isRecurringCycleSettled(entries, tx)
 }
 
-export default function Calendar({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, onSelectedDateChange }) {
+export default function Calendar({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, onSelectedDateChange, onPayBill }) {
   const s = symbol || '₱'
   const now = new Date()
   const currentYear = now.getFullYear()
@@ -1382,6 +1382,54 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           </div>
 
           <div className={calStyles.dayPanelBody}>
+
+            {(unpaidBillsByDateKey[selected] || []).length > 0 && (
+              <div className={calStyles.daySection}>
+                <div className={calStyles.daySectionHeader}>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Unpaid Bills Due Today</div>
+                  <div className={calStyles.daySectionCount}>{(unpaidBillsByDateKey[selected] || []).length}</div>
+                </div>
+                {(unpaidBillsByDateKey[selected] || []).map((bill, index) => (
+                  <div
+                    key={bill._id}
+                    className={`${calStyles.txRow} ${calStyles.dayTxRowStaggered} ${calStyles.txRowUnpaid}`}
+                    style={{ animationDelay: `${index * 40}ms` }}
+                  >
+                    <div className={calStyles.txLeft}>
+                      <div className={calStyles.txIcon} style={{ background: 'var(--amber-dim)', color: 'var(--amber)' }}>📄</div>
+                      <div className={calStyles.txInfoBlock}>
+                        <div className={calStyles.txDesc}>
+                          {bill.name}
+                          <span className={calStyles.projBadge} style={{ background: 'var(--amber-dim)', color: 'var(--amber)', borderColor: 'rgba(255,179,71,0.3)' }}>bill</span>
+                        </div>
+                        <div className={calStyles.txMeta}>
+                          {bill.cat || 'Bills'}
+                          <span className={`${calStyles.statusBadge} ${calStyles.statusUnpaid}`}>Unpaid</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={calStyles.txRight}>
+                      <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''}`} style={{ color: privacyMode ? 'var(--text3)' : 'var(--amber)' }}>
+                        {privacyMode ? 'Hidden' : `−${fmt(bill.amount, s)}`}
+                      </div>
+                      <div className={calStyles.projectedActionStack}>
+                        <div className={calStyles.projectedActionRowPrimary}>
+                          <button
+                            type="button"
+                            className={`${calStyles.logBtn} ${calStyles.primaryProjectedBtn}`}
+                            onClick={() => onPayBill?.(bill._id)}
+                            aria-label={`Pay bill ${bill.name} now`}
+                            style={{ background: 'var(--amber)', borderColor: 'var(--amber)', color: '#fff' }}
+                          >
+                            Pay now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {selectedIncome.length > 0 && (
               <div className={calStyles.daySection}>

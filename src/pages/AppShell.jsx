@@ -1480,6 +1480,7 @@ export default function AppShell({ user }) {
     onFinanceToolSelect: handleFinanceToolSelect,
     onTogglePrivacy: () => {},
     onSelectedDateChange: setCalendarQuickAddDate,
+    onPayBill: (billId) => handleNotificationAction({ action: { type: 'payBill', page: 'bills', billId } }),
     actionRequest: activeSpace === 'takda'
       ? (takdaActionRequest?.space === 'takda' ? takdaActionRequest : null)
       : (spaceActionRequest?.space === activeSpace ? spaceActionRequest : null),
