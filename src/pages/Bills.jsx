@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { deleteField } from 'firebase/firestore'
 import { fsAdd, fsDel, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
@@ -193,7 +194,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
     setPaymentForm({
       amount: String(Number(bill.amount) || ''),
       date: today(),
-      accountId: bill.accountId || '',
+      accountId: bill.accountId || accounts[0]?._id || '',
     })
   }
 
@@ -549,7 +550,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
       </div>
       </div>
       
-      {paymentBill && (
+      {paymentBill && createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -621,7 +622,8 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

@@ -825,7 +825,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     }
     if (actionKey && pendingRecurringActions[actionKey]) return
 
-    const accountId = tx.accountId || ''
+    const accountId = tx.accountId || data.accounts[0]?._id || ''
 
     try {
       if (actionKey) {
