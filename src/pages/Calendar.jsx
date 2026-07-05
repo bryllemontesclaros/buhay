@@ -195,11 +195,30 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return map
   }, [data?.bills, year, month, todayStr])
 
-  const debtsByDateKey = useMemo(() => {
+  const dueDebtsByDateKey = useMemo(() => {
     const map = {}
     if (!data?.debts || !Array.isArray(data.debts)) return map
     data.debts.forEach(debt => {
       const dayStr = String(debt.dueDate || '').trim()
+      if (!dayStr) return
+      const day = parseInt(dayStr, 10)
+      if (isNaN(day) || day < 1 || day > 31) return
+      
+      const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
+      const effectiveDay = Math.min(day, lastDayOfMonth)
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(effectiveDay).padStart(2, '0')}`
+      
+      if (!map[dateKey]) map[dateKey] = []
+      map[dateKey].push(debt)
+    })
+    return map
+  }, [data?.debts, year, month])
+
+  const statementDebtsByDateKey = useMemo(() => {
+    const map = {}
+    if (!data?.debts || !Array.isArray(data.debts)) return map
+    data.debts.forEach(debt => {
+      const dayStr = String(debt.statementDate || '').trim()
       if (!dayStr) return
       const day = parseInt(dayStr, 10)
       if (isNaN(day) || day < 1 || day > 31) return
@@ -959,7 +978,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const selectedIncome = selected ? allIncome.filter(tx => normalizeDate(tx.date) === selected) : []
   const selectedExpenses = selected ? allExpenses.filter(tx => normalizeDate(tx.date) === selected) : []
-  const selectedDebts = selected ? (debtsByDateKey[selected] || []) : []
+  const selectedDueDebts = selected ? (dueDebtsByDateKey[selected] || []) : []
+  const selectedStatementDebts = selected ? (statementDebtsByDateKey[selected] || []) : []
   const selectedDayCount = selectedIncome.length + selectedExpenses.length
   const selectedDayIncome = selectedIncome.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
@@ -1419,14 +1439,34 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
             )}
 
-            {selectedDebts.length > 0 && (
+            {selectedStatementDebts.length > 0 && (
+              <div className={calStyles.daySection}>
+                <div className={calStyles.daySectionHeader}>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--text2)' }}>Statement Closes</div>
+                  <div className={calStyles.daySectionCount}>{selectedStatementDebts.length}</div>
+                </div>
+                {selectedStatementDebts.map((debt) => (
+                  <div key={`stmt-${debt._id}`} className={calStyles.debtRow}>
+                    <div className={calStyles.debtRowMain}>
+                      <span className={calStyles.debtRowName}>{debt.name}</span>
+                      <span className={calStyles.debtRowMeta}>Day {debt.statementDate}</span>
+                    </div>
+                    <div className={calStyles.debtRowAmounts}>
+                      <span className={calStyles.debtRowBalance}>{privacyMode ? 'Hidden' : fmt(debt.balance || 0, s)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedDueDebts.length > 0 && (
               <div className={calStyles.daySection}>
                 <div className={calStyles.daySectionHeader}>
                   <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Debt Due</div>
-                  <div className={calStyles.daySectionCount}>{selectedDebts.length}</div>
+                  <div className={calStyles.daySectionCount}>{selectedDueDebts.length}</div>
                 </div>
-                {selectedDebts.map((debt) => (
-                  <div key={debt._id} className={calStyles.debtRow}>
+                {selectedDueDebts.map((debt) => (
+                  <div key={`due-${debt._id}`} className={calStyles.debtRow}>
                     <div className={calStyles.debtRowMain}>
                       <span className={calStyles.debtRowName}>{debt.name}</span>
                       <span className={calStyles.debtRowMeta}>Due {debt.dueDate ? `Day ${debt.dueDate}` : '—'}</span>
@@ -1442,7 +1482,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
             )}
 
-            {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedDebts.length === 0 && (
+            {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedDueDebts.length === 0 && selectedStatementDebts.length === 0 && (
               <EmptyState compact>No entries on this day yet.</EmptyState>
             )}
 
@@ -1616,7 +1656,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 }
               }
 
-                      const dayDebts = debtsByDateKey[ds] || []
+                      const dayDueDebts = dueDebtsByDateKey[ds] || []
+                      const dayStatementDebts = statementDebtsByDateKey[ds] || []
                       return (
                         <Fragment key={day}>
                             <button
@@ -1631,7 +1672,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                               aria-label={dayAriaLabel}
                             >
                               {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
-                              {dayDebts.length > 0 && <div className={calStyles.debtDueAlert} title="Debt payment due" />}
+                              {dayDueDebts.length > 0 && <div className={calStyles.debtDueAlert} title="Debt payment due" />}
+                              {dayStatementDebts.length > 0 && <div className={calStyles.debtStatementAlert} title="Statement closes" />}
     
                       <div className={calStyles.cellTop}>
                         <div className={calStyles.dateNum}>{day}</div>

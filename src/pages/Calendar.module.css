@@ -533,6 +533,17 @@
   animation-delay: 0.8s;
 }
 
+.debtStatementAlert {
+  position: absolute;
+  top: 6px;
+  right: 24px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text3);
+  box-shadow: 0 0 6px var(--text3);
+}
+
 @keyframes pulseAlert {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.4); opacity: 0.4; }
