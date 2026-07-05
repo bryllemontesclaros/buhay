@@ -555,7 +555,6 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           role="dialog"
           aria-modal="true"
           aria-label={`Mark ${paymentBill.name} paid`}
-          className="neo"
           style={{
             position: 'fixed',
             inset: 0,
@@ -565,7 +564,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
             flexDirection: 'column',
             alignItems: 'center',
             padding: '24px 16px',
-            background: 'rgba(6, 10, 18, 0.42)',
+            background: 'rgba(8, 12, 18, 0.22)',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
           }}
@@ -574,7 +573,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           }}
         >
           <div style={{ margin: 'auto 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <div className={styles.formCard} style={{ width: 'min(500px, 100%)', margin: 0, padding: 24 }}>
+            <div className={styles.formCard} style={{ width: 'min(500px, 100%)', margin: 0, padding: 24, backgroundColor: 'var(--surface)', borderRadius: 24 }}>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 16px', color: 'var(--text)' }}>
                 Mark {paymentBill.name} paid
               </h2>
