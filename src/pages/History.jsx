@@ -23,7 +23,7 @@ import styles from './Page.module.css'
 import hStyles from './History.module.css'
 
 const ALL_CATS = ['All categories', ...new Set([...getTransactionCategories('income'), ...getTransactionCategories('expense')])]
-const TYPES = ['All types', 'Income', 'Expense']
+const TYPES = ['All types', 'Income', 'Expense', 'Transfer']
 export default function History({ user, data, symbol, privacyMode = false }) {
   const s = symbol || '₱'
   const [search, setSearch] = useState('')
@@ -46,8 +46,9 @@ export default function History({ user, data, symbol, privacyMode = false }) {
   const allTx = useMemo(() => {
     const income = data.income.map(tx => ({ ...tx, type: 'income' }))
     const expenses = data.expenses.map(tx => ({ ...tx, type: 'expense' }))
-    return [...income, ...expenses]
-  }, [data.expenses, data.income])
+    const transfers = (data.transfers || []).map(tx => ({ ...tx, type: 'transfer' }))
+    return [...income, ...expenses, ...transfers]
+  }, [data.expenses, data.income, data.transfers])
 
   const filtered = useMemo(() => {
     let list = allTx
@@ -245,9 +246,9 @@ export default function History({ user, data, symbol, privacyMode = false }) {
     }
   }
 
-  const typeColor = { income: 'var(--accent)', expense: 'var(--red)' }
-  const typeBg = { income: 'var(--accent-glow)', expense: 'var(--red-dim)' }
-  const typeSign = { income: '+', expense: '−' }
+  const typeColor = { income: 'var(--accent)', expense: 'var(--red)', transfer: 'var(--text2)' }
+  const typeBg = { income: 'var(--accent-glow)', expense: 'var(--red-dim)', transfer: 'var(--border)' }
+  const typeSign = { income: '+', expense: '−', transfer: '' }
   const editCats = editTx ? getTransactionCategories(editTx.type) : []
   const editSubcats = editTx ? getTransactionSubcategories(editTx.type, editForm.cat) : []
   const editPresetGroups = editTx ? getPresetGroups(editTx.type) : []
@@ -452,7 +453,11 @@ export default function History({ user, data, symbol, privacyMode = false }) {
                   <div className={hStyles.txInfo}>
                     <div className={hStyles.txDesc}>{tx.desc}</div>
                     <div className={hStyles.txMeta}>
-                      <span className={hStyles.txCat}>{[tx.cat, tx.subcat].filter(Boolean).join(' · ')}</span>
+                      {tx.type === 'transfer' ? (
+                        <span className={hStyles.txCat}>Transfer: {tx.fromAccountName} → {tx.toAccountName}</span>
+                      ) : (
+                        <span className={hStyles.txCat}>{[tx.cat, tx.subcat].filter(Boolean).join(' · ')}</span>
+                      )}
                       <span className={`${hStyles.statusBadge} ${statusClassName}`}>
                         {lifecycle.statusLabel}
                       </span>

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { displayValue, fmt, maskMoney, playTick, today } from '../lib/utils'
+import { displayValue, fmt, maskMoney, playTick, today, getMonthKey } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import dStyles from './Debts.module.css'
@@ -330,6 +330,8 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   async function handlePayment(debt) {
     const value = parseFloat(payments[debt._id] || 0)
     const fromAccountId = paymentSources[debt._id]
+    const monthKey = getMonthKey(today())
+    const paymentRecord = { date: today(), amount: value }
 
     if (!Number.isFinite(value) || value <= 0) {
       notifyApp({ title: 'Check payment', message: 'Add a payment amount greater than zero.', tone: 'warning' })
@@ -350,9 +352,15 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           toAccountId: debt.accountId,
           source: 'debt-payment'
         }, data.accounts || [])
+        if (!debt.isSynthesized) {
+          await fsUpdate(user.uid, 'debts', debt._id, { [`paidPeriods.${monthKey}`]: paymentRecord })
+        }
       } else {
         const newBalance = Math.max(0, (debt.balance || 0) - value)
-        await fsUpdate(user.uid, 'debts', debt._id, { balance: newBalance })
+        await fsUpdate(user.uid, 'debts', debt._id, { 
+          balance: newBalance,
+          [`paidPeriods.${monthKey}`]: paymentRecord
+        })
       }
       setPayments(current => ({ ...current, [debt._id]: '' }))
       setPaymentSources(current => ({ ...current, [debt._id]: '' }))

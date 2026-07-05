@@ -198,7 +198,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const dueDebtsByDateKey = useMemo(() => {
     const map = {}
     if (!data?.debts || !Array.isArray(data.debts)) return map
+    
+    const currentMonthKey = `${year}-${String(month + 1).padStart(2, '0')}`
+
     data.debts.forEach(debt => {
+      if (debt.paidPeriods && debt.paidPeriods[currentMonthKey]) return
+
       const dayStr = String(debt.dueDate || '').trim()
       if (!dayStr) return
       const day = parseInt(dayStr, 10)
@@ -217,7 +222,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const statementDebtsByDateKey = useMemo(() => {
     const map = {}
     if (!data?.debts || !Array.isArray(data.debts)) return map
+
+    const currentMonthKey = `${year}-${String(month + 1).padStart(2, '0')}`
+
     data.debts.forEach(debt => {
+      if (debt.paidPeriods && debt.paidPeriods[currentMonthKey]) return
+
       const dayStr = String(debt.statementDate || '').trim()
       if (!dayStr) return
       const day = parseInt(dayStr, 10)
