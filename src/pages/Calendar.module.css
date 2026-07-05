@@ -1122,7 +1122,7 @@
 /* MODAL */
 .modalOverlay { position: fixed; inset: 0; background: var(--glass-3);   z-index: 540; display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
 @media (min-width: 640px) { .modalOverlay { align-items: center; } }
-.modal { background: var(--surface);   border: 1px solid var(--border2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; width: min(520px, 100%); max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; box-shadow: var(--glass-shadow-strong);   }
+.modal { background: var(--surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border2); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; width: min(520px, 100%); max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; box-sizing: border-box; box-shadow: var(--glass-shadow-strong); }
 @media (min-width: 640px) { .modal { border-radius: var(--radius-lg); max-width: 500px; max-height: unset; } }
 .modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.25rem; }
 .modalTitle { font-family: var(--font-display); font-size: var(--type-title-xl); color: var(--text); min-width: 0; }
@@ -1213,6 +1213,8 @@
 .recurChip { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); font-size: var(--type-caption); cursor: pointer; font-family: var(--font-body); min-height: 30px; max-width: 100%; white-space: normal; line-height: 1.25; text-align: center; }
 .recurChipActive { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
 .modalActions { display: flex; gap: 8px; margin-top: 1.25rem; }
+.modalActions > button { flex: 1; }
+.modalActions > button:last-child { flex: 2; }
 
 @media (min-width: 1024px) {
   .daySheetOverlay {
@@ -1660,9 +1662,10 @@
     bottom: calc(-1rem - env(safe-area-inset-bottom));
     margin: 12px -1rem calc(-1rem - env(safe-area-inset-bottom));
     padding: 10px 1rem calc(1rem + env(safe-area-inset-bottom));
-    background:
-      linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 97%, #ffffff 3%) 28%);
-    
+    background: var(--surface);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border2);
     z-index: 2;
     box-sizing: border-box;
   }
