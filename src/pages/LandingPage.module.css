@@ -1954,6 +1954,7 @@
   border: 3px solid var(--nb-stroke);
   box-shadow: 4px 4px 0 var(--nb-stroke);
   background: var(--surface-solid);
+  color: var(--nb-ink);
 }
 
 :global([data-theme="light"]) .btn:hover,
