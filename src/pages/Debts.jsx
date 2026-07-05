@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, playTick, today } from '../lib/utils'
@@ -43,9 +43,12 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const [extraBudget, setExtraBudget] = useState(0)
   const [strategy, setStrategy] = useState('avalanche')
   const [form, setForm] = useState(EMPTY_FORM)
-  const [editDebt, setEditDebt] = useState(null)
-  const [showModal, setShowModal] = useState(false)
   const [payments, setPayments] = useState({})
+  const [paymentSources, setPaymentSources] = useState({})
+  const [isEditing, setIsEditing] = useState(false)
+  const [editDebt, setEditDebt] = useState(null)
+  const [showDrawer, setShowDrawer] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   
   const editorRef = useRef(null)
 
@@ -326,6 +329,8 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
 
   async function handlePayment(debt) {
     const value = parseFloat(payments[debt._id] || 0)
+    const fromAccountId = paymentSources[debt._id]
+
     if (!Number.isFinite(value) || value <= 0) {
       notifyApp({ title: 'Check payment', message: 'Add a payment amount greater than zero.', tone: 'warning' })
       return
@@ -333,29 +338,31 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
 
     try {
       if (debt.accountId) {
-        await fsAddTransaction(user.uid, 'income', {
-          desc: `CC Payment: ${debt.name}`,
+        if (!fromAccountId) {
+          notifyApp({ title: 'Select account', message: 'Please select a cash/bank account to pay from.', tone: 'warning' })
+          return
+        }
+        await fsTransferAccounts(user.uid, {
+          desc: `Debt Payment: ${debt.name}`,
           amount: value,
           date: today(),
-          cat: 'Debts',
-          subcat: 'Credit Card Payment',
-          accountId: debt.accountId,
-          accountBalanceLinked: true,
-          accountBalanceApplied: true,
-          type: 'income'
+          fromAccountId: fromAccountId,
+          toAccountId: debt.accountId,
+          source: 'debt-payment'
         }, data.accounts || [])
       } else {
         const newBalance = Math.max(0, (debt.balance || 0) - value)
         await fsUpdate(user.uid, 'debts', debt._id, { balance: newBalance })
       }
       setPayments(current => ({ ...current, [debt._id]: '' }))
+      setPaymentSources(current => ({ ...current, [debt._id]: '' }))
       notifyApp({
         title: 'Payment logged',
         message: `Paid ${fmt(value, s)} toward ${debt.name}.`,
         tone: 'success',
       })
     } catch {
-      notifyApp({ title: 'Payment failed', message: 'Could not record transaction. Try again.', tone: 'error' })
+      notifyApp({ title: 'Payment failed', message: 'Could not record transfer. Try again.', tone: 'error' })
     }
   }
 
@@ -552,26 +559,41 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
 
         {/* Payment actions */}
         {!isCleared && (
-          <div className={dStyles.paymentActions}>
-            <input
-              type="number"
-              className={dStyles.paymentInput}
-              min="0"
-              inputMode="decimal"
-              placeholder={`Payment amount (${s})`}
-              value={payments[debt._id] || ''}
-              onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
-              onKeyDown={event => {
-                if (event.key === 'Enter') handlePayment(debt)
-              }}
-            />
-            <button
-              type="button"
-              className={dStyles.payBtn}
-              onClick={() => { playTick(); handlePayment(debt); }}
-            >
-              Make Payment
-            </button>
+          <div className={dStyles.paymentActions} style={{ flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+            {debt.accountId && (
+              <select
+                className={dStyles.paymentInput}
+                value={paymentSources[debt._id] || ''}
+                onChange={event => setPaymentSources(current => ({ ...current, [debt._id]: event.target.value }))}
+              >
+                <option value="">Pay from account...</option>
+                {(data.accounts || []).filter(a => a.type !== 'Credit Card').map(a => (
+                  <option key={a._id} value={a._id}>{a.name} ({fmt(a.balance, s)})</option>
+                ))}
+              </select>
+            )}
+            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+              <input
+                type="number"
+                className={dStyles.paymentInput}
+                min="0"
+                inputMode="decimal"
+                style={{ flex: 1 }}
+                placeholder={`Amount (${s})`}
+                value={payments[debt._id] || ''}
+                onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') handlePayment(debt)
+                }}
+              />
+              <button
+                type="button"
+                className={dStyles.payBtn}
+                onClick={() => { playTick(); handlePayment(debt); }}
+              >
+                Pay
+              </button>
+            </div>
           </div>
         )}
 
