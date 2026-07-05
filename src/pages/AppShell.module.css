@@ -1825,7 +1825,7 @@
     align-self: flex-start;
     padding-top: 2px;
   }
-  .topBarRight > :not(.themeBtn):not(.topBarStatus) { display: none; }
+  .topBarRight > :not(.themeBtn):not(.topBarStatus) { display: flex; }
   .topBarStatus {
     display: inline-flex;
     min-height: 42px;
