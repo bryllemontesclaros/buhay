@@ -18,6 +18,7 @@ import History from './History'
 import Portfolio from './Portfolio'
 import QuickAdd from './QuickAdd'
 import Debts from './Debts'
+import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
   getDefaultTransactionDraft,
@@ -572,6 +573,25 @@ export default function AppShell({ user }) {
   const mainRef = useRef(null)
   const lastMainScrollRef = useRef(0)
   const previousVisiblePageRef = useRef(null)
+  const [changelogData, setChangelogData] = useState(null)
+
+  useEffect(() => {
+    try {
+      if (typeof __COMMIT_HASH__ !== 'undefined' && __COMMIT_HASH__) {
+        const lastSeen = localStorage.getItem('takda_last_commit')
+        if (lastSeen !== __COMMIT_HASH__) {
+          setChangelogData({ hash: __COMMIT_HASH__, message: __COMMIT_MESSAGE__ })
+        }
+      }
+    } catch (e) {}
+  }, [])
+
+  function dismissChangelog() {
+    if (changelogData) {
+      localStorage.setItem('takda_last_commit', changelogData.hash)
+      setChangelogData(null)
+    }
+  }
 
 
 
@@ -1838,6 +1858,23 @@ export default function AppShell({ user }) {
         </button>
         )}
       </nav>
+
+      {changelogData && (
+        <div className={styles.changelogOverlay}>
+          <div className={styles.changelogModal}>
+            <div className={styles.changelogBadge}>🎉 Takda Updated</div>
+            <h2 className={styles.changelogTitle}>What's New</h2>
+            <div className={styles.changelogContent}>
+              <p>{changelogData.message || 'We\'ve added some exciting new features and improvements!'}</p>
+            </div>
+            <div className={styles.changelogActions}>
+              <Button type="button" variant="primary" fullWidth onClick={dismissChangelog}>
+                Awesome, got it!
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
