@@ -589,11 +589,17 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
               </div>
               <div className={styles.formGroup}>
                 <label>Payment date</label>
-                <input
-                  type="date"
-                  value={paymentForm.date}
-                  onChange={event => setPaymentForm(current => ({ ...current, date: event.target.value }))}
-                />
+                <div className={styles.dateFieldWrap}>
+                  <div className={styles.dateFieldDisplay}>
+                    {paymentForm.date ? formatDisplayDate(paymentForm.date) : 'Choose date'}
+                  </div>
+                  <input
+                    type="date"
+                    className={styles.dateFieldNative}
+                    value={paymentForm.date}
+                    onChange={event => setPaymentForm(current => ({ ...current, date: event.target.value }))}
+                  />
+                </div>
                 <div className={styles.helper}>Due for this period: {formatDisplayDate(paymentPeriod?.dueDate)}</div>
               </div>
               <div className={styles.formGroup}>
