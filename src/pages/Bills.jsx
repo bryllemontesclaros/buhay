@@ -559,9 +559,11 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
             position: 'fixed',
             inset: 0,
             zIndex: 700,
-            display: 'grid',
-            placeItems: 'center',
-            padding: 18,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '24px 16px',
             background: 'rgba(6, 10, 18, 0.42)',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
@@ -570,70 +572,53 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
             if (event.target === event.currentTarget) closePayment()
           }}
         >
-          <div className={styles.formCard} style={{ width: 'min(500px, 100%)', margin: 0, padding: 24 }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, margin: '0 0 8px', color: 'var(--text)' }}>
-              Mark bill paid
-            </h2>
-            <p style={{ color: 'var(--text3)', marginTop: 0, fontSize: 14, marginBottom: 20 }}>
-              This creates a real expense for {paymentBill.name}. If an account is selected, its balance updates too.
-            </p>
+          <div style={{ margin: 'auto 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div className={styles.formCard} style={{ width: 'min(500px, 100%)', margin: 0, padding: 24 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, margin: '0 0 16px', color: 'var(--text)' }}>
+                Mark {paymentBill.name} paid
+              </h2>
 
-            <div
-              style={{
-                display: 'grid',
-                gap: 8,
-                margin: '0 0 20px',
-                padding: 16,
-                border: '2px solid var(--text3)',
-                borderRadius: 12,
-                background: 'var(--surface2)',
-              }}
-            >
-              <div style={{ color: 'var(--text)', fontSize: 12, fontWeight: 800, letterSpacing: 0.5, textTransform: 'uppercase' }}>This payment will</div>
-              <div style={{ display: 'grid', gap: 6, color: 'var(--text2)', fontSize: 13, lineHeight: 1.4 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Create exactly one expense in History</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Mark this bill paid for {formatDisplayDate(paymentPeriod?.dueDate)}</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• {paymentAccountName ? `Subtract from ${paymentAccountName}` : 'No account balance movement'}</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>• Undoing paid status will not delete the History expense automatically</span>
+              <div className={styles.formGroup}>
+                <label>Amount ({s})</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={paymentForm.amount}
+                  onChange={event => setPaymentForm(current => ({ ...current, amount: event.target.value }))}
+                />
               </div>
-            </div>
-            <div className={styles.formGroup}>
-              <label>Amount ({s})</label>
-              <input
-                type="number"
-                min="0"
-                value={paymentForm.amount}
-                onChange={event => setPaymentForm(current => ({ ...current, amount: event.target.value }))}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Payment date</label>
-              <input
-                type="date"
-                value={paymentForm.date}
-                onChange={event => setPaymentForm(current => ({ ...current, date: event.target.value }))}
-              />
-              <div className={styles.helper}>Due for this period: {formatDisplayDate(paymentPeriod?.dueDate)}</div>
-            </div>
-            <div className={styles.formGroup}>
-              <label>Pay from account</label>
-              <select
-                value={paymentForm.accountId}
-                onChange={event => setPaymentForm(current => ({ ...current, accountId: event.target.value }))}
-              >
-                <option value="">No account movement</option>
-                {accounts.map(acc => (
-                  <option key={acc._id} value={acc._id}>
-                    {acc.name} - {acc.type}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.formRow} style={{ justifyContent: 'flex-end', marginTop: 24 }}>
-              <button type="button" className={styles.btnGhost} onClick={closePayment} disabled={paymentSaving}>Cancel</button>
-              <button type="button" className={styles.btnAdd} style={{ width: 'auto', padding: '0 24px' }} onClick={handleMarkPaid} disabled={paymentSaving}>
-                {paymentSaving ? 'Saving...' : 'Save payment'}
-              </button>
+              <div className={styles.formGroup}>
+                <label>Payment date</label>
+                <input
+                  type="date"
+                  value={paymentForm.date}
+                  onChange={event => setPaymentForm(current => ({ ...current, date: event.target.value }))}
+                />
+                <div className={styles.helper}>Due for this period: {formatDisplayDate(paymentPeriod?.dueDate)}</div>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Pay from account</label>
+                <select
+                  value={paymentForm.accountId}
+                  onChange={event => setPaymentForm(current => ({ ...current, accountId: event.target.value }))}
+                >
+                  <option value="">No account movement</option>
+                  {accounts.map(acc => (
+                    <option key={acc._id} value={acc._id}>
+                      {acc.name} - {acc.type}
+                    </option>
+                  ))}
+                </select>
+                <div className={styles.helper}>
+                  {paymentAccountName ? `This will deduct ${s}${paymentForm.amount || 0} from ${paymentAccountName} and record the expense in your history.` : 'This will record the expense in your history without affecting your account balances.'}
+                </div>
+              </div>
+              <div className={styles.formRow} style={{ justifyContent: 'flex-end', marginTop: 32 }}>
+                <button type="button" className={styles.btnGhost} onClick={closePayment} disabled={paymentSaving}>Cancel</button>
+                <button type="button" className={styles.btnAdd} style={{ width: 'auto', padding: '0 24px' }} onClick={handleMarkPaid} disabled={paymentSaving}>
+                  {paymentSaving ? 'Saving...' : 'Save payment'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
