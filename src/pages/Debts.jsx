@@ -586,7 +586,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                 className={dStyles.paymentInput}
                 min="0"
                 inputMode="decimal"
-                style={{ flex: 1 }}
+                style={{ flex: 1, minWidth: 0 }}
                 placeholder={`Amount (${s})`}
                 value={payments[debt._id] || ''}
                 onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
@@ -597,6 +597,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               <button
                 type="button"
                 className={dStyles.payBtn}
+                style={{ width: 'auto', flexShrink: 0 }}
                 onClick={() => { playTick(); handlePayment(debt); }}
               >
                 Pay
