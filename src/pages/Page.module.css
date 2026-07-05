@@ -1144,11 +1144,17 @@ tbody tr:hover td {
     display: flex;
     gap: 8px;
     margin: 0 -0.85rem 1rem;
-    padding: 0 0.85rem 2px;
+    padding: 0 0 2px 0.85rem;
     overflow-x: auto;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+  }
+
+  .statsGrid::after,
+  .trustGrid::after {
+    content: '';
+    flex: 0 0 0.85rem;
   }
 
   .statsGrid::-webkit-scrollbar,
