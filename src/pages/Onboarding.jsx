@@ -170,7 +170,7 @@ function formatDate(date) {
 }
 
 function createAccountRow() {
-  return { id: createId('account'), name: '', type: 'Cash', balance: '' }
+  return { id: createId('account'), name: '', type: 'Cash', balance: '', creditLimit: '', statementDate: '', dueDate: '' }
 }
 
 function createBillRow() {
@@ -441,6 +441,24 @@ export default function Onboarding({ user, onDone, notice = '' }) {
       notes: '',
     })), [form.accounts])
 
+  const preparedDebts = useMemo(() => form.accounts
+    .filter(row => hasAccountContent(row) && row.type === 'Credit Card')
+    .map((row, index) => ({
+      _id: createId('debt'),
+      name: row.name.trim(),
+      type: 'Credit Card',
+      balance: Math.abs(roundMoney(row.balance)) || 0,
+      originalAmount: Math.abs(roundMoney(row.balance)) || 0,
+      interestRate: 0,
+      minPayment: 0,
+      dueDate: row.dueDate || '',
+      statementDate: row.statementDate || '',
+      creditLimit: roundMoney(row.creditLimit) || 0,
+      color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length] || 'var(--red)',
+      notes: 'Generated from onboarding',
+      accountId: row.id,
+    })), [form.accounts])
+
   const preparedBills = useMemo(() => form.bills
     .filter(hasBillContent)
     .map(row => {
@@ -655,6 +673,7 @@ export default function Onboarding({ user, onDone, notice = '' }) {
         income: [],
         expenses: seededExpenses,
         accounts: preparedAccounts,
+        debts: preparedDebts,
         bills: preparedBills,
         lakasBodyLogs,
       })
@@ -875,6 +894,24 @@ export default function Onboarding({ user, onDone, notice = '' }) {
                             : 'Enter the money available in this account today. This becomes part of your starting balance.'}
                         </div>
                       </div>
+                      {account.type === 'Credit Card' && (
+                        <>
+                          <div className={styles.inputGroup}>
+                            <label>Credit Limit ({symbol})</label>
+                            <input type="number" min="0" placeholder="0.00" value={account.creditLimit} onChange={event => updateAccountRow(account.id, 'creditLimit', event.target.value)} />
+                          </div>
+                          <div className={styles.formGrid}>
+                            <div className={styles.inputGroup}>
+                              <label>Statement Day (1-31)</label>
+                              <input type="number" min="1" max="31" placeholder="e.g. 15" value={account.statementDate} onChange={event => updateAccountRow(account.id, 'statementDate', event.target.value)} />
+                            </div>
+                            <div className={styles.inputGroup}>
+                              <label>Due Day (1-31)</label>
+                              <input type="number" min="1" max="31" placeholder="e.g. 5" value={account.dueDate} onChange={event => updateAccountRow(account.id, 'dueDate', event.target.value)} />
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>

@@ -605,6 +605,7 @@ export async function fsCompleteOnboarding(uid, payload = {}) {
   seedCollection('income', Array.isArray(payload.income) ? payload.income : [])
   seedCollection('expenses', Array.isArray(payload.expenses) ? payload.expenses : [])
   seedCollection('accounts', Array.isArray(payload.accounts) ? payload.accounts : [])
+  seedCollection('debts', Array.isArray(payload.debts) ? payload.debts : [])
   seedCollection('bills', Array.isArray(payload.bills) ? payload.bills : [])
   seedCollection('lakasBodyLogs', Array.isArray(payload.lakasBodyLogs) ? payload.lakasBodyLogs : [])
 
