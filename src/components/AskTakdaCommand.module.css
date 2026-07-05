@@ -24,8 +24,6 @@
   background:
     radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 28%),
     rgba(6, 10, 18, 0.34);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
   animation: commandBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
 
@@ -44,8 +42,6 @@
     radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 14%, transparent), transparent 38%),
     linear-gradient(180deg, color-mix(in srgb, var(--glass-2) 78%, var(--surface) 22%), color-mix(in srgb, var(--surface) 92%, transparent 8%));
   box-shadow: var(--glass-shadow-strong);
-  backdrop-filter: blur(var(--glass-blur-xl)) saturate(165%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-xl)) saturate(165%);
   padding: 16px;
   animation: commandSheetIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }

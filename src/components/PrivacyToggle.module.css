@@ -16,8 +16,6 @@
   font-weight: 700;
   font-family: var(--font-body);
   transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-  backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(145%);
 }
 
 .toggle:hover {
