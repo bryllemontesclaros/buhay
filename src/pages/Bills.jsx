@@ -270,7 +270,8 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   const paymentAccountName = paymentForm.accountId ? accountNameById.get(paymentForm.accountId) || 'Selected account' : ''
 
   return (
-    <div className={styles.page}>
+    <>
+      <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.title}>Bills</div>
         <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
@@ -546,7 +547,6 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           )}
         </div>
       </div>
-
       {paymentBill && (
         <div
           role="dialog"
@@ -632,6 +632,6 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
