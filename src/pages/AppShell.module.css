@@ -2055,6 +2055,8 @@
     border-radius: 28px;
     border: 1px solid var(--border2);
     background: var(--surface);
+    backdrop-filter: blur(var(--glass-blur-lg));
+    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
     box-shadow: var(--glass-shadow-strong);
     
     
@@ -2503,6 +2505,39 @@
 
   :global(.neo) .bottomNavItem {
     border-radius: 22px;
+  }
+
+  :global(.neo) .mobileNavSheet {
+    background: var(--nb-paper);
+    border: 3px solid var(--nb-stroke);
+    border-radius: 28px;
+    box-shadow: 8px 8px 0 var(--nb-stroke);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  :global(.neo) .mobileNavSheetHandle {
+    background: var(--nb-stroke);
+    height: 6px;
+  }
+  :global(.neo) .mobileNavLink {
+    background: var(--nb-paper-2);
+    border: 2px solid var(--nb-stroke);
+    box-shadow: 4px 4px 0 var(--nb-stroke);
+  }
+  :global(.neo) .mobileNavLinkActive {
+    background: color-mix(in srgb, var(--accent) 22%, var(--nb-paper-2));
+    box-shadow: 4px 4px 0 var(--nb-stroke);
+  }
+  :global(.neo) .mobileNavLinkIcon {
+    background: var(--nb-paper);
+    border: 2px solid var(--nb-stroke);
+    color: var(--nb-ink);
+  }
+  :global(.neo) .mobileNavSheetClose {
+    background: var(--nb-paper-2);
+    border: 2px solid var(--nb-stroke);
+    color: var(--nb-ink);
+    box-shadow: 2px 2px 0 var(--nb-stroke);
   }
 }
 
