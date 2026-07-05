@@ -1996,22 +1996,6 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   : 'No preset selected. Choose a familiar biller or merchant, or keep this as a custom entry.'}
             </div>
 
-            <div className={calStyles.balanceImpactCard}>
-              <div className={calStyles.balanceImpactGrid}>
-                <div className={calStyles.balanceImpactLabel}>Updates account balance</div>
-                <div className={`${calStyles.balanceImpactValue} ${balanceImpact.affectsBalances ? calStyles.balanceImpactYes : calStyles.balanceImpactNo}`}>
-                  {balanceImpact.affectsLabel}
-                </div>
-                <div className={calStyles.balanceImpactLabel}>Account used</div>
-                <div className={`${calStyles.balanceImpactValue} ${balanceImpact.affectsLabel ? calStyles.balanceImpactAccount : ''}`}>{balanceImpact.accountLabel}</div>
-                <div className={calStyles.balanceImpactLabel}>Counts in calendar close</div>
-                <div className={`${calStyles.balanceImpactValue} ${String(form.paymentStatus || 'paid').toLowerCase() === 'unpaid' ? calStyles.balanceImpactNo : calStyles.balanceImpactYes}`}>
-                  {String(form.paymentStatus || 'paid').toLowerCase() === 'unpaid' ? 'No (until paid)' : 'Yes'}
-                </div>
-              </div>
-              <div className={calStyles.balanceImpactMeta}>{balanceImpact.meta}</div>
-            </div>
-
             <details className={calStyles.advancedBox}>
               <summary className={calStyles.advancedSummary}>
                 <span>More options</span>
