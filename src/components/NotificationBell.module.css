@@ -63,7 +63,7 @@
 }
 @media (max-width: 400px) { .dropdown { width: calc(100vw - 24px); right: 12px; } }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .badge {
     top: -1px;
     right: -1px;

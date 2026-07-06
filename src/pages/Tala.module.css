@@ -1525,7 +1525,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .page {
     gap: 14px;
   }
@@ -1663,7 +1663,7 @@
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .quickEntryPanel {
     padding: 18px;
   }
@@ -1868,7 +1868,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .workspaceBoardStatic {
     display: none;
   }
@@ -1953,7 +1953,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .page,
   .workspaceBoard,
   .hero,
@@ -2826,7 +2826,7 @@
   letter-spacing: 0.08em;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .entryCard,
   .rowCard,
   .goalCard,
@@ -3301,7 +3301,7 @@
   color: var(--text2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .entryCard,
   .rowCard,
   .goalCard,

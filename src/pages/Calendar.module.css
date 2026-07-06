@@ -127,7 +127,7 @@
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .monthStory {
     grid-template-columns: 1fr;
   }
@@ -1322,7 +1322,7 @@
 }
 
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .page {
     flex: 1;
     min-height: 100%;
@@ -1693,7 +1693,7 @@
 }
 
 /* Final winning mobile layer. Keep this at EOF so older calendar rules cannot override it. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .calendarCard {
     padding: 10px;
     border-width: 3px;
@@ -1828,7 +1828,7 @@
 }
 
 /* Final phone calendar correction: seven columns need lighter chrome and compact values. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .calendarCard {
     padding: 8px;
     border-width: 3px;
@@ -1955,7 +1955,7 @@
 
 
 /* Desktop Side Panel */
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
   .page {
     height: 100%;
   }
@@ -1980,7 +1980,7 @@
 }
 
 /* Mobile Accordion */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .monthBoard {
     flex-direction: column;
     height: auto;

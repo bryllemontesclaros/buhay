@@ -3871,7 +3871,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .page {
     gap: 14px;
   }
@@ -4209,7 +4209,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .workspaceBoardCompact {
     gap: 10px;
     padding: 0;
@@ -4287,7 +4287,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .bodyOverviewGrid {
     grid-template-columns: 1fr;
   }
@@ -4321,7 +4321,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .page,
   .workspaceBoard,
   .hero,
@@ -4509,7 +4509,7 @@
 }
 
 /* Gym session mobile coach mode: keep form help visible before logging controls. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .gymModeOverlay {
     align-items: stretch;
     padding: 8px;
@@ -6067,7 +6067,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   /* Guidance and Session picker overrides to fix specificity conflicts */
   .guidanceDetails .sessionPicker {
     display: flex !important;

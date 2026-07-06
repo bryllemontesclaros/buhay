@@ -398,7 +398,7 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .layer {
     align-items: flex-end;
     padding: 0;

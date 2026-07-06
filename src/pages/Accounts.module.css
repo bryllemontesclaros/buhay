@@ -697,7 +697,7 @@ select.fieldInput {
   color: var(--text3);
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1024px) {
   .heroSection {
     grid-template-columns: 1fr;
   }

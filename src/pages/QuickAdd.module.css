@@ -333,7 +333,7 @@ select.fieldControl {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .wrap { gap: 10px; }
   .sectionLabel,
   .fieldLabel { font-size: 11px; }

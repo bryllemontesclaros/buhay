@@ -167,7 +167,7 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :root {
     --app-mobile-bottom-offset: calc(72px + env(safe-area-inset-bottom));
   }
@@ -312,7 +312,7 @@ body::after {
   52%, 100% { opacity: 0.16; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   html,
   body {
     height: 100%;

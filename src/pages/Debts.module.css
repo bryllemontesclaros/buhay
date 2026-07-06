@@ -765,7 +765,7 @@
 }
 
 /* Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .heroSection {
     grid-template-columns: 1fr;
     gap: 20px;
