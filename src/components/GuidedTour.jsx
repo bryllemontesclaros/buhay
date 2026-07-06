@@ -196,7 +196,11 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
 
   return (
     <>
-      <div className={styles.overlay} onClick={onFinish} />
+      <div 
+        className={styles.overlay} 
+        style={{ backgroundColor: coords ? 'transparent' : 'rgba(0, 0, 0, 0.75)' }} 
+        onClick={onFinish} 
+      />
       {coords && (
         <div
           className={styles.spotlight}
