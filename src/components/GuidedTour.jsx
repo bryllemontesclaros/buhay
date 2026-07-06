@@ -80,6 +80,7 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
   const [currentStepIdx, setCurrentStepIdx] = useState(0)
   const [coords, setCoords] = useState(null)
   const resizeTimeoutRef = useRef(null)
+  const lastCardStyleRef = useRef(null)
 
   const step = config.steps[currentStepIdx]
 
@@ -167,7 +168,9 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
   // Calculate card position on desktop
   const getCardStyle = () => {
     if (window.innerWidth <= 768) return {} // Bottom sheet style handled by CSS Media query
-    if (!coords) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'fixed' }
+    if (!coords) {
+      return lastCardStyleRef.current || { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'fixed', opacity: 0 }
+    }
 
     // Position popover relative to spotlight element
     const spacing = 16
@@ -181,10 +184,14 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
       cardTop = coords.top - 220 - spacing // Place above target if bottom exceeds height
     }
 
-    return {
+    const nextStyle = {
+      position: 'fixed',
       top: `${cardTop}px`,
-      left: `${cardLeft}px`
+      left: `${cardLeft}px`,
+      opacity: 1
     }
+    lastCardStyleRef.current = nextStyle
+    return nextStyle
   }
 
   return (
