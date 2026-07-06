@@ -22,14 +22,14 @@
 
 .tourCard {
   position: fixed;
-  background: rgba(18, 18, 22, 0.95);
+  background: rgba(18, 18, 22, 0.96);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid color-mix(in srgb, var(--tour-accent) 25%, rgba(255, 255, 255, 0.12));
   border-radius: 20px;
   padding: 20px;
   width: 320px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 30px color-mix(in srgb, var(--tour-accent) 15%, transparent);
   z-index: 10001;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   color: #ffffff;

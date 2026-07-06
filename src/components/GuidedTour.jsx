@@ -32,7 +32,7 @@ const TOUR_CONFIGS = {
     ]
   },
   lakas: {
-    accentColor: 'var(--lakas-accent, #ff9f43)',
+    accentColor: '#ff9f43',
     steps: [
       {
         target: '#lakas-start-workout',
@@ -55,7 +55,7 @@ const TOUR_CONFIGS = {
     ]
   },
   tala: {
-    accentColor: 'var(--tala-accent, #00d2d3)',
+    accentColor: '#00d2d3',
     steps: [
       {
         target: '#tala-new-entry',
