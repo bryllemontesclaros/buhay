@@ -1037,3 +1037,114 @@
   font-family: var(--nb-font-display);
   color: var(--nb-ink);
 }
+
+/* Transaction History Section */
+.historySection {
+  margin-top: 16px;
+  border-top: 1px dashed var(--border2);
+  padding-top: 16px;
+}
+
+.historyToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+}
+
+.historyToggle:hover {
+  color: var(--text);
+}
+
+.historyBadge {
+  background: color-mix(in srgb, var(--text) 8%, var(--surface3));
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border2);
+}
+
+.historyList {
+  margin-top: 12px;
+  background: color-mix(in srgb, var(--surface2) 80%, transparent);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 8px 12px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.emptyHistory {
+  font-size: 12px;
+  color: var(--text3);
+  text-align: center;
+  padding: 12px 0;
+}
+
+.historyTable {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border2) 40%, transparent);
+}
+
+.historyRow:last-child {
+  border-bottom: none;
+}
+
+.historyMetaCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.historyDate {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+}
+
+.historyDesc {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.historyCategory {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.historyAmountCol {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+  margin-left: 12px;
+  flex-shrink: 0;
+}

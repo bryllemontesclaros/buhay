@@ -185,9 +185,12 @@ select.fieldControl {
 .dateFieldNative {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
   cursor: pointer;
   color: transparent;
+  z-index: 2;
 }
 .dateFieldNative::-webkit-date-and-time-value { opacity: 0; }
 .dateFieldNative::-webkit-calendar-picker-indicator {

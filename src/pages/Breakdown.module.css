@@ -193,19 +193,30 @@
   font-size: 11px;
   color: var(--text3);
   font-weight: 800;
-  letter-spacing: 0.35px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed color-mix(in srgb, var(--border2) 50%, transparent);
+  padding-bottom: 6px;
 }
 
 .detailsRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border-radius: 16px;
   border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface) 28%);
+  background: color-mix(in srgb, var(--surface2) 50%, var(--surface));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.detailsRow:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--text) 15%, var(--border2));
+  box-shadow: var(--glass-shadow-soft);
 }
 
 .detailsRowMain {
@@ -213,9 +224,10 @@
 }
 
 .detailsRowDesc {
-  font-weight: 900;
+  font-weight: 800;
   color: var(--text);
   letter-spacing: -0.01em;
+  font-size: 15px;
 }
 
 .detailsRowMeta {
@@ -223,20 +235,29 @@
   font-size: 11px;
   line-height: 1.45;
   color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .detailsRowAmount {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
   flex-shrink: 0;
 }
 
 .detailsBadge {
+  background: color-mix(in srgb, var(--text) 8%, var(--surface3));
   color: var(--text3);
-  font-weight: 800;
-  font-size: 11px;
+  font-weight: 700;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .summaryValue {

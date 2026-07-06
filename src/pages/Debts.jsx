@@ -49,7 +49,32 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const [editDebt, setEditDebt] = useState(null)
   const [showDrawer, setShowDrawer] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [expandedHistory, setExpandedHistory] = useState({})
   
+  const getDebtTransactions = useMemo(() => {
+    const income = (data.income || []).map(tx => ({ ...tx, type: 'income' }))
+    const expenses = (data.expenses || []).map(tx => ({ ...tx, type: 'expense' }))
+    const transfers = (data.transfers || []).map(tx => ({ ...tx, type: 'transfer' }))
+    const all = [...income, ...expenses, ...transfers]
+
+    return (debt) => {
+      const nameLower = (debt.name || '').toLowerCase()
+      const accId = debt.accountId
+      
+      return all.filter(tx => {
+        if (accId) {
+          if (tx.type === 'transfer') {
+            if (tx.fromAccountId === accId || tx.toAccountId === accId) return true
+          } else {
+            if (tx.accountId === accId) return true
+          }
+        }
+        if (tx.desc && tx.desc.toLowerCase().includes(nameLower)) return true
+        return false
+      }).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+    }
+  }, [data.income, data.expenses, data.transfers])
+
   const editorRef = useRef(null)
 
   function set(key, value) {
@@ -435,6 +460,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
     const original = Number(debt.originalAmount) || balance
     const pctPaid = original > 0 ? Math.min(100, Math.round(((original - balance) / original) * 100)) : 0
     const isCleared = balance === 0
+    const debtTx = getDebtTransactions(debt)
 
     return (
       <div
@@ -611,6 +637,52 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
             <span>🎉 This debt is completely paid off!</span>
           </div>
         )}
+
+        {/* Transaction History Section */}
+        <div className={dStyles.historySection}>
+          <button
+            type="button"
+            className={dStyles.historyToggle}
+            onClick={() => {
+              playTick()
+              setExpandedHistory(prev => ({ ...prev, [debt._id]: !prev[debt._id] }))
+            }}
+          >
+            <span>{expandedHistory[debt._id] ? '▼ Hide Transaction History' : '▶ Show Transaction History'}</span>
+            <span className={dStyles.historyBadge}>{debtTx.length}</span>
+          </button>
+
+          {expandedHistory[debt._id] && (
+            <div className={dStyles.historyList}>
+              {debtTx.length === 0 ? (
+                <div className={dStyles.emptyHistory}>No recorded transactions for this debt.</div>
+              ) : (
+                <div className={dStyles.historyTable}>
+                  {debtTx.map(tx => {
+                    const isPayment = (tx.type === 'transfer' && tx.toAccountId === debt.accountId) || 
+                                      (tx.type === 'income' && tx.accountId === debt.accountId) ||
+                                      (tx.desc && tx.desc.toLowerCase().includes('payment'))
+                    const amtSign = isPayment ? '-' : '+'
+                    const amtColor = isPayment ? 'var(--accent)' : 'var(--red)'
+                    
+                    return (
+                      <div key={tx._id} className={dStyles.historyRow}>
+                        <div className={dStyles.historyMetaCol}>
+                          <div className={dStyles.historyDate}>{tx.date}</div>
+                          <div className={dStyles.historyDesc}>{tx.desc}</div>
+                          {tx.cat && <div className={dStyles.historyCategory}>{tx.cat} {tx.subcat ? `› ${tx.subcat}` : ''}</div>}
+                        </div>
+                        <div className={dStyles.historyAmountCol} style={{ color: amtColor }}>
+                          {amtSign}{money(tx.amount)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     )
   }

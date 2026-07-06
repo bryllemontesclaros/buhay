@@ -1968,42 +1968,46 @@ function getHabitScore(row = {}) {
 function MiniBarChart({ title, rows, unit = '', hidden = false, color = 'var(--accent)' }) {
   const maxValue = Math.max(1, ...rows.map(row => numberOrZero(row.value)))
   const total = rows.reduce((sum, row) => sum + numberOrZero(row.value), 0)
-  const svgH = 52
-  const barW = 14
-  const gap = 6
-  const svgW = rows.length * (barW + gap)
+  const svgH = 34
+  const barW = 8
+  const gap = 8
+  const svgW = Math.max(120, rows.length * (barW + gap) - gap)
 
   return (
-    <div className={lStyles.chartCard}>
+    <div className={lStyles.chartCard} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div className={lStyles.chartTitle}>{title}</div>
-      <svg
-        viewBox={`0 0 ${svgW} ${svgH}`}
-        width="100%"
-        height={svgH}
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        className={lStyles.svgBarChart}
-      >
-        {rows.map((row, index) => {
-          const pct = numberOrZero(row.value) / maxValue
-          const barH = Math.max(3, pct * (svgH - 14))
-          const x = index * (barW + gap)
-          const y = svgH - barH - 12
-          return (
-            <g key={row.key}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+        <svg
+          viewBox={`0 0 ${svgW} ${svgH}`}
+          style={{ width: '100%', height: `${svgH}px`, maxWidth: `${rows.length * 20}px` }}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          className={lStyles.svgBarChart}
+        >
+          {rows.map((row, index) => {
+            const pct = numberOrZero(row.value) / maxValue
+            const barH = Math.max(2, pct * svgH)
+            const x = index * (barW + gap) + (svgW - (rows.length * (barW + gap) - gap)) / 2
+            const y = svgH - barH
+            return (
               <rect
-                x={x} y={y} width={barW} height={barH} rx={3}
+                key={row.key}
+                x={x} y={y} width={barW} height={barH} rx={2}
                 fill={color}
-                opacity={pct < 0.05 ? 0.2 : 0.82}
+                opacity={pct < 0.05 ? 0.15 : 0.85}
                 className={lStyles.svgBarRect}
               />
-              <text x={x + barW / 2} y={svgH - 1} textAnchor="middle" fontSize="7" fill="var(--text3)">
-                {row.label}
-              </text>
-            </g>
-          )
-        })}
-      </svg>
+            )
+          })}
+        </svg>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: `${rows.length * 20}px`, marginTop: '6px' }}>
+          {rows.map((row) => (
+            <span key={row.key} style={{ flex: 1, textAlign: 'center', fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text3)', transform: 'scale(0.85)' }}>
+              {row.label}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className={lStyles.chartMeta}>
         {hidden ? 'Private' : `${formatNumber(total, 1)} ${unit}`.trim()}
       </div>
@@ -2018,11 +2022,11 @@ function SvgSparkLine({ title, rows, unit = '', hidden = false, color = 'var(--a
   const maxVal = Math.max(...values)
   const range = Math.max(1, maxVal - minVal)
   const W = 200
-  const H = 52
-  const pad = 6
+  const H = 34
+  const pad = 8
 
   const toX = index => pad + (index / Math.max(1, rows.length - 1)) * (W - pad * 2)
-  const toY = value => H - 14 - ((value - minVal) / range) * (H - pad - 14)
+  const toY = value => H - 4 - ((value - minVal) / range) * (H - pad - 4)
 
   const points = rows.map((row, index) => `${toX(index)},${toY(numberOrZero(row.value))}`)
   const polyline = points.join(' ')
@@ -2031,52 +2035,42 @@ function SvgSparkLine({ title, rows, unit = '', hidden = false, color = 'var(--a
   const delta = lastVal - firstVal
   const deltaLabel = delta > 0 ? `+${formatNumber(delta, 1)}` : formatNumber(delta, 1)
   const areaPath = rows.length > 1
-    ? `M${toX(0)},${H - 12} L${points[0]} ${rows.slice(1).map((_, i) => `L${points[i + 1]}`).join(' ')} L${toX(rows.length - 1)},${H - 12} Z`
+    ? `M${toX(0)},${H} L${points[0]} ${rows.slice(1).map((_, i) => `L${points[i + 1]}`).join(' ')} L${toX(rows.length - 1)},${H} Z`
     : ''
 
   return (
-    <div className={lStyles.chartCard}>
+    <div className={lStyles.chartCard} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div className={lStyles.chartTitle}>{title}</div>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        width="100%"
-        height={H}
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        className={lStyles.svgSparkLine}
-      >
-        {showArea && areaPath && (
-          <path d={areaPath} fill={color} opacity="0.13" />
-        )}
-        {rows.length > 1 && (
-          <polyline
-            points={polyline}
-            fill="none"
-            stroke={color}
-            strokeWidth="2"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-        )}
-        {rows.map((row, index) => (
-          <circle
-            key={row.key}
-            cx={toX(index)}
-            cy={toY(numberOrZero(row.value))}
-            r={index === rows.length - 1 ? 3.5 : 2}
-            fill={index === rows.length - 1 ? color : 'var(--surface)'}
-            stroke={color}
-            strokeWidth={index === rows.length - 1 ? 0 : 1.5}
-          />
-        ))}
-        {rows.map((row, index) => (
-          index === 0 || index === rows.length - 1 || index === Math.floor(rows.length / 2) ? (
-            <text key={`lbl-${row.key}`} x={toX(index)} y={H - 2} textAnchor="middle" fontSize="7" fill="var(--text3)">
-              {row.label}
-            </text>
-          ) : null
-        ))}
-      </svg>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          style={{ width: '100%', height: `${H}px` }}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          className={lStyles.svgSparkLine}
+        >
+          {showArea && areaPath && (
+            <path d={areaPath} fill={color} opacity="0.1" />
+          )}
+          {rows.length > 1 && (
+            <polyline
+              points={polyline}
+              fill="none"
+              stroke={color}
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+          )}
+        </svg>
+        <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px', paddingRight: '8px', marginTop: '6px' }}>
+          <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text3)', transform: 'scale(0.85)', transformOrigin: 'left center' }}>{rows[0]?.label}</span>
+          {rows.length > 2 && (
+            <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text3)', transform: 'scale(0.85)' }}>{rows[Math.floor(rows.length / 2)]?.label}</span>
+          )}
+          <span style={{ fontSize: '9px', fontFamily: 'var(--font-mono)', color: 'var(--text3)', transform: 'scale(0.85)', transformOrigin: 'right center' }}>{rows[rows.length - 1]?.label}</span>
+        </div>
+      </div>
       <div className={lStyles.chartMeta}>
         {hidden
           ? 'Private'

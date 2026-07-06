@@ -465,31 +465,56 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
               <div className={bStyles.detailsEmpty}>Nothing to show yet.</div>
             ) : (
               <div className={bStyles.detailsList}>
-                {section.list.map(([day, list]) => (
-                  <div key={day} className={bStyles.detailsDay}>
-                    <div className={bStyles.detailsDayLabel}>{day}</div>
-                    {list.map((tx, index) => {
-                      const isIncome = tx.type === 'income'
-                      const sign = isIncome ? '+' : '−'
-                      const tone = isIncome ? 'var(--accent)' : 'var(--red)'
-                      const projectedBadge = tx._projected || tx.isProjected || tx.projected ? 'Projected cycle' : ''
-                      return (
-                        <div key={(tx._id || tx.id || 'tx') + index} className={bStyles.detailsRow}>
-                          <div className={bStyles.detailsRowMain}>
-                            <div className={bStyles.detailsRowDesc}>{tx.desc || tx.cat || 'Untitled'}</div>
-                            <div className={bStyles.detailsRowMeta}>
-                              <span>{[tx.cat, tx.subcat].filter(Boolean).join(' · ') || 'Other'}</span>
-                              {projectedBadge ? <span className={bStyles.detailsBadge}>· {projectedBadge}</span> : null}
+                {section.list.map(([day, list]) => {
+                  const formattedDay = (() => {
+                    const parsed = new Date(`${day}T00:00:00`)
+                    if (Number.isNaN(parsed.getTime())) return day
+                    return parsed.toLocaleDateString('en-PH', {
+                      weekday: 'long',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  })()
+
+                  return (
+                    <div key={day} className={bStyles.detailsDay}>
+                      <div className={bStyles.detailsDayLabel}>{formattedDay}</div>
+                      {list.map((tx, index) => {
+                        const isIncome = tx.type === 'income'
+                        const sign = isIncome ? '+' : '−'
+                        const tone = isIncome ? 'var(--accent)' : 'var(--red)'
+                        const projectedBadge = tx._projected || tx.isProjected || tx.projected ? 'Projected cycle' : ''
+                        
+                        const displayDesc = tx.desc || tx.cat || 'Untitled'
+                        const metaParts = []
+                        if (tx.cat && tx.cat.toLowerCase() !== displayDesc.toLowerCase()) {
+                          metaParts.push(tx.cat)
+                        }
+                        if (tx.subcat && tx.subcat.toLowerCase() !== displayDesc.toLowerCase()) {
+                          metaParts.push(tx.subcat)
+                        }
+                        const metaText = metaParts.join(' · ')
+
+                        return (
+                          <div key={(tx._id || tx.id || 'tx') + index} className={bStyles.detailsRow}>
+                            <div className={bStyles.detailsRowMain}>
+                              <div className={bStyles.detailsRowDesc}>{displayDesc}</div>
+                              {(metaText || projectedBadge) && (
+                                <div className={bStyles.detailsRowMeta}>
+                                  {metaText && <span>{metaText}</span>}
+                                  {projectedBadge && <span className={bStyles.detailsBadge}>{projectedBadge}</span>}
+                                </div>
+                              )}
+                            </div>
+                            <div className={bStyles.detailsRowAmount} style={{ color: tone }}>
+                              {displayValue(privacyMode, `${sign}${fmt(tx.amount || 0, s)}`, `${sign}${maskMoney(s)}`)}
                             </div>
                           </div>
-                          <div className={bStyles.detailsRowAmount} style={{ color: tone }}>
-                            {displayValue(privacyMode, `${sign}${fmt(tx.amount || 0, s)}`, `${sign}${maskMoney(s)}`)}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ))}
+                        )
+                      })}
+                    </div>
+                  )
+                })}
               </div>
             )}
           </div>
