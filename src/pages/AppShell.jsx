@@ -1693,6 +1693,29 @@ export default function AppShell({ user }) {
                 </svg>
               )}
             </button>
+            <button
+              type="button"
+              className={styles.themeBtn}
+              onClick={async () => {
+                const field = 
+                  activeSpace === 'takda' ? 'hasCompletedTakdaTour' :
+                  activeSpace === 'lakas' ? 'hasCompletedLakasTour' :
+                  'hasCompletedTalaTour'
+                try {
+                  await fsSetProfile(user.uid, { [field]: false })
+                } catch (err) {
+                  console.error('Failed to reset tour status', err)
+                }
+                setActiveTour(activeSpace)
+              }}
+              title="Play guided tour for this space"
+              aria-label="Play guided tour for this space"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="10 8 16 12 10 16 10 8"/>
+              </svg>
+            </button>
               <NotificationBell data={data} profile={profile} privacyMode={privacyMode} onAction={handleNotificationAction} space={activeSpace} />
           </div>
         </header>
