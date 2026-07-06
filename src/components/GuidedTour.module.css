@@ -23,21 +23,17 @@
 
 .tourCard {
   position: fixed;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--surface) 80%, transparent),
-    color-mix(in srgb, var(--glass-1) 85%, transparent)
-  );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+  background: rgba(18, 18, 22, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   padding: 20px;
   width: 320px;
-  box-shadow: var(--glass-shadow-soft), 0 12px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
   z-index: 10001;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  color: var(--text);
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -60,7 +56,7 @@
 .closeBtn {
   background: none;
   border: none;
-  color: var(--text3);
+  color: #94a3b8;
   cursor: pointer;
   padding: 4px;
   border-radius: 50%;
@@ -71,8 +67,8 @@
 }
 
 .closeBtn:hover {
-  background: var(--glass-1);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .title {
@@ -81,11 +77,12 @@
   font-weight: 700;
   margin: 0;
   line-height: 1.2;
+  color: #ffffff;
 }
 
 .body {
   font-size: 13.5px;
-  color: var(--text2);
+  color: #cbd5e1;
   line-height: 1.5;
   margin: 0;
 }
@@ -115,22 +112,22 @@
 
 .btnSecondary {
   background: transparent;
-  color: var(--text2);
-  border: 1px solid var(--glass-border);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btnSecondary:hover {
-  background: var(--glass-1);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .btnPrimary {
   background: var(--tour-accent, var(--accent));
-  color: #fff;
+  color: #ffffff;
 }
 
 .btnPrimary:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.15);
   transform: translateY(-1px);
 }
 

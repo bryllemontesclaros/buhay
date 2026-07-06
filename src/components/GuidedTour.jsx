@@ -3,7 +3,7 @@ import styles from './GuidedTour.module.css'
 
 const TOUR_CONFIGS = {
   takda: {
-    accentColor: 'var(--accent, #9b51e0)',
+    accentColor: '#a855f7',
     steps: [
       {
         target: '#takda-balance-card',
