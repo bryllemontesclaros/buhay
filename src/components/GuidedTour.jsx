@@ -90,44 +90,54 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
     }
   }, [currentStepIdx, step, activeTab, onTabChange])
 
-  // Recalculate target element position
+  // Recalculate target element position continuously to handle layout shifts, animations, and transitions
   useEffect(() => {
     let active = true
+    let frameId
 
     const updateCoords = () => {
       if (!active || !step) return
       const el = document.querySelector(step.target)
       if (el) {
         const rect = el.getBoundingClientRect()
-        setCoords({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height
+        setCoords(current => {
+          // Avoid triggering re-renders if coordinates did not change
+          if (
+            current &&
+            current.top === rect.top &&
+            current.left === rect.left &&
+            current.width === rect.width &&
+            current.height === rect.height
+          ) {
+            return current
+          }
+          return {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+          }
         })
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
       } else {
         setCoords(null)
       }
+
+      if (active) {
+        frameId = requestAnimationFrame(updateCoords)
+      }
     }
 
-    // Delay slightly to allow the DOM/tab switch to complete
-    const timer = setTimeout(updateCoords, 250)
-
-    const handleResize = () => {
-      clearTimeout(resizeTimeoutRef.current)
-      resizeTimeoutRef.current = setTimeout(updateCoords, 100)
+    // Scroll target into view once on step load
+    const el = document.querySelector(step.target)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
-    window.addEventListener('resize', handleResize)
-    window.addEventListener('scroll', updateCoords)
+    frameId = requestAnimationFrame(updateCoords)
 
     return () => {
       active = false
-      clearTimeout(timer)
-      clearTimeout(resizeTimeoutRef.current)
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('scroll', updateCoords)
+      cancelAnimationFrame(frameId)
     }
   }, [currentStepIdx, step, activeTab])
 
