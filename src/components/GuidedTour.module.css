@@ -1,0 +1,150 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+/* Clear cutout spotlight circle/rectangle */
+.spotlight {
+  position: absolute;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10000;
+  pointer-events: none;
+  border: 2px solid var(--tour-accent, var(--accent));
+}
+
+.tourCard {
+  position: absolute;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--surface) 80%, transparent),
+    color-mix(in srgb, var(--glass-1) 85%, transparent)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
+  border-radius: 20px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: var(--glass-shadow-soft), 0 12px 40px rgba(0, 0, 0, 0.5);
+  z-index: 10001;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stepIndicator {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--tour-accent, var(--accent));
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.closeBtn:hover {
+  background: var(--glass-1);
+  color: var(--text);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.body {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--glass-border);
+}
+
+.btnSecondary:hover {
+  background: var(--glass-1);
+  color: var(--text);
+}
+
+.btnPrimary {
+  background: var(--tour-accent, var(--accent));
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Mobile Bottom Sheet Styles */
+@media (max-width: 768px) {
+  .tourCard {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    z-index: 10001;
+    transform: translateY(0);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+}

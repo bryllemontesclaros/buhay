@@ -4472,7 +4472,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             )}
             {activeGymExercise.name && (
               <div className={lStyles.gymModeToolsRow}>
-                <details className={lStyles.gymModeToolDetails}>
+                <details id="lakas-plate-calc" className={lStyles.gymModeToolDetails}>
                   <summary className={lStyles.gymModeToolSummary}>Plate Calculator</summary>
                   <div className={lStyles.gymModeToolContent}>
                     <label>
@@ -5186,7 +5186,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 		          </div>
 	          <div className={lStyles.workoutHero}>
 	            <div className={lStyles.workoutLaunchGrid}>
-	              <article className={`${lStyles.workoutLaunchCard} ${lStyles.workoutPrimaryCard} ${lStyles.workoutHeroCard}`}>
+	              <article id="lakas-start-workout" className={`${lStyles.workoutLaunchCard} ${lStyles.workoutPrimaryCard} ${lStyles.workoutHeroCard}`}>
 	                <span>Start here today</span>
 	                <strong>{featuredWorkoutTemplate?.name || 'Guided session'}</strong>
 	                <small>
@@ -6621,7 +6621,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
               </div>
             </details>
 
-            <details className={lStyles.advancedBox}>
+            <details id="lakas-charts" className={lStyles.advancedBox}>
               <summary className={lStyles.advancedSummary}>
                 <span>Weekly charts</span>
                 <small>Frequency, volume, steps, and weight trend</small>

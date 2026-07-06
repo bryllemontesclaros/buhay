@@ -1648,7 +1648,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      <div className={`${styles.card} ${calStyles.calendarCard}`}>
+      <div id="takda-calendar" className={`${styles.card} ${calStyles.calendarCard}`}>
         <div className={calStyles.calHeader}>
           <div className={calStyles.nav}>
             <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">←</button>

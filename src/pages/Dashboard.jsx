@@ -477,7 +477,7 @@ export default function Dashboard({ user, data, profile = {}, symbol, privacyMod
       </div>
 
       <div className={dStyles.topBoard}>
-        <div className={dStyles.heroCard}>
+        <div id="takda-balance-card" className={dStyles.heroCard}>
           <div className={dStyles.heroLabel}>Net position</div>
           <div className={dStyles.heroVal}>{money(netWorth)}</div>
           <div className={dStyles.heroSub}>{accountCountLabel}</div>

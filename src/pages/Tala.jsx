@@ -1395,7 +1395,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
 
       {showJournal && (
       <div className={tStyles.grid}>
-        <section ref={journalQuickActionRef} className={`${tStyles.panel} ${tStyles.quickEntryPanel}`}>
+        <section id="tala-new-entry" ref={journalQuickActionRef} className={`${tStyles.panel} ${tStyles.quickEntryPanel}`}>
           <div className={tStyles.sectionHeader}>
             <div>
               <div className={tStyles.sectionKicker}>Journal</div>
@@ -1477,7 +1477,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
           <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleAddJournal(); }}>Save journal</Button>
         </section>
 
-        <section className={tStyles.panel}>
+        <section id="tala-history" className={tStyles.panel}>
           <div className={tStyles.sectionHeader}>
             <div>
               <div className={tStyles.sectionKicker}>Recent</div>

@@ -28,6 +28,7 @@ import {
 import { consumeStartSpaceIntent } from '../lib/startIntent'
 import { useTheme } from '../lib/theme.jsx'
 import NotificationBell from '../components/NotificationBell'
+import GuidedTour from '../components/GuidedTour'
 import styles from './AppShell.module.css'
 
 const Lakas = lazy(() => import('./Lakas'))
@@ -574,6 +575,55 @@ export default function AppShell({ user }) {
   const lastMainScrollRef = useRef(0)
   const previousVisiblePageRef = useRef(null)
   const [changelogData, setChangelogData] = useState(null)
+  const [activeTour, setActiveTour] = useState(null)
+
+  // Auto-trigger tour if user enters a space for the first time
+  useEffect(() => {
+    if (!profile) return
+    
+    // Check if the current space has a completed tour flag
+    const completedFlag = 
+      activeSpace === 'takda' ? profile.hasCompletedTakdaTour :
+      activeSpace === 'lakas' ? profile.hasCompletedLakasTour :
+      activeSpace === 'tala' ? profile.hasCompletedTalaTour : true
+
+    if (completedFlag === undefined || completedFlag === false) {
+      setActiveTour(activeSpace)
+    } else {
+      setActiveTour(null)
+    }
+  }, [activeSpace, profile])
+
+  const handleFinishTour = async () => {
+    const field = 
+      activeSpace === 'takda' ? 'hasCompletedTakdaTour' :
+      activeSpace === 'lakas' ? 'hasCompletedLakasTour' :
+      'hasCompletedTalaTour'
+    
+    try {
+      await fsSetProfile(user.uid, { [field]: true })
+    } catch (err) {
+      console.error('Failed to save tour status', err)
+    }
+    setActiveTour(null)
+  }
+
+  const handleTourTabChange = (tabName) => {
+    if (activeSpace === 'takda') {
+      navigateToFinancePage(tabName)
+    } else if (activeSpace === 'lakas') {
+      setLakasPage(tabName)
+    } else if (activeSpace === 'tala') {
+      setTalaPage(tabName)
+    }
+  }
+
+  const getActiveTourTab = () => {
+    if (activeSpace === 'takda') return page
+    if (activeSpace === 'lakas') return lakasPage
+    if (activeSpace === 'tala') return talaPage
+    return ''
+  }
 
   useEffect(() => {
     try {
@@ -1560,6 +1610,7 @@ export default function AppShell({ user }) {
               {n.section && <div className={styles.navSection}>{n.section}</div>}
               <button
                 type="button"
+                id={`${activeSpace}-nav-${n.id}`}
                 className={`${styles.navItem} ${activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
                 onClick={() => {
                   if (activeSpace === 'lakas') {
@@ -1836,6 +1887,7 @@ export default function AppShell({ user }) {
           <button
             key={`${n.space}-${n.id}`}
             type="button"
+            id={`${n.space}-nav-${n.id}`}
             className={`${styles.bottomNavItem} ${isBottomNavItemActive(n) ? styles.active : ''}`}
             onClick={() => handleBottomNavSelect(n)}
             aria-current={isBottomNavItemActive(n) ? 'page' : undefined}
@@ -1882,6 +1934,14 @@ export default function AppShell({ user }) {
             </div>
           </div>
         </div>
+      )}
+      {activeTour && (
+        <GuidedTour
+          space={activeTour}
+          activeTab={getActiveTourTab()}
+          onTabChange={handleTourTabChange}
+          onFinish={handleFinishTour}
+        />
       )}
     </div>
   )
