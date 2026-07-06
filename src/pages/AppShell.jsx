@@ -576,10 +576,11 @@ export default function AppShell({ user }) {
   const previousVisiblePageRef = useRef(null)
   const [changelogData, setChangelogData] = useState(null)
   const [activeTour, setActiveTour] = useState(null)
+  const autoTriggeredRef = useRef({ takda: false, lakas: false, tala: false })
 
   // Auto-trigger tour if user enters a space for the first time
   useEffect(() => {
-    if (!profile) return
+    if (!profile || Object.keys(profile).length === 0) return
     
     // Check if the current space has a completed tour flag
     const completedFlag = 
@@ -587,10 +588,9 @@ export default function AppShell({ user }) {
       activeSpace === 'lakas' ? profile.hasCompletedLakasTour :
       activeSpace === 'tala' ? profile.hasCompletedTalaTour : true
 
-    if (completedFlag === undefined || completedFlag === false) {
+    if ((completedFlag === undefined || completedFlag === false) && !autoTriggeredRef.current[activeSpace]) {
+      autoTriggeredRef.current[activeSpace] = true
       setActiveTour(activeSpace)
-    } else {
-      setActiveTour(null)
     }
   }, [activeSpace, profile])
 
@@ -1696,16 +1696,7 @@ export default function AppShell({ user }) {
             <button
               type="button"
               className={styles.themeBtn}
-              onClick={async () => {
-                const field = 
-                  activeSpace === 'takda' ? 'hasCompletedTakdaTour' :
-                  activeSpace === 'lakas' ? 'hasCompletedLakasTour' :
-                  'hasCompletedTalaTour'
-                try {
-                  await fsSetProfile(user.uid, { [field]: false })
-                } catch (err) {
-                  console.error('Failed to reset tour status', err)
-                }
+              onClick={() => {
                 setActiveTour(activeSpace)
               }}
               title="Play guided tour for this space"
