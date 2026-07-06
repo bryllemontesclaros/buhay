@@ -1675,6 +1675,20 @@ export default function AppShell({ user }) {
             <button
               type="button"
               className={styles.themeBtn}
+              onClick={() => {
+                setActiveTour(activeSpace)
+              }}
+              title="Play guided tour for this space"
+              aria-label="Play guided tour for this space"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              className={styles.themeBtn}
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -1692,20 +1706,6 @@ export default function AppShell({ user }) {
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
               )}
-            </button>
-            <button
-              type="button"
-              className={styles.themeBtn}
-              onClick={() => {
-                setActiveTour(activeSpace)
-              }}
-              title="Play guided tour for this space"
-              aria-label="Play guided tour for this space"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-              </svg>
             </button>
               <NotificationBell data={data} profile={profile} privacyMode={privacyMode} onAction={handleNotificationAction} space={activeSpace} />
           </div>
