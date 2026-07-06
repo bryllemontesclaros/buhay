@@ -450,7 +450,7 @@ function FinanceToolGroup({
     previousToolRef.current = selectedTool.id
 
     if (typeof window === 'undefined') return
-    if (!window.matchMedia('(max-width: 768px)').matches) return
+    if (!window.matchMedia('(max-width: 1024px)').matches) return
 
     window.requestAnimationFrame(() => {
       safeScrollIntoView(contentRef.current, { behavior: 'smooth', block: 'start' })
@@ -976,7 +976,7 @@ export default function AppShell({ user }) {
     previousVisiblePageRef.current = nextVisiblePage
 
     if (typeof window === 'undefined') return
-    if (!window.matchMedia('(max-width: 768px)').matches) return
+    if (!window.matchMedia('(max-width: 1024px)').matches) return
 
     window.requestAnimationFrame(() => {
       safeScrollIntoView(mainRef.current, { behavior: 'smooth', block: 'start' })
@@ -995,7 +995,7 @@ export default function AppShell({ user }) {
         const nextTop = node.scrollTop || 0
         const delta = nextTop - lastMainScrollRef.current
         lastMainScrollRef.current = nextTop
-        const isMobile = window.matchMedia('(max-width: 768px)').matches
+        const isMobile = window.matchMedia('(max-width: 1024px)').matches
 
         setChromeMode(current => {
           const compact = nextTop > 28
