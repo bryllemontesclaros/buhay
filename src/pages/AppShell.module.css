@@ -1635,7 +1635,7 @@
 }
 
 /* MOBILE */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .shell {
     flex-direction: column;
     height: 100dvh;
@@ -2176,7 +2176,7 @@
 }
 
 /* Mobile neo: avoid double strokes + odd arcs caused by desktop neo rules (higher specificity). */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :global(.neo) .mainWrap {
     border: none;
     border-radius: 0;
@@ -2194,7 +2194,7 @@
   }
 }
 
-@media (max-width: 768px) and (max-height: 760px) {
+@media (max-width: 1024px) and (max-height: 760px) {
   .quickAddLayer {
     padding: 6px 0 0;
   }
@@ -2239,7 +2239,7 @@
   min-height: 42px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .topBar {
     margin: 12px 12px 0;
     padding: 14px;
@@ -2329,7 +2329,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :global(.neo) .topBar {
     margin: 12px 12px 0;
     border-radius: 28px;
@@ -2450,7 +2450,7 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :global(.neo).shell {
     padding: 0;
     gap: 0;
@@ -2538,7 +2538,7 @@
 }
 
 /* Final mobile shell correction: prevent the header and space switch from overflowing phones. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :global(.neo) .main {
     padding-inline: 0px;
   }
@@ -2641,7 +2641,7 @@
 }
 
 /* Final mobile navigation model: top chooses space, bottom chooses page. */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .topBar,
   :global(.neo) .topBar {
     display: grid;
@@ -2869,7 +2869,7 @@
   line-height: 1.2;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .todayStrip {
     display: flex;
     overflow-x: auto;

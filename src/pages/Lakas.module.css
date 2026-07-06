@@ -3788,7 +3788,7 @@
   font-size: var(--type-body-sm);
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1024px) {
   .workspaceBoard {
     padding: 10px;
   }
@@ -4185,7 +4185,7 @@
   border-radius: 22px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .boardOverview,
   .hero {
     grid-template-columns: 1fr;
@@ -4196,7 +4196,7 @@
   grid-template-columns: 1fr;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .workoutHeroActions,
   .workoutLaunchGrid,
   .workoutSupportGrid,
@@ -4465,7 +4465,7 @@
   font-size: var(--type-body-sm);
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1024px) {
   .workoutLaunchGrid {
     grid-template-columns: 1fr;
   }

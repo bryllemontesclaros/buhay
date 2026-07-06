@@ -1616,6 +1616,19 @@
   .heroDeviceRail {
     max-width: 720px;
     margin-inline: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .heroRailCard {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .heroRailDevice {
+    width: 100px;
+    height: 138px;
   }
 }
 
@@ -1773,21 +1786,7 @@
     width: 100%;
   }
 
-  .heroRailCard {
-    min-height: 0;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 16px;
-  }
 
-  .heroRailDevice {
-    width: 100px;
-    height: 138px;
-  }
-
-  .heroDeviceRail {
-    grid-template-columns: 1fr;
-  }
 
   .flowGrid,
   .spacesGrid,

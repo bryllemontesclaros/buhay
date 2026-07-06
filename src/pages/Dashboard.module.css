@@ -567,7 +567,7 @@
 }
 
 /* MOBILE */
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   .signalDeck,
   .topBoard,
   .sectionGrid {
@@ -849,7 +849,7 @@
   border-radius: 20px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   .introBoard,
   .signalDeck,
   .storyScroller {
