@@ -165,14 +165,38 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
     '--tour-accent': config.accentColor
   }
 
-  // Calculate card position on desktop
+  // Calculate card position on desktop/mobile
   const getCardStyle = () => {
-    if (window.innerWidth <= 768) return {} // Bottom sheet style handled by CSS Media query
     if (!coords) {
       return lastCardStyleRef.current || { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'fixed', opacity: 0 }
     }
 
-    // Position popover relative to spotlight element
+    if (window.innerWidth <= 768) {
+      // Mobile: Place card at the top if target element is in bottom half of screen (and vice versa)
+      const isTargetInBottomHalf = coords.top + coords.height / 2 > window.innerHeight / 2
+      
+      const mobileStyle = {
+        position: 'fixed',
+        left: '16px',
+        right: '16px',
+        width: 'calc(100% - 32px)',
+        opacity: 1,
+        transform: 'none'
+      }
+
+      if (isTargetInBottomHalf) {
+        mobileStyle.top = '16px'
+        mobileStyle.bottom = 'auto'
+      } else {
+        mobileStyle.bottom = '16px'
+        mobileStyle.top = 'auto'
+      }
+
+      lastCardStyleRef.current = mobileStyle
+      return mobileStyle
+    }
+
+    // Desktop: Position popover relative to spotlight element
     const spacing = 16
     let cardLeft = coords.left + coords.width / 2 - 160 // Center popover horizontally
     let cardTop = coords.top + coords.height + spacing
@@ -188,6 +212,10 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
       position: 'fixed',
       top: `${cardTop}px`,
       left: `${cardLeft}px`,
+      right: 'auto',
+      bottom: 'auto',
+      width: '320px',
+      transform: 'none',
       opacity: 1
     }
     lastCardStyleRef.current = nextStyle
