@@ -3,7 +3,7 @@ import styles from './GuidedTour.module.css'
 
 const TOUR_CONFIGS = {
   takda: {
-    accentColor: '#a855f7',
+    accentColor: 'var(--accent)',
     steps: [
       {
         target: '#takda-balance-card',
@@ -32,7 +32,7 @@ const TOUR_CONFIGS = {
     ]
   },
   lakas: {
-    accentColor: '#ff9f43',
+    accentColor: 'var(--accent)',
     steps: [
       {
         target: '#lakas-start-workout',
@@ -55,7 +55,7 @@ const TOUR_CONFIGS = {
     ]
   },
   tala: {
-    accentColor: '#00d2d3',
+    accentColor: 'var(--accent)',
     steps: [
       {
         target: '#tala-new-entry',
