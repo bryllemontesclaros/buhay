@@ -14,19 +14,19 @@ const HERO_SPACES = [
   {
     label: 'Takda',
     title: 'Money',
-    desc: 'Balances, bills, savings target progress, budgets, and the Financial Pulse Evaluator keep your financial health green.',
+    desc: 'Interactive cashflow calendars, snowball/avalanche debt optimizers, savings target charts, and step-by-step Guided Tours keep your money path clear.',
     tone: 'takda',
   },
   {
     label: 'Lakas',
     title: 'Fitness',
-    desc: 'Workouts, habits, manual outdoor run logging, and Ghost Racer comparison leaderboards make fitness fun.',
+    desc: 'Workout logger templates, daily habit sheets, automatic barbell plate weight calculators, and competitive Ghost Racer leaderboards build consistency.',
     tone: 'lakas',
   },
   {
     label: 'Tala',
     title: 'Mind',
-    desc: 'Journal entries, mood check-ins, mood distribution wheels, and dynamic grounding prompts support quiet reflection.',
+    desc: 'Mood distribution wheels, reflection history timelines, daily grounding prompts, and private journaling tags support calm self-focus.',
     tone: 'tala',
   },
 ]
@@ -34,22 +34,22 @@ const HERO_SPACES = [
 const SPACE_FEATURES = [
   {
     title: 'Takda',
-    desc: 'Track cash flow day-by-day with dynamic balances, savings target tracking, pulsing overdue bill alerts, and the Financial Pulse Evaluator for automated coaching insights.',
+    desc: 'Track daily cash flow with dynamic balances, track savings targets, simulate snowball or avalanche debt payoff strategies, and follow interactive step-by-step guided onboarding tours.',
     tone: 'takda',
   },
   {
     title: 'Lakas',
-    desc: 'Log sessions, check off daily habits, record outdoor running distance and duration, and compete against your best averages via the Ghost Racer Leaderboard.',
+    desc: 'Log set repetitions, check off daily consistency habits, use the built-in barbell plate calculator, and compete against your own historic runs using the Ghost Racer leaderboard.',
     tone: 'lakas',
   },
   {
     title: 'Tala',
-    desc: 'Reflect with stepped range inputs, tag clouds, a visual Mood Distribution Wheel (donut chart breakdown), and context-aware Grounded Reflection Prompts.',
+    desc: 'Log entries with custom mood indicators, view weekly mood distribution wheels, tag reflection topics, and receive gentle grounding prompts during difficult days.',
     tone: 'tala',
   },
   {
     title: 'Buhay account',
-    desc: 'Keep sign-in, privacy, backup, restore, and deletion in one shared account layer while each space keeps its own job.',
+    desc: 'Quietly handles login, backups, data restore, CSV export, and complete deletion in a single secure account layer.',
     tone: 'buhay',
   },
 ]
@@ -118,21 +118,27 @@ const TRUST_POINTS = [
 const SPACE_PROMISES = [
   {
     label: 'Takda',
-    promise: 'Includes savings target trackers, dynamic budgets, and Financial Pulse evaluations.',
-    meta: 'Pulse Ring first',
+    promise: 'Includes savings target trackers, snowball/avalanche debt simulators, and daily cashflow calendars.',
+    meta: 'Debt & Savings',
     tone: 'takda',
   },
   {
     label: 'Lakas',
-    promise: 'Features cardio run logging and the Ghost Racer self-competition podium.',
-    meta: 'Ghost Racer first',
+    promise: 'Features cardio run logging, workout library builders, and the Ghost Racer podium.',
+    meta: 'Ghost Racer',
     tone: 'lakas',
   },
   {
     label: 'Tala',
     promise: 'Visualizes your weekly mood distribution wheel and unlocks Grounding Prompts.',
-    meta: 'Climate weather first',
+    meta: 'Mood Wheels',
     tone: 'tala',
+  },
+  {
+    label: 'Guided Tours',
+    promise: 'Features beautiful, step-by-step interactive onboarding tours for every single space.',
+    meta: 'Onboarding Guides',
+    tone: 'buhay',
   },
 ]
 
@@ -347,6 +353,10 @@ const FAQ_ITEMS = [
   {
     question: 'Is Buhay advice?',
     answer: 'No. Buhay helps you track money, fitness, and reflection more clearly, but it does not replace professional financial, medical, or mental-health advice.',
+  },
+  {
+    question: 'Is there a guide to help me learn how to use the app?',
+    answer: 'Yes! Buhay includes premium, interactive step-by-step Guided Onboarding Tours for every space (Takda, Lakas, and Tala) to show you around and help you get started instantly.',
   },
 ]
 
