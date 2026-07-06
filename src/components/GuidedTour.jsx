@@ -100,8 +100,8 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
       if (el) {
         const rect = el.getBoundingClientRect()
         setCoords({
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
+          top: rect.top,
+          left: rect.left,
           width: rect.width,
           height: rect.height
         })
@@ -167,7 +167,7 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
     // Bounds checking
     if (cardLeft < 20) cardLeft = 20
     if (cardLeft + 320 > window.innerWidth) cardLeft = window.innerWidth - 340
-    if (cardTop + 220 > document.documentElement.scrollHeight) {
+    if (cardTop + 220 > window.innerHeight) {
       cardTop = coords.top - 220 - spacing // Place above target if bottom exceeds height
     }
 

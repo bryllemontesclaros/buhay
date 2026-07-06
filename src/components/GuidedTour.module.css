@@ -12,7 +12,7 @@
 
 /* Clear cutout spotlight circle/rectangle */
 .spotlight {
-  position: absolute;
+  position: fixed;
   border-radius: 12px;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 255, 255, 0.3);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -22,7 +22,7 @@
 }
 
 .tourCard {
-  position: absolute;
+  position: fixed;
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--surface) 80%, transparent),
