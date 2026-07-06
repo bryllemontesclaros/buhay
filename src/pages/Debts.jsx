@@ -713,7 +713,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
       </div>
 
       {/* Main Totals */}
-      <div className={dStyles.totalCard}>
+      <div id="takda-debts-summary" className={dStyles.totalCard}>
         <div className={dStyles.totalLabel}>Total Outstanding Debt</div>
         <div className={dStyles.totalVal}>{money(totalDebtOwed)}</div>
         <div className={dStyles.totalSub}>

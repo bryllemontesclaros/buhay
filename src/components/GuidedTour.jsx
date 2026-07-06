@@ -18,13 +18,13 @@ const TOUR_CONFIGS = {
         tab: 'calendar'
       },
       {
-        target: '#takda-nav-savings',
+        target: '#takda-savings-summary',
         title: 'Savings Targets',
-        body: 'Tap here to track your savings goals, set target dates, and simulate your monthly deposits.',
+        body: 'Track your savings goals, set target dates, and simulate your monthly deposits.',
         tab: 'savings'
       },
       {
-        target: '#takda-nav-debts',
+        target: '#takda-debts-summary',
         title: 'Debt & Interest Tracker',
         body: 'Tracks credit cards, interest, repayment milestones, and transaction logs in one place.',
         tab: 'debts'

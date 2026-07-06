@@ -145,7 +145,7 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
         </div>
       </div>
 
-      <div className={sStyles.summaryGrid}>
+      <div id="takda-savings-summary" className={sStyles.summaryGrid}>
         <div className={sStyles.summaryCard}>
           <div className={sStyles.summaryLabel}>Saved total</div>
           <div className={`${sStyles.summaryValue} ${sStyles.summaryValueAccent}`}>{money(totalSaved)}</div>
