@@ -1075,6 +1075,7 @@
 .inputGroup input[type='number'],
 .inputControl[type='number'] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 .inputGroup input[type='number']::-webkit-outer-spin-button,
 .inputGroup input[type='number']::-webkit-inner-spin-button,
