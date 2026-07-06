@@ -171,15 +171,20 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
       return lastCardStyleRef.current || { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'fixed', opacity: 0 }
     }
 
-    if (window.innerWidth <= 768) {
-      // Mobile: Place card at the top if target element is in bottom half of screen (and vice versa)
+    if (window.innerWidth <= 1024) {
+      // Mobile & Tablet: Place card at the top if target element is in bottom half of screen (and vice versa)
       const isTargetInBottomHalf = coords.top + coords.height / 2 > window.innerHeight / 2
       
+      const isTablet = window.innerWidth > 768
+      const leftOffset = isTablet ? '242px' : '16px'
+      const rightOffset = '16px'
+      const widthVal = isTablet ? 'calc(100% - 258px)' : 'calc(100% - 32px)'
+
       const mobileStyle = {
         position: 'fixed',
-        left: '16px',
-        right: '16px',
-        width: 'calc(100% - 32px)',
+        left: leftOffset,
+        right: rightOffset,
+        width: widthVal,
         opacity: 1,
         transform: 'none'
       }
