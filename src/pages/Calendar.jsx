@@ -1798,7 +1798,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                               aria-label={dayAriaLabel}
                             >
                               <div className={calStyles.cellAlerts}>
-                                {overdueBills.length > 0 && <div className={calStyles.overdueBillAlert} title="Overdue bill scheduled" />}
+                                {overdueBills.length > 0 && (
+                                  <svg className={calStyles.overdueBillAlert} viewBox="0 0 24 24" fill="currentColor" title="Overdue bill scheduled">
+                                    <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
+                                  </svg>
+                                )}
                                 {dayDueDebts.map(debt => (
                                   <div 
                                     key={debt._id} 
@@ -1808,12 +1812,20 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                                   />
                                 ))}
                                 {dayStatementDebts.map(debt => (
-                                  <div 
+                                  <svg 
                                     key={debt._id} 
                                     className={calStyles.debtStatementAlert} 
-                                    style={{ borderColor: debt.color || 'var(--text3)' }} 
+                                    style={{ color: debt.color || 'var(--text3)' }} 
                                     title={`Statement closes: ${debt.name}`} 
-                                  />
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    strokeWidth="3"
+                                  >
+                                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                                    <line x1="7" y1="8" x2="17" y2="8" />
+                                    <line x1="7" y1="12" x2="13" y2="12" />
+                                  </svg>
                                 ))}
                               </div>
     
@@ -1822,20 +1834,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
                       </div>
     
-                      {(hasIncome || hasExpense) && (
-                        <div className={calStyles.miniVolumeBars}>
-                          {dayVol.income > 0 && (
-                            <div
-                              className={calStyles.miniVolumeBarInc}
-                              style={{ width: `${incPct}%` }}
-                            />
-                          )}
-                          {dayVol.expense > 0 && (
-                            <div
-                              className={calStyles.miniVolumeBarExp}
-                              style={{ width: `${expPct}%` }}
-                            />
-                          )}
+                      {(hasIncome || hasExpense || hasTransfer) && (
+                        <div className={calStyles.activityDots}>
+                          {hasIncome && <div className={calStyles.activityDotInc} title="Income recorded" />}
+                          {hasExpense && <div className={calStyles.activityDotExp} title="Expense recorded" />}
+                          {hasTransfer && <div className={calStyles.activityDotTrsf} title="Transfer recorded" />}
                         </div>
                       )}
     

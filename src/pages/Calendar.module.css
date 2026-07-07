@@ -472,14 +472,21 @@
   font-family: var(--font-body);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent);
 }
-.cell:hover { border-color: color-mix(in srgb, var(--border2) 88%, var(--glass-border)); background: var(--surface); transform: translateY(-1px); }
+.cell:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 8%, var(--surface));
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 16px var(--overlay-glow);
+  z-index: 2;
+}
 .today { border-color: color-mix(in srgb, var(--accent) 56%, var(--glass-border)) !important; background: var(--surface); }
 .otherMonth { opacity: 0.2; pointer-events: none; }
 .selectedCell { border-color: color-mix(in srgb, var(--accent) 76%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent); background: color-mix(in srgb, var(--accent-glow) 12%, var(--surface) 88%); }
 .hasData { border-color: color-mix(in srgb, var(--border2) 88%, transparent); }
 
 .cellTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; min-width: 0; }
-.dateNum { font-size: var(--type-support); font-weight: 700; color: var(--text); line-height: 1.2; letter-spacing: -0.02em; }
+.dateNum { font-size: var(--type-support); font-weight: 700; color: var(--text); line-height: 1.2; letter-spacing: -0.02em; transition: transform 0.2s ease; }
+.cell:hover .dateNum { transform: scale(1.1); color: var(--accent); }
 .today .dateNum { color: var(--accent); }
 .cellBalance {
   font-size: var(--type-caption);
@@ -514,63 +521,81 @@
   right: 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .overdueBillAlert {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--red);
-  box-shadow: 0 0 6px var(--red);
-  animation: pulseAlert 1.6s infinite ease-in-out;
+  width: 8px;
+  height: 8px;
+  color: var(--red);
+  filter: drop-shadow(0 0 4px var(--red));
+  animation: pulseAlert 2s infinite ease-in-out;
   flex-shrink: 0;
 }
 
 .debtDueAlert {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
-  animation: pulseAlert 1.6s infinite ease-in-out;
-  animation-delay: 0.8s;
+  transform: rotate(45deg);
+  animation: pulseAlert 2s infinite ease-in-out;
+  animation-delay: 0.5s;
   flex-shrink: 0;
 }
 
 .debtStatementAlert {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  border: 1.5px solid var(--text3);
-  background: transparent;
+  width: 8px;
+  height: 8px;
   flex-shrink: 0;
+  animation: pulseAlert 2s infinite ease-in-out;
+  animation-delay: 1s;
 }
 
 @keyframes pulseAlert {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.4; }
+  0%, 100% { opacity: 1; transform: scale(1) rotate(var(--rot, 0deg)); }
+  50% { opacity: 0.45; transform: scale(1.15) rotate(var(--rot, 0deg)); }
 }
 
-.miniVolumeBars {
+.debtDueAlert {
+  --rot: 45deg;
+}
+
+.activityDots {
   display: flex;
-  flex-direction: column;
-  gap: 2.5px;
+  gap: 3.5px;
   width: 100%;
   margin-top: 2px;
   padding: 0 2px;
+  justify-content: flex-start;
 }
 
-.miniVolumeBarInc {
-  height: 2.5px;
+.activityDotInc {
+  width: 5px;
+  height: 5px;
   background: var(--accent);
-  border-radius: 999px;
-  transition: width var(--motion-duration) var(--ease-fluid);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
 }
 
-.miniVolumeBarExp {
-  height: 2.5px;
+.activityDotExp {
+  width: 5px;
+  height: 5px;
   background: var(--red);
-  border-radius: 999px;
-  transition: width var(--motion-duration) var(--ease-fluid);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.activityDotTrsf {
+  width: 5px;
+  height: 5px;
+  background: var(--blue);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.cell:hover .activityDotInc,
+.cell:hover .activityDotExp,
+.cell:hover .activityDotTrsf {
+  transform: scale(1.3);
 }
 
 .gridAnimated {
