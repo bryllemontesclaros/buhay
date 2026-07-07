@@ -6,7 +6,7 @@ import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import sStyles from './Savings.module.css'
 
-export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {} }) {
+export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {}, hideHeader = false }) {
   const s = symbol || '₱'
   const accounts = data.accounts || []
   const bankAccounts = accounts.filter(acc => acc.type !== 'Credit Card')
@@ -113,37 +113,39 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
     return () => window.cancelAnimationFrame(frameId)
   }, [actionRequest, onActionHandled])
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.pageHero}>
-        <div className={styles.pageHeader}>
-          <div className={styles.pageEyebrow}>Savings</div>
-          <div className={styles.pageTitle}>Make goals concrete.</div>
-          <div className={styles.pageSub}>
-            Keep the target, remaining gap, and next contribution visible without pretending every goal will move on schedule.
+  const mainContent = (
+    <>
+      {!hideHeader && (
+        <div className={styles.pageHero}>
+          <div className={styles.pageHeader}>
+            <div className={styles.pageEyebrow}>Savings</div>
+            <div className={styles.pageTitle}>Make goals concrete.</div>
+            <div className={styles.pageSub}>
+              Keep the target, remaining gap, and next contribution visible without pretending every goal will move on schedule.
+            </div>
           </div>
-        </div>
 
-        <div className={sStyles.heroAside}>
-          <div className={sStyles.heroAsideLabel}>{nextGoal ? 'Closest next win' : 'Overall progress'}</div>
-          <div className={sStyles.heroAsideValue}>
-            {nextGoal ? nextGoal.name : displayValue(privacyMode, `${overallPct}%`, '•••')}
-          </div>
-          <div className={sStyles.heroAsideTrack}>
-            <div
-              className={sStyles.heroAsideFill}
-              style={{ width: `${nextGoal ? nextGoal.pct : overallPct}%` }}
-            />
-          </div>
-          <div className={sStyles.heroAsideMeta}>
-            {nextGoal
-              ? `${displayValue(privacyMode, `${nextGoal.pct}% funded`, 'Progress hidden')} · ${displayValue(privacyMode, `${fmt(nextGoal.remaining, s)} left`, `${maskMoney(s)} left`)}`
-              : goals.length
-                ? `${completedGoals} completed · ${goals.length} total`
-                : 'Create your first goal below'}
+          <div className={sStyles.heroAside}>
+            <div className={sStyles.heroAsideLabel}>{nextGoal ? 'Closest next win' : 'Overall progress'}</div>
+            <div className={sStyles.heroAsideValue}>
+              {nextGoal ? nextGoal.name : displayValue(privacyMode, `${overallPct}%`, '•••')}
+            </div>
+            <div className={sStyles.heroAsideTrack}>
+              <div
+                className={sStyles.heroAsideFill}
+                style={{ width: `${nextGoal ? nextGoal.pct : overallPct}%` }}
+              />
+            </div>
+            <div className={sStyles.heroAsideMeta}>
+              {nextGoal
+                ? `${displayValue(privacyMode, `${nextGoal.pct}% funded`, 'Progress hidden')} · ${displayValue(privacyMode, `${fmt(nextGoal.remaining, s)} left`, `${maskMoney(s)} left`)}`
+                : goals.length
+                  ? `${completedGoals} completed · ${goals.length} total`
+                  : 'Create your first goal below'}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div id="takda-savings-summary" className={sStyles.summaryGrid}>
         <div className={sStyles.summaryCard}>
@@ -395,6 +397,8 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
           ))}
         </div>
       )}
-    </div>
+    </>
   )
+
+  return hideHeader ? mainContent : <div className={styles.page}>{mainContent}</div>
 }

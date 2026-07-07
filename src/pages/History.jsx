@@ -24,7 +24,7 @@ import hStyles from './History.module.css'
 
 const ALL_CATS = ['All categories', ...new Set([...getTransactionCategories('income'), ...getTransactionCategories('expense')])]
 const TYPES = ['All types', 'Income', 'Expense', 'Transfer']
-export default function History({ user, data, symbol, privacyMode = false }) {
+export default function History({ user, data, symbol, privacyMode = false, hideHeader = false }) {
   const s = symbol || '₱'
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('All types')
@@ -297,32 +297,34 @@ export default function History({ user, data, symbol, privacyMode = false }) {
     setEditForm(current => ({ ...current, presetKey: '', subcat: nextSubcat }))
   }
 
-  return (
-    <div className={`${styles.page} ${hStyles.historyPage}`}>
-      <div className={hStyles.heroSection}>
-        <div className={hStyles.heroCopy}>
-          <div className={hStyles.pageEyebrow}>History</div>
-          <div className={hStyles.pageTitle}>Keep the ledger easy to review.</div>
-          <div className={hStyles.pageSub}>
-            Search, filter, edit, and clean up entries from one place so reports, forecasts, and balances stay understandable.
+  const mainContent = (
+    <>
+      {!hideHeader && (
+        <div className={hStyles.heroSection}>
+          <div className={hStyles.heroCopy}>
+            <div className={hStyles.pageEyebrow}>History</div>
+            <div className={hStyles.pageTitle}>Keep the ledger easy to review.</div>
+            <div className={hStyles.pageSub}>
+              Search, filter, edit, and clean up entries from one place so reports, forecasts, and balances stay understandable.
+            </div>
           </div>
-        </div>
 
-        <div className={hStyles.heroAside}>
-          <div className={hStyles.heroAsideLabel}>View scope</div>
-          <div className={hStyles.heroAsideValue}>{transactionCountLabel}</div>
-          <div className={hStyles.heroAsideTrack}>
-            <div className={hStyles.heroAsideFill} style={{ width: `${incomeShare}%` }} />
-          </div>
-          <div className={hStyles.heroAsideMeta}>
-            {unpaidCount > 0
-              ? `${unpaidCount} unpaid entr${unpaidCount === 1 ? 'y stays' : 'ies stay'} visible, but totals only count paid ones.`
-              : hasActiveFilters || search
-                ? 'Filters are shaping this view.'
-                : 'Showing all recorded transaction activity.'}
+          <div className={hStyles.heroAside}>
+            <div className={hStyles.heroAsideLabel}>View scope</div>
+            <div className={hStyles.heroAsideValue}>{transactionCountLabel}</div>
+            <div className={hStyles.heroAsideTrack}>
+              <div className={hStyles.heroAsideFill} style={{ width: `${incomeShare}%` }} />
+            </div>
+            <div className={hStyles.heroAsideMeta}>
+              {unpaidCount > 0
+                ? `${unpaidCount} unpaid entr${unpaidCount === 1 ? 'y stays' : 'ies stay'} visible, but totals only count paid ones.`
+                : hasActiveFilters || search
+                  ? 'Filters are shaping this view.'
+                  : 'Showing all recorded transaction activity.'}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className={hStyles.summaryGrid}>
         <button type="button" className={`${hStyles.summaryCard} ${hStyles.summaryCardButton}`} onClick={() => setDetailsMode('in-view')}>
@@ -672,6 +674,8 @@ export default function History({ user, data, symbol, privacyMode = false }) {
           </div>
         ))}
       </DetailsModal>
-    </div>
+    </>
   )
+
+  return hideHeader ? mainContent : <div className={`${styles.page} ${hStyles.historyPage}`}>{mainContent}</div>
 }

@@ -7,15 +7,12 @@ import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
-import Savings from './Savings'
-import Accounts from './Accounts'
-import Breakdown from './Breakdown'
-import Budget from './Budget'
 import Bills from './Bills'
 import Settings from './Settings'
-import History from './History'
 import QuickAdd from './QuickAdd'
-import Debts from './Debts'
+import AccountsAndDebts from './AccountsAndDebts'
+import SavingsAndBudget from './SavingsAndBudget'
+import HistoryAndInsights from './HistoryAndInsights'
 import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
@@ -1034,13 +1031,10 @@ export default function AppShell({ user }) {
   const nav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
 
-    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
+    { id: 'accounts', label: 'Accounts & Debts', iconKey: 'accounts', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
-    { id: 'debts', label: 'Debts', iconKey: 'debts', section: null },
-    { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
-    { id: 'budget', label: 'Budget', iconKey: 'budget', section: null },
-    { id: 'history', label: 'History', iconKey: 'history', section: null },
-    { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: null },
+    { id: 'budget', label: 'Savings & Budget', iconKey: 'budget', section: 'Review' },
+    { id: 'history', label: 'History & Insights', iconKey: 'history', section: null },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const lakasNav = [
@@ -1056,13 +1050,10 @@ export default function AppShell({ user }) {
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const takdaMoreNav = [
-
-    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
+    { id: 'accounts', label: 'Accounts & Debts', iconKey: 'accounts', section: 'Review' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: 'Review' },
-    { id: 'debts', label: 'Debts', iconKey: 'debts', section: 'Review' },
-    { id: 'savings', label: 'Savings', iconKey: 'savings', section: 'Review' },
-    { id: 'budget', label: 'Budget', iconKey: 'budget', section: 'Review' },
-    { id: 'breakdown', label: 'Insights', iconKey: 'insights', section: 'Review' },
+    { id: 'budget', label: 'Savings & Budget', iconKey: 'budget', section: 'Review' },
+    { id: 'history', label: 'History & Insights', iconKey: 'history', section: 'Review' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
 
@@ -1071,12 +1062,12 @@ export default function AppShell({ user }) {
     money: TakdaMoneyPage,
     plan: TakdaPlanPage,
     settings: Settings,
-    history: History,
-    savings: Savings,
-    debts: Debts,
-    accounts: Accounts,
-    breakdown: Breakdown,
-    budget: Budget,
+    history: HistoryAndInsights,
+    savings: SavingsAndBudget,
+    debts: AccountsAndDebts,
+    accounts: AccountsAndDebts,
+    breakdown: HistoryAndInsights,
+    budget: SavingsAndBudget,
     bills: Bills,
   }
   const PageComponent = activeSpace === 'lakas' ? Lakas : activeSpace === 'tala' ? Tala : financePages[page] || Calendar
@@ -1512,6 +1503,7 @@ export default function AppShell({ user }) {
     symbol,
     privacyMode,
     exchangeRates,
+    subTab: page === 'breakdown' ? 'insights' : page,
 
     billPaymentTarget,
     activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,

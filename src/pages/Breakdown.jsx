@@ -197,7 +197,7 @@ function PieChart({ data, size = 180, symbol = '₱', privacyMode = false }) {
 
 
 
-export default function Breakdown({ data, profile = {}, symbol, privacyMode = false }) {
+export default function Breakdown({ data, profile = {}, symbol, privacyMode = false, hideHeader = false }) {
   const s = symbol || '₱'
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
@@ -353,17 +353,19 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
     }
   }, [detailsMode, monthExpenses, monthIncome, monthLabel])
 
-  return (
-    <div className={`${styles.page} ${bStyles.breakdownPage}`}>
-      <div className={bStyles.heroSection}>
-        <div className={bStyles.heroCopy}>
-          <div className={bStyles.pageEyebrow}>Breakdown</div>
-          <div className={bStyles.pageTitle}>Read the pattern, then decide.</div>
-          <div className={bStyles.pageSub}>
-            Compare category mix and monthly flow as signals to review, not automatic advice.
+  const mainContent = (
+    <>
+      {!hideHeader && (
+        <div className={bStyles.heroSection}>
+          <div className={bStyles.heroCopy}>
+            <div className={bStyles.pageEyebrow}>Breakdown</div>
+            <div className={bStyles.pageTitle}>Read the pattern, then decide.</div>
+            <div className={bStyles.pageSub}>
+              Compare category mix and monthly flow as signals to review, not automatic advice.
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className={bStyles.summaryGrid}>
         <button type="button" className={`${bStyles.summaryCard} ${bStyles.summaryCardButton}`} onClick={() => setDetailsMode('income')}>
@@ -520,6 +522,8 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
           </div>
         ))}
       </DetailsModal>
-    </div>
+    </>
   )
+
+  return hideHeader ? mainContent : <div className={`${styles.page} ${bStyles.breakdownPage}`}>{mainContent}</div>
 }

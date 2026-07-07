@@ -23,7 +23,7 @@ const COLORS = [
 
 const EMPTY_FORM = { name: '', type: 'Cash', balance: '', creditLimit: '', color: '#22d87a', notes: '' }
 
-export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {} }) {
+export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, hideHeader = false }) {
   const s = symbol || '₱'
   const accounts = (data.accounts || []).filter(a => a.type !== 'Credit Card')
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
@@ -198,35 +198,37 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     }
   }, [showModal, editAccount?._id])
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.pageHero}>
-        <div className={styles.pageHeader}>
-          <div className={styles.pageEyebrow}>Accounts</div>
-          <div className={styles.pageTitle}>Keep each account clear and current.</div>
-          <div className={styles.pageSub}>
-            Cash, bank, wallet, and credit balances work best when each account has a clear role and only reflects real activity.
+  const mainContent = (
+    <>
+      {!hideHeader && (
+        <div className={styles.pageHero}>
+          <div className={styles.pageHeader}>
+            <div className={styles.pageEyebrow}>Accounts</div>
+            <div className={styles.pageTitle}>Keep each account clear and current.</div>
+            <div className={styles.pageSub}>
+              Cash, bank, wallet, and credit balances work best when each account has a clear role and only reflects real activity.
+            </div>
           </div>
-        </div>
 
-        <div
-          className={accStyles.heroAside}
-          style={{ '--account-tone': primaryAccount?.tone || 'var(--accent)' }}
-        >
-          <div className={accStyles.heroAsideLabel}>{primaryAccount ? 'Largest account' : 'Accounts snapshot'}</div>
-          <div className={accStyles.heroAsideValue}>
-            {primaryAccount ? primaryAccount.name : 'No accounts yet'}
-          </div>
-          <div className={accStyles.heroAsideTrack}>
-            <div className={accStyles.heroAsideFill} style={{ width: `${primaryShare}%` }} />
-          </div>
-          <div className={accStyles.heroAsideMeta}>
-            {primaryAccount
-              ? `${primaryAccount.type} · ${money(primaryAccount.signedBalance)} · ${displayValue(privacyMode, `${primaryShare}% of balances`, 'Share hidden')}`
-              : 'Add your first real balance below'}
+          <div
+            className={accStyles.heroAside}
+            style={{ '--account-tone': primaryAccount?.tone || 'var(--accent)' }}
+          >
+            <div className={accStyles.heroAsideLabel}>{primaryAccount ? 'Largest account' : 'Accounts snapshot'}</div>
+            <div className={accStyles.heroAsideValue}>
+              {primaryAccount ? primaryAccount.name : 'No accounts yet'}
+            </div>
+            <div className={accStyles.heroAsideTrack}>
+              <div className={accStyles.heroAsideFill} style={{ width: `${primaryShare}%` }} />
+            </div>
+            <div className={accStyles.heroAsideMeta}>
+              {primaryAccount
+                ? `${primaryAccount.type} · ${money(primaryAccount.signedBalance)} · ${displayValue(privacyMode, `${primaryShare}% of balances`, 'Share hidden')}`
+                : 'Add your first real balance below'}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className={accStyles.totalCard}>
         <div className={accStyles.totalLabel}>Total balance now</div>
@@ -472,6 +474,8 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
           ))}
         </div>
       )}
-    </div>
+    </>
   )
+
+  return hideHeader ? mainContent : <div className={styles.page}>{mainContent}</div>
 }

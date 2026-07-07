@@ -5,7 +5,7 @@ import { isTransactionPaid } from '../lib/finance'
 import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 import bStyles from './Budget.module.css'
-export default function Budget({ user, data, profile = {}, symbol, privacyMode = false }) {
+export default function Budget({ user, data, profile = {}, symbol, privacyMode = false, hideHeader = false }) {
   const s = symbol || '₱'
   const now = new Date()
   const [viewMonth, setViewMonth] = useState(now.getMonth())
@@ -68,16 +68,17 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
 
 
 
-  return (
-    <div className={`${styles.page} ${bStyles.budgetPage}`}>
-      <div className={bStyles.heroSection}>
-        <div className={bStyles.heroCopy}>
-          <div className={bStyles.pageEyebrow}>Budget</div>
-          <div className={bStyles.pageTitle}>Use budgets as guide rails, not punishment.</div>
-          <div className={bStyles.pageSub}>
-            Keep category limits, actual spending, and unplanned pressure in one monthly view so nothing sneaks up on you.
+  const mainContent = (
+    <>
+      {!hideHeader && (
+        <div className={bStyles.heroSection}>
+          <div className={bStyles.heroCopy}>
+            <div className={bStyles.pageEyebrow}>Budget</div>
+            <div className={bStyles.pageTitle}>Use budgets as guide rails, not punishment.</div>
+            <div className={bStyles.pageSub}>
+              Keep category limits, actual spending, and unplanned pressure in one monthly view so nothing sneaks up on you.
+            </div>
           </div>
-        </div>
 
         <div className={bStyles.heroAside}>
           <div className={bStyles.heroAsideLabel}>Current month</div>
@@ -95,6 +96,7 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
           </div>
         </div>
       </div>
+      )}
 
       <div className={bStyles.summaryGrid}>
         <div className={bStyles.summaryCard}>
@@ -165,6 +167,8 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
         </div>
       </div>
 
-    </div>
+    </>
   )
+
+  return hideHeader ? mainContent : <div className={`${styles.page} ${bStyles.budgetPage}`}>{mainContent}</div>
 }
