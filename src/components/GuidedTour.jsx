@@ -61,7 +61,7 @@ const TOUR_CONFIGS = {
         target: '#tala-history',
         title: 'Reflection History',
         body: 'Scroll back through your timeline of moods and written logs to trace your personal growth.',
-        tab: 'history'
+        tab: 'journal'
       }
     ]
   }
