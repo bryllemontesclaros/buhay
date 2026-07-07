@@ -391,7 +391,7 @@ export default function History({ user, data, symbol, privacyMode = false }) {
               </div>
               <div className={hStyles.filterGroup}>
                 <label>Month</label>
-                <input type="month" value={filterMonth} onChange={event => setFilterMonth(event.target.value)} />
+                <input type="month" value={filterMonth} onChange={event => setFilterMonth(event.target.value || getMonthKey(today()))} />
               </div>
               <div className={hStyles.filterGroup} style={{ gridColumn: 'span 2' }}>
                 <label>Sort by</label>
