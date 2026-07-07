@@ -29,14 +29,14 @@ export default function History({ user, data, symbol, privacyMode = false }) {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('All types')
   const [filterCat, setFilterCat] = useState('All categories')
-  const [filterMonth, setFilterMonth] = useState('')
+  const [filterMonth, setFilterMonth] = useState(() => getMonthKey(today()))
   const [sortBy, setSortBy] = useState('date-desc')
   const [showFilters, setShowFilters] = useState(false)
   const [editTx, setEditTx] = useState(null)
   const [editForm, setEditForm] = useState({ desc: '', amount: '', cat: '', subcat: '', presetKey: '', accountId: '', paymentStatus: 'paid' })
   const [detailsMode, setDetailsMode] = useState('')
 
-  const hasActiveFilters = filterType !== 'All types' || filterCat !== 'All categories' || filterMonth
+  const hasActiveFilters = filterType !== 'All types' || filterCat !== 'All categories' || filterMonth !== getMonthKey(today())
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   const accountLookup = useMemo(
     () => Object.fromEntries((data.accounts || []).map(account => [account._id, account])),
@@ -98,7 +98,7 @@ export default function History({ user, data, symbol, privacyMode = false }) {
   function clearFilters() {
     setFilterType('All types')
     setFilterCat('All categories')
-    setFilterMonth('')
+    setFilterMonth(getMonthKey(today()))
     setSortBy('date-desc')
   }
 
