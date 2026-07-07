@@ -95,7 +95,6 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
               : 'Set a budget limit to track progress.'}
           </div>
         </div>
-      </div>
       )}
 
       <div className={bStyles.summaryGrid}>
