@@ -173,6 +173,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const allIncome = useMemo(() => [...actualIncome, ...projectedIncome], [actualIncome, projectedIncome])
   const allExpenses = useMemo(() => [...actualExpenses, ...projectedExpenses], [actualExpenses, projectedExpenses])
+  const allTransfers = useMemo(() => getMonthTransactions(data.transfers || [], year, month), [data.transfers, year, month])
 
   const forecastMap = useMemo(
     () => getMonthForecast(data.accounts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
@@ -375,6 +376,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return {
       income: allIncome.filter(tx => normalizeDate(tx.date) === ds),
       expenses: allExpenses.filter(tx => normalizeDate(tx.date) === ds),
+      transfers: allTransfers.filter(tx => normalizeDate(tx.date) === ds),
     }
   }
 
@@ -988,9 +990,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const selectedIncome = selected ? allIncome.filter(tx => normalizeDate(tx.date) === selected) : []
   const selectedExpenses = selected ? allExpenses.filter(tx => normalizeDate(tx.date) === selected) : []
+  const selectedTransfers = selected ? allTransfers.filter(tx => normalizeDate(tx.date) === selected) : []
   const selectedDueDebts = selected ? (dueDebtsByDateKey[selected] || []) : []
   const selectedStatementDebts = selected ? (statementDebtsByDateKey[selected] || []) : []
-  const selectedDayCount = selectedIncome.length + selectedExpenses.length
+  const selectedDayCount = selectedIncome.length + selectedExpenses.length + selectedTransfers.length
   const selectedDayIncome = selectedIncome.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayNet = selectedDayIncome - selectedDayExpense
@@ -1540,7 +1543,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
             )}
 
-            {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedDueDebts.length === 0 && selectedStatementDebts.length === 0 && (
+            {selectedTransfers.length > 0 && (
+              <div className={calStyles.daySection}>
+                <div className={calStyles.daySectionHeader}>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--blue)' }}>Transfers</div>
+                  <div className={calStyles.daySectionCount}>{selectedTransfers.length}</div>
+                </div>
+                {selectedTransfers.map((tx) => (
+                  <div key={tx._id} className={calStyles.debtRow}>
+                    <div className={calStyles.debtRowMain}>
+                      <span className={calStyles.debtRowName}>{tx.desc || 'Transfer'}</span>
+                      <span className={calStyles.debtRowMeta}>{tx.fromAccountName || 'Cash'} → {tx.toAccountName || 'Bank'}</span>
+                    </div>
+                    <div className={calStyles.debtRowAmounts}>
+                      <span className={calStyles.debtRowBalance} style={{ color: 'var(--blue)' }}>
+                        {privacyMode ? 'Hidden' : fmt(tx.amount || 0, s)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedTransfers.length === 0 && selectedDueDebts.length === 0 && selectedStatementDebts.length === 0 && (
               <EmptyState compact>No entries on this day yet.</EmptyState>
             )}
 
@@ -1685,9 +1710,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             {Array.from({ length: daysInMonth }, (_, index) => {
               const day = index + 1
               const ds = dateStr(day)
-              const { income, expenses } = getDayData(day)
+              const { income, expenses, transfers } = getDayData(day)
               const hasIncome = income.length > 0
               const hasExpense = expenses.length > 0
+              const hasTransfer = transfers.length > 0
               const hasManualBalance = Object.prototype.hasOwnProperty.call(balanceOverrides, ds)
               const isSelected = selected === ds
               const isToday = ds === todayStr
@@ -1721,7 +1747,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                             <button
                               type="button"
                               key={day}
-                              className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense) ? calStyles.hasData : ''}`}
+                              className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''}`}
                               onClick={() => {
                                 playTick()
                                 setSelected(ds)

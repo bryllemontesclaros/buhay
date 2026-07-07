@@ -61,26 +61,76 @@ export async function fsDeletePortfolioHolding(uid, holdingId) {
 export async function fsDeleteAccountAndUnlinkTransactions(uid, accountId, data = {}) {
   if (!accountId) return
 
-  const linkedTransactions = ['income', 'expenses'].flatMap(col => (
-    (Array.isArray(data[col]) ? data[col] : [])
-      .filter(tx => tx?._id && tx.accountId === accountId)
-      .map(tx => ({ col, id: tx._id }))
-  ))
+  const batchOps = []
 
-  if (!linkedTransactions.length) {
+  // 1. Gather income/expenses to unlink
+  ;['income', 'expenses'].forEach(col => {
+    const list = Array.isArray(data[col]) ? data[col] : []
+    list.forEach(tx => {
+      if (tx?._id && tx.accountId === accountId) {
+        batchOps.push({
+          type: 'update',
+          col,
+          id: tx._id,
+          payload: {
+            accountId: '',
+            accountBalanceLinked: false,
+            accountBalanceApplied: false,
+          }
+        })
+      }
+    })
+  })
+
+  // 2. Gather transfers to unlink/update
+  const transfersList = Array.isArray(data.transfers) ? data.transfers : []
+  transfersList.forEach(tx => {
+    if (tx?._id && (tx.fromAccountId === accountId || tx.toAccountId === accountId)) {
+      const updateData = {}
+      if (tx.fromAccountId === accountId) {
+        updateData.fromAccountId = ''
+        updateData.fromAccountName = ''
+      }
+      if (tx.toAccountId === accountId) {
+        updateData.toAccountId = ''
+        updateData.toAccountName = ''
+      }
+      batchOps.push({
+        type: 'update',
+        col: 'transfers',
+        id: tx._id,
+        payload: updateData
+      })
+    }
+  })
+
+  // 3. Gather concrete debts to delete
+  const debtsList = Array.isArray(data.debts) ? data.debts : []
+  debtsList.forEach(d => {
+    if (d?._id && d.accountId === accountId) {
+      batchOps.push({
+        type: 'delete',
+        col: 'debts',
+        id: d._id
+      })
+    }
+  })
+
+  if (!batchOps.length) {
     await deleteDoc(doc(db, 'users', uid, 'accounts', accountId))
     return
   }
 
-  const chunks = chunkList(linkedTransactions, 399)
+  const chunks = chunkList(batchOps, 450)
   for (let index = 0; index < chunks.length; index += 1) {
     const batch = writeBatch(db)
-    chunks[index].forEach(tx => {
-      batch.update(doc(db, 'users', uid, tx.col, tx.id), {
-        accountId: '',
-        accountBalanceLinked: false,
-        accountBalanceApplied: false,
-      })
+    chunks[index].forEach(op => {
+      const docRef = doc(db, 'users', uid, op.col, op.id)
+      if (op.type === 'update') {
+        batch.update(docRef, op.payload)
+      } else {
+        batch.delete(docRef)
+      }
     })
     if (index === chunks.length - 1) {
       batch.delete(doc(db, 'users', uid, 'accounts', accountId))
@@ -341,6 +391,29 @@ export async function fsDeleteTransaction(uid, col, tx, accounts = []) {
   }
 
   batch.delete(doc(db, 'users', uid, col, tx._id))
+  applyAccountAdjustments(batch, uid, adjustments, accountLookup)
+  await batch.commit()
+}
+
+export async function fsDeleteTransfer(uid, transfer, accounts = []) {
+  const accountLookup = buildAccountLookup(accounts)
+  const fromAccountId = transfer.fromAccountId
+  const toAccountId = transfer.toAccountId
+  const amount = Number(transfer.amount) || 0
+  const adjustments = new Map()
+  const batch = writeBatch(db)
+
+  const fromAccount = accountLookup.get(fromAccountId)
+  const toAccount = accountLookup.get(toAccountId)
+
+  if (fromAccount) {
+    queueAccountAdjustment(adjustments, fromAccountId, -getTransferOutDelta(fromAccount, amount))
+  }
+  if (toAccount) {
+    queueAccountAdjustment(adjustments, toAccountId, -getTransferInDelta(toAccount, amount))
+  }
+
+  batch.delete(doc(db, 'users', uid, 'transfers', transfer._id))
   applyAccountAdjustments(batch, uid, adjustments, accountLookup)
   await batch.commit()
 }

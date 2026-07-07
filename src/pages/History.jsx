@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { fsDeleteTransaction, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
+import { fsDeleteTransaction, fsDeleteTransfer, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
 import {
   getTakdaTransactionLifecycle,
   isTransactionPaid,
@@ -185,7 +185,14 @@ export default function History({ user, data, symbol, privacyMode = false }) {
         tone: 'danger',
       })
       if (!confirmed) return
-    } else if (!(await confirmDeleteApp(tx.desc))) return
+    } else if (!(await confirmDeleteApp(tx.desc || 'this transfer'))) return
+
+    if (tx.type === 'transfer') {
+      await fsDeleteTransfer(user.uid, tx, data.accounts)
+      notifyApp({ title: 'Transfer deleted', message: 'The transfer record has been removed and balances reversed.', tone: 'success' })
+      return
+    }
+
     const collection = tx.type === 'income' ? 'income' : 'expenses'
     await fsDeleteTransaction(user.uid, collection, tx, data.accounts)
   }
@@ -487,14 +494,18 @@ export default function History({ user, data, symbol, privacyMode = false }) {
                       {displayValue(privacyMode, `${typeSign[tx.type]}${fmt(tx.amount, s)}`, `${typeSign[tx.type]}${maskMoney(s)}`)}
                     </div>
                     <div className={hStyles.txActions}>
-                      <button
-                        type="button"
-                        className={`${hStyles.statusBtn} ${isTransactionPaid(tx) ? hStyles.statusBtnPaid : hStyles.statusBtnUnpaid}`}
-                        onClick={() => handleTogglePaymentStatus(tx)}
-                      >
-                        {isTransactionPaid(tx) ? 'Paid' : 'Unpaid'}
-                      </button>
-                      <button type="button" className={hStyles.editBtn} onClick={() => openEdit(tx)}>Edit</button>
+                      {tx.type !== 'transfer' && (
+                        <>
+                          <button
+                            type="button"
+                            className={`${hStyles.statusBtn} ${isTransactionPaid(tx) ? hStyles.statusBtnPaid : hStyles.statusBtnUnpaid}`}
+                            onClick={() => handleTogglePaymentStatus(tx)}
+                          >
+                            {isTransactionPaid(tx) ? 'Paid' : 'Unpaid'}
+                          </button>
+                          <button type="button" className={hStyles.editBtn} onClick={() => openEdit(tx)}>Edit</button>
+                        </>
+                      )}
                       <button type="button" className={hStyles.delBtn} onClick={() => handleDelete(tx)}>Delete</button>
                     </div>
                   </div>
