@@ -83,6 +83,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   const [paymentBill, setPaymentBill] = useState(null)
   const [paymentForm, setPaymentForm] = useState({ amount: '', date: today(), accountId: '' })
   const [paymentSaving, setPaymentSaving] = useState(false)
+  const [showDrawer, setShowDrawer] = useState(false)
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
 
   const accountNameById = useMemo(() => {
@@ -108,10 +109,11 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
       return String(left.period?.dueDate || '').localeCompare(String(right.period?.dueDate || ''))
     })
   }, [billsWithStatus])
-  const actionBills = useMemo(
-    () => sortedBillsWithStatus.filter(bill => !bill.period?.paid).slice(0, 3),
-    [sortedBillsWithStatus],
-  )
+
+  const overdueBills = useMemo(() => sortedBillsWithStatus.filter(b => b.period?.status === 'overdue'), [sortedBillsWithStatus])
+  const dueSoonBills = useMemo(() => sortedBillsWithStatus.filter(b => b.period?.status === 'due' || b.period?.status === 'soon'), [sortedBillsWithStatus])
+  const upcomingBills = useMemo(() => sortedBillsWithStatus.filter(b => b.period?.status === 'upcoming'), [sortedBillsWithStatus])
+  const paidBills = useMemo(() => sortedBillsWithStatus.filter(b => b.period?.status === 'paid'), [sortedBillsWithStatus])
   const billTrustStats = useMemo(() => {
     const stats = billsWithStatus.reduce((summary, bill) => {
       const monthly = getMonthlyEquivalent(bill.amount, bill.freq)
@@ -316,325 +318,273 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   const paymentPeriod = paymentBill ? getBillPeriodInfo(paymentBill) : null
   const paymentAccountName = paymentForm.accountId ? accountNameById.get(paymentForm.accountId) || 'Selected account' : ''
 
+  const renderBillCard = (row) => {
+    const statusPeriod = row.period || {}
+    const isPaid = statusPeriod.paid
+    const statusStyle = getStatusStyle(statusPeriod.status)
+    const dueLabel = getBillDueLabel(row)
+    
+    return (
+      <div key={row._id} className={`${bStyles.billCard} ${isPaid ? bStyles.billCardPaid : ''}`}>
+        <div className={bStyles.billCardHeader}>
+          <div>
+            <h4 className={bStyles.billCardTitle}>{row.name}</h4>
+            <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
+          </div>
+          <span style={{ ...statusStyle, borderRadius: 20, padding: '4px 10px', fontSize: 10, fontWeight: 700 }}>
+            {statusPeriod.label}
+          </span>
+        </div>
+        <div className={bStyles.billCardBody}>
+          <div className={bStyles.billCardDetail}>
+            <span className={bStyles.detailLabel}>Account</span>
+            <span className={bStyles.detailValue}>
+              {row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}
+            </span>
+          </div>
+          <div className={bStyles.billCardDetail}>
+            <span className={bStyles.detailLabel}>Due Date</span>
+            <span className={bStyles.detailValue}>
+              {dueLabel} ({formatDisplayDate(statusPeriod.dueDate)})
+            </span>
+          </div>
+          <div className={bStyles.billCardDetail}>
+            <span className={bStyles.detailLabel}>Frequency</span>
+            <span className={bStyles.detailValue}>
+              {BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}
+            </span>
+          </div>
+        </div>
+        <div className={bStyles.billCardFooter}>
+          <div className={bStyles.billCardPrice}>
+            <span className={bStyles.detailLabel}>Amount</span>
+            <strong className={bStyles.billCardAmount}>{fmt(row.amount, s)}</strong>
+          </div>
+          <div className={bStyles.billCardActions}>
+            {isPaid ? (
+              <button type="button" className={bStyles.undoBtn} onClick={() => handleUndoPaid(row)}>Undo</button>
+            ) : (
+              <button type="button" className={bStyles.payBtn} onClick={() => openPayment(row)}>
+                {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
+              </button>
+            )}
+            <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.title}>Bills</div>
-        <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
-      </div>
-
-      <div className={styles.trustGrid}>
-        <div className={styles.trustCard}>
-          <span>Monthly commitment</span>
-          <strong>{fmt(billTrustStats.monthlyCommitment, s)}</strong>
-          <small>Monthly equivalent across all active recurring bills.</small>
-        </div>
-        <div className={styles.trustCard}>
-          <span>Needs attention</span>
-          <strong>{billTrustStats.overdue ? `${billTrustStats.overdue} overdue` : `${billTrustStats.dueSoon} due soon`}</strong>
-          <small>{billTrustStats.overdue ? 'Overdue bills can still be marked paid.' : 'Due and upcoming bills are ready to review.'}</small>
-        </div>
-        <div className={styles.trustCard}>
-          <span>Account defaults</span>
-          <strong>{billTrustStats.linked}/{billTrustStats.total || 0}</strong>
-          <small>Default pay-from accounts are optional and can be changed on payment.</small>
-        </div>
-        <div className={styles.trustCard}>
-          <span>Payment rule</span>
-          <strong>Paid creates expense</strong>
-          <small>Marking paid creates one History expense. Account movement happens only if an account is selected.</small>
-        </div>
-      </div>
-
-      <div className={styles.formCard}>
-        <div className={styles.cardTitle}>Pay now</div>
-        <p style={{ color: 'var(--text3)', marginTop: 0 }}>
-          Open the next due bill from here, then save the payment only when the money really moved.
-        </p>
-        {!actionBills.length ? (
-          <div className={styles.helper}>Nothing is waiting for payment right now. Add a recurring bill below when you need one.</div>
-        ) : (
-          <div style={{ display: 'grid', gap: 10 }}>
-            {actionBills.map(bill => (
-              <button
-                key={bill._id}
-                type="button"
-                className={styles.trustCard}
-                onClick={() => openPayment(bill)}
-                style={{ textAlign: 'left', cursor: 'pointer', gap: 6 }}
-              >
-                <span>{bill.period?.status === 'overdue' ? 'Overdue now' : bill.period?.status === 'due' ? 'Due now' : 'Up next'}</span>
-                <strong>{bill.name}</strong>
-                <small>
-                  {formatDisplayDate(bill.period?.dueDate)} · {fmt(bill.amount, s)}
-                  {bill.accountId ? ` · ${accountNameById.get(bill.accountId) || 'Linked account'}` : ' · Choose account when paying'}
-                </small>
-              </button>
-            ))}
+        <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div className={styles.title}>Bills</div>
+            <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
           </div>
-        )}
-      </div>
+          <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
+            + Add Bill
+          </button>
+        </div>
 
-      <div className={styles.formCard}>
-        <div className={styles.cardTitle}>Add bill</div>
-        <p style={{ color: 'var(--text3)', marginTop: 0 }}>
-          The pay-from account is optional. Takda will not subtract anything until you mark a bill period as paid.
-        </p>
-
-        <div className={styles.formGroup}>
-          <label>What bill is this for?</label>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
-            {quickPresets.map(item => (
-              <button
-                key={item.key}
-                type="button"
-                className={styles.chip}
-                onClick={() => item.isCustom ? applyPreset(null) : applyPreset(item)}
-                style={form.presetKey === item.key ? { borderColor: 'var(--amber)', background: 'var(--amber-glow)', color: 'var(--amber)' } : {}}
-              >
-                {item.label}
-              </button>
-            ))}
+        <div className={styles.trustGrid}>
+          <div className={styles.trustCard}>
+            <span>Monthly commitment</span>
+            <strong>{fmt(billTrustStats.monthlyCommitment, s)}</strong>
+            <small>Monthly equivalent across all active recurring bills.</small>
           </div>
-          <div className={styles.helper}>
-            {selectedPreset && !selectedPreset.isCustom
-              ? `${selectedPreset.label} auto-fills Bills -> ${selectedPreset.subcat}.`
-              : 'Choose a familiar biller, or keep it custom.'}
+          <div className={styles.trustCard}>
+            <span>Needs attention</span>
+            <strong>{billTrustStats.overdue ? `${billTrustStats.overdue} overdue` : `${billTrustStats.dueSoon} due soon`}</strong>
+            <small>{billTrustStats.overdue ? 'Overdue bills can still be marked paid.' : 'Due and upcoming bills are ready to review.'}</small>
+          </div>
+          <div className={styles.trustCard}>
+            <span>Account defaults</span>
+            <strong>{billTrustStats.linked}/{billTrustStats.total || 0}</strong>
+            <small>Default pay-from accounts are optional and can be changed on payment.</small>
+          </div>
+          <div className={styles.trustCard}>
+            <span>Payment rule</span>
+            <strong>Paid creates expense</strong>
+            <small>Marking paid creates one History expense. Account movement happens only if an account is selected.</small>
           </div>
         </div>
 
-        <div className={`${styles.formRow} ${styles.col2}`}>
-          <div className={styles.formGroup}>
-            <label>Bill name</label>
-            <input placeholder="e.g. Meralco" value={form.name} onChange={e => handleNameChange(e.target.value)} />
-          </div>
-          <div className={styles.formGroup}>
-            <label>Amount ({s})</label>
-            <input type="number" min="0" placeholder="0.00" value={form.amount} onChange={e => set('amount', e.target.value)} />
-          </div>
-        </div>
-
-        <div className={`${styles.formRow} ${styles.col2}`}>
-          <div className={styles.formGroup}>
-            <label>Frequency</label>
-            <select value={form.freq} onChange={e => {
-              const nextFreq = e.target.value
-              let defaultDue = '15'
-              if (nextFreq === 'weekly' || nextFreq === 'bi-weekly') {
-                defaultDue = '5'
-              }
-              setForm(current => ({ ...current, freq: nextFreq, due: defaultDue, dueMonth: nextFreq === 'yearly' ? '0' : '' }))
-            }}>
-              {BILL_FREQS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
-          </div>
-          <div className={styles.formGroup}>
-            {form.freq === 'weekly' || form.freq === 'bi-weekly' ? (
-              <>
-                <label>Due day of week</label>
-                <select value={form.due} onChange={e => set('due', e.target.value)}>
-                  <option value="0">Sunday</option>
-                  <option value="1">Monday</option>
-                  <option value="2">Tuesday</option>
-                  <option value="3">Wednesday</option>
-                  <option value="4">Thursday</option>
-                  <option value="5">Friday</option>
-                  <option value="6">Saturday</option>
-                </select>
-              </>
-            ) : form.freq === 'yearly' ? (
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <div style={{ flex: 1 }}>
-                  <label>Due Month</label>
-                  <select value={form.dueMonth || '0'} onChange={e => set('dueMonth', e.target.value)}>
-                    {MONTHS.map((m, idx) => (
-                      <option key={m} value={String(idx)}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-                <div style={{ width: '80px' }}>
-                  <label>Day (1-31)</label>
-                  <input type="number" min={1} max={31} value={form.due} onChange={e => set('due', e.target.value)} />
-                </div>
-              </div>
-            ) : (
-              <>
-                <label>Due day of month (1-31)</label>
-                <input type="number" min={1} max={31} placeholder="e.g. 15" value={form.due} onChange={e => set('due', e.target.value)} />
-              </>
-            )}
-          </div>
-        </div>
-
-        <details className={styles.advancedBox}>
-          <summary className={styles.advancedSummary}>
-            <span>More options</span>
-            <small>Bill type, frequency, default account</small>
-          </summary>
-          <div className={`${styles.formRow} ${styles.col2} ${styles.advancedBody}`}>
-            <div className={styles.formGroup}>
-              <label>Browse bill presets</label>
-              <select
-                value={form.presetKey || 'other-custom'}
-                onChange={event => {
-                  const preset = getBillPresetByKey(event.target.value)
-                  if (!preset || preset.isCustom) {
-                    applyPreset(null)
-                    return
-                  }
-                  applyPreset(preset)
-                }}
-              >
-                <option value="other-custom">Custom bill</option>
-                {presetGroups.map(group => (
-                  <optgroup key={group.label} label={group.label}>
-                    {group.items.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-            <div className={styles.formGroup}>
-              <label>Bill type</label>
-              <select value={form.subcat} onChange={e => handleSubcategoryChange(e.target.value)}>
-                {subcategories.map(option => <option key={option}>{option}</option>)}
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Default pay-from account</label>
-              <select value={form.accountId} onChange={e => set('accountId', e.target.value)}>
-                <option value="">Choose when paying</option>
-                {accounts.map(acc => (
-                  <option key={acc._id} value={acc._id}>
-                    {acc.name} - {acc.type}
-                  </option>
-                ))}
-              </select>
-              <div className={styles.helper}>
-                {accounts.length ? 'This is only the default. You can change the account every time you pay.' : 'Add accounts first if you want bill payments to update balances automatically.'}
+        <div className={bStyles.prioritySections}>
+          {overdueBills.length > 0 && (
+            <div className={bStyles.prioritySection}>
+              <h3 className={bStyles.sectionHeader} style={{ color: 'var(--red)' }}>🔴 Overdue</h3>
+              <div className={bStyles.billsGrid}>
+                {overdueBills.map(renderBillCard)}
               </div>
             </div>
-          </div>
-        </details>
+          )}
 
-        <div className={styles.formRow}>
-          <button className={styles.btnAdd} onClick={handleAdd}>Add bill</button>
-        </div>
-      </div>
-
-      <div className={styles.card}>
-        <div className={styles.cardTitle}>Bills</div>
-        <div className={`${styles.tableWrap} ${bStyles.desktopTableOnly}`}>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Account</th>
-                <th>Due</th>
-                <th>Frequency</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {!billsWithStatus.length
-                ? <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--text3)', padding: '2rem' }}>No bills yet. Add one above to start your bill plan.</td></tr>
-                : sortedBillsWithStatus.map(row => (
-                  <tr key={row._id}>
-                    <td style={{ color: 'var(--text)' }}>{row.name}</td>
-                    <td><span className={`${styles.badge} ${styles.badgeBill}`}>{row.subcat || row.cat}</span></td>
-                    <td style={{ color: 'var(--text2)' }}>
-                      {row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}
-                    </td>
-                    <td>
-                      <div>{getBillDueLabel(row)}</div>
-                      <div style={{ color: 'var(--text3)', fontSize: 11 }}>{formatDisplayDate(row.period.dueDate)}</div>
-                    </td>
-                    <td>{BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--amber)' }}>{fmt(row.amount, s)}</td>
-                    <td>
-                      <span style={{ ...getStatusStyle(row.period.status), borderRadius: 20, padding: '4px 10px', fontSize: 11, fontWeight: 700 }}>
-                        {row.period.label}
-                      </span>
-                    </td>
-                    <td style={{ whiteSpace: 'nowrap' }}>
-                      {row.period.paid ? (
-                        <button className={styles.btnGhost} onClick={() => handleUndoPaid(row)}>Undo</button>
-                      ) : (
-                        <button className={styles.btnAdd} style={{ width: 'auto', minHeight: 38, padding: '8px 12px' }} onClick={() => openPayment(row)}>
-                          {row.period.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
-                        </button>
-                      )}
-                      <button className={styles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>x</button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className={bStyles.mobileCardList}>
-          {!billsWithStatus.length ? (
-            <div className={styles.helper} style={{ textAlign: 'center', padding: '2rem' }}>
-              No bills yet. Add one above to start your bill plan.
+          {dueSoonBills.length > 0 && (
+            <div className={bStyles.prioritySection}>
+              <h3 className={bStyles.sectionHeader} style={{ color: 'var(--amber)' }}>⏳ Due Soon</h3>
+              <div className={bStyles.billsGrid}>
+                {dueSoonBills.map(renderBillCard)}
+              </div>
             </div>
-          ) : (
-            sortedBillsWithStatus.map(row => {
-              const statusPeriod = row.period || {}
-              return (
-                <div key={row._id} className={bStyles.billCard}>
-                  <div className={bStyles.billCardHeader}>
-                    <div className={bStyles.billCardTitle}>
-                      <h4>{row.name}</h4>
-                      <span>{row.subcat || row.cat}</span>
-                    </div>
-                  </div>
-                  <div className={bStyles.billCardDetails}>
-                    <div className={bStyles.detailItem}>
-                      <label>Account</label>
-                      <span>{row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}</span>
-                    </div>
-                    <div className={bStyles.detailItem}>
-                      <label>Due Date</label>
-                      <span>{getBillDueLabel(row)} ({formatDisplayDate(statusPeriod.dueDate)})</span>
-                    </div>
-                    <div className={bStyles.detailItem}>
-                      <label>Frequency</label>
-                      <span>{BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}</span>
-                    </div>
-                    <div className={bStyles.detailItem}>
-                      <label>Status</label>
-                      <span style={{ ...getStatusStyle(statusPeriod.status), borderRadius: 20, padding: '4px 10px', fontSize: 11, fontWeight: 700, width: 'fit-content' }}>
-                        {statusPeriod.label}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={bStyles.billCardFooter}>
-                    <div className={bStyles.billCardPrice}>
-                      <span>Amount</span>
-                      <strong>{fmt(row.amount, s)}</strong>
-                    </div>
-                    <div className={bStyles.billCardActions}>
-                      {statusPeriod.paid ? (
-                        <button type="button" className={bStyles.undoBtn} onClick={() => handleUndoPaid(row)}>Undo</button>
-                      ) : (
-                        <button type="button" className={bStyles.payBtn} onClick={() => openPayment(row)}>
-                          {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
-                        </button>
-                      )}
-                      <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
+          )}
+
+          {upcomingBills.length > 0 && (
+            <div className={bStyles.prioritySection}>
+              <h3 className={bStyles.sectionHeader} style={{ color: 'var(--blue)' }}>📅 Upcoming</h3>
+              <div className={bStyles.billsGrid}>
+                {upcomingBills.map(renderBillCard)}
+              </div>
+            </div>
+          )}
+
+          {paidBills.length > 0 && (
+            <div className={bStyles.prioritySection}>
+              <h3 className={bStyles.sectionHeader} style={{ color: 'var(--accent)' }}>✅ Paid</h3>
+              <div className={bStyles.billsGrid}>
+                {paidBills.map(renderBillCard)}
+              </div>
+            </div>
+          )}
+
+          {sortedBillsWithStatus.length === 0 && (
+            <div className={bStyles.emptyState}>
+              <h4>No active bills yet</h4>
+              <p>Add your first recurring bill to see upcoming payments and track them here.</p>
+              <button className={styles.btnAdd} style={{ width: 'auto', marginTop: 12 }} onClick={() => setShowDrawer(true)}>+ Add Bill</button>
+            </div>
           )}
         </div>
       </div>
-      </div>
+
+      {showDrawer && (
+        <div className={bStyles.drawerOverlay} onClick={() => setShowDrawer(false)}>
+          <div className={bStyles.drawerModal} onClick={e => e.stopPropagation()}>
+            <div className={bStyles.drawerHeader}>
+              <h3>Add Recurring Bill</h3>
+              <button className={bStyles.drawerClose} onClick={() => setShowDrawer(false)}>✕</button>
+            </div>
+            <div className={bStyles.drawerBody}>
+              <div className={styles.formGroup}>
+                <label>What bill is this for?</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
+                  {quickPresets.map(item => (
+                    <button
+                      key={item.key}
+                      type="button"
+                      className={styles.chip}
+                      onClick={() => item.isCustom ? applyPreset(null) : applyPreset(item)}
+                      style={form.presetKey === item.key ? { borderColor: 'var(--amber)', background: 'var(--amber-glow)', color: 'var(--amber)' } : {}}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Bill name</label>
+                <input placeholder="e.g. Meralco" value={form.name} onChange={e => handleNameChange(e.target.value)} />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Amount ({s})</label>
+                <input type="number" min="0" placeholder="0.00" value={form.amount} onChange={e => set('amount', e.target.value)} />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Frequency</label>
+                <select value={form.freq} onChange={e => {
+                  const nextFreq = e.target.value
+                  let defaultDue = '15'
+                  if (nextFreq === 'weekly' || nextFreq === 'bi-weekly') {
+                    defaultDue = '5'
+                  }
+                  setForm(current => ({ ...current, freq: nextFreq, due: defaultDue, dueMonth: nextFreq === 'yearly' ? '0' : '' }))
+                }}>
+                  {BILL_FREQS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                {form.freq === 'weekly' || form.freq === 'bi-weekly' ? (
+                  <>
+                    <label>Due day of week</label>
+                    <select value={form.due} onChange={e => set('due', e.target.value)}>
+                      <option value="0">Sunday</option>
+                      <option value="1">Monday</option>
+                      <option value="2">Tuesday</option>
+                      <option value="3">Wednesday</option>
+                      <option value="4">Thursday</option>
+                      <option value="5">Friday</option>
+                      <option value="6">Saturday</option>
+                    </select>
+                  </>
+                ) : form.freq === 'yearly' ? (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ flex: 1 }}>
+                      <label>Due Month</label>
+                      <select value={form.dueMonth || '0'} onChange={e => set('dueMonth', e.target.value)}>
+                        {MONTHS.map((m, idx) => (
+                          <option key={m} value={String(idx)}>{m}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div style={{ width: '80px' }}>
+                      <label>Day (1-31)</label>
+                      <input type="number" min={1} max={31} value={form.due} onChange={e => set('due', e.target.value)} />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <label>Due day of month (1-31)</label>
+                    <input type="number" min={1} max={31} placeholder="e.g. 15" value={form.due} onChange={e => set('due', e.target.value)} />
+                  </>
+                )}
+              </div>
+              <div className={styles.formGroup}>
+                <label>Browse presets</label>
+                <select
+                  value={form.presetKey || 'other-custom'}
+                  onChange={event => {
+                    const preset = getBillPresetByKey(event.target.value)
+                    if (!preset || preset.isCustom) {
+                      applyPreset(null)
+                      return
+                    }
+                    applyPreset(preset)
+                  }}
+                >
+                  <option value="other-custom">Custom bill</option>
+                  {presetGroups.map(group => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.items.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Bill type</label>
+                <select value={form.subcat} onChange={e => handleSubcategoryChange(e.target.value)}>
+                  {subcategories.map(option => <option key={option}>{option}</option>)}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Default pay-from account</label>
+                <select value={form.accountId} onChange={e => set('accountId', e.target.value)}>
+                  <option value="">Choose when paying</option>
+                  {accounts.map(acc => (
+                    <option key={acc._id} value={acc._id}>
+                      {acc.name} - {acc.type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+              <button className={styles.btnGhost} onClick={() => setShowDrawer(false)} style={{ flex: 1 }}>Cancel</button>
+              <button className={styles.btnAdd} onClick={handleAdd} style={{ flex: 2, margin: 0 }}>Add Bill</button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {paymentBill && createPortal(
         <div
