@@ -72,13 +72,13 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
     <>
       {!hideHeader && (
         <div className={bStyles.heroSection}>
-          <div className={bStyles.heroCopy}>
-            <div className={bStyles.pageEyebrow}>Budget</div>
-            <div className={bStyles.pageTitle}>Use budgets as guide rails, not punishment.</div>
-            <div className={bStyles.pageSub}>
-              Keep category limits, actual spending, and unplanned pressure in one monthly view so nothing sneaks up on you.
-            </div>
+        <div className={bStyles.heroCopy}>
+          <div className={bStyles.pageEyebrow}>Budget</div>
+          <div className={bStyles.pageTitle}>Use budgets as guide rails, not punishment.</div>
+          <div className={bStyles.pageSub}>
+            Keep category limits, actual spending, and unplanned pressure in one monthly view so nothing sneaks up on you.
           </div>
+        </div>
 
         <div className={bStyles.heroAside}>
           <div className={bStyles.heroAsideLabel}>Current month</div>
@@ -95,6 +95,7 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
               : 'Set a budget limit to track progress.'}
           </div>
         </div>
+      </div>
       )}
 
       <div className={bStyles.summaryGrid}>
