@@ -2259,7 +2259,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const showWorkouts = currentTab === 'workout'
   const showWorkoutLog = currentTab === 'workout'
   const showBody = currentTab === 'body' && safeTrackView === 'body'
-  const showMeals = currentTab === 'body' && safeTrackView === 'meals'
+
   const showMovement = currentTab === 'body' && safeTrackView === 'activity'
   const showRecovery = currentTab === 'body' && safeTrackView === 'recovery'
   const showGoals = currentTab === 'body' && safeTrackView === 'goals'
@@ -2351,11 +2351,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       value: currentBodyTrackView.label,
       meta: bodyQuickStartSummary,
     },
-    {
-      label: 'Nutrition today',
-      value: `${displayMetric(insights.caloriesToday, 'kcal', privacyMode, 0)} · ${displayMetric(insights.proteinToday, 'g protein', privacyMode, 0)}`,
-      meta: `${displayMetric(mealsToday, 'meals', privacyMode, 0)} logged · ${coachingSystem.profile.nutritionMode}`,
-    },
+
     {
       label: 'Recovery today',
       value: privacyMode ? `.../${HABIT_OPTIONS.length}` : `${insights.habitScoreToday}/${HABIT_OPTIONS.length}`,
@@ -3335,15 +3331,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	                  </div>
 	                </article>
 
-	                <article className={`${lStyles.workoutLaunchCard} ${lStyles.workoutSupportCard}`}>
-	                  <span>Nutrition</span>
-	                  <strong>{coachingSystem.profile.nutritionMode}</strong>
-	                  <small>{coachingSystem.nutrition.summary}</small>
-	                  <div className={lStyles.todayLaunchPills}>
-	                    <span>{displayMetric(coachingSystem.nutrition.calorieTarget, 'kcal target', privacyMode, 0)}</span>
-	                    <span>{displayMetric(coachingSystem.nutrition.proteinTarget, 'g protein', privacyMode, 0)}</span>
-	                  </div>
-	                </article>
+
 
 	                <article className={`${lStyles.workoutLaunchCard} ${lStyles.workoutSupportCard}`}>
 	                  <span>Progress</span>
@@ -3879,7 +3867,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       </div>
       )}
 
-      {(showBody || showGoals || showMovement || showRecovery || showMeals) && (
+      {(showBody || showGoals || showMovement || showRecovery) && (
       <div className={lStyles.grid}>
         {showTrackSwitcher && (
           <section className={lStyles.viewSwitchCard} aria-label="Choose what to update">

@@ -1045,7 +1045,7 @@ export default function AppShell({ user }) {
   ]
   const lakasNav = [
     { id: 'workout', label: 'Workout', iconKey: 'workouts', section: 'Core' },
-    { id: 'body', label: 'Body & Nutrition', iconKey: 'meals', section: null },
+    { id: 'body', label: 'Body System', iconKey: 'meals', section: null },
     { id: 'progress', label: 'Progress', iconKey: 'body', section: 'Review' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]

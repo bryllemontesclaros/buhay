@@ -609,20 +609,19 @@ export const LAKAS_TAB_COPY = {
 }
 
 export const LAKAS_TRACK_VIEWS = [
-  { id: 'meals', label: 'Meals', meta: 'Nutrition log' },
   { id: 'body', label: 'Body', meta: 'Measurements and weight' },
   { id: 'activity', label: 'Movement', meta: 'Steps and active minutes' },
   { id: 'recovery', label: 'Recovery', meta: 'Habits and check-ins' },
 ]
 
-export const VALID_LAKAS_TRACK_VIEWS = new Set(['meals', 'body', 'activity', 'recovery', 'goals'])
+export const VALID_LAKAS_TRACK_VIEWS = new Set(['body', 'activity', 'recovery', 'goals'])
 
 export function getTrackViewForTab(tab = '') {
   if (tab === 'measurements' || tab === 'body-log') return 'body'
   if (tab === 'activity') return 'activity'
   if (tab === 'habits' || tab === 'recovery') return 'recovery'
   if (tab === 'goals') return 'goals'
-  return 'meals'
+  return 'body'
 }
 
 export function normalizeTrackView(view = '', activeTab = '') {
