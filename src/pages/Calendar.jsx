@@ -33,7 +33,7 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { fmt, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
-import { getBillPeriodInfo } from '../lib/bills'
+import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
 import { createPortal } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
@@ -183,18 +183,20 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const unpaidBillsByDateKey = useMemo(() => {
     const map = {}
     if (!data?.bills || !Array.isArray(data.bills)) return map
-    const refDate = new Date(year, month, 15)
     data.bills.forEach(bill => {
-      const info = getBillPeriodInfo(bill, refDate)
-      if (info && !info.paid && info.dueDate <= todayStr) {
-        if (!map[info.dueDate]) {
-          map[info.dueDate] = []
+      const dates = getBillOccurrencesForMonth(bill, year, month)
+      dates.forEach(date => {
+        const paid = isBillPaidForPeriod(bill, date)
+        if (!paid) {
+          if (!map[date]) {
+            map[date] = []
+          }
+          map[date].push(bill)
         }
-        map[info.dueDate].push(bill)
-      }
+      })
     })
     return map
-  }, [data?.bills, year, month, todayStr])
+  }, [data?.bills, year, month])
 
   const dueDebtsByDateKey = useMemo(() => {
     const map = {}

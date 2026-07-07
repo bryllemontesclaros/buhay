@@ -13,8 +13,62 @@ function clampDueDay(year, monthIndex, dueDay) {
 
 export function getBillDueDate(bill = {}, referenceDate = new Date()) {
   const base = toLocalDate(referenceDate)
-  const dueDay = clampDueDay(base.getFullYear(), base.getMonth(), bill.due)
-  return normalizeDate(`${base.getFullYear()}-${base.getMonth() + 1}-${dueDay}`)
+  const freq = bill.freq || 'monthly'
+  const due = Number(bill.due) || 1
+
+  if (freq === 'weekly' || freq === 'bi-weekly') {
+    const currentDow = base.getDay()
+    const diff = due - currentDow
+    const targetDate = new Date(base.getTime() + diff * 86400000)
+    return normalizeDate(targetDate)
+  }
+
+  if (freq === 'yearly') {
+    const targetMonth = Number(bill.dueMonth) || 0
+    const d = clampDueDay(base.getFullYear(), targetMonth, due)
+    return normalizeDate(`${base.getFullYear()}-${targetMonth + 1}-${d}`)
+  }
+
+  const d = clampDueDay(base.getFullYear(), base.getMonth(), due)
+  return normalizeDate(`${base.getFullYear()}-${base.getMonth() + 1}-${d}`)
+}
+
+export function getBillOccurrencesForMonth(bill = {}, year, month) {
+  const freq = bill.freq || 'monthly'
+  const due = Number(bill.due) || 1
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const dates = []
+
+  if (freq === 'weekly') {
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(year, month, d)
+      if (dt.getDay() === due) {
+        dates.push(normalizeDate(dt))
+      }
+    }
+  } else if (freq === 'bi-weekly') {
+    let matchCount = 0
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(year, month, d)
+      if (dt.getDay() === due) {
+        matchCount++
+        if (matchCount % 2 === 1) {
+          dates.push(normalizeDate(dt))
+        }
+      }
+    }
+  } else if (freq === 'yearly') {
+    const targetMonth = Number(bill.dueMonth) || 0
+    if (month === targetMonth) {
+      const d = clampDueDay(year, month, due)
+      dates.push(normalizeDate(new Date(year, month, d)))
+    }
+  } else {
+    const d = clampDueDay(year, month, due)
+    dates.push(normalizeDate(new Date(year, month, d)))
+  }
+
+  return dates
 }
 
 export function getBillPeriodKey(bill = {}, referenceDate = new Date()) {

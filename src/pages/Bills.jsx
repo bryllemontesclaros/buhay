@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { deleteField } from 'firebase/firestore'
-import { fsAdd, fsDel, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
+import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
@@ -16,12 +16,30 @@ function createBillForm() {
     name: '',
     amount: '',
     due: '',
+    dueMonth: '',
     cat: 'Bills',
     subcat: getTransactionSubcategories('expense', 'Bills')[0],
     presetKey: '',
     freq: 'monthly',
     accountId: '',
   }
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function getBillDueLabel(bill) {
+  const freq = bill.freq || 'monthly'
+  const due = Number(bill.due)
+  const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  
+  if (freq === 'weekly' || freq === 'bi-weekly') {
+    return weekDays[due] || `Day ${due}`
+  }
+  if (freq === 'yearly') {
+    const monthName = MONTHS[Number(bill.dueMonth) || 0] || 'Jan'
+    return `${monthName} ${due}`
+  }
+  return `Day ${due}`
 }
 
 function getStatusStyle(status) {
@@ -159,7 +177,9 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   async function handleAdd() {
     const amount = Number(form.amount)
     const due = Number(form.due)
-    if (!form.name.trim() || !form.amount || !form.due) {
+    const freq = form.freq || 'monthly'
+
+    if (!form.name.trim() || !form.amount || form.due === '') {
       notifyApp({ title: 'Bill needs details', message: 'Add a bill name, amount, and due day before saving.', tone: 'warning' })
       return
     }
@@ -167,12 +187,20 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
       notifyApp({ title: 'Check bill amount', message: 'Bill amount must be greater than zero.', tone: 'warning' })
       return
     }
-    if (!Number.isFinite(due) || due < 1 || due > 31) {
-      notifyApp({ title: 'Check due day', message: 'Due day must be between 1 and 31.', tone: 'warning' })
-      return
+
+    if (freq === 'weekly' || freq === 'bi-weekly') {
+      if (!Number.isFinite(due) || due < 0 || due > 6) {
+        notifyApp({ title: 'Check weekday', message: 'Please select a valid weekday.', tone: 'warning' })
+        return
+      }
+    } else {
+      if (!Number.isFinite(due) || due < 1 || due > 31) {
+        notifyApp({ title: 'Check due day', message: 'Due day must be between 1 and 31.', tone: 'warning' })
+        return
+      }
     }
 
-    await fsAdd(user.uid, 'bills', {
+    const payload = {
       name: form.name.trim(),
       amount,
       due: parseInt(form.due, 10),
@@ -184,8 +212,13 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
       paidPeriods: {},
       type: 'bill',
       accountId: form.accountId || '',
-    })
+    }
 
+    if (freq === 'yearly') {
+      payload.dueMonth = parseInt(form.dueMonth || '0', 10)
+    }
+
+    await fsAdd(user.uid, 'bills', payload)
     setForm(createBillForm())
   }
 
@@ -241,14 +274,24 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
   async function handleUndoPaid(bill) {
     playTick()
     const period = getBillPeriodInfo(bill)
+    const paidPeriodRecord = bill.paidPeriods ? bill.paidPeriods[period.key] : null
+    const expenseId = paidPeriodRecord ? paidPeriodRecord.expenseId : ''
+
     const confirmed = await confirmApp({
       title: 'Undo paid status?',
-      message: `This will mark ${bill.name} unpaid for ${formatDisplayDate(period.dueDate)}. The expense transaction already created will stay in History unless you delete it there.`,
-      confirmLabel: 'Undo paid',
+      message: `This will mark ${bill.name} unpaid for ${formatDisplayDate(period.dueDate)} and delete the corresponding expense from History.`,
+      confirmLabel: 'Undo paid & Delete Expense',
       cancelLabel: 'Keep paid',
       tone: 'danger',
     })
     if (!confirmed) return
+
+    if (expenseId) {
+      const expenseObj = (data.expenses || []).find(e => e._id === expenseId)
+      if (expenseObj) {
+        await fsDeleteTransaction(user.uid, 'expenses', expenseObj, data.accounts)
+      }
+    }
 
     await fsUpdate(user.uid, 'bills', bill._id, {
       [`paidPeriods.${period.key}`]: deleteField(),
@@ -257,6 +300,8 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
       lastPaidPeriod: '',
       lastPaidExpenseId: '',
     })
+
+    notifyApp({ title: 'Bill unpaid', message: 'Bill status was undone and its transaction removed.', tone: 'success' })
   }
 
   useEffect(() => {
@@ -372,8 +417,53 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
 
         <div className={`${styles.formRow} ${styles.col2}`}>
           <div className={styles.formGroup}>
-            <label>Due day (1-31)</label>
-            <input type="number" min={1} max={31} placeholder="e.g. 15" value={form.due} onChange={e => set('due', e.target.value)} />
+            <label>Frequency</label>
+            <select value={form.freq} onChange={e => {
+              const nextFreq = e.target.value
+              let defaultDue = '15'
+              if (nextFreq === 'weekly' || nextFreq === 'bi-weekly') {
+                defaultDue = '5'
+              }
+              setForm(current => ({ ...current, freq: nextFreq, due: defaultDue, dueMonth: nextFreq === 'yearly' ? '0' : '' }))
+            }}>
+              {BILL_FREQS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            {form.freq === 'weekly' || form.freq === 'bi-weekly' ? (
+              <>
+                <label>Due day of week</label>
+                <select value={form.due} onChange={e => set('due', e.target.value)}>
+                  <option value="0">Sunday</option>
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                </select>
+              </>
+            ) : form.freq === 'yearly' ? (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ flex: 1 }}>
+                  <label>Due Month</label>
+                  <select value={form.dueMonth || '0'} onChange={e => set('dueMonth', e.target.value)}>
+                    {MONTHS.map((m, idx) => (
+                      <option key={m} value={String(idx)}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ width: '80px' }}>
+                  <label>Day (1-31)</label>
+                  <input type="number" min={1} max={31} value={form.due} onChange={e => set('due', e.target.value)} />
+                </div>
+              </div>
+            ) : (
+              <>
+                <label>Due day of month (1-31)</label>
+                <input type="number" min={1} max={31} placeholder="e.g. 15" value={form.due} onChange={e => set('due', e.target.value)} />
+              </>
+            )}
           </div>
         </div>
 
@@ -410,12 +500,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
                 {subcategories.map(option => <option key={option}>{option}</option>)}
               </select>
             </div>
-            <div className={styles.formGroup}>
-              <label>Frequency</label>
-              <select value={form.freq} onChange={e => set('freq', e.target.value)}>
-                {BILL_FREQS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-              </select>
-            </div>
+
             <div className={styles.formGroup}>
               <label>Default pay-from account</label>
               <select value={form.accountId} onChange={e => set('accountId', e.target.value)}>
@@ -465,7 +550,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
                       {row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}
                     </td>
                     <td>
-                      <div>Day {row.due}</div>
+                      <div>{getBillDueLabel(row)}</div>
                       <div style={{ color: 'var(--text3)', fontSize: 11 }}>{formatDisplayDate(row.period.dueDate)}</div>
                     </td>
                     <td>{BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}</td>
@@ -514,7 +599,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
                     </div>
                     <div className={bStyles.detailItem}>
                       <label>Due Date</label>
-                      <span>Day {row.due} ({formatDisplayDate(statusPeriod.dueDate)})</span>
+                      <span>{getBillDueLabel(row)} ({formatDisplayDate(statusPeriod.dueDate)})</span>
                     </div>
                     <div className={bStyles.detailItem}>
                       <label>Frequency</label>
