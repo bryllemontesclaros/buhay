@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { execSync } from 'child_process'
+import fs from 'fs'
+
+const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
 
 let commitHash = ''
 let commitMessage = ''
@@ -17,6 +20,7 @@ export default defineConfig({
   define: {
     __COMMIT_HASH__: JSON.stringify(commitHash),
     __COMMIT_MESSAGE__: JSON.stringify(commitMessage),
+    __APP_VERSION__: JSON.stringify(pkg.version),
   },
   build: {
     rollupOptions: {

@@ -20,7 +20,7 @@ import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, today } fr
 import styles from './Page.module.css'
 import settStyles from './Settings.module.css'
 
-const VERSION = '1.0.0'
+const VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '1.0.0'
 
 const FEEDBACK_PRESETS = {
   feedback: {
@@ -310,6 +310,17 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false)
   const [donationMsg, setDonationMsg] = useState({ text: '', ok: false })
   const [legalMsg, setLegalMsg] = useState({ text: '', ok: false })
+  const feedbackOverlayRef = useRef(null)
+
+  useEffect(() => {
+    if (feedbackModal) {
+      setTimeout(() => {
+        if (feedbackOverlayRef.current) {
+          feedbackOverlayRef.current.scrollIntoView({ block: 'start', behavior: 'smooth' })
+        }
+      }, 50)
+    }
+  }, [feedbackModal])
 
   useEffect(() => {
     if (profile && Object.keys(profile).length > 0) {
@@ -1382,7 +1393,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
       </div>
 
       {feedbackModal && (
-        <div className={settStyles.feedbackOverlay} onClick={event => { if (event.target === event.currentTarget) setFeedbackModal(null) }}>
+        <div ref={feedbackOverlayRef} className={settStyles.feedbackOverlay} onClick={event => { if (event.target === event.currentTarget) setFeedbackModal(null) }}>
           <div className={settStyles.feedbackModal}>
             <div className={settStyles.feedbackHeader}>
               <div>
