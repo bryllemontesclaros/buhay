@@ -308,6 +308,38 @@
   margin-bottom: 0.7rem;
 }
 
+.typePillsRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.typePill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text3);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.typePill:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  color: var(--text);
+}
+
+.typePillActive {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .searchRow {
   display: flex;
   gap: 8px;

@@ -364,15 +364,25 @@ export default function History({ user, data, symbol, privacyMode = false }) {
           </button>
         </div>
 
+        <div className={hStyles.typePillsRow}>
+          {TYPES.map(t => {
+            const isActive = filterType === t
+            return (
+              <button
+                key={t}
+                type="button"
+                className={`${hStyles.typePill} ${isActive ? hStyles.typePillActive : ''}`}
+                onClick={() => setFilterType(isActive ? 'All types' : t)}
+              >
+                {t}
+              </button>
+            )
+          })}
+        </div>
+
         {showFilters && (
           <div className={hStyles.filterPanel}>
             <div className={hStyles.filterGrid}>
-              <div className={hStyles.filterGroup}>
-                <label>Type</label>
-                <select value={filterType} onChange={event => setFilterType(event.target.value)}>
-                  {TYPES.map(type => <option key={type}>{type}</option>)}
-                </select>
-              </div>
               <div className={hStyles.filterGroup}>
                 <label>Category</label>
                 <select value={filterCat} onChange={event => setFilterCat(event.target.value)}>
@@ -383,7 +393,7 @@ export default function History({ user, data, symbol, privacyMode = false }) {
                 <label>Month</label>
                 <input type="month" value={filterMonth} onChange={event => setFilterMonth(event.target.value)} />
               </div>
-              <div className={hStyles.filterGroup}>
+              <div className={hStyles.filterGroup} style={{ gridColumn: 'span 2' }}>
                 <label>Sort by</label>
                 <select value={sortBy} onChange={event => setSortBy(event.target.value)}>
                   <option value="date-desc">Newest first</option>
