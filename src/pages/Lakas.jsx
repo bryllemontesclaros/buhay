@@ -20,7 +20,7 @@ import {
   EXERCISE_LIBRARY_CATEGORIES, EXERCISE_MUSCLE_GROUPS, DEFAULT_EXERCISE_LIBRARY,
   HABIT_OPTIONS, DEFAULT_LAKAS_SETTINGS, LAKAS_TAB_COPY, LAKAS_TRACK_VIEWS,
   VALID_LAKAS_TRACK_VIEWS, getTrackViewForTab, normalizeTrackView,
-  createExerciseRow, createWorkoutForm, createRoutineForm, createMealForm,
+  createExerciseRow, createWorkoutForm, createRoutineForm,
   getMediaSaveErrorMessage, isRetryableMediaSaveError, createBodyForm,
   createActivityForm, createHabitForm, createGoalForm, createExerciseLibraryDraft,
   createReminderForm, getLakasSettings, sanitizeLakasSettings, getExerciseGuide,
@@ -609,7 +609,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const initialSettings = getLakasSettings(profile)
   const [routineForm, setRoutineForm] = useState(() => createRoutineForm(initialSettings))
   const [workoutForm, setWorkoutForm] = useState(() => createWorkoutForm(initialSettings))
-  const [mealForm, setMealForm] = useState(createMealForm)
+
   const [bodyForm, setBodyForm] = useState(createBodyForm)
   const [activityForm, setActivityForm] = useState(createActivityForm)
   const [habitForm, setHabitForm] = useState(createHabitForm)
@@ -655,17 +655,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const exerciseSuggestions = useMemo(() => savedExerciseLibrary.map(entry => entry.name), [savedExerciseLibrary])
   const pendingCustomExercises = useMemo(() => sanitizeExerciseLibrary(settingsForm.exerciseLibrary), [settingsForm.exerciseLibrary])
   const pendingExerciseCount = pendingCustomExercises.length
-  const mealQuickActionRef = useRef(null)
-  const mealNameInputRef = useRef(null)
+
   const workoutLogRef = useRef(null)
   const workoutNameInputRef = useRef(null)
   const programsRef = useRef(null)
   const workoutPathRef = useRef(null)
   const handledActionTokenRef = useRef(null)
-  const mealPhotoUrlsRef = useRef({})
   const bodyPhotoUrlsRef = useRef({})
   const hasInitializedHabitsRef = useRef(false)
-  const [mealPhotoUrls, setMealPhotoUrls] = useState({})
   const [bodyPhotoUrls, setBodyPhotoUrls] = useState({})
 
   const routines = sortNewest(normalizeRows(data.lakasRoutines))
@@ -676,7 +673,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const habits = sortNewest(normalizeRows(data.lakasHabits))
   const reminders = sortNewest(normalizeRows(data.lakasReminders))
   const goals = normalizeRows(data.lakasGoals)
-  const visibleMeals = useMemo(() => meals.slice(0, 6), [meals])
+
   const visibleBodyLogs = useMemo(() => bodyLogs.slice(0, 6), [bodyLogs])
   const exerciseHistory = useMemo(() => buildExerciseHistoryMap(workouts), [workouts])
   const exerciseInsights = useMemo(() => buildExerciseAnalytics(workouts, savedExerciseMetaMap), [savedExerciseMetaMap, workouts])
@@ -2281,7 +2278,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
   const todayStepTarget = Math.max(1, numberOrZero(savedLakasSettings.targets.steps) || 8000)
   const todayStepPct = Math.min(100, Math.round((insights.stepsToday / todayStepTarget) * 100))
   const todayHabitPct = HABIT_OPTIONS.length > 0 ? Math.min(100, Math.round((insights.habitScoreToday / HABIT_OPTIONS.length) * 100)) : 0
-  const mealsToday = meals.filter(row => row.date === today()).length
+
   const latestBodyLog = bodyLogs[0] || {}
   const completedGoals = resolvedGoals.filter(goal => {
     const target = numberOrZero(goal.target)
@@ -2308,11 +2305,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
         : latestBmiLabel
   }
   const bodyHeroCard = {
-    meals: {
-      label: 'Meal tracking',
-      value: displayMetric(mealsToday, 'meals today', privacyMode, 0),
-      meta: `${displayMetric(insights.caloriesToday, 'kcal', privacyMode, 0)} · ${displayMetric(insights.proteinToday, 'g protein', privacyMode, 0)}`,
-    },
+
     body: {
       label: 'Body tracking',
       value: insights.latestWeight ? displayMetric(insights.latestWeight, savedLakasSettings.units.weight, privacyMode) : 'No body log',
@@ -2334,9 +2327,9 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       meta: `${displayMetric(completedGoals, 'completed', privacyMode, 0)} done · ${displayMetric(enabledReminders, 'reminders on', privacyMode, 0)}`,
     },
   }[safeTrackView] || {
-    label: 'Meal tracking',
-    value: displayMetric(mealsToday, 'meals today', privacyMode, 0),
-    meta: `${displayMetric(insights.caloriesToday, 'kcal', privacyMode, 0)} · ${displayMetric(insights.proteinToday, 'g protein', privacyMode, 0)}`,
+    label: 'Body tracking',
+    value: insights.latestWeight ? displayMetric(insights.latestWeight, savedLakasSettings.units.weight, privacyMode) : 'No body log',
+    meta: latestBodyLog.date ? `${formatDisplayDate(latestBodyLog.date)} · ${latestBodyMeta}` : latestBodyMeta,
   }
   const showTrackSwitcher = currentTab === 'body'
   const currentBodyTrackView = LAKAS_TRACK_VIEWS.find(view => view.id === safeTrackView) || LAKAS_TRACK_VIEWS[0]
@@ -2386,64 +2379,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       meta: coachingSystem.progress.weightTrend.label,
     },
   ]
-  useEffect(() => {
-    mealPhotoUrlsRef.current = mealPhotoUrls
-  }, [mealPhotoUrls])
 
-  useEffect(() => {
-    bodyPhotoUrlsRef.current = bodyPhotoUrls
-  }, [bodyPhotoUrls])
-
-  useEffect(() => {
-    return () => {
-      Object.values(mealPhotoUrlsRef.current).forEach(revokeObjectUrl)
-      Object.values(bodyPhotoUrlsRef.current).forEach(revokeObjectUrl)
-    }
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-    const visibleIds = new Set(visibleMeals.map(meal => meal._id))
-
-    setMealPhotoUrls(current => {
-      let changed = false
-      const next = {}
-      Object.entries(current).forEach(([id, value]) => {
-        if (visibleIds.has(id)) {
-          next[id] = value
-        } else {
-          changed = true
-          revokeObjectUrl(value)
-        }
-      })
-      return changed ? next : current
-    })
-
-    visibleMeals.forEach(meal => {
-      if (!meal.photoPath || mealPhotoUrlsRef.current[meal._id]) return
-
-      loadStorageObjectUrl(meal.photoPath)
-        .then(url => {
-          if (cancelled) {
-            revokeObjectUrl(url)
-            return
-          }
-
-          setMealPhotoUrls(current => {
-            if (current[meal._id]) {
-              revokeObjectUrl(url)
-              return current
-            }
-            return { ...current, [meal._id]: url }
-          })
-        })
-        .catch(() => {})
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [visibleMeals])
 
   useEffect(() => {
     let cancelled = false
@@ -2517,7 +2453,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     if (actionRequest.type === 'meal-log') {
       if (currentTab !== 'body') return undefined
       handledActionTokenRef.current = actionRequest.token
-      setTrackView('meals')
+      setTrackView('body')
       setPendingQuickAction({ type: 'meal-log', token: actionRequest.token })
       return undefined
     }
@@ -2527,16 +2463,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     return undefined
   }, [actionRequest, currentTab, onActionHandled, selectedGymSession, selectedGymTemplate])
 
-  useEffect(() => {
-    if (!pendingQuickAction || pendingQuickAction.type !== 'meal-log' || !showMeals) return undefined
-    const frameId = window.requestAnimationFrame(() => {
-      safeScrollIntoView(mealQuickActionRef.current, { behavior: 'smooth', block: 'start' })
-      mealNameInputRef.current?.focus()
-      onActionHandled(pendingQuickAction.token)
-      setPendingQuickAction(null)
-    })
-    return () => window.cancelAnimationFrame(frameId)
-  }, [pendingQuickAction, showMeals, onActionHandled])
+
 
   const gymSessionOverlay = gymSessionMode.open ? (
     <div className={lStyles.gymModeOverlay} role="dialog" aria-modal="true" aria-labelledby="gym-session-title">
@@ -3077,14 +3004,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           onClick={() => {
             playTick()
             onLakasTabChange('body')
-            setTrackView('meals')
+            setTrackView('body')
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
               playTick()
               onLakasTabChange('body')
-              setTrackView('meals')
+              setTrackView('body')
             }
           }}
           aria-label="Calories: Go to meals log"
@@ -3113,14 +3040,14 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
           onClick={() => {
             playTick()
             onLakasTabChange('body')
-            setTrackView('meals')
+            setTrackView('body')
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
               playTick()
               onLakasTabChange('body')
-              setTrackView('meals')
+              setTrackView('body')
             }
           }}
           aria-label="Protein: Go to meals log"
