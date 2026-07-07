@@ -7,7 +7,6 @@ import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
-import Dashboard from './Dashboard'
 import Savings from './Savings'
 import Accounts from './Accounts'
 import Breakdown from './Breakdown'
@@ -15,7 +14,6 @@ import Budget from './Budget'
 import Bills from './Bills'
 import Settings from './Settings'
 import History from './History'
-import Portfolio from './Portfolio'
 import QuickAdd from './QuickAdd'
 import Debts from './Debts'
 import { Button } from '../components/ui/Button'
@@ -559,7 +557,7 @@ export default function AppShell({ user }) {
   const [quickAddSheet, setQuickAddSheet] = useState({ open: false, mode: 'manual', type: 'expense', initialEntry: null })
   const [spaceActionRequest, setSpaceActionRequest] = useState(null)
   const [takdaActionRequest, setTakdaActionRequest] = useState(null)
-  const [portfolioActionRequest, setPortfolioActionRequest] = useState(null)
+
   const [mobileNavMenuOpen, setMobileNavMenuOpen] = useState(false)
   const [calendarQuickAddDate, setCalendarQuickAddDate] = useState('')
   const [emailVerified, setEmailVerified] = useState(() => Boolean(auth.currentUser?.emailVerified || user?.emailVerified))
@@ -1035,7 +1033,7 @@ export default function AppShell({ user }) {
 
   const nav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
-    { id: 'portfolio', label: 'Portfolio', iconKey: 'portfolio', section: null },
+
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
     { id: 'debts', label: 'Debts', iconKey: 'debts', section: null },
@@ -1058,7 +1056,7 @@ export default function AppShell({ user }) {
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const takdaMoreNav = [
-    { id: 'dashboard', label: 'Overview', iconKey: 'home', section: 'Review' },
+
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: 'Review' },
     { id: 'debts', label: 'Debts', iconKey: 'debts', section: 'Review' },
@@ -1069,9 +1067,7 @@ export default function AppShell({ user }) {
   ]
 
   const financePages = {
-    dashboard: Dashboard,
     calendar: Calendar,
-    portfolio: Portfolio,
     money: TakdaMoneyPage,
     plan: TakdaPlanPage,
     settings: Settings,
@@ -1083,7 +1079,7 @@ export default function AppShell({ user }) {
     budget: Budget,
     bills: Bills,
   }
-  const PageComponent = activeSpace === 'lakas' ? Lakas : activeSpace === 'tala' ? Tala : financePages[page] || Dashboard
+  const PageComponent = activeSpace === 'lakas' ? Lakas : activeSpace === 'tala' ? Tala : financePages[page] || Calendar
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
     ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
@@ -1110,7 +1106,7 @@ export default function AppShell({ user }) {
     : currentNavItem?.label || activeSpaceConfig.label
   const financeBottomNav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
-    { id: 'portfolio', label: 'Portfolio', iconKey: 'portfolio', space: 'takda' },
+
     { id: 'bills', label: 'Bills', iconKey: 'bills', space: 'takda' },
     { id: 'history', label: 'History', iconKey: 'history', space: 'takda' },
   ]
@@ -1365,12 +1361,7 @@ export default function AppShell({ user }) {
 
   function toggleQuickAddMenu() {
     if (quickAddSheet.open) return
-    if (activeSpace === 'takda' && page === 'portfolio') {
-      setMobileNavMenuOpen(false)
-      setQuickAddMenuOpen(false)
-      setPortfolioActionRequest({ type: 'add-holding', token: Date.now() })
-      return
-    }
+
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(current => !current)
   }
@@ -1427,10 +1418,7 @@ export default function AppShell({ user }) {
     setTakdaActionRequest(current => (current?.token === token ? null : current))
   }
 
-  function handlePortfolioActionHandled(token) {
-    if (!token) return
-    setPortfolioActionRequest(current => (current?.token === token ? null : current))
-  }
+
 
   function closeQuickAdd() {
     setQuickAddSheet(current => ({ ...current, open: false, initialEntry: null }))
@@ -1538,8 +1526,6 @@ export default function AppShell({ user }) {
     onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
     onTakdaAction: openTakdaAction,
     onLakasTabChange: setLakasPage,
-    portfolioActionRequest: activeSpace === 'takda' && page === 'portfolio' ? portfolioActionRequest : null,
-    onPortfolioActionHandled: handlePortfolioActionHandled,
   }
 
   const quickAddDialogLabel = quickAddSheet.mode === 'import'
