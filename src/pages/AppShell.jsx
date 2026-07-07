@@ -13,6 +13,12 @@ import QuickAdd from './QuickAdd'
 import AccountsAndDebts from './AccountsAndDebts'
 import SavingsAndBudget from './SavingsAndBudget'
 import HistoryAndInsights from './HistoryAndInsights'
+import Accounts from './Accounts'
+import Debts from './Debts'
+import Budget from './Budget'
+import Savings from './Savings'
+import History from './History'
+import Breakdown from './Breakdown'
 import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
