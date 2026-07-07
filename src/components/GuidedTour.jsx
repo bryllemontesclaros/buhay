@@ -6,15 +6,9 @@ const TOUR_CONFIGS = {
     accentColor: 'var(--accent)',
     steps: [
       {
-        target: '#takda-balance-card',
-        title: 'Buhay Summary',
-        body: 'Welcome to Takda! Here is your net worth, monthly income, and expenses calculated at a glance.',
-        tab: 'dashboard'
-      },
-      {
         target: '#takda-calendar',
         title: 'Daily Cashflow & Log',
-        body: 'This interactive calendar shows daily income/expense dots. Tap any date to add a record or view daily entries.',
+        body: 'Welcome to Takda! This interactive calendar shows daily income/expense dots. Tap any date to add a record or view daily entries.',
         tab: 'calendar'
       },
       {
