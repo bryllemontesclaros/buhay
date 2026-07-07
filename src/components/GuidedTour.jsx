@@ -205,6 +205,9 @@ export default function GuidedTour({ space, activeTab, onTabChange, onFinish }) 
     if (cardTop + 220 > window.innerHeight) {
       cardTop = coords.top - 220 - spacing // Place above target if bottom exceeds height
     }
+    if (cardTop < 20) {
+      cardTop = Math.max(20, coords.top + 20) // Fallback to safe top if pushed off-screen
+    }
 
     const nextStyle = {
       position: 'fixed',
