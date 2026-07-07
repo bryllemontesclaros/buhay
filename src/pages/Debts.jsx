@@ -50,6 +50,7 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const [showDrawer, setShowDrawer] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [expandedHistory, setExpandedHistory] = useState({})
+  const [activeMilestone, setActiveMilestone] = useState(null)
   
   const getDebtTransactions = useMemo(() => {
     const income = (data.income || []).map(tx => ({ ...tx, type: 'income' }))
@@ -353,6 +354,8 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
   const loansAndOthers = useMemo(() => mappedDebts.filter(d => d.type !== 'Credit Card'), [mappedDebts])
 
   async function handlePayment(debt) {
+    const prevBalance = debt.balance || 0
+    const original = debt.originalAmount || prevBalance || 0
     const value = parseFloat(payments[debt._id] || 0)
     const fromAccountId = paymentSources[debt._id]
     const monthKey = getMonthKey(today())
@@ -387,6 +390,27 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
           [`paidPeriods.${monthKey}`]: paymentRecord
         })
       }
+
+      const newBalance = Math.max(0, prevBalance - value)
+      let milestoneReached = null
+
+      if (prevBalance > 0 && newBalance === 0) {
+        milestoneReached = '100% Paid Off! 🎉'
+      } else if (original > 0) {
+        const prevPctPaid = Math.round(((original - prevBalance) / original) * 100)
+        const newPctPaid = Math.round(((original - newBalance) / original) * 100)
+
+        if (prevPctPaid < 75 && newPctPaid >= 75) {
+          milestoneReached = '75% Paid Off! 🚀'
+        } else if (prevPctPaid < 50 && newPctPaid >= 50) {
+          milestoneReached = '50% Paid Off! ⭐'
+        }
+      }
+
+      if (milestoneReached) {
+        setActiveMilestone({ label: milestoneReached, debtName: debt.name })
+      }
+
       setPayments(current => ({ ...current, [debt._id]: '' }))
       setPaymentSources(current => ({ ...current, [debt._id]: '' }))
       notifyApp({
@@ -565,7 +589,12 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
                 <div className={dStyles.progressBlock}>
                   <div className={dStyles.progressMeta}>
                     <span>Credit Utilization</span>
-                    <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      {utilization > 30 && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--amber)', fontWeight: 'bold' }}>⚠️ High</span>
+                      )}
+                      <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
+                    </div>
                   </div>
                   <div className={dStyles.progressBar}>
                     <div
@@ -1088,6 +1117,27 @@ export default function Debts({ user, data, symbol, privacyMode = false }) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {activeMilestone && (
+        <div className={dStyles.celebrationOverlay} onClick={() => setActiveMilestone(null)}>
+          <div className={dStyles.celebrationModal}>
+            <div className={dStyles.confettiWrapper}>
+              {Array.from({ length: 30 }).map((_, idx) => (
+                <div key={idx} className={dStyles.confettiPiece} style={{
+                  '--left': `${Math.random() * 100}%`,
+                  '--delay': `${Math.random() * 2}s`,
+                  '--bg': ['#ff5370', '#22d87a', '#ffb627', '#00e5ff'][idx % 4],
+                  '--duration': `${1.5 + Math.random() * 1.5}s`
+                }} />
+              ))}
+            </div>
+            <h2>Milestone Reached!</h2>
+            <div className={dStyles.milestoneLabel}>{activeMilestone.label}</div>
+            <p>You have made major progress paying off <strong>{activeMilestone.debtName}</strong>. Keep going!</p>
+            <button className={dStyles.primaryButton} onClick={() => setActiveMilestone(null)}>Awesome</button>
+          </div>
         </div>
       )}
     </div>

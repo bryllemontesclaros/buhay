@@ -1526,20 +1526,60 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Debt Due</div>
                   <div className={calStyles.daySectionCount}>{selectedDueDebts.length}</div>
                 </div>
-                {selectedDueDebts.map((debt) => (
-                  <div key={`due-${debt._id}`} className={calStyles.debtRow}>
-                    <div className={calStyles.debtRowMain}>
-                      <span className={calStyles.debtRowName}>{debt.name}</span>
-                      <span className={calStyles.debtRowMeta}>Due {debt.dueDate ? `Day ${debt.dueDate}` : '—'}</span>
-                    </div>
-                    <div className={calStyles.debtRowAmounts}>
-                      <span className={calStyles.debtRowBalance}>{privacyMode ? 'Hidden' : fmt(debt.balance || 0, s)}</span>
-                      {debt.minPayment > 0 && (
-                        <span className={calStyles.debtRowMin}>{privacyMode ? 'Hidden' : `Min ${fmt(debt.minPayment, s)}`}</span>
+                {selectedDueDebts.map((debt) => {
+                  const cashAccounts = data.accounts || []
+                  const totalCash = cashAccounts
+                    .filter(a => String(a.type || '').toLowerCase() !== 'credit card')
+                    .reduce((sum, a) => sum + (Number(a.balance) || 0), 0)
+
+                  const minAmount = debt.minPayment || 0
+                  const statementAmount = debt.balance || 0
+                  
+                  const isMinOverdraft = totalCash < minAmount
+                  const isFullOverdraft = totalCash < statementAmount
+
+                  return (
+                    <div key={`due-${debt._id}`} className={calStyles.debtRow} style={{ flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className={calStyles.debtRowMain}>
+                          <span className={calStyles.debtRowName}>{debt.name}</span>
+                          <span className={calStyles.debtRowMeta}>Due {debt.dueDate ? `Day ${debt.dueDate}` : '—'}</span>
+                        </div>
+                        <div className={calStyles.debtRowAmounts}>
+                          <span className={calStyles.debtRowBalance}>{privacyMode ? 'Hidden' : fmt(debt.balance || 0, s)}</span>
+                          {debt.minPayment > 0 && (
+                            <span className={calStyles.debtRowMin}>{privacyMode ? 'Hidden' : `Min ${fmt(debt.minPayment, s)}`}</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {debt.balance > 0 && (
+                        <div style={{ background: 'var(--bg2)', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '0.8rem', marginTop: '4px' }}>
+                          <div style={{ fontWeight: 'bold', marginBottom: '6px', color: 'var(--text2)' }}>Payment Recommendations</div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <span>1. Pay Minimum:</span>
+                              <span style={{ color: isMinOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
+                                {privacyMode ? 'Hidden' : fmt(minAmount, s)}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <span>2. Pay Full Balance:</span>
+                              <span style={{ color: isFullOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
+                                {privacyMode ? 'Hidden' : fmt(statementAmount, s)}
+                              </span>
+                            </div>
+                          </div>
+                          {(isMinOverdraft || isFullOverdraft) && (
+                            <div style={{ marginTop: '8px', color: 'var(--red)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', borderTop: '1px solid var(--border)', paddingTop: '6px' }}>
+                              <span>⚠️ {isMinOverdraft ? 'Low Cash: Risk of Overdraft even on Minimum!' : 'Risk of Overdraft on Full Balance payment!'}</span>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
 
