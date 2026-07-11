@@ -455,7 +455,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                     <span>Utilization: {account.utilization}%</span>
                     {account.utilization > 30 && (
                       <span className={accStyles.utilizationWarningBadge} style={{ color: 'var(--amber)', fontSize: '0.75rem', fontWeight: 'bold' }}>
-                        ⚠️ High Utilization (>30%)
+                        ⚠️ High Utilization (&gt;30%)
                       </span>
                     )}
                   </div>
