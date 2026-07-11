@@ -1,0 +1,442 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 24px;
+}
+
+.greetingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-family: var(--font-header);
+  font-size: var(--type-h2);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--type-body-sm);
+  color: var(--text3);
+  margin: 0;
+}
+
+.streakBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(255, 136, 0, 0.08);
+  border: 1px solid rgba(255, 136, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(255, 136, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.streakBadge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 136, 0, 0.08);
+}
+
+.streakEmoji {
+  font-size: 24px;
+}
+
+.streakText {
+  display: flex;
+  flex-direction: column;
+}
+
+.streakVal {
+  font-family: var(--font-mono);
+  font-size: var(--type-body);
+  font-weight: 700;
+  color: #ff9800;
+}
+
+.streakLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+/* BENTO GRID */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 21, 26, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitleBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardEmoji {
+  font-size: 20px;
+}
+
+.cardTitle {
+  font-family: var(--font-header);
+  font-size: var(--type-h3);
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.viewBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.viewBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bentoBody {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 16px;
+}
+
+.metricBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricLabel {
+  font-size: var(--type-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+.metricVal {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.subMetricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.subMetric {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 10px 14px;
+}
+
+.subMetricLabel {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 500;
+}
+
+.subMetricVal {
+  font-family: var(--font-mono);
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.widgetDivider {
+  height: 1px;
+  background: var(--border2);
+  margin: 8px 0;
+}
+
+.extraWidget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.extraTitle {
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  color: var(--text2);
+  margin: 0;
+}
+
+.nextBillRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.nextBillDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nextBillName {
+  font-size: var(--type-body-sm);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.nextBillDate {
+  font-size: var(--type-caption);
+  color: var(--text3);
+}
+
+.nextBillAmount {
+  font-family: var(--font-mono);
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+}
+
+.emptyText {
+  font-size: var(--type-caption);
+  color: var(--text3);
+  margin: 4px 0 0 0;
+  font-style: italic;
+}
+
+/* HEALTH HABITS GRID */
+.habitsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.habitPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text2);
+}
+
+.habitPill:hover {
+  background: rgba(6, 182, 212, 0.08);
+  border-color: rgba(6, 182, 212, 0.3);
+  color: var(--text);
+}
+
+.habitPillDone {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #06b6d4;
+  font-weight: 600;
+}
+
+.habitDot {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.habitLabel {
+  font-size: var(--type-caption);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* MOOD ACCENT ELEMENT */
+.moodSelectorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sliderLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.moodEmojiDisplay {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.moodTextDisplay {
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  color: #a855f7;
+}
+
+.moodSlider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--border2);
+  border-radius: 3px;
+  outline: none;
+  margin: 8px 0;
+}
+
+.moodSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #a855f7;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  transition: transform 0.1s ease;
+}
+
+.moodSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* QUICK JOURNAL REFLECTION */
+.journalLogBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quickJournalInput {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  color: var(--text);
+  font-size: var(--type-caption);
+  font-family: inherit;
+  padding: 12px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quickJournalInput:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.15);
+}
+
+.journalSubmitBtn {
+  background: #a855f7;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: var(--type-caption);
+  font-weight: 600;
+  padding: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.journalSubmitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.journalSubmitBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 900px) {
+  .bento {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .streakBadge {
+    align-self: flex-start;
+  }
+}

@@ -33,57 +33,57 @@ const HERO_SPACES = [
 
 const SPACE_FEATURES = [
   {
-    title: 'Takda',
+    title: 'Buhay Bento',
+    desc: 'Brings together cash balance projections, physical training habits, and mood check-in circles onto a single central screen.',
+    tone: 'buhay',
+  },
+  {
+    title: 'Takda (Wealth)',
     desc: 'Track daily cash flow with dynamic balances, track savings targets, simulate snowball or avalanche debt payoff strategies, and follow interactive step-by-step guided onboarding tours.',
     tone: 'takda',
   },
   {
-    title: 'Lakas',
+    title: 'Lakas (Health)',
     desc: 'Log set repetitions, check off daily consistency habits, use the built-in barbell plate calculator, and compete against your own historic runs using the Ghost Racer leaderboard.',
     tone: 'lakas',
   },
   {
-    title: 'Tala',
+    title: 'Tala (Mind)',
     desc: 'Log entries with custom mood indicators, view weekly mood distribution wheels, tag reflection topics, and receive gentle grounding prompts during difficult days.',
     tone: 'tala',
-  },
-  {
-    title: 'Buhay account',
-    desc: 'Quietly handles login, backups, data restore, CSV export, and complete deletion in a single secure account layer.',
-    tone: 'buhay',
   },
 ]
 
 const FLOW_BEATS = [
   {
-    title: 'Choose a space',
-    desc: 'Pick Takda, Lakas, or Tala based on what helps today. You do not have to set up everything first.',
-    beat: 'Choose',
-    tone: 'takda',
-    pills: ['Takda', 'Lakas', 'Tala'],
+    title: 'Central Bento Dashboard',
+    desc: 'Launch from a single cockpit screen. View your net worth, check off daily physical habits, and log today\'s reflection in one step.',
+    beat: 'Cockpit',
+    tone: 'buhay',
+    pills: ['Bento', 'Unified', 'Home'],
     mock: 'spaces',
   },
   {
-    title: 'Do the one thing',
-    desc: 'Each space keeps one primary action close: add a money entry, start a workout, or write one honest line.',
-    beat: 'Do',
+    title: 'Drill Down Easily',
+    desc: 'Go deeper into money forecasting, training workout sheets, or comprehensive reflection wheels when you need full control.',
+    beat: 'Drill',
     tone: 'lakas',
-    pills: ['Add', 'Start', 'Write'],
+    pills: ['Wealth', 'Health', 'Mind'],
     mock: 'action',
   },
   {
     title: 'See it stay organized',
-    desc: 'Calendar and history keep your records structured so totals and review stay clear without extra work.',
+    desc: 'Buhay structure ensures all transactions, workouts, and reflection tags are logged cleanly and automatically updated.',
     beat: 'Organize',
     tone: 'tala',
     pills: ['Calendar', 'Totals', 'History'],
     mock: 'organized',
   },
   {
-    title: 'Use it your way',
-    desc: 'Use one space or all three. Export, backup, restore, and privacy controls stay in your account.',
-    beat: 'Use',
-    tone: 'buhay',
+    title: 'Complete private control',
+    desc: 'Use any combination of tools you like. Local backups, private encryption, and full CSV exports stay in your account.',
+    beat: 'Control',
+    tone: 'takda',
     pills: ['Free', 'Export', 'Backup'],
     mock: 'account',
   },
@@ -117,6 +117,12 @@ const TRUST_POINTS = [
 
 const SPACE_PROMISES = [
   {
+    label: 'Bento Dashboard',
+    promise: 'Aggregates your net worth, daily training habits, and reflection prompts onto a single screen.',
+    meta: 'Central Cockpit',
+    tone: 'buhay',
+  },
+  {
     label: 'Takda',
     promise: 'Includes savings target trackers, snowball/avalanche debt simulators, and daily cashflow calendars.',
     meta: 'Debt & Savings',
@@ -133,12 +139,6 @@ const SPACE_PROMISES = [
     promise: 'Visualizes your weekly mood distribution wheel and unlocks Grounding Prompts.',
     meta: 'Mood Wheels',
     tone: 'tala',
-  },
-  {
-    label: 'Guided Tours',
-    promise: 'Features beautiful, step-by-step interactive onboarding tours for every single space.',
-    meta: 'Onboarding Guides',
-    tone: 'buhay',
   },
 ]
 
@@ -458,13 +458,13 @@ export default function LandingPage() {
         <header className={styles.hero}>
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <div className={styles.heroKicker}>Takda for money. Lakas for fitness. Tala for reflection.</div>
+              <div className={styles.heroKicker}>Wealth · Health · Mind</div>
               <h1 className={styles.heroTitle}>
-                Skip the noise.{' '}
-                <span className={styles.heroHighlight}>One calm account.</span>
+                The Unified Life System.{' '}
+                <span className={styles.heroHighlight}>All in one bento cockpit.</span>
               </h1>
               <p className={styles.heroSub}>
-                Buhay gives money, training, and reflection their own focused spaces while one shared account quietly handles sign-in, privacy, backup, and restore.
+                Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a single home dashboard. Control your wealth, health, and mind from one unified space.
               </p>
 
               <div className={styles.heroActionRow}>

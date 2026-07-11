@@ -19,6 +19,7 @@ import Budget from './Budget'
 import Savings from './Savings'
 import History from './History'
 import Breakdown from './Breakdown'
+import Dashboard from './Dashboard'
 import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
@@ -358,12 +359,14 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
+  { id: 'dashboard', label: 'Buhay', meta: 'Home', iconKey: 'home', cue: 'Cockpit overview' },
   { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
   { id: 'lakas', label: 'Lakas', meta: 'Fitness', iconKey: 'lakas', cue: 'Training rhythm' },
   { id: 'tala', label: 'Tala', meta: 'Reflection', iconKey: 'tala', cue: 'Calm reflection' },
 ]
 
 const DEFAULT_SPACE_PAGES = {
+  dashboard: 'main',
   takda: 'calendar',
   lakas: 'workout',
   tala: 'journal',
@@ -523,7 +526,7 @@ function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pag
 
 
 export default function AppShell({ user }) {
-  const [activeSpace, setActiveSpace] = useState('takda')
+  const [activeSpace, setActiveSpace] = useState('dashboard')
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
   const [lakasPage, setLakasPage] = useState(DEFAULT_SPACE_PAGES.lakas)
   const [talaPage, setTalaPage] = useState(DEFAULT_SPACE_PAGES.tala)
@@ -754,7 +757,7 @@ export default function AppShell({ user }) {
 
   useEffect(() => {
     if (preferredSpaceAppliedRef.current) return
-    if (!['takda', 'lakas', 'tala'].includes(profile?.preferredSpace)) return
+    if (!['dashboard', 'takda', 'lakas', 'tala'].includes(profile?.preferredSpace)) return
     preferredSpaceAppliedRef.current = true
     setActiveSpace(profile.preferredSpace)
   }, [profile?.preferredSpace])
@@ -762,12 +765,12 @@ export default function AppShell({ user }) {
   useEffect(() => {
     if (!user) return
     const intendedSpace = consumeStartSpaceIntent()
-    if (!['takda', 'lakas', 'tala'].includes(intendedSpace)) return
+    if (!['dashboard', 'takda', 'lakas', 'tala'].includes(intendedSpace)) return
     setActiveSpace(intendedSpace)
   }, [user])
 
   useEffect(() => {
-    if (!user || activeSpace !== 'lakas') return undefined
+    if (!user) return undefined
 
     const uid = user.uid
     const unsubs = LAKAS_COLLECTIONS.map(collectionName => (
@@ -777,10 +780,10 @@ export default function AppShell({ user }) {
     ))
 
     return () => unsubs.forEach(unsub => unsub())
-  }, [activeSpace, user])
+  }, [user])
 
   useEffect(() => {
-    if (!user || activeSpace !== 'tala') return undefined
+    if (!user) return undefined
 
     const uid = user.uid
     const unsubs = TALA_COLLECTIONS.map(collectionName => (
@@ -790,7 +793,7 @@ export default function AppShell({ user }) {
     ))
 
     return () => unsubs.forEach(unsub => unsub())
-  }, [activeSpace, user])
+  }, [user])
 
   useEffect(() => {
     function getPendingLinkedTransactions() {
@@ -960,11 +963,13 @@ export default function AppShell({ user }) {
     'body-log': 'body',
   }[lakasPage] || lakasPage)
 
-  const visiblePageKey = activeSpace === 'takda'
-    ? page
-    : activeSpace === 'lakas'
-      ? resolvedLakasPage
-      : talaPage
+  const visiblePageKey = activeSpace === 'dashboard'
+    ? 'main'
+    : activeSpace === 'takda'
+      ? page
+      : activeSpace === 'lakas'
+        ? resolvedLakasPage
+        : talaPage
 
   useEffect(() => {
     if (previousVisiblePageRef.current == null) {
@@ -1037,6 +1042,10 @@ export default function AppShell({ user }) {
     if (nextVerified) setVerifyBannerMsg({ text: '', ok: false })
   }, [user])
 
+  const dashboardNav = [
+    { id: 'main', label: 'Home', iconKey: 'dashboard', section: 'Overview' },
+    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
+  ]
   const nav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
 
@@ -1079,7 +1088,13 @@ export default function AppShell({ user }) {
     budget: SavingsAndBudget,
     bills: Bills,
   }
-  const PageComponent = activeSpace === 'lakas' ? Lakas : activeSpace === 'tala' ? Tala : financePages[page] || Calendar
+  const PageComponent = activeSpace === 'dashboard'
+    ? Dashboard
+    : activeSpace === 'lakas'
+      ? Lakas
+      : activeSpace === 'tala'
+        ? Tala
+        : financePages[page] || Calendar
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
     ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
@@ -1093,7 +1108,13 @@ export default function AppShell({ user }) {
     : activeSpace === 'lakas'
       ? `lakas:${resolvedLakasPage}`
       : `tala:${talaPage}`
-  const currentSidebarNav = activeSpace === 'lakas' ? lakasNav : activeSpace === 'tala' ? talaNav : nav
+  const currentSidebarNav = activeSpace === 'dashboard'
+    ? dashboardNav
+    : activeSpace === 'lakas'
+      ? lakasNav
+      : activeSpace === 'tala'
+        ? talaNav
+        : nav
   const currentNavItem = (
     activeSpace === 'takda'
       ? [...nav, ...takdaMoreNav]
@@ -1120,7 +1141,19 @@ export default function AppShell({ user }) {
     { id: 'track', label: 'Track', iconKey: 'mood', space: 'tala' },
     { id: 'focus', label: 'Focus', iconKey: 'goals', space: 'tala' },
   ]
-  const bottomNav = activeSpace === 'lakas' ? lakasBottomNav : activeSpace === 'tala' ? talaBottomNav : financeBottomNav
+  const dashboardBottomNav = [
+    { id: 'main', label: 'Home', iconKey: 'home', space: 'dashboard' },
+    { id: 'calendar', label: 'Wealth', iconKey: 'finance', space: 'takda' },
+    { id: 'workout', label: 'Health', iconKey: 'lakas', space: 'lakas' },
+    { id: 'journal', label: 'Mind', iconKey: 'tala', space: 'tala' },
+  ]
+  const bottomNav = activeSpace === 'dashboard'
+    ? dashboardBottomNav
+    : activeSpace === 'lakas'
+      ? lakasBottomNav
+      : activeSpace === 'tala'
+        ? talaBottomNav
+        : financeBottomNav
   const financeMoreNav = takdaMoreNav.map(item => ({ ...item, space: 'takda' }))
   const lakasMoreNav = lakasNav
     .filter(item => ['settings'].includes(item.id))
@@ -1144,11 +1177,13 @@ export default function AppShell({ user }) {
   const shouldHideFabWrap = mobileNavMenuOpen || (activeSpace === 'takda' && quickAddSheet.open)
   const shouldHideBottomNav = quickAddMenuOpen || mobileNavMenuOpen || (activeSpace === 'takda' && quickAddSheet.open)
   const isBottomNavItemActive = item => (
-    item.space === 'lakas'
-      ? activeSpace === 'lakas' && resolvedLakasPage === item.id
-      : item.space === 'tala'
-        ? activeSpace === 'tala' && talaPage === item.id
-        : activeSpace === 'takda' && page === item.id
+    item.space === 'dashboard'
+      ? activeSpace === 'dashboard'
+      : item.space === 'lakas'
+        ? activeSpace === 'lakas' && resolvedLakasPage === item.id
+        : item.space === 'tala'
+          ? activeSpace === 'tala' && talaPage === item.id
+          : activeSpace === 'takda' && page === item.id
   )
 
   // 1. Takda Financial Pulse Status
@@ -1300,11 +1335,23 @@ export default function AppShell({ user }) {
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
-    const normalizedSpace = ['lakas', 'tala'].includes(nextSpace) ? nextSpace : 'takda'
+    const normalizedSpace = ['dashboard', 'takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'dashboard'
     setActiveSpace(normalizedSpace)
     if (normalizedSpace === 'takda') setPage(DEFAULT_SPACE_PAGES.takda)
     if (normalizedSpace === 'lakas') setLakasPage(DEFAULT_SPACE_PAGES.lakas)
     if (normalizedSpace === 'tala') setTalaPage(DEFAULT_SPACE_PAGES.tala)
+  }
+
+  function handleDashboardNavigate(space, subPage) {
+    playTick()
+    setActiveSpace(space)
+    if (space === 'takda') {
+      setPage(subPage || 'calendar')
+    } else if (space === 'lakas') {
+      setLakasPage(subPage || 'workout')
+    } else if (space === 'tala') {
+      setTalaPage(subPage || 'journal')
+    }
   }
 
   function handleBadgeClick(spaceId) {
@@ -1342,6 +1389,10 @@ export default function AppShell({ user }) {
   }
 
   function handleBottomNavSelect(item) {
+    if (item.space === 'dashboard') {
+      openSpace('dashboard')
+      return
+    }
     if (item.space === 'lakas') {
       openSpace('lakas')
       setLakasPage(item.id || DEFAULT_SPACE_PAGES.lakas)
@@ -1527,6 +1578,7 @@ export default function AppShell({ user }) {
     onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
     onTakdaAction: openTakdaAction,
     onLakasTabChange: setLakasPage,
+    onNavigate: handleDashboardNavigate,
   }
 
   const quickAddDialogLabel = quickAddSheet.mode === 'import'
@@ -1565,7 +1617,7 @@ export default function AppShell({ user }) {
         ]
 
   return (
-    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
+    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
       <a href="#app-main" className="skipLink">Skip to main content</a>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
