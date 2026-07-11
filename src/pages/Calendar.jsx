@@ -10,7 +10,7 @@ import {
   TAKDA_BALANCE_IMPACT,
   TAKDA_TRANSACTION_STATUS,
 } from '../lib/finance'
-import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
+import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsDeleteTransfer, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
 import { getTransactionImpact } from '../lib/forecast'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import {
@@ -722,6 +722,19 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     await fsDeleteTransaction(user.uid, tx.type === 'income' ? 'income' : 'expenses', tx, data.accounts)
   }
 
+  async function handleDeleteTransfer(transfer) {
+    if (!user?.uid) return
+    playTick()
+    if (!(await confirmApp({
+      title: 'Delete this transfer?',
+      message: `Delete ${transfer.desc || 'this transfer'} from ${transfer.date || 'this day'}? Linked account balances will be reverted.`,
+      confirmLabel: 'Delete transfer',
+      cancelLabel: 'Keep it',
+      tone: 'danger',
+    }))) return
+    await fsDeleteTransfer(user.uid, transfer, data.accounts)
+  }
+
   async function handleTogglePaymentStatus(tx) {
     playTick()
     if (tx._projected) {
@@ -1074,17 +1087,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (!form.accountId) {
       return 'No account selected. This entry will stay in the ledger only and will not change current account balances.'
     }
+
+    const isCreditCard = String(selectedAccount?.type || '').toLowerCase() === 'credit card'
+    const ccAction = modalType === 'income' ? 'reduce outstanding debt' : 'increase outstanding debt'
+
     if (form.paymentStatus === 'unpaid') {
       return `${selectedAccount?.name || 'Selected account'} is linked, but this entry will not change balances until you mark it paid.`
     }
     if (editTx && !editTx.accountBalanceLinked) {
       return `${selectedAccount?.name || 'Selected account'} will become linked when you save, so balances can stay in sync from here.`
     }
+
+    let baseMsg = ''
     if (targetDate && targetDate <= todayStr) {
-      return `${selectedAccount?.name || 'Selected account'} updates right away because this date is today or earlier.`
+      baseMsg = `${selectedAccount?.name || 'Selected account'} updates right away because this date is today or earlier.`
+    } else {
+      baseMsg = `${selectedAccount?.name || 'Selected account'} is linked, but current balances will wait until this date arrives.`
     }
-    return `${selectedAccount?.name || 'Selected account'} is linked, but current balances will wait until this date arrives.`
-  }, [accountLookup, data.accounts.length, editTx, form.accountId, form.paymentStatus, selected, todayStr])
+
+    if (isCreditCard) {
+      return `💳 ${baseMsg} Mapped to a Credit Card: this will ${ccAction} by ${s}${form.amount || '0.00'}.`
+    }
+    return baseMsg
+  }, [accountLookup, data.accounts.length, editTx, form.accountId, form.paymentStatus, selected, todayStr, modalType, s, form.amount])
 
   const balanceImpact = useMemo(() => {
     const targetDate = normalizeDate(editTx?.date || selected)
@@ -1624,6 +1649,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       <span className={calStyles.debtRowBalance} style={{ color: 'var(--blue)' }}>
                         {privacyMode ? 'Hidden' : fmt(tx.amount || 0, s)}
                       </span>
+                      <button
+                        type="button"
+                        className={calStyles.delBtnSm}
+                        onClick={() => handleDeleteTransfer(tx)}
+                        aria-label={`Delete transfer ${tx.desc}`}
+                        disabled={selectedDateLocked}
+                        style={{ marginTop: '4px', padding: '0 6px', minHeight: '22px', fontSize: '10px' }}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))}
