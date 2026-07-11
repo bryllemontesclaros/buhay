@@ -1908,15 +1908,15 @@
 
   .cellBalance {
     display: block;
-    font-size: var(--type-support);
-    font-weight: 900;
-    line-height: 1;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.1;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: clip;
     word-break: normal;
     overflow-wrap: normal;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
   }
 
   .balanceRail {
@@ -1945,7 +1945,8 @@
   }
 
   .cellBalance {
-    font-size: var(--type-caption);
+    font-size: 8.2px;
+    letter-spacing: -0.05em;
   }
 }
 
