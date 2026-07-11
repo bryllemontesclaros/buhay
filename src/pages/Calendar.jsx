@@ -300,7 +300,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
   const formatCellBalance = value => {
     if (privacyMode) return ''
-    return formatRoundedBalance(value, s)
+    return formatRoundedBalance(value, '')
   }
 
   function bumpMonth(direction) {
