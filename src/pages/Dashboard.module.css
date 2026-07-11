@@ -24,6 +24,29 @@
   gap: 6px;
 }
 
+.title {
+  font-family: var(--font-header) !important;
+  font-size: var(--type-h2) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+}
+
+:global([data-theme="dark"]) .title {
+  color: #f6f4ef !important;
+}
+
+.subtitle {
+  font-size: var(--type-body-sm) !important;
+  color: #596c80 !important;
+  margin: 0 !important;
+}
+
+:global([data-theme="dark"]) .subtitle {
+  color: rgba(189, 202, 217, 0.65) !important;
+}
+
 .greetingGroup h1 {
   font-family: var(--font-header);
   font-size: var(--type-h2);

@@ -171,6 +171,15 @@
   --purple: #a855f7;
 }
 
+:global([data-theme="light"]) .shellDashboard,
+:global(.force-light-theme) .shellDashboard {
+  --text: #0f172a;
+  --text2: #334155;
+  --text3: #596c80;
+  --border: rgba(0, 0, 0, 0.08);
+  --border2: rgba(0, 0, 0, 0.12);
+}
+
 .shellDashboard::before {
   background:
     radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 28%),
