@@ -82,7 +82,8 @@ export function applyBalanceOverridesToForecast(forecastMap = {}, year, month, b
     const currentDay = nextMap[overrideDate]
     if (!currentDay) return
 
-    const delta = Number(overrideBalance) - currentDay.runningBalance
+    const previousOpeningBalance = currentDay.runningBalance - currentDay.net
+    const delta = Number(overrideBalance) - previousOpeningBalance
     if (!Number.isFinite(delta) || delta === 0) return
 
     sortedDays.forEach(date => {
