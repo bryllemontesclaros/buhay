@@ -1318,7 +1318,28 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               {!editingDayBalance ? (
                 <>
                   <div className={calStyles.dayBalanceHeader}>
-                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day opening balance' : 'Day opening balance'}</span>
+                    <span className={calStyles.dayBalanceLabel}>
+                      {hasManualBalanceOnSelectedDay ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          Pinned day opening balance
+                          <span style={{
+                            fontSize: '9px',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.04em',
+                            textTransform: 'uppercase',
+                            background: 'color-mix(in srgb, var(--blue) 12%, transparent)',
+                            color: 'var(--blue)',
+                            padding: '1px 6px',
+                            borderRadius: '999px',
+                            border: '1px solid color-mix(in srgb, var(--blue) 30%, transparent)'
+                          }}>
+                            Pinned
+                          </span>
+                        </span>
+                      ) : (
+                        'Day opening balance'
+                      )}
+                    </span>
                     <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit opening balance for ${selected}`} disabled={selectedDateLocked}>
                       Edit
                     </Button>
@@ -1354,6 +1375,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       <input
                         type="number"
                         step="0.01"
+                        inputMode="decimal"
+                        autoFocus
                         value={dayBalanceDraft}
                         onChange={event => setDayBalanceDraft(event.target.value)}
                         onKeyDown={event => {
