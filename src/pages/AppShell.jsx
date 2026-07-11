@@ -1026,6 +1026,9 @@ export default function AppShell({ user }) {
   useEffect(() => {
     setChromeMode({ compact: false, hidden: false })
     lastMainScrollRef.current = 0
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0
+    }
   }, [activeSpace, visiblePageKey])
 
   useEffect(() => {

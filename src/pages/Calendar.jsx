@@ -584,12 +584,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (!selected) return
     const rawValue = dayBalanceDraft.trim()
     if (!rawValue) {
-      notifyApp({ title: 'Balance needed', message: 'Enter a valid closing balance before saving.', tone: 'warning' })
+      notifyApp({ title: 'Balance needed', message: 'Enter a valid opening balance before saving.', tone: 'warning' })
       return
     }
     const value = Number(rawValue)
     if (!Number.isFinite(value)) {
-      notifyApp({ title: 'Check balance', message: 'Enter a valid closing balance before saving.', tone: 'warning' })
+      notifyApp({ title: 'Check balance', message: 'Enter a valid opening balance before saving.', tone: 'warning' })
       return
     }
 
@@ -605,7 +605,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       showEntryFeedback({
         eyebrow: 'Day balance',
         title: hasManualBalanceOnSelectedDay ? 'Balance updated' : 'Balance pinned',
-        body: `${selected} now closes at ${formatRoundedBalance(value, s)}. Later days inherit from this point until another manual day balance appears.`,
+        body: `${selected} now opens at ${formatRoundedBalance(value, s)}. Later days inherit from this point until another manual day balance appears.`,
         tone: 'var(--blue)',
       })
       closeDayBalanceEditor()
@@ -1052,7 +1052,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (hasManualBalanceOnSelectedDay) {
       return {
         level: 'ok',
-        msg: 'This day already has a manual closing balance, so later balances stay pinned unless you update that day balance too.',
+        msg: "This day has a manual opening balance pin. Transactions on this day affect the balance but prior history doesn't carry forward.",
       }
     }
     const impact = getTransactionImpact(forecastMap, selected, parseFloat(form.amount), modalType, {
@@ -1318,8 +1318,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               {!editingDayBalance ? (
                 <>
                   <div className={calStyles.dayBalanceHeader}>
-                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day closing balance' : 'Day closing balance'}</span>
-                    <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit closing balance for ${selected}`} disabled={selectedDateLocked}>
+                    <span className={calStyles.dayBalanceLabel}>{hasManualBalanceOnSelectedDay ? 'Pinned day opening balance' : 'Day opening balance'}</span>
+                    <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit opening balance for ${selected}`} disabled={selectedDateLocked}>
                       Edit
                     </Button>
                   </div>
@@ -1329,8 +1329,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     {hasManualBalanceOnSelectedDay
                       ? 'Manual balance override active.'
                       : selectedDayUnpaidCount > 0
-                        ? `Day close excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
-                        : 'Day close includes paid entries only.'}
+                        ? `Day balance excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
+                        : 'Day balance includes paid entries only.'}
                     {latestOverrideEvent?.createdAt && (
                       <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                         Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
@@ -1348,7 +1348,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               ) : (
                 <>
                   <label className={calStyles.dayBalanceField}>
-                    <span className={calStyles.dayBalanceLabel}>Day closing balance for {selected}</span>
+                    <span className={calStyles.dayBalanceLabel}>Day opening balance for {selected}</span>
                     <div className={calStyles.dayBalanceInputWrap}>
                       <span>{s}</span>
                       <input
@@ -1366,7 +1366,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     </div>
                   </label>
                   <div className={calStyles.dayBalanceMeta}>
-                    This pins the calendar close for this day and recalculates later days from here. It does not edit individual account balances.
+                    This pins the calendar opening balance for this day and recalculates later days from here. It does not edit individual account balances.
                   </div>
                   <div className={calStyles.dayBalanceActions}>
                     <Button type="button" variant="ghost" onClick={closeDayBalanceEditor} disabled={dayBalanceSaving}>
@@ -1799,9 +1799,24 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                             >
                               <div className={calStyles.cellAlerts}>
                                 {overdueBills.length > 0 && (
-                                  <svg className={calStyles.overdueBillAlert} viewBox="0 0 24 24" fill="currentColor" title="Overdue bill scheduled">
-                                    <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
-                                  </svg>
+                                  ds <= todayStr ? (
+                                    <svg className={calStyles.overdueBillAlert} viewBox="0 0 24 24" fill="currentColor" title="Overdue bill scheduled">
+                                      <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
+                                    </svg>
+                                  ) : (
+                                    <div
+                                      style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        background: 'var(--amber)',
+                                        opacity: 0.7,
+                                        flexShrink: 0,
+                                        marginTop: '1px'
+                                      }}
+                                      title="Upcoming bill scheduled"
+                                    />
+                                  )
                                 )}
                                 {dayDueDebts.map(debt => (
                                   <div 

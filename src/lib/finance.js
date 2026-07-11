@@ -318,7 +318,7 @@ export function getBalanceAtDateWithOverrides(accounts = [], income = [], expens
       const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, closestOverrideDate, target)
       
       const deltaUntilTarget = [...actualLedger, ...projectedLedger]
-        .filter(entry => entry.date > closestOverrideDate && entry.date <= target)
+        .filter(entry => entry.date >= closestOverrideDate && entry.date <= target)
         .reduce((sum, entry) => sum + entry.signedAmount, 0)
       
       return overrideVal + deltaUntilTarget

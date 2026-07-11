@@ -34,11 +34,35 @@ export function isRecurringCycleSettled(entries = [], tx = {}) {
   const occurrenceKey = getRecurringOccurrenceKey(tx)
   if (!sourceId || !occurrenceKey) return false
 
-  return entries.some(existing => (
+  // 1. Exact match via recurrenceSourceId and occurrenceKey
+  const hasExactMatch = entries.some(existing => (
     !existing?._projected
     && existing?.recurrenceSourceId === sourceId
     && getRecurringOccurrenceKey(existing) === occurrenceKey
   ))
+  if (hasExactMatch) return true
+
+  // 2. Fallback heuristic: check if another actual transaction has already been logged on this date
+  // with a highly similar description/category and exact same amount, which prevents double-payment
+  const amount = Number(tx.amount) || 0
+  const normalizedDesc = String(tx.desc || tx.cat || '').toLowerCase().trim()
+
+  return entries.some(existing => {
+    if (existing?._projected) return false
+    if (getRecurringOccurrenceKey(existing) !== occurrenceKey) return false
+
+    const existingAmount = Number(existing.amount) || 0
+    if (Math.abs(existingAmount - amount) > 0.01) return false
+
+    const existingDesc = String(existing.desc || existing.cat || '').toLowerCase().trim()
+
+    // Check if descriptions are similar (e.g. one contains the other, or one is "X payment" and other is "X")
+    const isSimilarDesc = existingDesc.includes(normalizedDesc)
+      || normalizedDesc.includes(existingDesc)
+      || (existingDesc.replace(/\s+payment$/, '') === normalizedDesc.replace(/\s+payment$/, ''))
+
+    return isSimilarDesc
+  })
 }
 
 export function isRecurringRecordedOffDueDate(tx = {}) {
