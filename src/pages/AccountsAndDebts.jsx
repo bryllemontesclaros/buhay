@@ -18,8 +18,15 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
   const debts = Array.isArray(data?.debts) ? data.debts : []
 
-  const totalAssets = accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
-  const totalDebts = debts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
+  const assetAccounts = accounts.filter(acc => acc.type !== 'Credit Card')
+  const creditCardAccounts = accounts.filter(acc => acc.type === 'Credit Card')
+
+  const accountIds = new Set(accounts.map(a => a._id))
+  const unlinkedDebts = debts.filter(d => !d.accountId || !accountIds.has(d.accountId))
+
+  const totalAssets = assetAccounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
+  const totalDebts = unlinkedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0) +
+                     creditCardAccounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
   const netWorth = totalAssets - totalDebts
 
   return (

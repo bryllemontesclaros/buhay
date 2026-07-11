@@ -505,7 +505,7 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
                 )}
               </div>
               <div className={dStyles.debtMeta}>
-                {debt.type} · {debt.interestRate}% APR
+                {debt.type} {Number(debt.interestRate) > 0 ? `· ${debt.interestRate}% APR` : ''}
                 {debt.contactName && ` · Contact: ${debt.contactName}`}
               </div>
             </div>
@@ -988,7 +988,7 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
 
             <div className={dStyles.formRowTwoCol}>
               <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR)</label>
+                <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR) - Optional</label>
                 <input
                   id="debt-rate"
                   className={dStyles.fieldInput}
