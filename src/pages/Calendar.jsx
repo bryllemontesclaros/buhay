@@ -1798,26 +1798,6 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                               aria-label={dayAriaLabel}
                             >
                               <div className={calStyles.cellAlerts}>
-                                {overdueBills.length > 0 && (
-                                  ds <= todayStr ? (
-                                    <svg className={calStyles.overdueBillAlert} viewBox="0 0 24 24" fill="currentColor" title="Overdue bill scheduled">
-                                      <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2V8h2v4z"/>
-                                    </svg>
-                                  ) : (
-                                    <div
-                                      style={{
-                                        width: '6px',
-                                        height: '6px',
-                                        borderRadius: '50%',
-                                        background: 'var(--amber)',
-                                        opacity: 0.7,
-                                        flexShrink: 0,
-                                        marginTop: '1px'
-                                      }}
-                                      title="Upcoming bill scheduled"
-                                    />
-                                  )
-                                )}
                                 {dayDueDebts.map(debt => (
                                   <div 
                                     key={debt._id} 
