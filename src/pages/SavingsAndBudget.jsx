@@ -15,7 +15,7 @@ export default function SavingsAndBudget({ user, data, profile = {}, symbol, pri
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <div className={styles.title}>Savings & Budget</div>
+        <div className={styles.title}>Budgets</div>
         <div className={styles.sub}>Set category monthly budget limits and plan your savings target goals.</div>
       </div>
 

@@ -15,7 +15,7 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <div className={styles.title}>History & Insights</div>
+        <div className={styles.title}>Insights</div>
         <div className={styles.sub}>Review transaction history ledger records and analyze visual cash flow distributions.</div>
       </div>
 

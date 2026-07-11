@@ -1040,10 +1040,10 @@ export default function AppShell({ user }) {
   const nav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
 
-    { id: 'accounts', label: 'Accounts & Debts', iconKey: 'accounts', section: 'Do' },
+    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
-    { id: 'budget', label: 'Savings & Budget', iconKey: 'budget', section: 'Review' },
-    { id: 'history', label: 'History & Insights', iconKey: 'history', section: null },
+    { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
+    { id: 'history', label: 'Insights', iconKey: 'history', section: null },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const lakasNav = [
@@ -1059,10 +1059,10 @@ export default function AppShell({ user }) {
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const takdaMoreNav = [
-    { id: 'accounts', label: 'Accounts & Debts', iconKey: 'accounts', section: 'Review' },
+    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: 'Review' },
-    { id: 'budget', label: 'Savings & Budget', iconKey: 'budget', section: 'Review' },
-    { id: 'history', label: 'History & Insights', iconKey: 'history', section: 'Review' },
+    { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
+    { id: 'history', label: 'Insights', iconKey: 'history', section: 'Review' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
 

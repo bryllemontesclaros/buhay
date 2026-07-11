@@ -33,7 +33,7 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
     <div className={styles.page}>
       <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div className={styles.title}>Accounts & Debts</div>
+          <div className={styles.title}>Accounts</div>
           <div className={styles.sub}>Manage cash flow accounts, track card utilization, and plan debt payoff strategies.</div>
         </div>
         
