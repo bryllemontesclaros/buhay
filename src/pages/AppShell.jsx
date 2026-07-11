@@ -759,7 +759,8 @@ export default function AppShell({ user }) {
     if (preferredSpaceAppliedRef.current) return
     if (!['dashboard', 'takda', 'lakas', 'tala'].includes(profile?.preferredSpace)) return
     preferredSpaceAppliedRef.current = true
-    setActiveSpace(profile.preferredSpace)
+    const targetSpace = profile?.preferredSpace === 'takda' ? 'dashboard' : profile.preferredSpace
+    setActiveSpace(targetSpace || 'dashboard')
   }, [profile?.preferredSpace])
 
   useEffect(() => {
