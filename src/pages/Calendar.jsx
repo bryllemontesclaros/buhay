@@ -1398,7 +1398,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
           <div className={calStyles.dayPanelBody}>
 
-            {(unpaidBillsByDateKey[selected] || []).length > 0 && (
+            {selected === todayStr && (unpaidBillsByDateKey[selected] || []).length > 0 && (
               <div className={calStyles.daySection}>
                 <div className={calStyles.daySectionHeader}>
                   <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Unpaid Bills Due Today</div>
