@@ -24,19 +24,27 @@
   gap: 6px;
 }
 
-.title {
+.greetingGroup h1 {
   font-family: var(--font-header);
   font-size: var(--type-h2);
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--text) !important;
+  color: #0f172a !important;
   margin: 0;
 }
 
-.subtitle {
+:global([data-theme="dark"]) .greetingGroup h1 {
+  color: #f6f4ef !important;
+}
+
+.greetingGroup p {
   font-size: var(--type-body-sm);
-  color: var(--text3) !important;
+  color: #596c80 !important;
   margin: 0;
+}
+
+:global([data-theme="dark"]) .greetingGroup p {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .streakBadge {
@@ -69,7 +77,7 @@
   font-family: var(--font-mono);
   font-size: var(--type-body);
   font-weight: 700;
-  color: #ff9800;
+  color: #ff9800 !important;
 }
 
 .streakLabel {
@@ -77,7 +85,11 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--text3);
+  color: #596c80 !important;
+}
+
+:global([data-theme="dark"]) .streakLabel {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 /* BENTO GRID */
@@ -141,9 +153,13 @@
   font-family: var(--font-header);
   font-size: var(--type-h3);
   font-weight: 600;
-  color: var(--text) !important;
+  color: #0f172a !important;
   margin: 0;
   letter-spacing: -0.01em;
+}
+
+:global([data-theme="dark"]) .cardTitle {
+  color: #f6f4ef !important;
 }
 
 .viewBtn {
@@ -182,7 +198,11 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--text3) !important;
+  color: #596c80 !important;
+}
+
+:global([data-theme="dark"]) .metricLabel {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .metricVal {
@@ -190,7 +210,11 @@
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--text) !important;
+  color: #0f172a !important;
+}
+
+:global([data-theme="dark"]) .metricVal {
+  color: #f6f4ef !important;
 }
 
 .subMetricsGrid {
@@ -210,16 +234,24 @@
 
 .subMetricLabel {
   font-size: 10px;
-  color: var(--text3) !important;
+  color: #596c80 !important;
   font-weight: 500;
+}
+
+:global([data-theme="dark"]) .subMetricLabel {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .subMetricVal {
   font-family: var(--font-mono);
   font-size: var(--type-body-sm);
   font-weight: 600;
-  color: var(--text) !important;
+  color: #0f172a !important;
   margin-top: 2px;
+}
+
+:global([data-theme="dark"]) .subMetricVal {
+  color: #f6f4ef !important;
 }
 
 .widgetDivider {
@@ -237,8 +269,12 @@
 .extraTitle {
   font-size: var(--type-body-sm);
   font-weight: 600;
-  color: var(--text2) !important;
+  color: #334155 !important;
   margin: 0;
+}
+
+:global([data-theme="dark"]) .extraTitle {
+  color: rgba(232, 238, 244, 0.78) !important;
 }
 
 .nextBillRow {
@@ -260,12 +296,20 @@
 .nextBillName {
   font-size: var(--type-body-sm);
   font-weight: 500;
-  color: var(--text) !important;
+  color: #0f172a !important;
+}
+
+:global([data-theme="dark"]) .nextBillName {
+  color: #f6f4ef !important;
 }
 
 .nextBillDate {
   font-size: var(--type-caption);
-  color: var(--text3) !important;
+  color: #596c80 !important;
+}
+
+:global([data-theme="dark"]) .nextBillDate {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .nextBillAmount {
@@ -276,9 +320,13 @@
 
 .emptyText {
   font-size: var(--type-caption);
-  color: var(--text3) !important;
+  color: #596c80 !important;
   margin: 4px 0 0 0;
   font-style: italic;
+}
+
+:global([data-theme="dark"]) .emptyText {
+  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 /* HEALTH HABITS GRID */
@@ -327,6 +375,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #0f172a !important;
+}
+
+:global([data-theme="dark"]) .habitLabel {
+  color: #f6f4ef !important;
+}
+
+.habitPillDone .habitLabel {
+  color: var(--accent) !important;
 }
 
 /* MOOD ACCENT ELEMENT */
@@ -388,16 +445,22 @@
 }
 
 .quickJournalInput {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
+  background: #f8f9fa !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
   border-radius: 16px;
-  color: var(--text);
+  color: #0f172a !important;
   font-size: var(--type-caption);
   font-family: inherit;
   padding: 12px;
   outline: none;
   resize: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:global([data-theme="dark"]) .quickJournalInput {
+  background: #121f2f !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  color: #f6f4ef !important;
 }
 
 .quickJournalInput:focus {
