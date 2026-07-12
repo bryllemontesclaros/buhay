@@ -2622,7 +2622,7 @@
 
   :global(.neo) .mobileSpaceSwitch {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 100%;
     gap: 6px;
     overflow: visible;
@@ -2741,7 +2741,7 @@
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 100%;
     min-width: 0;
     gap: 8px;
