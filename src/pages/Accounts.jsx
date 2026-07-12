@@ -138,15 +138,25 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       utilization: utilizationRate,
     }
   })
-  const totalBalance = getTakdaTotalBalanceNow(accounts, data.debts || [])
-  const liquidTotal = accountsWithMeta
+  const allAccounts = data.accounts || []
+  const totalBalance = getTakdaTotalBalanceNow(allAccounts, data.debts || [])
+  const liquidTotal = allAccounts
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
-    .reduce((sum, account) => sum + account.signedBalance, 0)
-  const debtTotal = Math.abs(
-    accountsWithMeta
-      .filter(account => account.signedBalance < 0)
-      .reduce((sum, account) => sum + account.signedBalance, 0),
-  )
+    .reduce((sum, account) => sum + Math.max(0, Number(account.balance) || 0), 0)
+
+  const ccDebts = allAccounts
+    .filter(account => account.type === 'Credit Card')
+    .reduce((sum, account) => sum + Math.abs(Number(account.balance) || 0), 0)
+
+  const allAccountIds = new Set(allAccounts.map(a => a._id))
+  const unlinkedDebtsList = (data.debts || []).filter(d => !d.accountId || !allAccountIds.has(d.accountId))
+  const otherDebts = unlinkedDebtsList.reduce((sum, d) => sum + Math.abs(Number(d.balance) || 0), 0)
+
+  const negativeAssetTotal = allAccounts
+    .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type) && Number(account.balance) < 0)
+    .reduce((sum, account) => sum + Math.abs(Number(account.balance)), 0)
+
+  const debtTotal = ccDebts + otherDebts + negativeAssetTotal
   const accountTypeCount = new Set(accountsWithMeta.map(account => account.type)).size
   const primaryAccount = [...accountsWithMeta]
     .sort((a, b) => Math.abs(b.signedBalance) - Math.abs(a.signedBalance))[0] || null
