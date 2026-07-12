@@ -1,4 +1,4 @@
-const CACHE = 'buhay-v6'
+const CACHE = 'buhay-v7'
 const APP_SHELL = '/'
 const ASSETS = [APP_SHELL, '/manifest.json', '/buhay-icon.svg', '/favicon.svg']
 

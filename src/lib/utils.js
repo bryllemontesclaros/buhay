@@ -38,7 +38,7 @@ export function fmt(n, symbol = '₱') {
 }
 
 export function displayValue(hidden, visible, masked = '••••') {
-  return visible
+  return hidden ? masked : visible
 }
 
 export function maskMoney(symbol = '₱') {
