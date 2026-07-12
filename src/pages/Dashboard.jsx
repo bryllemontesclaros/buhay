@@ -63,8 +63,8 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     const cashAccounts = accounts.filter(a => a.type !== 'Credit Card')
     const creditCardAccounts = accounts.filter(a => a.type === 'Credit Card')
 
-    const totalCash = cashAccounts.reduce((sum, a) => sum + (a.balance || 0), 0)
-    const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + (a.balance || 0), 0)
+    const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a.balance || 0), 0)
+    const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a.balance || 0), 0)
     const netWorth = totalCash - totalCCDebt
 
     // Closest upcoming unpaid bill
