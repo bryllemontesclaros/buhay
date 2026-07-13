@@ -376,7 +376,7 @@ export default function LandingPage() {
   }, [])
 
   const primaryLabel = authReady
-    ? (isSignedIn ? 'Open the app' : 'Start free')
+    ? (isSignedIn ? 'Open the app' : 'Join Beta')
     : 'Open Buhay'
 
   /**
@@ -504,7 +504,7 @@ export default function LandingPage() {
 
                 <div className={styles.heroCardRow}>
                   <button type="button" className={`${styles.btnPrimary} ${styles.heroStartButton}`} onClick={() => openPrimary()}>
-                    {isSignedIn ? 'Open the app' : 'Start free now'}
+                    {isSignedIn ? 'Open the app' : 'Join Beta now'}
                   </button>
                 </div>
 

@@ -81,6 +81,7 @@ export default function AuthScreen() {
     email: safeGet(REMEMBERED_EMAIL_KEY, ''),
     password: '',
     confirm: '',
+    inviteCode: '',
   }))
   const [rememberMe, setRememberMe] = useState(() => safeGet(REMEMBERED_EMAIL_MODE_KEY, 'true') !== 'false')
   const [showForgot, setShowForgot] = useState(false)
@@ -118,6 +119,7 @@ export default function AuthScreen() {
     if (!form.name || !form.email || !form.password) return setError('Enter your name, email, and password.')
     if (form.password !== form.confirm) return setError('Passwords do not match.')
     if (form.password.length < 6) return setError('Use at least 6 characters.')
+    if (!['BUHAY-BETA', 'BUHAY2026'].includes((form.inviteCode || '').trim().toUpperCase())) return setError('Invalid or expired access code.')
     setLoading(true); setError(''); setSuccess('')
     try {
       if (intendedStart) setStartSpaceIntent(intendedStart)
@@ -315,6 +317,7 @@ export default function AuthScreen() {
                     </button>
                   </div>
                 </div>
+                <div className={styles.field}><label>Access Code</label><input type="text" placeholder="BUHAY-BETA" value={form.inviteCode} onChange={e => set('inviteCode', e.target.value)} autoComplete="off" /></div>
                 <button className={styles.btnPrimary} type="submit" disabled={loading}>{loading ? 'Creating account...' : startSpaceLabel ? `Create account and open ${startSpaceLabel}` : 'Create account'}</button>
                 <p className={styles.legalNotice}>
                   By creating an account, you agree to Buhay&apos;s <Link className={styles.legalLink} to="/terms">Terms of Use</Link> and acknowledge the <Link className={styles.legalLink} to="/privacy">Privacy Policy</Link>.
