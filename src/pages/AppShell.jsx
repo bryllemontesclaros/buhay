@@ -592,10 +592,14 @@ export default function AppShell({ user }) {
   const [activeTour, setActiveTour] = useState(null)
   const autoTriggeredRef = useRef({ takda: false, lakas: false, tala: false })
 
-  // Auto-trigger tour if user enters a space for the first time
+  // Auto-trigger tour if user enters a space for the first time after registering
   useEffect(() => {
     if (!profile || Object.keys(profile).length === 0) return
     
+    // Only auto-trigger if they recently finished registration onboarding in this session
+    const justRegistered = sessionStorage.getItem('just_registered') === 'true'
+    if (!justRegistered) return
+
     // Check if the current space has a completed tour flag
     const completedFlag = 
       activeSpace === 'takda' ? profile.hasCompletedTakdaTour :
@@ -1747,20 +1751,7 @@ export default function AppShell({ user }) {
           </div>
           <div className={styles.topBarRight}>
 
-            <button
-              type="button"
-              className={styles.themeBtn}
-              onClick={() => {
-                setActiveTour(activeSpace)
-              }}
-              title="Play guided tour for this space"
-              aria-label="Play guided tour for this space"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-              </svg>
-            </button>
+
             <button
               type="button"
               className={styles.themeBtn}

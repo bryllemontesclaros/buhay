@@ -677,6 +677,7 @@ export default function Onboarding({ user, onDone, notice = '' }) {
         bills: preparedBills,
         lakasBodyLogs,
       })
+      sessionStorage.setItem('just_registered', 'true')
       clearStartSpaceIntent()
       setSaving(false)
       onDone()
