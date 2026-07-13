@@ -419,6 +419,9 @@ export default function LandingPage() {
         description="Track money, fitness, and reflection in three focused spaces inside one account."
         path="/"
       />
+      <div className={styles.backdropWrap} aria-hidden="true">
+        <div className={styles.backdrop} />
+      </div>
       <a href="#landing-main" className="skipLink">Skip to main content</a>
 
       <div className={styles.ribbon} aria-hidden="true">
