@@ -1174,9 +1174,7 @@ export default function AppShell({ user }) {
         ? lakasNav
         : talaNav
   ).find(item => item.id === visiblePageKey) || currentSidebarNav[0]
-  const activeWorkspaceLabel = activeSpace === 'takda' && selectedFinanceTool
-    ? selectedFinanceTool.label
-    : currentNavItem?.label || activeSpaceConfig.label
+  const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', space: 'takda' },
