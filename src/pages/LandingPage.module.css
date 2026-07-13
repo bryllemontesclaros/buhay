@@ -62,18 +62,6 @@
 /* ---------------------------------------------------- */
 
 .page {
-  --bg: #071018;
-  --bg-deep: #03070d;
-  --surface: #0c1622;
-  --surface2: #121f2f;
-  --surface3: #192a3e;
-  --text: #f6f4ef;
-  --text2: rgba(232, 238, 244, 0.78);
-  --text3: rgba(189, 202, 217, 0.65);
-  --border: rgba(204, 219, 236, 0.09);
-  --border2: rgba(218, 230, 242, 0.16);
-  --accent: #69d4b2;
-
   --btn-h-lg: 54px;
   --btn-h-md: 46px;
   --select-h: 54px;
@@ -151,12 +139,18 @@
   margin: var(--space-4) auto 0;
   border: 1px solid var(--border2);
   border-radius: 999px;
-  background: rgba(12, 22, 34, 0.72);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   box-sizing: border-box;
+  transition: background-color var(--motion-duration) var(--motion-ease-out), border-color var(--motion-duration) var(--motion-ease-out);
+}
+
+:global([data-theme="dark"]) .nav {
+  background: rgba(12, 22, 34, 0.72);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .navInner {
@@ -291,25 +285,36 @@
 }
 
 .btnGhost {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   color: var(--text);
   border: 1px solid var(--border2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  transition: background-color var(--motion-duration-fast) var(--motion-ease-out), border-color var(--motion-duration-fast) var(--motion-ease-out), transform var(--motion-duration-fast) var(--motion-ease-out), box-shadow var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+:global([data-theme="dark"]) .btnGhost {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .btn:hover,
 .btnPrimary:hover,
 .btnGhost:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(105, 212, 178, 0.2);
+  box-shadow: 0 10px 24px rgba(105, 212, 178, 0.15);
+}
+
+:global([data-theme="dark"]) .btn:hover,
+:global([data-theme="dark"]) .btnPrimary:hover,
+:global([data-theme="dark"]) .btnGhost:hover {
+  box-shadow: 0 10px 24px rgba(105, 212, 178, 0.3);
 }
 
 .btn:active,
 .btnPrimary:active,
 .btnGhost:active {
   transform: translateY(0) scale(0.97);
-  box-shadow: 0 2px 4px rgba(105, 212, 178, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .pillRow {
@@ -522,7 +527,7 @@
   border-radius: 34px;
   box-shadow: var(--glass-shadow-soft);
   padding: var(--space-5);
-  background: rgba(12, 22, 34, 0.48);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: grid;
@@ -533,8 +538,16 @@
 
 .heroCard:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(0, 0, 0, 0.15);
   box-shadow: var(--glass-shadow-strong);
+}
+
+:global([data-theme="dark"]) .heroCard {
+  background: rgba(12, 22, 34, 0.48);
+}
+
+:global([data-theme="dark"]) .heroCard:hover {
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .heroStartHeader {
@@ -945,7 +958,7 @@
   min-height: 360px;
   padding: var(--space-6) var(--space-4) var(--space-4);
   text-align: left;
-  background: rgba(12, 22, 34, 0.48);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s var(--ease-fluid);
@@ -956,6 +969,14 @@
 .beatCard:hover {
   transform: translateY(-6px);
   box-shadow: var(--glass-shadow-strong), 0 0 30px color-mix(in srgb, var(--tone-main, var(--accent)) 10%, transparent);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+:global([data-theme="dark"]) .beatCard {
+  background: rgba(12, 22, 34, 0.48);
+}
+
+:global([data-theme="dark"]) .beatCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -1052,7 +1073,7 @@
   border: 1px solid var(--border2);
   box-shadow: var(--glass-shadow-soft);
   padding: var(--space-5) var(--space-4);
-  background: rgba(12, 22, 34, 0.48);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   text-align: left;
@@ -1068,6 +1089,14 @@
 .spaceCard:hover {
   transform: translateY(-6px);
   box-shadow: var(--glass-shadow-strong), 0 0 30px color-mix(in srgb, var(--tone-main, var(--accent)) 10%, transparent);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+:global([data-theme="dark"]) .spaceCard {
+  background: rgba(12, 22, 34, 0.48);
+}
+
+:global([data-theme="dark"]) .spaceCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
 }
 
