@@ -3,6 +3,7 @@ import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
 import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '../lib/utils'
+import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
 import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
@@ -857,6 +858,28 @@ export default function AppShell({ user }) {
       document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [user, data.accounts, data.expenses, data.income])
+
+  const autoRecurRunRef = useRef(false)
+
+  useEffect(() => {
+    if (!user || autoRecurRunRef.current) return
+    if (!data.income || !data.expenses || !data.accounts) return
+    
+    // Prevent running immediately on empty arrays if we just haven't fetched yet,
+    // though listenCol generally fires with the cached snapshot quickly.
+    autoRecurRunRef.current = true
+    
+    runAutoRecurrenceEngine(user.uid, data.income, data.expenses, data.accounts)
+      .then(addedCount => {
+        if (addedCount > 0) {
+          playTick()
+          console.log(`Buhay AutoRecurEngine: ${addedCount} transactions automatically logged.`)
+        }
+      })
+      .catch(err => {
+        console.error('Buhay AutoRecurEngine Error:', err)
+      })
+  }, [user, data.income, data.expenses, data.accounts])
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
   const [privacyMode, setPrivacyMode] = useState(() => {
