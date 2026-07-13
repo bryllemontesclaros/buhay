@@ -1100,6 +1100,7 @@ export default function AppShell({ user }) {
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
+    { id: 'subscriptions', label: 'Subscriptions', iconKey: 'bills', section: null },
     { id: 'history', label: 'Insights', iconKey: 'history', section: null },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
