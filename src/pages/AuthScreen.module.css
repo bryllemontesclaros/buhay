@@ -504,7 +504,7 @@
 .passwordToggle:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 1px; }
 .checkRow { display: flex; align-items: center; gap: 10px; font-size: var(--type-body-sm); color: var(--text2); margin-bottom: 12px; cursor: pointer; user-select: none; }
 .checkRow input { width: 16px; height: 16px; accent-color: var(--accent); }
-.btnPrimary { width: 100%; min-height: 48px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: var(--type-body); font-weight: 800; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent); }
+.btnPrimary { width: 100%; min-height: 50px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius); font-size: var(--type-body); font-weight: 800; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent); }
 .btnPrimary:hover { opacity: 0.94; transform: translateY(-1px); }
 .btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
 .legalNotice {
@@ -525,7 +525,7 @@
 }
 .divider { display: flex; align-items: center; gap: 12px; margin: 1rem 0; color: var(--text3); font-size: var(--type-support); }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.btnGoogle { width: 100%; min-height: 46px; padding: 10px; background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: var(--type-body-sm); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s, transform 0.16s ease; }
+.btnGoogle { width: 100%; min-height: 50px; padding: 10px; background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-size: var(--type-body-sm); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s, transform 0.16s ease; }
 .btnGoogle:hover { border-color: var(--border2); transform: translateY(-1px); }
 .forgotLink { background: none; border: none; color: var(--text3); font-size: var(--type-support); cursor: pointer; font-family: var(--font-body); padding: 0; margin-bottom: 12px; display: block; text-align: right; width: 100%; }
 .forgotLink:hover { color: var(--accent); }

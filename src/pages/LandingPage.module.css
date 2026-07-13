@@ -62,9 +62,9 @@
 /* ---------------------------------------------------- */
 
 .page {
-  --btn-h-lg: 54px;
+  --btn-h-lg: 52px;
   --btn-h-md: 46px;
-  --select-h: 54px;
+  --select-h: 52px;
   
   min-height: 100vh;
   min-height: 100dvh;
@@ -279,9 +279,10 @@
 }
 
 .btnPrimary {
-  background: var(--accent);
-  color: var(--bg-deep);
-  border: 1px solid var(--accent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%));
+  color: #08110d;
+  border: 1px solid var(--border2);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .btnGhost {
@@ -1715,7 +1716,6 @@
     top: auto;
     max-width: calc(100% - 24px);
     margin: 10px 12px 0;
-    border-width: 3px;
     border-radius: 28px;
   }
 
@@ -1736,7 +1736,6 @@
     width: 42px;
     height: 42px;
     font-size: 21px;
-    border-width: 3px;
   }
 
   .brandName {
@@ -1760,7 +1759,6 @@
     width: 100%;
     height: var(--btn-h-md);
     font-size: 16px;
-    border-width: 3px;
     border-radius: 999px;
   }
 
@@ -1814,7 +1812,6 @@
 
   .heroChecklist .heroPromise {
     min-height: 0;
-    border-width: 3px;
     padding: 14px;
   }
 

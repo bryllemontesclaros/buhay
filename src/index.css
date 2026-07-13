@@ -105,6 +105,10 @@
   --font-brutal: 'Plus Jakarta Sans', sans-serif;
   --font-editorial: 'Plus Jakarta Sans', sans-serif;
   --font-ui: 'Plus Jakarta Sans', sans-serif;
+  --font-header: var(--font-display);
+  --nb-font-display: var(--font-display);
+  --nb-font-body: var(--font-body);
+  --nb-font-mono: var(--font-mono);
 
   --type-overline: 10px;
   --type-caption: 11px;
