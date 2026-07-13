@@ -1119,6 +1119,7 @@ export default function AppShell({ user }) {
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'bills', label: 'Bills', iconKey: 'bills', section: 'Review' },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
+    { id: 'subscriptions', label: 'Subscriptions', iconKey: 'bills', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: 'Review' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
@@ -1135,6 +1136,7 @@ export default function AppShell({ user }) {
     breakdown: HistoryAndInsights,
     budget: SavingsAndBudget,
     bills: Bills,
+    subscriptions: Subscriptions,
   }
   const PageComponent = activeSpace === 'dashboard'
     ? Dashboard
@@ -1175,9 +1177,9 @@ export default function AppShell({ user }) {
     : currentNavItem?.label || activeSpaceConfig.label
   const financeBottomNav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
-
     { id: 'bills', label: 'Bills', iconKey: 'bills', space: 'takda' },
     { id: 'history', label: 'History', iconKey: 'history', space: 'takda' },
+    { id: 'subscriptions', label: 'Subs', iconKey: 'bills', space: 'takda' },
   ]
   const lakasBottomNav = [
     { id: 'workout', label: 'Workout', iconKey: 'workouts', space: 'lakas' },
