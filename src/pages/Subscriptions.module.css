@@ -1,0 +1,147 @@
+.subGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.subCard {
+  background: color-mix(in srgb, var(--glass-1) 50%, var(--surface) 50%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.subCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--glass-border-hover);
+}
+
+.subCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.subCardTitle {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.subCardSubcat {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.badgeIncome, .badgeExpense {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.badgeIncome {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.badgeExpense {
+  background: var(--red-dim);
+  color: var(--red);
+}
+
+.subCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: color-mix(in srgb, var(--glass-1) 30%, transparent);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.subCardDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detailLabel {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.detailValue {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.amountIncome {
+  font-size: 15px;
+  color: var(--green);
+  font-family: var(--font-mono);
+}
+
+.amountExpense {
+  font-size: 15px;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+.subCardFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px dashed color-mix(in srgb, var(--glass-border) 50%, var(--border));
+}
+
+.stopBtn {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--text2) 20%, var(--border));
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stopBtn:hover {
+  background: var(--red-dim);
+  color: var(--red);
+  border-color: transparent;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: color-mix(in srgb, var(--glass-1) 50%, var(--surface) 50%);
+  border: 1px dashed color-mix(in srgb, var(--glass-border) 60%, var(--border));
+  border-radius: 20px;
+}
+
+.emptyState h4 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--text);
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text2);
+}

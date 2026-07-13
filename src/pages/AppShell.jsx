@@ -21,6 +21,7 @@ import Savings from './Savings'
 import History from './History'
 import Breakdown from './Breakdown'
 import Dashboard from './Dashboard'
+import Subscriptions from './Subscriptions'
 import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
@@ -382,6 +383,7 @@ const FINANCE_PAGE_ALIASES = {
   bills: { page: 'bills' },
   budget: { page: 'budget' },
   debts: { page: 'debts' },
+  subscriptions: { page: 'subscriptions' },
 }
 
 const MONEY_TOOLS = [
@@ -429,6 +431,12 @@ const PLAN_TOOLS = [
     label: 'Debts',
     meta: 'CC & loan payoff tracking',
     Component: Debts,
+  },
+  {
+    id: 'subscriptions',
+    label: 'Subscriptions',
+    meta: 'Recurring income & expenses',
+    Component: Subscriptions,
   },
 ]
 
