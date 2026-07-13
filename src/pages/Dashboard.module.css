@@ -25,26 +25,18 @@
 }
 
 .title {
-  font-family: var(--font-header) !important;
-  font-size: var(--type-h2) !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
-  color: #0f172a !important;
-  margin: 0 !important;
-}
-
-:global([data-theme="dark"]) .title {
-  color: #f6f4ef !important;
+  font-family: var(--font-header);
+  font-size: var(--type-h2);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0;
 }
 
 .subtitle {
-  font-size: var(--type-body-sm) !important;
-  color: #596c80 !important;
-  margin: 0 !important;
-}
-
-:global([data-theme="dark"]) .subtitle {
-  color: rgba(189, 202, 217, 0.65) !important;
+  font-size: var(--type-body-sm);
+  color: var(--text3);
+  margin: 0;
 }
 
 .greetingGroup h1 {
@@ -52,22 +44,14 @@
   font-size: var(--type-h2);
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #0f172a !important;
+  color: var(--text);
   margin: 0;
-}
-
-:global([data-theme="dark"]) .greetingGroup h1 {
-  color: #f6f4ef !important;
 }
 
 .greetingGroup p {
   font-size: var(--type-body-sm);
-  color: #596c80 !important;
+  color: var(--text3);
   margin: 0;
-}
-
-:global([data-theme="dark"]) .greetingGroup p {
-  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .streakBadge {
@@ -75,16 +59,16 @@
   align-items: center;
   gap: 12px;
   padding: 12px 18px;
-  background: rgba(255, 136, 0, 0.08);
-  border: 1px solid rgba(255, 136, 0, 0.2);
+  background: color-mix(in srgb, var(--peach) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--peach) 25%, transparent);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(255, 136, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .streakBadge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 136, 0, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
 }
 
 .streakEmoji {
@@ -100,7 +84,7 @@
   font-family: var(--font-mono);
   font-size: var(--type-body);
   font-weight: 700;
-  color: #ff9800 !important;
+  color: var(--peach);
 }
 
 .streakLabel {
@@ -108,11 +92,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: #596c80 !important;
-}
-
-:global([data-theme="dark"]) .streakLabel {
-  color: rgba(189, 202, 217, 0.65) !important;
+  color: var(--text3);
 }
 
 /* BENTO GRID */

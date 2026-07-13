@@ -193,14 +193,14 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.greetingGroup}>
-          <h1 className={styles.title} style={{ color: theme === 'dark' ? '#f6f4ef' : '#0f172a' }}>{greeting}</h1>
-          <p className={styles.subtitle} style={{ color: theme === 'dark' ? 'rgba(189, 202, 217, 0.65)' : '#596c80' }}>Welcome to your life control center.</p>
+          <h1 className={styles.title}>{greeting}</h1>
+          <p className={styles.subtitle}>Welcome to your life control center.</p>
         </div>
         <div className={styles.streakBadge} title="Combined wealth, health, and mind consistency streak">
           <span className={styles.streakEmoji}>🔥</span>
           <div className={styles.streakText}>
-            <span className={styles.streakVal} style={{ color: '#ff9800' }}>{streak} day{streak !== 1 ? 's' : ''}</span>
-            <span className={styles.streakLabel} style={{ color: theme === 'dark' ? 'rgba(189, 202, 217, 0.65)' : '#596c80' }}>Buhay Rhythm</span>
+            <span className={styles.streakVal}>{streak} day{streak !== 1 ? 's' : ''}</span>
+            <span className={styles.streakLabel}>Buhay Rhythm</span>
           </div>
         </div>
       </header>
