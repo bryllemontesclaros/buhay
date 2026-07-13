@@ -462,17 +462,12 @@
   letter-spacing: -0.02em;
 }
 
-.spaceSwitcher {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 8px;
+.sidebarWorkspaceSelectWrap {
   padding: 0 10px 12px;
 }
 
-.spaceButton {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
+.sidebarWorkspaceSelect {
+  display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -489,67 +484,54 @@
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
     background var(--motion-duration) var(--motion-ease-standard),
-    color var(--motion-duration) var(--motion-ease-standard),
     box-shadow var(--motion-duration) var(--motion-ease-standard);
 }
 
-.spaceButton:hover {
+.sidebarWorkspaceSelect:hover {
   transform: translateY(-2px) scale(1.01);
   color: var(--text);
   border-color: color-mix(in srgb, var(--glass-highlight) 32%, var(--glass-border));
 }
 
-.spaceButton:active {
+.sidebarWorkspaceSelect:active {
   transform: translateY(0) scale(0.97);
 }
 
-.spaceButtonActive {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 34%, var(--glass-border));
-  background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
-    0 12px 28px rgba(4, 10, 20, 0.12);
-}
-
-.spaceIcon {
+.sidebarWorkspaceSelectIcon {
   width: 36px;
   height: 36px;
   border-radius: 15px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--glass-1) 84%, var(--surface3) 16%);
-  color: var(--text2);
+  background: color-mix(in srgb, var(--accent) 18%, var(--glass-1));
+  color: var(--accent);
   transition: background var(--motion-duration) var(--ease-fluid),
               color var(--motion-duration) var(--ease-fluid);
 }
 
-.spaceButtonActive .spaceIcon {
-  background: color-mix(in srgb, var(--accent) 18%, var(--glass-1));
-  color: var(--accent);
-}
-
-.spaceCopy {
+.sidebarWorkspaceSelectLabel {
+  flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.spaceName {
-  color: inherit;
+  color: var(--text);
   font-size: var(--type-body);
   font-weight: 800;
   line-height: 1.1;
 }
 
-.spaceMeta {
+.sidebarWorkspaceSelectMeta {
   color: var(--text3);
   font-size: var(--type-overline);
   font-weight: 800;
   letter-spacing: 0.65px;
   text-transform: uppercase;
+}
+
+.sidebarWorkspaceSelectChevron {
+  color: var(--text3);
+  font-size: 16px;
+  font-weight: 800;
+  padding-right: 4px;
 }
 
 .sidebarNav {
@@ -907,7 +889,17 @@
 }
 .topBarTitleBlock {
   min-width: 0;
-  transition: gap var(--motion-duration) var(--motion-ease-standard);
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--motion-duration) var(--motion-ease-standard);
+}
+.topBarTitleBlock:hover {
+  background: color-mix(in srgb, var(--glass-1) 80%, transparent);
 }
 .topBarKicker {
   color: var(--text3);
@@ -922,7 +914,8 @@
   gap: 12px;
   flex-wrap: wrap;
 }
-.topBarLogo { font-family: var(--font-brutal); font-size: var(--type-heading-xs); color: var(--text); letter-spacing: -0.04em; line-height: 0.95; text-wrap: balance; transition: font-size var(--motion-duration) var(--motion-ease-standard), transform var(--motion-duration) var(--motion-ease-out); }
+.topBarLogo { font-family: var(--font-brutal); font-size: var(--type-heading-xs); color: var(--text); letter-spacing: -0.04em; line-height: 0.95; text-wrap: balance; transition: font-size var(--motion-duration) var(--motion-ease-standard), transform var(--motion-duration) var(--motion-ease-out); display: flex; align-items: center; gap: 8px; }
+.topBarChevron { font-size: 20px; color: var(--text3); font-weight: 400; }
 .topBarContextPill {
   display: inline-flex;
   align-items: center;
@@ -972,36 +965,110 @@
   line-height: 1.55;
   color: var(--text2);
 }
-.mobileSpaceSwitch { display: none; }
-.mobileSpaceButton {
-  min-height: 32px;
-  padding: 6px 10px;
-  border-radius: 999px;
+.workspaceDropdownBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+.workspaceDropdown {
+  position: absolute;
+  top: 76px;
+  left: 20px;
+  z-index: 101;
+  width: 280px;
+  background: var(--surface);
   border: 1px solid var(--border2);
-  background: transparent;
+  border-radius: 24px;
+  padding: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+  animation: slideDownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (min-width: 900px) {
+  .workspaceDropdown {
+    top: 60px;
+    left: 10px;
+  }
+}
+
+.workspaceDropdownHeader {
+  font-size: var(--type-overline);
   color: var(--text3);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: var(--type-caption);
   font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 12px;
 }
-.mobileSpaceButtonActive {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+
+.workspaceDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.workspaceDropdownItem:hover {
+  background: color-mix(in srgb, var(--glass-1) 60%, transparent);
+}
+
+.workspaceDropdownItemActive {
   background: color-mix(in srgb, var(--accent) 15%, var(--glass-1));
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
 }
 
-:global(.neo) .mobileSpaceButton {
-  border: 1px solid var(--border2);
-  background: var(--nb-paper-2);
-  box-shadow: var(--nb-shadow-sm);
-  color: var(--nb-ink-2);
+.workspaceDropdownIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--glass-1) 84%, var(--surface3) 16%);
+  color: var(--text2);
 }
 
-:global(.neo) .mobileSpaceButtonActive {
-  color: var(--nb-ink);
-  border-color: var(--nb-stroke);
-  background: color-mix(in srgb, var(--accent) 16%, var(--nb-paper-2));
+.workspaceDropdownItemActive .workspaceDropdownIcon {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
+}
+
+.workspaceDropdownCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.workspaceDropdownName {
+  font-size: var(--type-body);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.workspaceDropdownMeta {
+  font-size: var(--type-overline);
+  font-weight: 700;
+  color: var(--text3);
+}
+
+.workspaceDropdownCheck {
+  color: var(--accent);
+  font-weight: 800;
 }
 .topBarRight { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .topBarStatus {

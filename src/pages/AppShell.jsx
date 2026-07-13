@@ -574,6 +574,7 @@ export default function AppShell({ user }) {
   const [takdaActionRequest, setTakdaActionRequest] = useState(null)
 
   const [mobileNavMenuOpen, setMobileNavMenuOpen] = useState(false)
+  const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false)
   const [calendarQuickAddDate, setCalendarQuickAddDate] = useState('')
   const [emailVerified, setEmailVerified] = useState(() => Boolean(auth.currentUser?.emailVerified || user?.emailVerified))
   const [verifyBannerMsg, setVerifyBannerMsg] = useState({ text: '', ok: false })
@@ -1382,6 +1383,7 @@ export default function AppShell({ user }) {
 
   function openSpace(nextSpace) {
     setMobileNavMenuOpen(false)
+    setWorkspaceDropdownOpen(false)
     setQuickAddMenuOpen(false)
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
@@ -1676,24 +1678,17 @@ export default function AppShell({ user }) {
             <div className={styles.logo}>Buhay</div>
           </div>
         </div>
-        <div className={styles.sidebarSectionLabel}>Spaces</div>
-        <div className={styles.spaceSwitcher} role="group" aria-label="Switch app space">
-          {APP_SPACES.map(space => (
-            <button
-              key={space.id}
-              type="button"
-              className={`${styles.spaceButton} ${activeSpace === space.id ? styles.spaceButtonActive : ''}`}
-              onClick={() => openSpace(space.id)}
-              aria-pressed={activeSpace === space.id}
-              aria-label={`Open ${space.label} ${space.meta} space`}
-            >
-              <span className={styles.spaceIcon}>{NAV_ICONS[space.iconKey]}</span>
-              <span className={styles.spaceCopy}>
-                <span className={styles.spaceName}>{space.label}</span>
-                <span className={styles.spaceMeta}>{space.meta}</span>
-              </span>
-            </button>
-          ))}
+        <div className={styles.sidebarWorkspaceSelectWrap}>
+          <button 
+            type="button" 
+            className={styles.sidebarWorkspaceSelect} 
+            onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
+            aria-expanded={workspaceDropdownOpen}
+          >
+            <span className={styles.sidebarWorkspaceSelectIcon}>{NAV_ICONS[activeSpaceConfig.iconKey]}</span>
+            <span className={styles.sidebarWorkspaceSelectLabel}>{activeSpaceConfig.label} <span className={styles.sidebarWorkspaceSelectMeta}>({activeSpaceConfig.meta})</span></span>
+            <span className={styles.sidebarWorkspaceSelectChevron}>⌄</span>
+          </button>
         </div>
         <nav className={styles.sidebarNav} aria-label={activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
           {currentSidebarNav.map(n => (
@@ -1739,27 +1734,18 @@ export default function AppShell({ user }) {
       <div className={`${styles.mainWrap} ${isCalendarPage ? styles.mainWrapCalendar : ''} ${chromeMode.compact ? styles.mainWrapScrolled : ''} ${chromeMode.hidden ? styles.mainWrapChromeHidden : ''}`}>
         <header className={styles.topBar}>
           <div className={styles.topBarLeft}>
-            <div className={styles.topBarTitleBlock}>
+            <button 
+              type="button"
+              className={styles.topBarTitleBlock} 
+              onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
+              aria-expanded={workspaceDropdownOpen}
+            >
               <div className={styles.topBarKicker}>{activeSpaceConfig.label}</div>
               <div className={styles.topBarHeadingRow}>
-                <div className={styles.topBarLogo}>{activeWorkspaceLabel}</div>
+                <div className={styles.topBarLogo}>{activeWorkspaceLabel} <span className={styles.topBarChevron}>⌄</span></div>
                 <div className={styles.topBarContextPill}>{activeSpaceConfig.meta}</div>
               </div>
-            </div>
-            <div className={styles.mobileSpaceSwitch} role="group" aria-label="Switch app space">
-              {APP_SPACES.map(space => (
-                <button
-                  key={space.id}
-                  type="button"
-                  className={`${styles.mobileSpaceButton} ${activeSpace === space.id ? styles.mobileSpaceButtonActive : ''}`}
-                  onClick={() => openSpace(space.id)}
-                  aria-pressed={activeSpace === space.id}
-                  aria-label={`Open ${space.label} ${space.meta} space`}
-                >
-                  {space.label}
-                </button>
-              ))}
-            </div>
+            </button>
           </div>
           <div className={styles.topBarRight}>
 
@@ -1946,6 +1932,29 @@ export default function AppShell({ user }) {
             />
           </div>
         </div>
+        </>
+      )}
+      {workspaceDropdownOpen && (
+        <>
+          <div className={styles.workspaceDropdownBackdrop} onClick={() => setWorkspaceDropdownOpen(false)} aria-hidden="true" />
+          <div className={styles.workspaceDropdown}>
+            <div className={styles.workspaceDropdownHeader}>Switch Space</div>
+            {APP_SPACES.map(space => (
+              <button
+                key={space.id}
+                type="button"
+                className={`${styles.workspaceDropdownItem} ${activeSpace === space.id ? styles.workspaceDropdownItemActive : ''}`}
+                onClick={() => openSpace(space.id)}
+              >
+                <span className={styles.workspaceDropdownIcon}>{NAV_ICONS[space.iconKey]}</span>
+                <span className={styles.workspaceDropdownCopy}>
+                  <span className={styles.workspaceDropdownName}>{space.label}</span>
+                  <span className={styles.workspaceDropdownMeta}>{space.meta}</span>
+                </span>
+                {activeSpace === space.id && <span className={styles.workspaceDropdownCheck}>✓</span>}
+              </button>
+            ))}
+          </div>
         </>
       )}
       {mobileNavMenuOpen && (
