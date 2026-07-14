@@ -1692,15 +1692,21 @@ export default function AppShell({ user }) {
             <span className={styles.sidebarWorkspaceSelectChevron}>⌄</span>
           </button>
         </div>
-        <nav className={styles.sidebarNav} aria-label={activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
+        <nav className={styles.sidebarNav} aria-label={activeSpace === 'dashboard' ? 'Buhay navigation' : activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
           {currentSidebarNav.map(n => (
             <div key={n.id}>
               {n.section && <div className={styles.navSection}>{n.section}</div>}
               <button
                 type="button"
                 id={`${activeSpace}-nav-${n.id}`}
-                className={`${styles.navItem} ${activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
+                className={`${styles.navItem} ${activeSpace === 'dashboard' ? page === n.id ? styles.active : '' : activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
                 onClick={() => {
+                  if (activeSpace === 'dashboard') {
+                    // Stay in Buhay space — just switch sub-page (main, settings)
+                    if (n.id === 'settings') setPage('settings')
+                    else setPage('main')
+                    return
+                  }
                   if (activeSpace === 'lakas') {
                     setLakasPage(n.id)
                     return
@@ -1711,7 +1717,7 @@ export default function AppShell({ user }) {
                   }
                   navigateToFinancePage(n.id)
                 }}
-                aria-current={activeSpace === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : activeSpace === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
+                aria-current={activeSpace === 'dashboard' ? page === n.id ? 'page' : undefined : activeSpace === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : activeSpace === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
                 aria-label={`Open ${n.label}`}
               >
                 <span className={styles.icon} aria-hidden="true">{NAV_ICONS[n.iconKey]}</span> {n.label}

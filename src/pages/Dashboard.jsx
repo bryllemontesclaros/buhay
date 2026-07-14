@@ -3,15 +3,14 @@ import { fsAdd, fsUpdate } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { today, formatDisplayDate } from '../lib/utils'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
-import { useTheme } from '../lib/theme'
-import calStyles from './Calendar.module.css'
 import styles from './Dashboard.module.css'
 
+
 export default function Dashboard({ user, data, onNavigate, privacyMode = false, s = '₱' }) {
-  const { theme } = useTheme()
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3) // 1-5 scale (neutral is 3)
   const todayStr = today()
+
 
   // 1. Personalized greeting based on local time
   const greeting = useMemo(() => {
@@ -168,33 +167,23 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
   }
 
   const getMoodEmoji = (val) => {
-    switch (val) {
-      case 1: return '😢'
-      case 2: return '🙁'
-      case 3: return '😐'
-      case 4: return '🙂'
-      case 5: return '😊'
-      default: return '😐'
-    }
+    const emojis = { 1: '😢', 2: '🙁', 3: '😐', 4: '🙂', 5: '😊' }
+    return emojis[val] || '😐'
   }
 
   const getMoodLabel = (val) => {
-    switch (val) {
-      case 1: return 'Tired / Low'
-      case 2: return 'Slightly Down'
-      case 3: return 'Neutral'
-      case 4: return 'Good / Peaceful'
-      case 5: return 'Excellent'
-      default: return 'Neutral'
-    }
+    const labels = { 1: 'Tired', 2: 'Down', 3: 'Neutral', 4: 'Good', 5: 'Excellent' }
+    return labels[val] || 'Neutral'
   }
 
   return (
     <div className={styles.container}>
+
+      {/* ── HEADER ─────────────────────────── */}
       <header className={styles.header}>
         <div className={styles.greetingGroup}>
           <h1 className={styles.title}>{greeting}</h1>
-          <p className={styles.subtitle}>Welcome to your life control center.</p>
+          <p className={styles.subtitle}>Your life control center — all in one view.</p>
         </div>
         <div className={styles.streakBadge} title="Combined wealth, health, and mind consistency streak">
           <span className={styles.streakEmoji}>🔥</span>
@@ -205,26 +194,56 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
         </div>
       </header>
 
+      {/* ── STAT STRIP ─────────────────────── */}
+      <div className={styles.statStrip} aria-label="Today's key numbers">
+        <div className={styles.statChip}>
+          <span className={styles.statChipIcon} aria-hidden="true">💳</span>
+          <div className={styles.statChipBody}>
+            <span className={styles.statChipLabel}>Net Worth</span>
+            <span className={`${styles.statChipVal} ${styles.statChipValWealth}`}>
+              {fmt(wealthInfo.netWorth)}
+            </span>
+          </div>
+        </div>
+        <div className={styles.statDivider} aria-hidden="true" />
+        <div className={styles.statChip}>
+          <span className={styles.statChipIcon} aria-hidden="true">🏃‍♂️</span>
+          <div className={styles.statChipBody}>
+            <span className={styles.statChipLabel}>Habits Today</span>
+            <span className={`${styles.statChipVal} ${styles.statChipValHealth}`}>
+              {habitsDoneCount} / {HABIT_OPTIONS.length}
+            </span>
+          </div>
+        </div>
+        <div className={styles.statDivider} aria-hidden="true" />
+        <div className={styles.statChip}>
+          <span className={styles.statChipIcon} aria-hidden="true">{getMoodEmoji(moodRating)}</span>
+          <div className={styles.statChipBody}>
+            <span className={styles.statChipLabel}>Mood</span>
+            <span className={`${styles.statChipVal} ${styles.statChipValMind}`}>
+              {getMoodLabel(moodRating)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── BENTO GRID ─────────────────────── */}
       <div className={styles.bento}>
-        {/* WEALTH CARD */}
-        <section className={`${styles.card} ${styles.wealthCard}`}>
+
+        {/* WEALTH — spans 2 rows on left */}
+        <section className={`${styles.card} ${styles.wealthCard}`} aria-label="Wealth overview">
           <div className={styles.cardHeader}>
             <div className={styles.cardTitleBlock}>
-              <span className={styles.cardEmoji}>💳</span>
+              <span className={styles.cardEmoji} aria-hidden="true">💳</span>
               <h2 className={styles.cardTitle}>Wealth</h2>
             </div>
-            <button
-              onClick={() => onNavigate('takda', 'calendar')}
-              className={styles.viewBtn}
-            >
-              Open Calendar
-            </button>
+            <span className={styles.cardTag}>Takda</span>
           </div>
 
           <div className={styles.bentoBody}>
             <div className={styles.metricBlock}>
               <span className={styles.metricLabel}>Net Worth</span>
-              <span className={styles.metricVal} style={{ color: 'var(--accent)' }}>
+              <span className={`${styles.metricVal} ${styles.metricValWealth}`}>
                 {fmt(wealthInfo.netWorth)}
               </span>
             </div>
@@ -236,7 +255,7 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
               </div>
               <div className={styles.subMetric}>
                 <span className={styles.subMetricLabel}>Credit Debt</span>
-                <span className={styles.subMetricVal} style={{ color: 'var(--red)' }}>
+                <span className={`${styles.subMetricVal} ${styles.subMetricValRed}`}>
                   {fmt(wealthInfo.totalCCDebt)}
                 </span>
               </div>
@@ -252,7 +271,7 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
                     <span className={styles.nextBillName}>{wealthInfo.nextBill.desc || wealthInfo.nextBill.cat}</span>
                     <span className={styles.nextBillDate}>Due {formatDisplayDate(wealthInfo.nextBill.dueDate)}</span>
                   </div>
-                  <span className={styles.nextBillAmount} style={{ color: 'var(--red)' }}>
+                  <span className={`${styles.nextBillAmount} ${styles.nextBillAmountRed}`}>
                     {fmt(wealthInfo.nextBill.amount || 0)}
                   </span>
                 </div>
@@ -261,27 +280,30 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
               )}
             </div>
           </div>
+
+          <button
+            type="button"
+            className={`${styles.spaceChip} ${styles.spaceChipWealth}`}
+            onClick={() => onNavigate('takda', 'calendar')}
+          >
+            Open Takda <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
+          </button>
         </section>
 
-        {/* HEALTH CARD */}
-        <section className={`${styles.card} ${styles.healthCard}`}>
+        {/* HEALTH */}
+        <section className={`${styles.card} ${styles.healthCard}`} aria-label="Health overview">
           <div className={styles.cardHeader}>
             <div className={styles.cardTitleBlock}>
-              <span className={styles.cardEmoji}>🏃‍♂️</span>
+              <span className={styles.cardEmoji} aria-hidden="true">🏃‍♂️</span>
               <h2 className={styles.cardTitle}>Health</h2>
             </div>
-            <button
-              onClick={() => onNavigate('lakas', 'workout')}
-              className={styles.viewBtn}
-            >
-              Open Workout
-            </button>
+            <span className={styles.cardTag}>Lakas</span>
           </div>
 
           <div className={styles.bentoBody}>
             <div className={styles.metricBlock}>
               <span className={styles.metricLabel}>Habits Completed</span>
-              <span className={styles.metricVal} style={{ color: 'var(--blue)' }}>
+              <span className={`${styles.metricVal} ${styles.metricValHealth}`}>
                 {habitsDoneCount} / {HABIT_OPTIONS.length}
               </span>
             </div>
@@ -295,46 +317,50 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
                     type="button"
                     className={`${styles.habitPill} ${isDone ? styles.habitPillDone : ''}`}
                     onClick={() => handleToggleHabit(opt.key, isDone)}
+                    aria-pressed={isDone}
+                    aria-label={`${opt.label}: ${isDone ? 'done' : 'not done'}`}
                   >
-                    <span className={styles.habitDot}>{isDone ? '✓' : '○'}</span>
+                    <span className={styles.habitDot} aria-hidden="true">{isDone ? '✓' : '○'}</span>
                     <span className={styles.habitLabel}>{opt.label}</span>
                   </button>
                 )
               })}
             </div>
           </div>
+
+          <button
+            type="button"
+            className={`${styles.spaceChip} ${styles.spaceChipHealth}`}
+            onClick={() => onNavigate('lakas', 'workout')}
+          >
+            Open Lakas <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
+          </button>
         </section>
 
-        {/* MIND CARD */}
-        <section className={`${styles.card} ${styles.mindCard}`}>
+        {/* MIND */}
+        <section className={`${styles.card} ${styles.mindCard}`} aria-label="Mind overview">
           <div className={styles.cardHeader}>
             <div className={styles.cardTitleBlock}>
-              <span className={styles.cardEmoji}>🧠</span>
+              <span className={styles.cardEmoji} aria-hidden="true">🧠</span>
               <h2 className={styles.cardTitle}>Mind</h2>
             </div>
-            <button
-              onClick={() => onNavigate('tala', 'journal')}
-              className={styles.viewBtn}
-            >
-              Open Journal
-            </button>
+            <span className={styles.cardTag}>Tala</span>
           </div>
 
           <div className={styles.bentoBody}>
             <div className={styles.moodSelectorBlock}>
               <span className={styles.metricLabel}>Mood Check-in</span>
               <div className={styles.sliderLabelRow}>
-                <span className={styles.moodEmojiDisplay}>{getMoodEmoji(moodRating)}</span>
+                <span className={styles.moodEmojiDisplay} aria-hidden="true">{getMoodEmoji(moodRating)}</span>
                 <span className={styles.moodTextDisplay}>{getMoodLabel(moodRating)}</span>
               </div>
               <input
                 type="range"
-                min="1"
-                max="5"
-                step="1"
+                min="1" max="5" step="1"
                 value={moodRating}
                 onChange={(e) => setMoodRating(Number(e.target.value))}
                 className={styles.moodSlider}
+                aria-label={`Mood rating: ${getMoodLabel(moodRating)}`}
               />
             </div>
 
@@ -344,10 +370,11 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
               <h3 className={styles.extraTitle}>Quick Reflection</h3>
               <textarea
                 className={styles.quickJournalInput}
-                placeholder="How was today in one sentence? Write it here..."
+                placeholder="How was today in one sentence?"
                 value={journalText}
                 onChange={(e) => setJournalText(e.target.value)}
                 rows={2}
+                aria-label="Quick journal reflection"
               />
               <button
                 type="button"
@@ -359,7 +386,16 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
               </button>
             </div>
           </div>
+
+          <button
+            type="button"
+            className={`${styles.spaceChip} ${styles.spaceChipMind}`}
+            onClick={() => onNavigate('tala', 'journal')}
+          >
+            Open Tala <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
+          </button>
         </section>
+
       </div>
     </div>
   )

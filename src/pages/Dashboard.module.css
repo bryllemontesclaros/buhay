@@ -1,7 +1,13 @@
+/* ──────────────────────────────────────────────
+   DASHBOARD (Buhay Space)
+   Asymmetric 2-col bento: Wealth (tall left),
+   Health + Mind (stacked right)
+────────────────────────────────────────────── */
+
 .container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
@@ -9,19 +15,20 @@
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ── HEADER ──────────────────────────────────── */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
   border-bottom: 1px solid var(--border2);
-  padding-bottom: 24px;
+  padding-bottom: 20px;
 }
 
 .greetingGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .title {
@@ -54,6 +61,7 @@
   margin: 0;
 }
 
+/* ── STREAK BADGE ────────────────────────────── */
 .streakBadge {
   display: flex;
   align-items: center;
@@ -64,6 +72,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
 }
 
 .streakBadge:hover {
@@ -71,9 +80,7 @@
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
 }
 
-.streakEmoji {
-  font-size: 24px;
-}
+.streakEmoji { font-size: 24px; }
 
 .streakText {
   display: flex;
@@ -95,26 +102,85 @@
   color: var(--text3);
 }
 
-/* BENTO GRID */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+/* ── STAT STRIP ──────────────────────────────── */
+.statStrip {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow-soft);
 }
 
+.statChip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  padding: 16px 22px;
+  transition: background 0.15s ease;
+}
+
+.statChip:hover { background: var(--surface2); }
+
+.statDivider {
+  width: 1px;
+  height: 36px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.statChipIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.statChipBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statChipLabel {
+  font-size: var(--type-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+.statChipVal {
+  font-family: var(--font-mono);
+  font-size: var(--type-body);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.statChipValWealth { color: var(--accent); }
+.statChipValHealth { color: var(--blue); }
+.statChipValMind   { color: var(--purple); }
+
+/* ── BENTO GRID ──────────────────────────────── */
+.bento {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}
+
+/* ── CARD BASE ───────────────────────────────── */
 .card {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 24px;
   padding: 24px;
   box-shadow: var(--glass-shadow-soft);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.3s ease, 
-              box-shadow 0.3s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
   overflow: hidden;
 }
 
@@ -125,16 +191,19 @@
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(0, 0, 0, 0.18);
+  transform: translateY(-4px);
   box-shadow: var(--glass-shadow);
 }
 
 :global([data-theme="dark"]) .card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
+/* Wealth spans both rows */
+.wealthCard { grid-row: span 2; }
+
+/* ── CARD INTERNALS ──────────────────────────── */
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -148,39 +217,27 @@
   gap: 10px;
 }
 
-.cardEmoji {
-  font-size: 20px;
-}
+.cardEmoji { font-size: 20px; }
 
 .cardTitle {
   font-family: var(--font-header);
   font-size: var(--type-h3);
   font-weight: 600;
-  color: #0f172a !important;
+  color: var(--text);
   margin: 0;
   letter-spacing: -0.01em;
 }
 
-:global([data-theme="dark"]) .cardTitle {
-  color: #f6f4ef !important;
-}
-
-.viewBtn {
+.cardTag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: var(--text3);
   background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  color: var(--text2);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
-.viewBtn:hover {
-  background: var(--surface3);
-  border-color: var(--border2);
-  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px 8px;
 }
 
 .bentoBody {
@@ -190,6 +247,7 @@
   gap: 16px;
 }
 
+/* ── METRICS ─────────────────────────────────── */
 .metricBlock {
   display: flex;
   flex-direction: column;
@@ -201,11 +259,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: #596c80 !important;
-}
-
-:global([data-theme="dark"]) .metricLabel {
-  color: rgba(189, 202, 217, 0.65) !important;
+  color: var(--text3);
 }
 
 .metricVal {
@@ -213,12 +267,12 @@
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #0f172a !important;
+  color: var(--text);
 }
 
-:global([data-theme="dark"]) .metricVal {
-  color: #f6f4ef !important;
-}
+.metricValWealth { color: var(--accent); }
+.metricValHealth { color: var(--blue); }
+.metricValMind   { color: var(--purple); }
 
 .subMetricsGrid {
   display: grid;
@@ -237,32 +291,27 @@
 
 .subMetricLabel {
   font-size: 10px;
-  color: #596c80 !important;
+  color: var(--text3);
   font-weight: 500;
-}
-
-:global([data-theme="dark"]) .subMetricLabel {
-  color: rgba(189, 202, 217, 0.65) !important;
 }
 
 .subMetricVal {
   font-family: var(--font-mono);
   font-size: var(--type-body-sm);
   font-weight: 600;
-  color: #0f172a !important;
+  color: var(--text);
   margin-top: 2px;
 }
 
-:global([data-theme="dark"]) .subMetricVal {
-  color: #f6f4ef !important;
-}
+.subMetricValRed { color: var(--red); }
 
 .widgetDivider {
   height: 1px;
   background: var(--border2);
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
+/* ── EXTRA WIDGET (Next Bill) ────────────────── */
 .extraWidget {
   display: flex;
   flex-direction: column;
@@ -272,12 +321,8 @@
 .extraTitle {
   font-size: var(--type-body-sm);
   font-weight: 600;
-  color: #334155 !important;
+  color: var(--text2);
   margin: 0;
-}
-
-:global([data-theme="dark"]) .extraTitle {
-  color: rgba(232, 238, 244, 0.78) !important;
 }
 
 .nextBillRow {
@@ -299,44 +344,95 @@
 .nextBillName {
   font-size: var(--type-body-sm);
   font-weight: 500;
-  color: #0f172a !important;
-}
-
-:global([data-theme="dark"]) .nextBillName {
-  color: #f6f4ef !important;
+  color: var(--text);
 }
 
 .nextBillDate {
   font-size: var(--type-caption);
-  color: #596c80 !important;
-}
-
-:global([data-theme="dark"]) .nextBillDate {
-  color: rgba(189, 202, 217, 0.65) !important;
+  color: var(--text3);
 }
 
 .nextBillAmount {
   font-family: var(--font-mono);
   font-size: var(--type-body-sm);
   font-weight: 600;
+  color: var(--text);
 }
+
+.nextBillAmountRed { color: var(--red); }
 
 .emptyText {
   font-size: var(--type-caption);
-  color: #596c80 !important;
+  color: var(--text3);
   margin: 4px 0 0 0;
   font-style: italic;
 }
 
-:global([data-theme="dark"]) .emptyText {
-  color: rgba(189, 202, 217, 0.65) !important;
+/* ── SPACE CHIP (bottom deep-link CTA) ───────── */
+.spaceChip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 11px 18px;
+  border-radius: 14px;
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1.5px solid;
 }
 
-/* HEALTH HABITS GRID */
+.spaceChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.spaceChipArrow {
+  font-size: 14px;
+  transition: transform 0.15s ease;
+}
+
+.spaceChip:hover .spaceChipArrow { transform: translateX(3px); }
+
+.spaceChipWealth {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+}
+
+.spaceChipWealth:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.spaceChipHealth {
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+  border-color: color-mix(in srgb, var(--blue) 35%, transparent);
+  color: var(--blue);
+}
+
+.spaceChipHealth:hover {
+  background: color-mix(in srgb, var(--blue) 16%, transparent);
+}
+
+.spaceChipMind {
+  background: color-mix(in srgb, var(--purple) 10%, transparent);
+  border-color: color-mix(in srgb, var(--purple) 35%, transparent);
+  color: var(--purple);
+}
+
+.spaceChipMind:hover {
+  background: color-mix(in srgb, var(--purple) 16%, transparent);
+}
+
+/* ── HEALTH HABITS GRID ──────────────────────── */
 .habitsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
   flex-grow: 1;
 }
 
@@ -346,24 +442,24 @@
   gap: 8px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 10px 12px;
+  border-radius: 14px;
+  padding: 9px 11px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  color: var(--text2) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text2);
 }
 
 .habitPill:hover {
   background: var(--surface3);
   border-color: var(--border2);
-  color: var(--text) !important;
+  color: var(--text);
 }
 
 .habitPillDone {
-  background: var(--accent-glow) !important;
-  border-color: var(--accent) !important;
-  color: var(--accent) !important;
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -378,18 +474,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #0f172a !important;
+  color: var(--text2);
 }
 
-:global([data-theme="dark"]) .habitLabel {
-  color: #f6f4ef !important;
-}
+.habitPillDone .habitLabel { color: var(--accent); }
 
-.habitPillDone .habitLabel {
-  color: var(--accent) !important;
-}
-
-/* MOOD ACCENT ELEMENT */
+/* ── MIND MOOD SELECTOR ──────────────────────── */
 .moodSelectorBlock {
   display: flex;
   flex-direction: column;
@@ -400,18 +490,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 6px 0;
+  margin: 4px 0;
 }
 
 .moodEmojiDisplay {
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1;
 }
 
 .moodTextDisplay {
   font-size: var(--type-body-sm);
   font-weight: 600;
-  color: #a855f7;
+  color: var(--purple);
 }
 
 .moodSlider {
@@ -422,7 +512,7 @@
   background: var(--border2);
   border-radius: 3px;
   outline: none;
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 .moodSlider::-webkit-slider-thumb {
@@ -431,17 +521,15 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #a855f7;
+  background: var(--purple);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--purple) 50%, transparent);
   transition: transform 0.1s ease;
 }
 
-.moodSlider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
+.moodSlider::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-/* QUICK JOURNAL REFLECTION */
+/* ── MIND QUICK JOURNAL ──────────────────────── */
 .journalLogBlock {
   display: flex;
   flex-direction: column;
@@ -449,10 +537,10 @@
 }
 
 .quickJournalInput {
-  background: #f8f9fa !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  border-radius: 16px;
-  color: #0f172a !important;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
   font-size: var(--type-caption);
   font-family: inherit;
   padding: 12px;
@@ -461,19 +549,13 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-:global([data-theme="dark"]) .quickJournalInput {
-  background: #121f2f !important;
-  border-color: rgba(255, 255, 255, 0.09) !important;
-  color: #f6f4ef !important;
-}
-
 .quickJournalInput:focus {
-  border-color: #a855f7;
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.15);
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--purple) 16%, transparent);
 }
 
 .journalSubmitBtn {
-  background: #a855f7;
+  background: var(--purple);
   border: none;
   border-radius: 12px;
   color: #ffffff;
@@ -482,40 +564,44 @@
   padding: 10px;
   cursor: pointer;
   transition: opacity 0.15s ease, transform 0.15s ease;
+  font-family: inherit;
 }
 
 .journalSubmitBtn:hover:not(:disabled) {
-  opacity: 0.9;
+  opacity: 0.88;
   transform: translateY(-1px);
 }
 
 .journalSubmitBtn:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
+/* ── ANIMATION ───────────────────────────────── */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* RESPONSIVE LAYOUT */
-@media (max-width: 900px) {
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 960px) {
   .bento {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
   }
+  .wealthCard { grid-row: span 1; }
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
   }
-  .streakBadge {
-    align-self: flex-start;
-  }
+  .streakBadge { align-self: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 16px; gap: 16px; }
+  .statStrip { flex-direction: column; border-radius: 16px; }
+  .statChip { padding: 14px 18px; width: 100%; }
+  .statDivider { width: 100%; height: 1px; }
+  .habitsGrid { grid-template-columns: repeat(2, 1fr); }
 }
