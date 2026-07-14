@@ -1145,7 +1145,7 @@ export default function AppShell({ user }) {
     subscriptions: Subscriptions,
   }
   const PageComponent = activeSpace === 'dashboard'
-    ? Dashboard
+    ? (page === 'settings' ? Settings : Dashboard)
     : activeSpace === 'lakas'
       ? Lakas
       : activeSpace === 'tala'
