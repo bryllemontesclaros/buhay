@@ -424,14 +424,8 @@ export default function LandingPage() {
       </div>
       <a href="#landing-main" className="skipLink">Skip to main content</a>
 
-      <div className={styles.ribbon} aria-hidden="true">
-        <div className={styles.ribbonTrack}>
-          <span className={styles.ribbonItem}>Skip the chaos · choose a space · do one honest thing</span>
-          <span className={styles.ribbonItem}>Skip the chaos · choose a space · do one honest thing</span>
-          <span className={styles.ribbonItem}>Skip the chaos · choose a space · do one honest thing</span>
-          <span className={styles.ribbonItem}>Skip the chaos · choose a space · do one honest thing</span>
-        </div>
-      </div>
+
+
 
       <nav className={styles.nav} aria-label="Buhay landing">
         <div className={styles.navInner}>
