@@ -111,3 +111,24 @@
 .summaryValueNegative {
   color: var(--red);
 }
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .summaryStrip {
+    gap: 12px;
+  }
+  .summaryCard {
+    min-width: 140px; /* Allows 2 columns on most mobile screens */
+    padding: 16px;
+  }
+  .summaryValue {
+    font-size: 24px;
+  }
+  .tabsWrap {
+    margin-bottom: 16px;
+  }
+  .tab {
+    font-size: 14px;
+    padding: 10px 0;
+  }
+}

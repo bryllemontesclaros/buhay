@@ -57,6 +57,12 @@
   }
 }
 
+@keyframes textShine {
+  to {
+    background-position: 200% center;
+  }
+}
+
 /* ---------------------------------------------------- */
 /* 2. Global Page Settings & Mesh Backdrop              */
 /* ---------------------------------------------------- */
@@ -233,9 +239,10 @@
 }
 
 .navLink:hover {
-  border-color: var(--border2);
+  border-color: var(--accent);
   background: var(--surface);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .navActions {
@@ -305,10 +312,18 @@
   box-shadow: 0 10px 24px rgba(105, 212, 178, 0.15);
 }
 
+.btnPrimary:hover {
+  box-shadow: 0 10px 24px rgba(105, 212, 178, 0.4), 0 0 20px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
 :global([data-theme="dark"]) .btn:hover,
 :global([data-theme="dark"]) .btnPrimary:hover,
 :global([data-theme="dark"]) .btnGhost:hover {
   box-shadow: 0 10px 24px rgba(105, 212, 178, 0.3);
+}
+
+:global([data-theme="dark"]) .btnPrimary:hover {
+  box-shadow: 0 10px 24px rgba(105, 212, 178, 0.6), 0 0 25px color-mix(in srgb, var(--accent) 60%, transparent);
 }
 
 .btn:active,
@@ -370,7 +385,6 @@
   display: grid;
   gap: var(--space-4);
   text-align: left;
-  animation: revealRise 600ms var(--motion-ease-out) both;
   min-width: 0;
 }
 
@@ -380,6 +394,8 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text);
+  animation: revealRise 600ms var(--motion-ease-out) both;
+  animation-delay: 100ms;
 }
 
 .heroTitle {
@@ -390,6 +406,13 @@
   line-height: 0.95;
   max-width: 12ch;
   text-wrap: pretty;
+  background: linear-gradient(to right, var(--text), var(--text2), var(--text));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: revealRise 600ms var(--motion-ease-out) both, textShine 8s linear infinite;
+  animation-delay: 200ms, 0s;
 }
 
 .heroHighlight {
@@ -399,7 +422,7 @@
   border: 1px solid var(--border2);
   border-radius: 28px;
   background: var(--surface);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05), 0 0 40px color-mix(in srgb, var(--accent) 35%, transparent);
   max-width: 100%;
   width: fit-content;
   box-sizing: border-box;
@@ -417,6 +440,8 @@
   line-height: 1.56;
   color: var(--text2);
   text-wrap: pretty;
+  animation: revealRise 600ms var(--motion-ease-out) both;
+  animation-delay: 300ms;
 }
 
 .heroActionRow {
@@ -424,6 +449,8 @@
   flex-wrap: wrap;
   gap: var(--space-3);
   align-items: center;
+  animation: revealRise 600ms var(--motion-ease-out) both;
+  animation-delay: 400ms;
 }
 
 .heroActionRow .btnPrimary,
@@ -438,6 +465,8 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
+  animation: revealRise 600ms var(--motion-ease-out) both;
+  animation-delay: 500ms;
 }
 
 .heroSignal {
@@ -473,6 +502,8 @@
   gap: 10px;
   max-width: 880px;
   margin-top: var(--space-3);
+  animation: revealRise 600ms var(--motion-ease-out) both;
+  animation-delay: 600ms;
 }
 
 .heroChecklist .heroPromise {
@@ -525,8 +556,13 @@
   position: relative;
   overflow: hidden;
   border: 1px solid var(--border2);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 34px;
-  box-shadow: var(--glass-shadow-soft);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.02),
+    0 12px 24px rgba(0, 0, 0, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.08);
   padding: var(--space-5);
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(12px);
@@ -540,15 +576,30 @@
 .heroCard:hover {
   transform: translateY(-4px);
   border-color: rgba(0, 0, 0, 0.15);
-  box-shadow: var(--glass-shadow-strong);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.04),
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.12);
 }
 
 :global([data-theme="dark"]) .heroCard {
   background: rgba(12, 22, 34, 0.48);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(0, 0, 0, 0.3),
+    0 24px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 :global([data-theme="dark"]) .heroCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.25),
+    0 12px 24px rgba(0, 0, 0, 0.35),
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .heroStartHeader {
@@ -780,9 +831,9 @@
 }
 
 .heroRailCard:hover {
-  transform: translateY(-4px) scale(1.005);
-  box-shadow: var(--glass-shadow-strong);
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--glass-shadow-strong), 0 20px 40px rgba(0,0,0,0.1);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border2));
 }
 
 .heroRailCard:nth-child(2) {
@@ -1225,7 +1276,10 @@
   border: 1px solid var(--border2);
   border-radius: 12px;
   padding: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  animation: ringFloat 6s ease-in-out infinite alternate;
 }
 
 .mockCardLabel {
