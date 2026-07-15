@@ -47,6 +47,7 @@ import {
 } from '../lib/lakasHelpers'
 import styles from './Page.module.css'
 import lStyles from './Lakas.module.css'
+import tabStyles from '../components/SharedTabs.module.css'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 
@@ -3797,62 +3798,51 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
       {(showBody || showGoals || showMovement || showRecovery) && (
       <div className={lStyles.grid}>
         {showTrackSwitcher && (
-          <section className={lStyles.viewSwitchCard} aria-label="Choose what to update">
-            <div className={lStyles.viewSwitchHeader}>
-              <div>
-                <div className={lStyles.sectionKicker}>Body system</div>
-                <h3>Food, body, movement, and recovery now live in one calmer hub.</h3>
-                <p className={lStyles.sectionHint}>Choose the one thing you want to update, keep the other signals visible, and avoid bouncing between disconnected screens.</p>
+          <>
+            <div className={tabStyles.summaryStrip} style={{ gridColumn: '1 / -1', marginBottom: '24px' }}>
+              <div className={tabStyles.summaryCard}>
+                <div className={tabStyles.summaryLabel}>Latest Weight</div>
+                <div className={tabStyles.summaryValue}>
+                  {insights.latestWeight ? displayMetric(insights.latestWeight, savedLakasSettings.units.weight, privacyMode) : 'No log'}
+                </div>
+              </div>
+              <div className={tabStyles.summaryCard}>
+                <div className={tabStyles.summaryLabel}>Steps Today</div>
+                <div className={tabStyles.summaryValue}>
+                  {displayMetric(insights.stepsToday, '', privacyMode, 0) || '0'}
+                </div>
+              </div>
+              <div className={tabStyles.summaryCard}>
+                <div className={tabStyles.summaryLabel}>Recovery Habits</div>
+                <div className={tabStyles.summaryValue}>
+                  {privacyMode ? '••' : `${insights.habitScoreToday}/${HABIT_OPTIONS.length}`}
+                </div>
               </div>
             </div>
-            <div className={lStyles.bodyQuickStartGrid} role="tablist" aria-label="Choose what to update in Lakas">
-              {LAKAS_TRACK_VIEWS.map(view => {
-                const meta = view.id === 'goals'
-                  ? activeGoalCount
-                    ? `${activeGoalCount} active targets`
-                    : 'Longer-term targets'
-                  : view.meta
-                return (
-                  <button
-                    key={view.id}
-                    type="button"
-                    className={`${lStyles.viewSwitchButton} ${view.id === 'goals' ? lStyles.bodyQuickStartButtonWide : ''} ${safeTrackView === view.id ? lStyles.viewSwitchButtonActive : ''}`}
-                    onClick={() => setTrackView(view.id)}
-                    role="tab"
-                    aria-selected={safeTrackView === view.id}
-                  >
-                    <strong>{view.label}</strong>
-                    <span>{meta}</span>
-                  </button>
-                )
-              })}
-            </div>
-            <div className={lStyles.bodyOverviewGrid}>
-              {bodyOverviewCards.map(card => (
-                <article key={card.label} className={lStyles.bodyOverviewCard}>
-                  <span>{card.label}</span>
-                  <strong>{card.value}</strong>
-                  <small>{card.meta}</small>
-                </article>
-              ))}
-            </div>
-            <div className={lStyles.bodyQuickStartNote}>
-              <div>
-                <span>Current focus</span>
-                <strong>{currentBodyTrackView.label}</strong>
-                <small>{bodyQuickStartSummary}</small>
-              </div>
-              <div className={lStyles.bodyQuickStartActions}>
 
-                <Button type="button" variant="ghost" onClick={() => setTrackView('body')}>
-                  Body check-in
-                </Button>
-                <Button type="button" variant="ghost" onClick={() => setTrackView('recovery')}>
-                  Recovery
-                </Button>
+            <div className={tabStyles.tabsWrap} style={{ gridColumn: '1 / -1', marginBottom: '24px' }}>
+              <div className={tabStyles.tabs} role="tablist">
+                {[
+                  { id: 'body', label: 'Body', count: bodyLogs.length },
+                  { id: 'activity', label: 'Movement', count: activities.length },
+                  { id: 'recovery', label: 'Recovery', count: habits.length },
+                  { id: 'goals', label: 'Goals', count: activeGoalsCount },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={safeTrackView === tab.id}
+                    className={`${tabStyles.tab} ${safeTrackView === tab.id ? tabStyles.tabActive : ''}`}
+                    onClick={() => setTrackView(tab.id)}
+                  >
+                    {tab.label}
+                    <span className={tabStyles.tabCount}>{tab.count}</span>
+                  </button>
+                ))}
               </div>
             </div>
-          </section>
+          </>
         )}
 
 

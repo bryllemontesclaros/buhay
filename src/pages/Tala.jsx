@@ -5,6 +5,7 @@ import { formatDisplayDate, today, playTick } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import tStyles from './Tala.module.css'
+import sharedTabsStyles from '../components/SharedTabs.module.css'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 
@@ -1202,60 +1203,54 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
   }
 
   const trackSwitcher = currentTab === 'track' ? (
-    <div className={tStyles.grid}>
-      <section className={`${tStyles.viewSwitchCard} ${tStyles.viewSwitchCompact}`} aria-label="Choose what to track in Tala">
-        <div className={tStyles.viewSwitchHeader}>
-          <div>
-            <div className={tStyles.sectionKicker}>Track</div>
-            <h3>Choose what you want to update.</h3>
-            <p className={tStyles.sectionHint}>Check-in, mood, and calendar stay in one calm area so the page does not keep changing shape.</p>
-          </div>
-        </div>
-        <div className={tStyles.viewSwitch} role="tablist" aria-label="Choose what to track in Tala">
-          {TALA_TRACK_VIEWS.map(view => (
+    <div className={sharedTabsStyles.tabsWrap}>
+      <div className={sharedTabsStyles.tabs} role="tablist">
+        {TALA_TRACK_VIEWS.map(view => {
+          const count = view.id === 'checkin'
+            ? checkins.length
+            : view.id === 'mood'
+              ? moods.length
+              : journal.length
+          return (
             <button
               key={view.id}
               type="button"
-              className={`${tStyles.viewSwitchButton} ${trackView === view.id ? tStyles.viewSwitchButtonActive : ''}`}
-              onClick={() => setTrackView(view.id)}
               role="tab"
               aria-selected={trackView === view.id}
+              className={`${sharedTabsStyles.tab} ${trackView === view.id ? sharedTabsStyles.tabActive : ''}`}
+              onClick={() => setTrackView(view.id)}
             >
-              <strong>{view.label}</strong>
-              <span>{view.meta}</span>
+              {view.label}
+              <span className={sharedTabsStyles.tabCount}>{count}</span>
             </button>
-          ))}
-        </div>
-      </section>
+          )
+        })}
+      </div>
     </div>
   ) : null
 
   const focusSwitcher = currentTab === 'focus' ? (
-    <div className={tStyles.grid}>
-      <section className={`${tStyles.viewSwitchCard} ${tStyles.viewSwitchCompact}`} aria-label="Choose what to focus on in Tala">
-        <div className={tStyles.viewSwitchHeader}>
-          <div>
-            <div className={tStyles.sectionKicker}>Focus</div>
-            <h3>Choose what you want to keep in view.</h3>
-            <p className={tStyles.sectionHint}>Tasks and goals stay together so Tala feels familiar even when you switch focus.</p>
-          </div>
-        </div>
-        <div className={tStyles.viewSwitch} role="tablist" aria-label="Choose what to focus on in Tala">
-          {TALA_FOCUS_VIEWS.map(view => (
+    <div className={sharedTabsStyles.tabsWrap}>
+      <div className={sharedTabsStyles.tabs} role="tablist">
+        {TALA_FOCUS_VIEWS.map(view => {
+          const count = view.id === 'tasks'
+            ? insights.openTasks.length
+            : insights.activeGoals.length
+          return (
             <button
               key={view.id}
               type="button"
-              className={`${tStyles.viewSwitchButton} ${focusView === view.id ? tStyles.viewSwitchButtonActive : ''}`}
-              onClick={() => setFocusView(view.id)}
               role="tab"
               aria-selected={focusView === view.id}
+              className={`${sharedTabsStyles.tab} ${focusView === view.id ? sharedTabsStyles.tabActive : ''}`}
+              onClick={() => setFocusView(view.id)}
             >
-              <strong>{view.label}</strong>
-              <span>{view.meta}</span>
+              {view.label}
+              <span className={sharedTabsStyles.tabCount}>{count}</span>
             </button>
-          ))}
-        </div>
-      </section>
+          )
+        })}
+      </div>
     </div>
   ) : null
 
