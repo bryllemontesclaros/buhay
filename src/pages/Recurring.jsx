@@ -7,6 +7,26 @@ import sStyles from './Recurring.module.css'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import Bills from './Bills'
 
+function getMonthlyEquivalent(amount, freq = 'monthly') {
+  const numericAmount = Number(amount) || 0
+  if (!numericAmount) return 0
+  switch (freq) {
+    case 'weekly': return (numericAmount * 52) / 12
+    case 'bi-weekly':
+    case 'biweekly': return (numericAmount * 26) / 12
+    case 'tri-weekly': return (numericAmount * (365 / 21)) / 12
+    case 'quad-weekly': return (numericAmount * (365 / 28)) / 12
+    case 'semi-monthly': return (numericAmount * 24) / 12
+    case 'yearly':
+    case 'annually': return numericAmount / 12
+    case 'quarterly': return numericAmount / 3
+    case 'daily': return numericAmount * 30.4
+    case 'monthly':
+    default:
+      return numericAmount
+  }
+}
+
 export default function Recurring({ user, data, symbol, billPaymentTarget }) {
   const s = symbol || '₱'
   
@@ -21,7 +41,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
 
   // --- Aggregate Recurring Transactions ---
   // Any transaction (expense or income) with a `recur` field set is tracked here
-  const { calendarBills, subscriptions, recurringIncome } = useMemo(() => {
+  const { calendarBills, subscriptions, recurringIncome, totals } = useMemo(() => {
     const allTx = [...(data?.income || []), ...(data?.expenses || [])]
     const chains = {}
     
@@ -46,10 +66,16 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
     const subs = []
     const rIncome = []
     
+    let obligationsMonthly = 0
+    let incomeMonthly = 0
+    
     active.forEach(tx => {
+      const monthlyEquiv = getMonthlyEquivalent(tx.amount, tx.recur)
       if (tx.type === 'income') {
         rIncome.push(tx)
+        incomeMonthly += monthlyEquiv
       } else {
+        obligationsMonthly += monthlyEquiv
         if (tx.cat === 'Bills' && tx.subcat !== 'Subscriptions') {
           cBills.push(tx)
         } else {
@@ -58,14 +84,30 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
       }
     })
     
+    // Add manual bills to obligations
+    if (data?.bills) {
+      data.bills.forEach(bill => {
+        obligationsMonthly += getMonthlyEquivalent(bill.amount, bill.freq)
+      })
+    }
+    
     // Sort each group by amount descending
     const sortByAmount = (a, b) => b.amount - a.amount
     cBills.sort(sortByAmount)
     subs.sort(sortByAmount)
     rIncome.sort(sortByAmount)
     
-    return { calendarBills: cBills, subscriptions: subs, recurringIncome: rIncome }
-  }, [data?.income, data?.expenses])
+    return { 
+      calendarBills: cBills, 
+      subscriptions: subs, 
+      recurringIncome: rIncome,
+      totals: {
+        obligations: obligationsMonthly,
+        income: incomeMonthly,
+        net: incomeMonthly - obligationsMonthly
+      }
+    }
+  }, [data?.income, data?.expenses, data?.bills])
 
   async function handleStopRecurrence(tx) {
     playTick()
@@ -96,43 +138,40 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
     }
   }
 
-  const renderSubCard = (tx) => {
+  const renderRowItem = (tx) => {
     const freqLabel = RECUR_OPTIONS.find(o => o.value === tx.recur)?.label || tx.recur
     const isIncome = tx.type === 'income'
     const occurrenceDate = getRecurringOccurrenceKey(tx) || tx.date
     
     return (
-      <div key={tx._id} className={sStyles.subCard}>
-        <div className={sStyles.subCardHeader}>
-          <div>
-            <h4 className={sStyles.subCardTitle}>{tx.desc || tx.cat}</h4>
-            <span className={sStyles.subCardSubcat}>{tx.subcat || tx.cat}</span>
+      <div key={tx._id} className={sStyles.rowItem}>
+        <div className={sStyles.rowTop}>
+          <div className={sStyles.rowLeft}>
+            <div className={`${sStyles.iconWrap} ${isIncome ? sStyles.iconIncome : sStyles.iconExpense}`}>
+              {isIncome ? '💰' : '🔄'}
+            </div>
+            <div className={sStyles.rowInfo}>
+              <h4 className={sStyles.rowTitle} title={tx.desc || tx.cat}>{tx.desc || tx.cat}</h4>
+              <div className={sStyles.rowMeta}>
+                <span className={`${sStyles.badge} ${isIncome ? sStyles.badgeIncome : sStyles.badgeExpense}`}>
+                  {isIncome ? 'Income' : 'Expense'}
+                </span>
+                <span className={`${sStyles.badge} ${sStyles.badgeFreq}`}>{freqLabel}</span>
+              </div>
+            </div>
           </div>
-          <span className={isIncome ? sStyles.badgeIncome : sStyles.badgeExpense}>
-            {isIncome ? 'Income' : 'Expense'}
-          </span>
-        </div>
-        
-        <div className={sStyles.subCardBody}>
-          <div className={sStyles.subCardDetail}>
-            <span className={sStyles.detailLabel}>Amount</span>
-            <strong className={isIncome ? sStyles.amountIncome : sStyles.amountExpense}>
-              {isIncome ? '+' : '-'}{fmt(tx.amount, s)}
-            </strong>
-          </div>
-          <div className={sStyles.subCardDetail}>
-            <span className={sStyles.detailLabel}>Frequency</span>
-            <span className={sStyles.detailValue}>{freqLabel}</span>
-          </div>
-          <div className={sStyles.subCardDetail}>
-            <span className={sStyles.detailLabel}>Last recorded</span>
-            <span className={sStyles.detailValue}>{formatDisplayDate(occurrenceDate)}</span>
+          <div className={`${sStyles.rowAmount} ${isIncome ? sStyles.amountIncome : sStyles.amountExpense}`}>
+            {isIncome ? '+' : '-'}{fmt(tx.amount, s)}
           </div>
         </div>
         
-        <div className={sStyles.subCardFooter}>
+        <div className={sStyles.rowBottom}>
+          <div className={sStyles.lastRecorded}>
+            <span role="img" aria-label="calendar">📅</span> 
+            Last: {formatDisplayDate(occurrenceDate)}
+          </div>
           <button type="button" className={sStyles.stopBtn} onClick={() => handleStopRecurrence(tx)}>
-            Stop recurring
+            Stop
           </button>
         </div>
       </div>
@@ -144,7 +183,34 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
       <div className={styles.header}>
         <div className={styles.title}>Recurring</div>
         <div className={styles.sub}>
-          Manage all your recurring obligations in one place.
+          Manage all your recurring obligations and income.
+        </div>
+      </div>
+
+      <div className={sStyles.summaryStrip}>
+        <div className={sStyles.summaryCard}>
+          <div className={sStyles.summaryLabel}>
+            Monthly Obligations
+          </div>
+          <div className={sStyles.summaryValue}>
+            {fmt(totals.obligations, s)}
+          </div>
+        </div>
+        <div className={sStyles.summaryCard}>
+          <div className={sStyles.summaryLabel}>
+            Monthly Income
+          </div>
+          <div className={`${sStyles.summaryValue} ${sStyles.summaryValuePositive}`}>
+            {fmt(totals.income, s)}
+          </div>
+        </div>
+        <div className={sStyles.summaryCard}>
+          <div className={sStyles.summaryLabel}>
+            Net Recurring
+          </div>
+          <div className={`${sStyles.summaryValue} ${totals.net >= 0 ? sStyles.summaryValuePositive : ''}`}>
+            {totals.net >= 0 ? '+' : '-'}{fmt(Math.abs(totals.net), s)}
+          </div>
         </div>
       </div>
 
@@ -158,6 +224,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             onClick={() => handleTabChange('bills')}
           >
             Bills
+            <span className={sStyles.tabCount}>{(data?.bills?.length || 0) + calendarBills.length}</span>
           </button>
           <button
             type="button"
@@ -167,6 +234,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             onClick={() => handleTabChange('subscriptions')}
           >
             Subscriptions
+            <span className={sStyles.tabCount}>{subscriptions.length}</span>
           </button>
           <button
             type="button"
@@ -176,22 +244,24 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             onClick={() => handleTabChange('income')}
           >
             Income
+            <span className={sStyles.tabCount}>{recurringIncome.length}</span>
           </button>
         </div>
       </div>
 
       {activeTab === 'bills' && (
-        <div>
+        <div className={sStyles.billsWrapper}>
           <Bills user={user} data={data} symbol={symbol} billPaymentTarget={billPaymentTarget} embedded={true} />
           
           {calendarBills.length > 0 && (
-            <div style={{ marginTop: '40px' }}>
-              <div className={sStyles.sectionTitle}>Auto-generated Bills</div>
-              <div className={sStyles.sectionDesc}>
-                These recurring expenses were tracked automatically from your calendar. They are not manually paid bills.
+            <div>
+              <div className={sStyles.billsDivider} />
+              <div className={sStyles.groupHeader}>
+                <h3 className={sStyles.groupTitle}>Auto-generated Bills</h3>
+                <span className={sStyles.groupDesc}>Tracked from your calendar</span>
               </div>
-              <div className={sStyles.subGrid}>
-                {calendarBills.map(renderSubCard)}
+              <div className={sStyles.listLayout}>
+                {calendarBills.map(renderRowItem)}
               </div>
             </div>
           )}
@@ -200,18 +270,19 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
 
       {activeTab === 'subscriptions' && (
         <div>
-          <div className={sStyles.sectionTitle}>Subscriptions & Services</div>
-          <div className={sStyles.sectionDesc}>
-            Auto-charged recurring expenses like Netflix, Spotify, or gym memberships.
+          <div className={sStyles.groupHeader}>
+            <h3 className={sStyles.groupTitle}>Subscriptions & Services</h3>
+            <span className={sStyles.groupDesc}>Auto-charged recurring expenses</span>
           </div>
           
-          <div className={sStyles.subGrid}>
+          <div className={sStyles.listLayout}>
             {subscriptions.length > 0 ? (
-              subscriptions.map(renderSubCard)
+              subscriptions.map(renderRowItem)
             ) : (
               <div className={sStyles.emptyState}>
+                <div className={sStyles.emptyStateIcon}>🔄</div>
                 <h4>No active subscriptions</h4>
-                <p>Any recurring expense that isn't a bill will appear here.</p>
+                <p>Any recurring expense from your calendar that isn't a bill will appear here.</p>
               </div>
             )}
           </div>
@@ -220,16 +291,17 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
 
       {activeTab === 'income' && (
         <div>
-          <div className={sStyles.sectionTitle}>Recurring Income</div>
-          <div className={sStyles.sectionDesc}>
-            Expected income like salary, retainers, or regular allowances.
+          <div className={sStyles.groupHeader}>
+            <h3 className={sStyles.groupTitle}>Recurring Income</h3>
+            <span className={sStyles.groupDesc}>Expected income like salary or retainers</span>
           </div>
           
-          <div className={sStyles.subGrid}>
+          <div className={sStyles.listLayout}>
             {recurringIncome.length > 0 ? (
-              recurringIncome.map(renderSubCard)
+              recurringIncome.map(renderRowItem)
             ) : (
               <div className={sStyles.emptyState}>
+                <div className={sStyles.emptyStateIcon}>💰</div>
                 <h4>No active recurring income</h4>
                 <p>Add your salary to the calendar as a recurring income to see it here.</p>
               </div>
