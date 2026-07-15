@@ -22,6 +22,7 @@ import History from './History'
 import Breakdown from './Breakdown'
 import Dashboard from './Dashboard'
 import Subscriptions from './Subscriptions'
+import Recurring from './Recurring'
 import { Button } from '../components/ui/Button'
 import {
   findPresetByLabel,
@@ -1103,9 +1104,8 @@ export default function AppShell({ user }) {
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
 
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
-    { id: 'bills', label: 'Bills', iconKey: 'bills', section: null },
+    { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: null },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
-    { id: 'subscriptions', label: 'Subscriptions', iconKey: 'bills', section: null },
     { id: 'history', label: 'Insights', iconKey: 'history', section: null },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
@@ -1123,9 +1123,8 @@ export default function AppShell({ user }) {
   ]
   const takdaMoreNav = [
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
-    { id: 'bills', label: 'Bills', iconKey: 'bills', section: 'Review' },
+    { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: 'Review' },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
-    { id: 'subscriptions', label: 'Subscriptions', iconKey: 'bills', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: 'Review' },
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
@@ -1141,6 +1140,7 @@ export default function AppShell({ user }) {
     accounts: AccountsAndDebts,
     breakdown: HistoryAndInsights,
     budget: SavingsAndBudget,
+    recurring: Recurring,
     bills: Bills,
     subscriptions: Subscriptions,
   }
@@ -1180,10 +1180,9 @@ export default function AppShell({ user }) {
   ).find(item => item.id === visiblePageKey) || currentSidebarNav[0]
   const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
-    { id: 'bills', label: 'Bills', iconKey: 'bills', space: 'takda' },
-    { id: 'history', label: 'History', iconKey: 'history', space: 'takda' },
-    { id: 'subscriptions', label: 'Subs', iconKey: 'bills', space: 'takda' },
+    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', space: 'takda' },
+    { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'takda' },
+    { id: 'budget', label: 'Budget', iconKey: 'budget', space: 'takda' },
   ]
   const lakasBottomNav = [
     { id: 'workout', label: 'Workout', iconKey: 'workouts', space: 'lakas' },

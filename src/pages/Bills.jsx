@@ -77,7 +77,7 @@ function getMonthlyEquivalent(amount, freq = 'monthly') {
 
 let globalHandledTargetAt = 0
 
-export default function Bills({ user, data, symbol, billPaymentTarget = null }) {
+export default function Bills({ user, data, symbol, billPaymentTarget = null, embedded = false }) {
   const s = symbol || '₱'
   const [form, setForm] = useState(createBillForm())
   const [paymentBill, setPaymentBill] = useState(null)
@@ -377,16 +377,29 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null }) 
 
   return (
     <>
-      <div className={styles.page}>
-        <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div className={styles.title}>Bills</div>
-            <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
+      <div className={embedded ? '' : styles.page}>
+        {!embedded && (
+          <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div className={styles.title}>Bills</div>
+              <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
+            </div>
+            <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
+              + Add Bill
+            </button>
           </div>
-          <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
-            + Add Bill
-          </button>
-        </div>
+        )}
+        
+        {embedded && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ color: 'var(--text2)', fontSize: '14px' }}>
+              Plan recurring bills, then mark them paid when money leaves an account.
+            </div>
+            <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
+              + Add Bill
+            </button>
+          </div>
+        )}
 
         <div className={styles.trustGrid}>
           <div className={styles.trustCard}>
