@@ -1180,9 +1180,10 @@ export default function AppShell({ user }) {
   ).find(item => item.id === visiblePageKey) || currentSidebarNav[0]
   const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
+    { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', space: 'takda' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'takda' },
-    { id: 'budget', label: 'Budget', iconKey: 'budget', space: 'takda' },
+    { id: 'history', label: 'Insights', iconKey: 'history', space: 'takda' },
   ]
   const lakasBottomNav = [
     { id: 'workout', label: 'Workout', iconKey: 'workouts', space: 'lakas' },
