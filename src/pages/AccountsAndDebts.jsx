@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Accounts from './Accounts'
 import Debts from './Debts'
 import styles from './Page.module.css'
+import tStyles from '../components/SharedTabs.module.css'
 import { fmt } from '../lib/utils'
 
 export default function AccountsAndDebts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, subTab = 'accounts' }) {
@@ -31,77 +32,55 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
 
   return (
     <div className={styles.page}>
-      <div className={styles.header} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
-          <div className={styles.title}>Accounts</div>
-          <div className={styles.sub}>Manage cash flow accounts, track card utilization, and plan debt payoff strategies.</div>
+      <div className={styles.header}>
+        <div className={styles.title}>Accounts & Debts</div>
+        <div className={styles.sub}>Manage cash flow accounts, track card utilization, and plan debt payoff strategies.</div>
+      </div>
+
+      <div className={tStyles.summaryStrip}>
+        <div className={tStyles.summaryCard}>
+          <div className={tStyles.summaryLabel}>Total Cash Assets</div>
+          <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
+            {privacyMode ? '••••' : fmt(totalAssets, s)}
+          </div>
         </div>
-        
-        <div style={{
-          background: 'var(--surface2)',
-          border: '1px solid var(--border2)',
-          borderRadius: '16px',
-          padding: '12px 18px',
-          minWidth: '220px',
-          textAlign: 'right'
-        }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text3)', letterSpacing: '0.5px' }}>Net Worth</span>
-          <div style={{ fontSize: '22px', fontWeight: 900, color: netWorth >= 0 ? 'var(--accent)' : 'var(--red)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+        <div className={tStyles.summaryCard}>
+          <div className={tStyles.summaryLabel}>Total Debts & Cards</div>
+          <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
+            {privacyMode ? '••••' : fmt(totalDebts, s)}
+          </div>
+        </div>
+        <div className={tStyles.summaryCard}>
+          <div className={tStyles.summaryLabel}>Net Worth</div>
+          <div className={`${tStyles.summaryValue} ${netWorth >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
             {privacyMode ? '••••' : fmt(netWorth, s)}
           </div>
-          <small style={{ fontSize: '10px', color: 'var(--text3)' }}>
-            Cash {fmt(totalAssets, s)} · Debt {fmt(totalDebts, s)}
-          </small>
         </div>
       </div>
 
-      <div style={{
-        display: 'inline-flex',
-        background: 'var(--surface2)',
-        border: '1px solid var(--border2)',
-        borderRadius: '14px',
-        padding: '3px',
-        marginBottom: '20px',
-        width: 'fit-content'
-      }}>
-        <button
-          type="button"
-          onClick={() => setActiveTab('accounts')}
-          style={{
-            minHeight: '34px',
-            padding: '0 20px',
-            fontSize: '13px',
-            fontWeight: 800,
-            borderRadius: '11px',
-            border: 'none',
-            background: activeTab === 'accounts' ? 'var(--surface)' : 'transparent',
-            color: activeTab === 'accounts' ? 'var(--text)' : 'var(--text3)',
-            cursor: 'pointer',
-            boxShadow: activeTab === 'accounts' ? 'var(--shadow-sm)' : 'none',
-            transition: 'all 0.16s ease'
-          }}
-        >
-          Asset Accounts
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('debts')}
-          style={{
-            minHeight: '34px',
-            padding: '0 20px',
-            fontSize: '13px',
-            fontWeight: 800,
-            borderRadius: '11px',
-            border: 'none',
-            background: activeTab === 'debts' ? 'var(--surface)' : 'transparent',
-            color: activeTab === 'debts' ? 'var(--text)' : 'var(--text3)',
-            cursor: 'pointer',
-            boxShadow: activeTab === 'debts' ? 'var(--shadow-sm)' : 'none',
-            transition: 'all 0.16s ease'
-          }}
-        >
-          Debt Payoffs
-        </button>
+      <div className={tStyles.tabsWrap}>
+        <div className={tStyles.tabs} role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'accounts'}
+            className={`${tStyles.tab} ${activeTab === 'accounts' ? tStyles.tabActive : ''}`}
+            onClick={() => setActiveTab('accounts')}
+          >
+            Asset Accounts
+            <span className={tStyles.tabCount}>{accounts.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'debts'}
+            className={`${tStyles.tab} ${activeTab === 'debts' ? tStyles.tabActive : ''}`}
+            onClick={() => setActiveTab('debts')}
+          >
+            Debt Payoffs
+            <span className={tStyles.tabCount}>{debts.length}</span>
+          </button>
+        </div>
       </div>
 
       {activeTab === 'accounts' ? (
