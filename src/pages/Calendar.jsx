@@ -176,8 +176,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const allTransfers = useMemo(() => getMonthTransactions(data.transfers || [], year, month), [data.transfers, year, month])
 
   const forecastMap = useMemo(
-    () => getMonthForecast(data.accounts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
-    [data.accounts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
+    () => getMonthForecast(data.accounts, data.debts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
+    [data.accounts, data.debts, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
   )
 
   const unpaidBillsByDateKey = useMemo(() => {
@@ -1014,10 +1014,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
   const selectedDayBalance = selected
-    ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.income, data.expenses, selected, balanceOverrides))
+    ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.debts, data.income, data.expenses, selected, balanceOverrides))
     : 0
   const selectedDayAutoBalance = selected
-    ? getBalanceAtDate(data.accounts, data.income, data.expenses, selected)
+    ? getBalanceAtDate(data.accounts, data.debts, data.income, data.expenses, selected)
     : 0
   const isCurrentMonthView = year === currentYear && month === currentMonth
   const defaultBalanceDate = useMemo(() => {
@@ -1028,7 +1028,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
   const balanceFocusValue = balanceFocusDate
-    ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.income, data.expenses, balanceFocusDate, balanceOverrides))
+    ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.debts, data.income, data.expenses, balanceFocusDate, balanceOverrides))
     : 0
   const balanceRailMeta = selected
     ? 'Calendar close · paid entries only'

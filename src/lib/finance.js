@@ -94,9 +94,16 @@ export function getTakdaTransactionLifecycle(tx = {}, referenceDate = today()) {
   }
 }
 
-function toLedgerEntry(tx, sign) {
+function toLedgerEntry(tx, sign, anchorDateStr) {
   const date = normalizeDate(tx?.date)
   if (!date || !isTransactionPaid(tx)) return null
+
+  // Fix: For transactions on or before the anchor date (the past/today), 
+  // only include them in balance calculations if they were actually applied to an account.
+  // Otherwise, they never affected the current account balance, so "undoing" them inflates past balances.
+  if (anchorDateStr && date <= anchorDateStr && !tx.accountBalanceApplied) {
+    return null
+  }
 
   return {
     ...tx,
@@ -108,13 +115,17 @@ function toLedgerEntry(tx, sign) {
 export function getAccountSignedBalance(account = {}) {
   const value = Number(account?.balance) || 0
   if (String(account?.type || '').toLowerCase() === 'credit card') {
-    return -Math.abs(value)
+    return -value
   }
   return value
 }
 
-export function getCurrentBalance(accounts = []) {
-  return accounts.reduce((sum, account) => sum + getAccountSignedBalance(account), 0)
+export function getCurrentBalance(accounts = [], debts = []) {
+  const accountIds = new Set(accounts.map(a => a._id))
+  const unlinkedDebts = (debts || []).filter(d => !d.accountId || !accountIds.has(d.accountId))
+  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
+  const accountsBalance = accounts.reduce((sum, account) => sum + getAccountSignedBalance(account), 0)
+  return accountsBalance - totalDebt
 }
 
 export function getAccountBalanceDelta(account = {}, txType, amount = 0) {
@@ -123,11 +134,10 @@ export function getAccountBalanceDelta(account = {}, txType, amount = 0) {
 
   const isCreditCard = String(account?.type || '').toLowerCase() === 'credit card'
   if (isCreditCard) {
-    const isStoredNegative = (Number(account?.balance) || 0) < 0
     if (txType === 'income') {
-      return isStoredNegative ? normalizedAmount : -normalizedAmount
+      return -normalizedAmount
     }
-    return isStoredNegative ? -normalizedAmount : normalizedAmount
+    return normalizedAmount
   }
 
   if (txType === 'income') {
@@ -149,10 +159,10 @@ export function shouldAffectCurrentAccountBalance(tx = {}, referenceDate = today
   return txDate <= anchorDate
 }
 
-export function getActualLedger(income = [], expenses = []) {
+export function getActualLedger(income = [], expenses = [], anchorDateStr = null) {
   return [
-    ...income.map(tx => toLedgerEntry(tx, 1)),
-    ...expenses.map(tx => toLedgerEntry(tx, -1)),
+    ...income.map(tx => toLedgerEntry(tx, 1, anchorDateStr)),
+    ...expenses.map(tx => toLedgerEntry(tx, -1, anchorDateStr)),
   ]
     .filter(Boolean)
     .sort((a, b) => {
@@ -245,7 +255,7 @@ function getBalanceFromAnchor(accounts = [], income = [], expenses = [], anchorD
 
   if (!anchor || !target || target <= anchor) return Number(anchorBalance) || 0
 
-  const actualLedger = getActualLedger(income, expenses)
+  const actualLedger = getActualLedger(income, expenses, anchor)
   const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, anchor, target)
   const deltaUntilTarget = [...actualLedger, ...projectedLedger]
     .filter(entry => entry.date > anchor && entry.date <= target)
@@ -277,14 +287,14 @@ export function getBalanceOverrides(dailyBalanceOverrides = {}, monthStartBalanc
   }
 }
 
-export function getBalanceAtDate(accounts = [], income = [], expenses = [], targetDate, anchorDate = today()) {
-  const currentBalance = getCurrentBalance(accounts)
+export function getBalanceAtDate(accounts = [], debts = [], income = [], expenses = [], targetDate, anchorDate = today()) {
+  const currentBalance = getCurrentBalance(accounts, debts)
   const target = normalizeDate(targetDate)
   const anchor = normalizeDate(anchorDate)
 
   if (!target || !anchor || target === anchor) return currentBalance
 
-  const actualLedger = getActualLedger(income, expenses)
+  const actualLedger = getActualLedger(income, expenses, anchor)
 
   if (target < anchor) {
     const deltaAfterTarget = actualLedger
@@ -302,7 +312,7 @@ export function getBalanceAtDate(accounts = [], income = [], expenses = [], targ
   return currentBalance + deltaUntilTarget
 }
 
-export function getBalanceAtDateWithOverrides(accounts = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
+export function getBalanceAtDateWithOverrides(accounts = [], debts = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
   const target = normalizeDate(targetDate)
   if (!target) return getCurrentBalance(accounts)
 
@@ -314,7 +324,7 @@ export function getBalanceAtDateWithOverrides(accounts = [], income = [], expens
   if (closestOverrideDate) {
     const overrideVal = Number(balanceOverrides[closestOverrideDate])
     if (Number.isFinite(overrideVal)) {
-      const actualLedger = getActualLedger(income, expenses)
+      const actualLedger = getActualLedger(income, expenses, anchor)
       const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, closestOverrideDate, target)
       
       const deltaUntilTarget = [...actualLedger, ...projectedLedger]
@@ -325,12 +335,12 @@ export function getBalanceAtDateWithOverrides(accounts = [], income = [], expens
     }
   }
 
-  return getBalanceAtDate(accounts, income, expenses, target)
+  return getBalanceAtDate(accounts, debts, income, expenses, target)
 }
 
-export function getMonthStartBalance(accounts = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
+export function getMonthStartBalance(accounts = [], debts = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
   const targetAnchorDate = toDateKey(new Date(year, month, 0))
-  return getBalanceAtDateWithOverrides(accounts, income, expenses, targetAnchorDate, balanceOverrides)
+  return getBalanceAtDateWithOverrides(accounts, debts, income, expenses, targetAnchorDate, balanceOverrides)
 }
 
 export function getMonthForecast(
