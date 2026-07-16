@@ -145,6 +145,34 @@ const SPACE_PROMISES = [
 // --- CSS Mockup Sub-components & Helpers ---
 
 function TakdaMockup() {
+  const [balance, setBalance] = useState(45210.50)
+  const [txs, setTxs] = useState([
+    { emoji: '🛒', name: 'Groceries', amount: -2350 },
+    { emoji: '⚡', name: 'Power Bill', amount: -3100 },
+    { emoji: '💰', name: 'Salary', amount: 45000 }
+  ])
+  const [limitSpent, setLimitSpent] = useState(12500)
+
+  const addCoffee = () => {
+    if (balance <= 1000) return
+    setBalance(prev => prev - 500)
+    setLimitSpent(prev => Math.min(20000, prev + 500))
+    setTxs(prev => [
+      { emoji: '☕', name: 'Sample Coffee', amount: -500 },
+      ...prev
+    ])
+  }
+
+  const reset = () => {
+    setBalance(45210.50)
+    setLimitSpent(12500)
+    setTxs([
+      { emoji: '🛒', name: 'Groceries', amount: -2350 },
+      { emoji: '⚡', name: 'Power Bill', amount: -3100 },
+      { emoji: '💰', name: 'Salary', amount: 45000 }
+    ])
+  }
+
   return (
     <div className={styles.mockupFrame}>
       <div className={styles.mockupHeader}>
@@ -157,34 +185,33 @@ function TakdaMockup() {
       </div>
       <div className={styles.mockupContent}>
         <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--blue)' }}>
-          <div className={styles.mockCardLabel}>Financial Pulse · Healthy</div>
-          <div className={styles.mockBalance}>₱45,210.50</div>
+          <div className={styles.mockCardHeaderRow}>
+            <div className={styles.mockCardLabel}>Financial Pulse · Healthy</div>
+            <button type="button" onClick={txs.length > 3 ? reset : addCoffee} className={styles.mockActionBtn}>
+              {txs.length > 3 ? 'Reset' : '⚡ Simulate -₱500'}
+            </button>
+          </div>
+          <div className={styles.mockBalance}>₱{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
         </div>
         <div className={styles.mockBudget}>
           <div className={styles.mockBudgetHeader}>
             <span>Limit status</span>
-            <span>₱12.5k / ₱20k</span>
+            <span>₱{(limitSpent / 1000).toFixed(1)}k / ₱20k</span>
           </div>
           <div className={styles.mockProgressBar}>
-            <div className={styles.mockProgressFill} style={{ width: '62.5%' }}></div>
+            <div className={styles.mockProgressFill} style={{ width: `${(limitSpent / 20000) * 100}%`, backgroundColor: 'var(--blue)' }}></div>
           </div>
         </div>
         <div className={styles.mockTransactions}>
-          <div className={styles.mockTxItem}>
-            <span>🛒</span>
-            <span className={styles.txName}>Groceries</span>
-            <span className={styles.txAmount}>-₱2,350</span>
-          </div>
-          <div className={styles.mockTxItem}>
-            <span>⚡</span>
-            <span className={styles.txName}>Power Bill</span>
-            <span className={styles.txAmount}>-₱3,100</span>
-          </div>
-          <div className={styles.mockTxItem}>
-            <span>💰</span>
-            <span className={styles.txName}>Salary</span>
-            <span className={styles.txAmountPositive}>+₱45k</span>
-          </div>
+          {txs.slice(0, 3).map((tx, i) => (
+            <div key={i} className={styles.mockTxItem}>
+              <span>{tx.emoji}</span>
+              <span className={styles.txName}>{tx.name}</span>
+              <span className={tx.amount > 0 ? styles.txAmountPositive : styles.txAmount}>
+                {tx.amount > 0 ? '+' : ''}₱{Math.abs(tx.amount).toLocaleString()}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -193,13 +220,15 @@ function TakdaMockup() {
 
 function LakasMockup() {
   const [seconds, setSeconds] = useState(105) // 01:45
+  const [isRunning, setIsRunning] = useState(false)
   
   useEffect(() => {
+    if (!isRunning) return
     const interval = setInterval(() => {
       setSeconds(s => (s > 0 ? s - 1 : 120))
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [isRunning])
 
   const min = Math.floor(seconds / 60)
   const sec = seconds % 60
@@ -221,7 +250,12 @@ function LakasMockup() {
       </div>
       <div className={styles.mockupContent}>
         <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--accent)' }}>
-          <div className={styles.mockCardLabel}>Ghost Racer Leaderboard</div>
+          <div className={styles.mockCardHeaderRow}>
+            <div className={styles.mockCardLabel}>Ghost Racer Leaderboard</div>
+            <button type="button" onClick={() => setIsRunning(!isRunning)} className={styles.mockActionBtn}>
+              {isRunning ? '⏸ Pause' : '▶ Start Timer'}
+            </button>
+          </div>
           <div className={styles.mockWorkoutTitle}>🏆 1st: You (154 pts)</div>
         </div>
         
@@ -236,6 +270,7 @@ function LakasMockup() {
                 className={styles.mockRingFill} 
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
+                stroke="var(--accent)"
               />
             </svg>
             <div className={styles.mockTimerText}>{timeStr}</div>
@@ -243,7 +278,7 @@ function LakasMockup() {
           
           <div className={styles.mockSets}>
             <div className={styles.mockSetItemDone}>🗺️ Outdoor Run: 5.2 km logged</div>
-            <div className={styles.mockSetItemActive}>⚡ Consistency Score: Active</div>
+            <div className={styles.mockSetItemActive}>⚡ Consistency: {isRunning ? 'Active Tracker' : 'Paused'}</div>
           </div>
         </div>
       </div>
@@ -252,6 +287,22 @@ function LakasMockup() {
 }
 
 function TalaMockup() {
+  const [mood, setMood] = useState('⛈️')
+  
+  const moodPrompts = {
+    '☀️': 'Sunny: Wonderful day. Grateful for today\'s clear skies.',
+    '🌤️': 'Partly Sunny: Calm focus. Balanced state and light exercises.',
+    '🌧️': 'Rainy: Tired state. Remember to take a break and rest.',
+    '⛈️': 'Heavy: Heavy state detected. Grounding prompt active...'
+  }
+
+  const moodColors = {
+    '☀️': 'var(--yellow)',
+    '🌤️': 'var(--blue)',
+    '🌧️': 'var(--accent)',
+    '⛈️': 'var(--purple)'
+  }
+
   return (
     <div className={styles.mockupFrame}>
       <div className={styles.mockupHeader}>
@@ -263,7 +314,7 @@ function TalaMockup() {
         <div className={styles.mockupUrl}>buhay.app/tala</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockCard} style={{ borderLeft: '3px solid var(--purple)' }}>
+        <div className={styles.mockCard} style={{ borderLeft: `3px solid ${moodColors[mood]}` }}>
           <div className={styles.mockPanicBar}>
             <span className={styles.mockCardLabel}>Grounded Reflection Prompt</span>
             <span className={styles.mockPanicBtn}>🔒 Private default</span>
@@ -271,15 +322,20 @@ function TalaMockup() {
         </div>
         
         <div className={styles.mockTextareaBlur}>
-          ⛈️ Heavy state detected. Grounding reflection recommendation active...
+          {moodPrompts[mood]}
         </div>
 
         <div className={styles.mockCalendarDots}>
-          <span className={styles.mockCalDay}>☀️ <span className={styles.mockCalDayNum}>1</span></span>
-          <span className={styles.mockCalDay}>🌤️ <span className={styles.mockCalDayNum}>2</span></span>
-          <span className={styles.mockCalDay}>☁️ <span className={styles.mockCalDayNum}>3</span></span>
-          <span className={styles.mockCalDay}>🌧️ <span className={styles.mockCalDayNum}>4</span></span>
-          <span className={styles.mockCalDay}>⛈️ <span className={styles.mockCalDayNum}>5</span></span>
+          {['☀️', '🌤️', '🌧️', '⛈️'].map(m => (
+            <button 
+              key={m} 
+              type="button" 
+              onClick={() => setMood(m)} 
+              className={`${styles.mockMoodBtn} ${mood === m ? styles.mockMoodBtnActive : ''}`}
+            >
+              {m}
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -400,6 +456,19 @@ export default function LandingPage() {
   const [isSignedIn, setIsSignedIn] = useState(() => Boolean(auth.currentUser))
   const [activeTab, setActiveTab] = useState('buhay')
   const [openFaqIdx, setOpenFaqIdx] = useState(null)
+  const [lockActive, setLockActive] = useState(true)
+  const [backupStatus, setBackupStatus] = useState('Idle')
+
+  const triggerBackup = () => {
+    if (backupStatus !== 'Idle') return
+    setBackupStatus('Exporting...')
+    setTimeout(() => {
+      setBackupStatus('buhay_backup.csv saved')
+      setTimeout(() => {
+        setBackupStatus('Idle')
+      }, 3000)
+    }, 1500)
+  }
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, currentUser => {
@@ -613,14 +682,71 @@ export default function LandingPage() {
             <p className={styles.sectionLead}>Buhay is free to use right now, and it stays clear about your data, your controls, and what the product does not replace.</p>
           </ScrollReveal>
           
-          <div className={styles.minimalistTrustGrid}>
-            {TRUST_POINTS.map((point, idx) => (
-              <ScrollReveal key={point.title} className={styles.trustColumn}>
-                <div className={styles.trustNum}>0{idx + 1}</div>
-                <h3 className={styles.trustTitle}>{point.title}</h3>
-                <p className={styles.trustDesc}>{point.desc}</p>
-              </ScrollReveal>
-            ))}
+          <div className={styles.bentoGrid}>
+            <ScrollReveal className={`${styles.bentoCard} ${styles.bentoCol1}`}>
+              <div className={styles.bentoNum}>01</div>
+              <h3 className={styles.bentoTitle}>Free to use right now</h3>
+              <p className={styles.bentoDesc}>Create one account and use Takda, Lakas, and Tala without a paid plan in the current release.</p>
+              <div className={styles.bentoWidgetMini}>
+                <span className={styles.bentoBadge}>Beta v1.0</span>
+                <span className={styles.bentoBadgeSuccess}>No Ads</span>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal className={`${styles.bentoCard} ${styles.bentoCol2}`}>
+              <div className={styles.bentoContentSplit}>
+                <div className={styles.bentoText}>
+                  <div className={styles.bentoNum}>02</div>
+                  <h3 className={styles.bentoTitle}>Private account controls</h3>
+                  <p className={styles.bentoDesc}>Your money, fitness, and reflection records stay tied to your signed-in account, with privacy settings and deletion tools inside the app.</p>
+                </div>
+                <div className={styles.bentoVisual}>
+                  <button 
+                    type="button" 
+                    onClick={() => setLockActive(!lockActive)} 
+                    className={`${styles.bentoWidgetBtn} ${lockActive ? styles.bentoWidgetBtnActive : ''}`}
+                  >
+                    {lockActive ? '🔒 Lock Active' : '🔓 Tap to Lock'}
+                  </button>
+                  <div className={styles.bentoStatusLabel}>
+                    Status: <span className={lockActive ? styles.textSuccess : styles.textWarning}>{lockActive ? 'Encrypted' : 'Decrypted'}</span>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal className={`${styles.bentoCard} ${styles.bentoCol2}`}>
+              <div className={styles.bentoContentSplit}>
+                <div className={styles.bentoText}>
+                  <div className={styles.bentoNum}>03</div>
+                  <h3 className={styles.bentoTitle}>Export, backup, restore</h3>
+                  <p className={styles.bentoDesc}>Export your records, keep backups, and restore them from settings if you switch devices or want an extra copy.</p>
+                </div>
+                <div className={styles.bentoVisual}>
+                  <button 
+                    type="button" 
+                    onClick={triggerBackup} 
+                    className={`${styles.bentoWidgetBtn} ${backupStatus !== 'Idle' ? styles.bentoWidgetBtnActive : ''}`}
+                  >
+                    {backupStatus === 'Idle' && '📥 Export Backup'}
+                    {backupStatus === 'Exporting...' && '⏳ Processing...'}
+                    {backupStatus === 'buhay_backup.csv saved' && '✅ Export Saved'}
+                  </button>
+                  <div className={styles.bentoStatusLabel}>
+                    File: <span className={styles.textCode}>{backupStatus === 'Idle' ? 'No action' : backupStatus}</span>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal className={`${styles.bentoCard} ${styles.bentoCol1}`}>
+              <div className={styles.bentoNum}>04</div>
+              <h3 className={styles.bentoTitle}>Honest limits</h3>
+              <p className={styles.bentoDesc}>Buhay is a manual tracking tool. It is not a bank, not automatic bank sync, and not replacement for medical/mental health advice.</p>
+              <div className={styles.bentoWidgetMini}>
+                <span className={styles.bentoBadge}>Manual Logging</span>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
