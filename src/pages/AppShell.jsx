@@ -1098,35 +1098,32 @@ export default function AppShell({ user }) {
 
   const dashboardNav = [
     { id: 'main', label: 'Home', iconKey: 'dashboard', section: 'Overview' },
-    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const nav = [
+    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
-
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: null },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: null },
-    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const lakasNav = [
+    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
     { id: 'workout', label: 'Workout', iconKey: 'workouts', section: 'Core' },
     { id: 'body', label: 'Body System', iconKey: 'meals', section: null },
     { id: 'progress', label: 'Progress', iconKey: 'body', section: 'Review' },
-    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const talaNav = [
+    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
     { id: 'journal', label: 'Journal', iconKey: 'journal', section: 'Core' },
     { id: 'track', label: 'Track', iconKey: 'mood', section: null },
     { id: 'focus', label: 'Focus', iconKey: 'goals', section: null },
-    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
   const takdaMoreNav = [
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: 'Review' },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: 'Review' },
-    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'Manage' },
   ]
 
   const financePages = {
@@ -1647,15 +1644,19 @@ export default function AppShell({ user }) {
     ? 'Lakas quick actions'
     : activeSpace === 'tala'
       ? 'Tala quick actions'
-      : 'Takda quick actions'
+      : activeSpace === 'dashboard'
+        ? 'Buhay quick actions'
+        : 'Takda quick actions'
   const fabButtonLabel = activeSpace === 'lakas'
     ? 'Open Lakas quick actions'
     : activeSpace === 'tala'
       ? 'Open Tala quick actions'
-      : page === 'portfolio'
-        ? 'Add portfolio holding'
-        : 'Open Takda quick actions'
-  const isContextualFabMenu = activeSpace === 'lakas' || activeSpace === 'tala'
+      : activeSpace === 'dashboard'
+        ? 'Open Buhay quick actions'
+        : page === 'portfolio'
+          ? 'Add portfolio holding'
+          : 'Open Takda quick actions'
+  const isContextualFabMenu = activeSpace === 'lakas' || activeSpace === 'tala' || activeSpace === 'dashboard'
   const fabActions = activeSpace === 'lakas'
     ? [
         { key: 'meal-log', label: 'Meal Log', meta: 'Log calories, protein, carbs, fat, and notes.', icon: 'ML', className: styles.fabActionMeal, onClick: () => openLakasFabAction('meal-log') },
@@ -1666,10 +1667,17 @@ export default function AppShell({ user }) {
           { key: 'journal', label: 'Add Journal', meta: 'Write a private entry and jump straight into the editor.', icon: 'JR', className: styles.fabActionJournal, onClick: () => openTalaFabAction('journal') },
           { key: 'mood', label: 'What is your mood?', meta: 'Log mood, energy, stress, and triggers.', icon: 'MO', className: styles.fabActionMood, onClick: () => openTalaFabAction('mood') },
         ]
-      : [
-          { key: 'expense', label: 'Expense', icon: '-', className: styles.fabActionExpense, onClick: () => openQuickAdd('expense') },
-          { key: 'income', label: 'Income', icon: '+', className: styles.fabActionIncome, onClick: () => openQuickAdd('income') },
-        ]
+      : activeSpace === 'dashboard'
+        ? [
+            { key: 'expense', label: 'Log Expense', meta: 'Track spending in Takda.', icon: '-', className: styles.fabActionExpense, onClick: () => openQuickAdd('expense') },
+            { key: 'meal-log', label: 'Log Meal', meta: 'Track nutrition in Lakas.', icon: 'ML', className: styles.fabActionMeal, onClick: () => openLakasFabAction('meal-log') },
+            { key: 'journal', label: 'Write Journal', meta: 'Reflect in Tala.', icon: 'JR', className: styles.fabActionJournal, onClick: () => openTalaFabAction('journal') },
+            { key: 'gym-session', label: 'Start Gym Session', meta: 'Start workout in Lakas.', icon: 'GS', className: styles.fabActionSession, onClick: () => openLakasFabAction('gym-session') },
+          ]
+        : [
+            { key: 'expense', label: 'Expense', icon: '-', className: styles.fabActionExpense, onClick: () => openQuickAdd('expense') },
+            { key: 'income', label: 'Income', icon: '+', className: styles.fabActionIncome, onClick: () => openQuickAdd('income') },
+          ]
 
   return (
     <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
@@ -1680,17 +1688,20 @@ export default function AppShell({ user }) {
             <div className={styles.logo}>Buhay</div>
           </div>
         </div>
-        <div className={styles.sidebarWorkspaceSelectWrap}>
-          <button 
-            type="button" 
-            className={styles.sidebarWorkspaceSelect} 
-            onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
-            aria-expanded={workspaceDropdownOpen}
-          >
-            <span className={styles.sidebarWorkspaceSelectIcon}>{NAV_ICONS[activeSpaceConfig.iconKey]}</span>
-            <span className={styles.sidebarWorkspaceSelectLabel}>{activeSpaceConfig.label} <span className={styles.sidebarWorkspaceSelectMeta}>({activeSpaceConfig.meta})</span></span>
-            <span className={styles.sidebarWorkspaceSelectChevron}>⌄</span>
-          </button>
+        <div className={styles.sidebarSpaceRail}>
+          {APP_SPACES.map(space => (
+            <button
+              key={space.id}
+              type="button"
+              className={`${styles.spaceRailBtn} ${activeSpace === space.id ? styles.spaceRailBtnActive : ''}`}
+              onClick={() => openSpace(space.id)}
+              title={space.label}
+              aria-label={`Switch to ${space.label}`}
+              aria-pressed={activeSpace === space.id}
+            >
+              {NAV_ICONS[space.iconKey]}
+            </button>
+          ))}
         </div>
         <nav className={styles.sidebarNav} aria-label={activeSpace === 'dashboard' ? 'Buhay navigation' : activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
           {currentSidebarNav.map(n => (
@@ -1701,6 +1712,10 @@ export default function AppShell({ user }) {
                 id={`${activeSpace}-nav-${n.id}`}
                 className={`${styles.navItem} ${activeSpace === 'dashboard' ? page === n.id ? styles.active : '' : activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
                 onClick={() => {
+                  if (n.id === 'dashboard-home') {
+                    openSpace('dashboard')
+                    return
+                  }
                   if (activeSpace === 'dashboard') {
                     // Stay in Buhay space — just switch sub-page (main, settings)
                     if (n.id === 'settings') setPage('settings')
@@ -1736,7 +1751,29 @@ export default function AppShell({ user }) {
               </div>
             </div>
           </div>
-          <button type="button" className={styles.btnLogout} onClick={() => signOut(auth)}>Log out</button>
+          <div className={styles.sidebarActions}>
+            <button
+              type="button"
+              className={styles.btnSettings}
+              onClick={() => {
+                if (activeSpace === 'dashboard') setPage('settings')
+                else if (activeSpace === 'lakas') {
+                  openSpace('lakas')
+                  setLakasPage('settings')
+                } else if (activeSpace === 'tala') {
+                  openSpace('tala')
+                  setTalaPage('settings')
+                } else {
+                  navigateToFinancePage('settings')
+                }
+              }}
+              title="Settings"
+            >
+              <span className={styles.icon} aria-hidden="true">{NAV_ICONS.settings}</span>
+              Settings
+            </button>
+            <button type="button" className={styles.btnLogout} onClick={() => signOut(auth)}>Log out</button>
+          </div>
         </div>
       </aside>
       <div className={`${styles.mainWrap} ${isCalendarPage ? styles.mainWrapCalendar : ''} ${chromeMode.compact ? styles.mainWrapScrolled : ''} ${chromeMode.hidden ? styles.mainWrapChromeHidden : ''}`}>
@@ -1869,7 +1906,7 @@ export default function AppShell({ user }) {
           }}
         />
       )}
-      {['takda', 'lakas', 'tala'].includes(activeSpace) && (
+      {['dashboard', 'takda', 'lakas', 'tala'].includes(activeSpace) && (
         <div className={`${styles.fabWrap} ${shouldHideFabWrap ? styles.fabWrapHidden : ''}`}>
           {quickAddMenuOpen && (
             <div className={`${styles.fabMenu} ${isContextualFabMenu ? styles.fabMenuContextual : ''}`} role="menu" aria-label={fabMenuLabel}>

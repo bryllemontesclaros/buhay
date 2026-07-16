@@ -253,8 +253,12 @@
   padding: 1.15rem 0 1rem;
   overflow-y: auto;
   border: 1px solid var(--border2);
+  border-top: 1px solid var(--glass-highlight);
+  border-left: 1px solid color-mix(in srgb, var(--glass-highlight) 50%, transparent);
   border-radius: 34px;
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
   box-shadow: var(--glass-shadow);
   isolation: isolate;
 }
@@ -470,76 +474,55 @@
   letter-spacing: -0.02em;
 }
 
-.sidebarWorkspaceSelectWrap {
+.sidebarSpaceRail {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   padding: 0 10px 12px;
 }
 
-.sidebarWorkspaceSelect {
+.spaceRailBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 56px;
-  padding: 10px;
-  border-radius: 18px;
+  justify-content: center;
+  height: 44px;
+  border-radius: 14px;
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   color: var(--text2);
   cursor: pointer;
-  font-family: var(--font-body);
-  text-align: left;
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
     background var(--motion-duration) var(--motion-ease-standard),
+    color var(--motion-duration) var(--motion-ease-standard),
     box-shadow var(--motion-duration) var(--motion-ease-standard);
 }
 
-.sidebarWorkspaceSelect:hover {
-  transform: translateY(-2px) scale(1.01);
+.spaceRailBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.spaceRailBtn:hover {
+  transform: translateY(-2px);
   color: var(--text);
   border-color: color-mix(in srgb, var(--glass-highlight) 32%, var(--glass-border));
 }
 
-.sidebarWorkspaceSelect:active {
-  transform: translateY(0) scale(0.97);
+.spaceRailBtn:active {
+  transform: translateY(0);
 }
 
-.sidebarWorkspaceSelectIcon {
-  width: 36px;
-  height: 36px;
-  border-radius: 15px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.spaceRailBtnActive {
   background: color-mix(in srgb, var(--accent) 18%, var(--glass-1));
   color: var(--accent);
-  transition: background var(--motion-duration) var(--ease-fluid),
-              color var(--motion-duration) var(--ease-fluid);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
 }
 
-.sidebarWorkspaceSelectLabel {
-  flex: 1;
-  min-width: 0;
-  color: var(--text);
-  font-size: var(--type-body);
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.sidebarWorkspaceSelectMeta {
-  color: var(--text3);
-  font-size: var(--type-overline);
-  font-weight: 800;
-  letter-spacing: 0.65px;
-  text-transform: uppercase;
-}
-
-.sidebarWorkspaceSelectChevron {
-  color: var(--text3);
-  font-size: 16px;
-  font-weight: 800;
-  padding-right: 4px;
+.spaceRailBtnActive:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
 }
 
 .sidebarNav {
@@ -573,11 +556,11 @@
   color: var(--text2);
   cursor: pointer;
   transition:
-    transform var(--motion-duration) var(--motion-ease-out),
-    border-color var(--motion-duration) var(--motion-ease-standard),
-    background var(--motion-duration) var(--motion-ease-standard),
-    color var(--motion-duration) var(--motion-ease-standard),
-    box-shadow var(--motion-duration) var(--motion-ease-standard);
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    border-color var(--motion-duration-fast) var(--motion-ease-standard),
+    background var(--motion-duration-fast) var(--motion-ease-standard),
+    color var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
   border: 1px solid var(--border2);
   border-radius: 16px;
   background: transparent;
@@ -586,10 +569,11 @@
 }
 
 .navItem:hover {
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-2px) scale(1.02);
   color: var(--text);
-  background: color-mix(in srgb, var(--glass-1) 94%, transparent);
-  border-color: color-mix(in srgb, var(--glass-border) 50%, transparent);
+  background: color-mix(in srgb, var(--surface2) 80%, transparent);
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .navItem:active {
@@ -599,10 +583,10 @@
 .navItem.active {
   color: var(--text);
   background: var(--surface);
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
+  border-color: var(--accent);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent),
-    0 10px 24px rgba(4, 10, 20, 0.12);
+    inset 0 1px 0 var(--glass-highlight),
+    0 10px 24px color-mix(in srgb, var(--accent) 15%, rgba(4, 10, 20, 0.12));
 }
 .icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .icon svg { width: 18px; height: 18px; }
@@ -668,11 +652,17 @@
   white-space: nowrap;
   max-width: 100%;
 }
+.sidebarActions {
+  display: flex;
+  gap: 8px;
+}
+.btnSettings,
 .btnLogout {
-  width: 100%;
+  flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   min-height: 42px;
   border-radius: 16px;
   border: 1px solid var(--border2);
@@ -686,15 +676,23 @@
   text-align: center;
   transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 }
+.btnSettings:hover,
 .btnLogout:hover {
   transform: translateY(-2px) scale(1.01);
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--glass-highlight) 32%, var(--glass-border));
+  background: color-mix(in srgb, var(--surface) 72%, var(--surface2) 28%);
+}
+.btnLogout:hover {
   color: var(--red);
   border-color: color-mix(in srgb, var(--red) 35%, var(--glass-border));
   background: color-mix(in srgb, var(--red-dim) 72%, var(--surface2) 28%);
 }
+.btnSettings:active,
 .btnLogout:active {
   transform: translateY(0) scale(0.97);
 }
+.btnSettings:focus-visible,
 .btnLogout:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--red) 48%, white 52%);
   outline-offset: 2px;
@@ -1726,14 +1724,14 @@
   .sidebarDeckCard:hover,
   .userCard:hover,
   .financeGroupHero:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--glass-highlight) 36%, var(--glass-border));
-    box-shadow: var(--glass-shadow);
+    transform: translateY(-3px) scale(1.015);
+    border-color: var(--accent);
+    box-shadow: var(--glass-shadow-strong), 0 12px 30px color-mix(in srgb, var(--accent) 8%, transparent);
   }
 }
 
 /* MOBILE */
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   .shell {
     flex-direction: column;
     height: 100dvh;
@@ -2274,7 +2272,7 @@
 }
 
 /* Mobile neo: avoid double strokes + odd arcs caused by desktop neo rules (higher specificity). */
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   :global(.neo) .mainWrap {
     border: none;
     border-radius: 0;
@@ -2292,7 +2290,7 @@
   }
 }
 
-@media (max-width: 1024px) and (max-height: 760px) {
+@media (max-width: 860px) and (max-height: 760px) {
   .quickAddLayer {
     padding: 6px 0 0;
   }
@@ -2337,7 +2335,7 @@
   min-height: 42px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   .topBar {
     margin: 12px 12px 0;
     padding: 14px;
@@ -2427,7 +2425,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   :global(.neo) .topBar {
     margin: 12px 12px 0;
     border-radius: 28px;
@@ -2548,7 +2546,7 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   :global(.neo).shell {
     padding: 0;
     gap: 0;
@@ -2636,7 +2634,7 @@
 }
 
 /* Final mobile shell correction: prevent the header and space switch from overflowing phones. */
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   :global(.neo) .main {
     padding-inline: 0px;
   }
@@ -2739,7 +2737,7 @@
 }
 
 /* Final mobile navigation model: top chooses space, bottom chooses page. */
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   .topBar,
   :global(.neo) .topBar {
     display: grid;
@@ -2967,7 +2965,7 @@
   line-height: 1.2;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   .todayStrip {
     display: flex;
     overflow-x: auto;

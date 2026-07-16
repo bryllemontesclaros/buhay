@@ -202,6 +202,10 @@ select.fieldControl {
   opacity: 0;
   cursor: pointer;
 }
+.dateFieldNative::-webkit-inner-spin-button,
+.dateFieldNative::-webkit-clear-button {
+  display: none;
+}
 .formError { padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--red-dim); color: var(--red); font-size: 13px; line-height: 1.5; }
 .accountNote {
   padding: 10px 12px;

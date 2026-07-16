@@ -62,16 +62,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [error, setError] = useState('')
   const isIncome = type === 'income'
   const selectedAccount = accounts.find(account => account._id === accountId) || null
-  const entryWillAffectCurrentBalance = Boolean(accountId && paymentStatus !== 'unpaid' && entryDate && entryDate <= today())
-  const accountHint = !accounts.length
-    ? 'Add an account first if you want transactions to move your current balances automatically.'
-    : !accountId
-      ? 'No account selected. This entry will stay in the ledger only and will not change current account balances.'
-      : paymentStatus === 'unpaid'
-        ? `${selectedAccount?.name || 'Selected account'} is linked, but this entry will not change balances until you mark it paid.`
-      : entryWillAffectCurrentBalance
-        ? `${selectedAccount?.name || 'Selected account'} will update right away because this date is today or earlier.`
-        : `${selectedAccount?.name || 'Selected account'} is linked, but current balances will wait until this date arrives.`
+
 
   const quickPresets = getQuickItems(type)
   const presetGroups = getPresetGroups(type)
@@ -314,14 +305,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
           </select>
         </label>
       )}
-      <div className={styles.presetHint}>
-        {selectedPreset
-          ? `${selectedPreset.label} auto-fills ${selectedPreset.cat} → ${selectedPreset.subcat}.`
-          : isIncome
-            ? 'Choose a familiar income source, or keep it custom.'
-            : 'Choose a familiar merchant or biller, or keep it custom.'}
-      </div>
-
       <div className={styles.sectionLabel}>Details</div>
       <div className={styles.descRow}>
         <input
@@ -430,12 +413,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
           </label>
         </div>
       </details>
-
-      {paymentStatus === 'unpaid' && (
-        <div className={styles.presetHint}>
-          Unpaid entries stay visible in Takda, but they do not affect account balances or month totals until you mark them paid.
-        </div>
-      )}
 
 
       {error && <div className={styles.formError}>{error}</div>}
