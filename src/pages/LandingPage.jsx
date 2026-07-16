@@ -286,10 +286,42 @@ function TalaMockup() {
   )
 }
 
+function BentoMockup() {
+  return (
+    <div className={styles.mockupFrame}>
+      <div className={styles.mockupHeader}>
+        <div className={styles.mockupDots}>
+          <span className={styles.dotRed}></span>
+          <span className={styles.dotYellow}></span>
+          <span className={styles.dotGreen}></span>
+        </div>
+        <div className={styles.mockupUrl}>buhay.app/dashboard</div>
+      </div>
+      <div className={styles.mockupContent}>
+        <div className={styles.mockBentoGrid}>
+          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--blue)', padding: '8px', marginBottom: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+            <div className={styles.mockCardLabel}>Takda · Wealth</div>
+            <div className={styles.mockBalance} style={{ fontSize: '15px', fontWeight: 'bold', margin: '2px 0' }}>₱45,210.50</div>
+          </div>
+          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--accent)', padding: '8px', marginBottom: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+            <div className={styles.mockCardLabel}>Lakas · Fitness</div>
+            <div style={{ fontSize: '12px', fontWeight: '500', margin: '2px 0' }}>🏆 Ghost Racer: 1st place</div>
+          </div>
+          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--purple)', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+            <div className={styles.mockCardLabel}>Tala · Mind</div>
+            <div style={{ fontSize: '11px', opacity: 0.8, margin: '2px 0' }}>⛈️ Grounded Reflection Active</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function renderMockup(tone) {
   if (tone === 'takda') return <TakdaMockup />
   if (tone === 'lakas') return <LakasMockup />
   if (tone === 'tala') return <TalaMockup />
+  if (tone === 'buhay') return <BentoMockup />
   return <TakdaMockup />
 }
 
@@ -366,6 +398,8 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const [authReady, setAuthReady] = useState(() => Boolean(auth.currentUser))
   const [isSignedIn, setIsSignedIn] = useState(() => Boolean(auth.currentUser))
+  const [activeTab, setActiveTab] = useState('buhay')
+  const [openFaqIdx, setOpenFaqIdx] = useState(null)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, currentUser => {
@@ -453,197 +487,122 @@ export default function LandingPage() {
 
       <main id="landing-main" className={styles.main}>
         <header className={styles.hero}>
-          <div className={styles.heroGrid}>
-            <div className={styles.heroCopy}>
-              <div className={styles.heroKicker}>Wealth · Health · Mind</div>
-              <h1 className={styles.heroTitle}>
-                The Unified Life System.{' '}
-                <span className={styles.heroHighlight}>All in one bento cockpit.</span>
-              </h1>
-              <p className={styles.heroSub}>
-                Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a single home dashboard. Control your wealth, health, and mind from one unified space.
-              </p>
+          <div className={styles.heroContentCentered}>
+            <div className={styles.heroKicker}>Wealth · Health · Mind</div>
+            <h1 className={styles.heroTitleCentered}>
+              The Unified Life System.{' '}
+              <span className={styles.heroHighlight}>All in one calm bento cockpit.</span>
+            </h1>
+            <p className={styles.heroSubCentered}>
+              Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a single home dashboard. Control your wealth, health, and mind from one unified space.
+            </p>
 
-              <div className={styles.heroActionRow}>
-                <button type="button" className={styles.btnPrimary} onClick={() => openPrimary()}>
-                  {primaryLabel}
-                </button>
-                <button type="button" className={styles.btnGhost} onClick={goLogin}>
-                  Sign in
-                </button>
-              </div>
-
-              <div className={styles.heroSignalRow} aria-label="Buhay quick facts">
-                <span className={styles.heroSignal}>Free right now</span>
-                <span className={styles.heroSignal}>Manual and honest</span>
-                <span className={styles.heroSignal}>Private by account</span>
-              </div>
-
-              <div className={styles.heroChecklist} aria-label="What Buhay helps keep clear">
-                {SPACE_PROMISES.map(promise => (
-                  <div key={promise.label} className={`${styles.heroPromise} ${toneClass(promise.tone)}`}>
-                    <strong>{promise.label}</strong>
-                    <small>{promise.meta}</small>
-                    {promise.promise}
-                  </div>
-                ))}
-              </div>
+            <div className={styles.heroActionRowCentered}>
+              <button type="button" className={styles.btnPrimary} onClick={() => openPrimary()}>
+                {primaryLabel}
+              </button>
+              <button type="button" className={styles.btnGhost} onClick={goLogin}>
+                Sign in
+              </button>
             </div>
 
-            <div className={styles.heroShowcase}>
-              <div className={styles.heroCard} aria-label="Choose how to start Buhay">
-                <div className={styles.heroStartHeader}>
-                  <div>
-                    <h2 className={styles.heroStartTitle}>Start your journey.</h2>
-                  </div>
-                  <p className={styles.heroStartLead}>Track what matters, simply and privately.</p>
-                </div>
-
-                <div className={styles.heroCardRow}>
-                  <button type="button" className={`${styles.btnPrimary} ${styles.heroStartButton}`} onClick={() => openPrimary()}>
-                    {isSignedIn ? 'Open the app' : 'Join Beta now'}
-                  </button>
-                </div>
-
-                <div className={styles.heroMetaRow}>
-                  <span>One account.</span>
-                  <span>Three clear jobs.</span>
-                  <button type="button" className={styles.metaLink} onClick={goLogin}>Already have an account?</button>
-                </div>
-
-                <div className={styles.heroSharedStrip}>
-                  <strong>Buhay account layer</strong>
-                  <span>Sign-in, privacy, backup, restore, and export stay shared so the spaces can stay focused.</span>
-                </div>
-              </div>
+            <div className={styles.heroSignalRowCentered} aria-label="Buhay quick facts">
+              <span className={styles.heroSignal}>Free right now</span>
+              <span className={styles.heroSignal}>Manual and honest</span>
+              <span className={styles.heroSignal}>Private by account</span>
             </div>
           </div>
 
-          <div className={styles.heroDeviceRail} aria-label="Buhay spaces overview">
-            {HERO_SPACES.map(space => {
-              return (
-                <article key={space.label} className={`${styles.heroRailCard} ${toneClass(space.tone)}`}>
-                  <div className={styles.heroRailMeta}>
-                    <div>
-                      <span className={styles.heroSpaceLabel}>{space.label}</span>
-                      <strong>{space.title}</strong>
-                    </div>
-                    <small>
-                      {space.tone === 'takda' && 'Money'}
-                      {space.tone === 'lakas' && 'Fitness'}
-                      {space.tone === 'tala' && 'Reflection'}
-                    </small>
-                  </div>
-                  <div className={styles.heroRailDevice}>
-                    {renderMockup(space.tone)}
-                  </div>
-                  <p className={styles.heroRailCopy}>{space.desc}</p>
-                </article>
-              )
-            })}
+          <div className={styles.heroMockupCentered}>
+            <BentoMockup />
           </div>
         </header>
 
-        <section className={styles.section} id="how-it-works">
-          <ScrollReveal className={styles.sectionHead}>
-            <div className={styles.kicker}>How it works</div>
-            <h2 className={styles.sectionTitle}>Choose a space. Do one real thing.</h2>
-            <p className={styles.sectionLead}>The app should feel obvious: pick the space you need, finish the update, then let Buhay keep the record organized.</p>
-          </ScrollReveal>
-
-          <div className={`${styles.beatsGrid} ${styles.flowGrid}`}>
-            {FLOW_BEATS.map((beat, idx) => {
-              return (
-                <ScrollReveal key={beat.title} className={`${styles.beatCard} ${toneClass(beat.tone)}`}>
-                  <div className={styles.beatNum}>{idx + 1}</div>
-                  <div className={styles.beatSignal}>0{idx + 1} / signal</div>
-                  <div className={styles.beatTitle}>{beat.title}</div>
-                  <p className={styles.beatDesc}>{beat.desc}</p>
-                  <div className={styles.pillRow} aria-label={`${beat.title} cues`}>
-                    {beat.pills.map(pill => (
-                      <span key={pill} className={styles.pill}>{pill}</span>
-                    ))}
-                  </div>
-                  <div className={styles.device} aria-hidden="true">
-                    {renderMockup(beat.tone)}
-                  </div>
-                </ScrollReveal>
-              )
-            })}
-          </div>
-        </section>
-
         <section className={styles.section} id="spaces">
           <ScrollReveal className={styles.sectionHead}>
-            <div className={styles.kicker}>Spaces</div>
+            <div className={styles.kicker}>Spaces & Features</div>
             <h2 className={styles.sectionTitle}>Each space stays focused on one job.</h2>
-            <p className={styles.sectionLead}>The account layer stays in the background. What you see first is the one thing each space is actually for.</p>
+            <p className={styles.sectionLead}>Choose a space below to see how it keeps your daily records organized and clear.</p>
           </ScrollReveal>
 
-          <div className={styles.spacesGrid}>
-            {SPACE_FEATURES.map(feature => (
-              <ScrollReveal
-                key={feature.title}
-                className={`${styles.spaceCard} ${styles[`spaceCard${feature.tone.charAt(0).toUpperCase()}${feature.tone.slice(1)}`] || ''} ${toneClass(feature.tone)}`}
-              >
-                <div className={styles.spaceTop}>
-                  <div className={styles.spaceName}>{feature.title}</div>
-                  <div className={styles.spacePills}>
-                    {feature.tone === 'takda' && (
-                      <>
-                        <span className={styles.pill}>Money</span>
-                        <span className={styles.pill}>Calendar</span>
-                      </>
-                    )}
-                    {feature.tone === 'lakas' && (
-                      <>
-                        <span className={styles.pill}>Workout</span>
-                        <span className={styles.pill}>Progress</span>
-                      </>
-                    )}
-                    {feature.tone === 'tala' && (
-                      <>
-                        <span className={styles.pill}>Journal</span>
-                        <span className={styles.pill}>Mood</span>
-                      </>
-                    )}
-                    {feature.tone === 'buhay' && (
-                      <>
-                        <span className={styles.pill}>Privacy</span>
-                        <span className={styles.pill}>Backup</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.spaceTelemetry}>
-                  {feature.tone === 'takda' && 'Forecast · accounts · budgets'}
-                  {feature.tone === 'lakas' && 'Sessions · meals · body logs'}
-                  {feature.tone === 'tala' && 'Entries · moods · quiet goals'}
-                  {feature.tone === 'buhay' && 'Sign-in · export · restore'}
-                </div>
-                <p className={styles.spaceDesc}>{feature.desc}</p>
-                <div className={styles.spaceActionRow}>
-                  {feature.tone === 'takda' && (
-                    <button type="button" className={styles.btnPrimary} onClick={() => openPrimary('takda')}>
-                      {isSignedIn ? 'Open Takda' : 'Start with Takda'}
-                    </button>
-                  )}
-                  {feature.tone === 'lakas' && (
-                    <button type="button" className={styles.btnPrimary} onClick={() => openPrimary('lakas')}>
-                      {isSignedIn ? 'Open Lakas' : 'Start with Lakas'}
-                    </button>
-                  )}
-                  {feature.tone === 'tala' && (
-                    <button type="button" className={styles.btnPrimary} onClick={() => openPrimary('tala')}>
-                      {isSignedIn ? 'Open Tala' : 'Start with Tala'}
-                    </button>
-                  )}
-                  {feature.tone === 'buhay' && (
-                    <a className={styles.spaceInlineLink} href="#privacy">See the shared account layer</a>
-                  )}
-                </div>
-              </ScrollReveal>
-            ))}
+          <div className={styles.tabsContainer}>
+            <div className={styles.tabList} role="tablist" aria-label="Buhay spaces">
+              {SPACE_FEATURES.map(feature => (
+                <button
+                  key={feature.tone}
+                  role="tab"
+                  aria-selected={activeTab === feature.tone}
+                  className={`${styles.tabBtn} ${activeTab === feature.tone ? `${styles.tabBtnActive} ${toneClass(feature.tone)}` : ''}`}
+                  onClick={() => setActiveTab(feature.tone)}
+                >
+                  {feature.title}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.tabContentPanel}>
+              {(() => {
+                const currentFeature = SPACE_FEATURES.find(f => f.tone === activeTab) || SPACE_FEATURES[0]
+                return (
+                  <ScrollReveal className={styles.showcaseGrid}>
+                    <div className={styles.showcaseCopy}>
+                      <div className={`${styles.showcaseToneLabel} ${toneClass(currentFeature.tone)}`}>
+                        {currentFeature.tone === 'buhay' ? 'Cockpit' : currentFeature.tone.toUpperCase()}
+                      </div>
+                      <h3 className={styles.showcaseTitle}>{currentFeature.title}</h3>
+                      <p className={styles.showcaseDesc}>{currentFeature.desc}</p>
+                      
+                      <div className={styles.showcasePillRow}>
+                        {currentFeature.tone === 'takda' && (
+                          <>
+                            <span className={styles.pill}>Money</span>
+                            <span className={styles.pill}>Calendar</span>
+                            <span className={styles.pill}>Savings</span>
+                          </>
+                        )}
+                        {currentFeature.tone === 'lakas' && (
+                          <>
+                            <span className={styles.pill}>Workout</span>
+                            <span className={styles.pill}>Timer</span>
+                            <span className={styles.pill}>Ghost Racer</span>
+                          </>
+                        )}
+                        {currentFeature.tone === 'tala' && (
+                          <>
+                            <span className={styles.pill}>Journal</span>
+                            <span className={styles.pill}>Mood</span>
+                            <span className={styles.pill}>Grounding</span>
+                          </>
+                        )}
+                        {currentFeature.tone === 'buhay' && (
+                          <>
+                            <span className={styles.pill}>Bento</span>
+                            <span className={styles.pill}>Privacy</span>
+                            <span className={styles.pill}>Backup</span>
+                          </>
+                        )}
+                      </div>
+
+                      <div className={styles.showcaseAction}>
+                        {currentFeature.tone !== 'buhay' ? (
+                          <button type="button" className={styles.btnPrimary} onClick={() => openPrimary(currentFeature.tone)}>
+                            {isSignedIn ? `Open ${currentFeature.title}` : `Start with ${currentFeature.title}`}
+                          </button>
+                        ) : (
+                          <button type="button" className={styles.btnPrimary} onClick={() => openPrimary()}>
+                            {primaryLabel}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className={styles.showcaseMockup}>
+                      {renderMockup(currentFeature.tone)}
+                    </div>
+                  </ScrollReveal>
+                )
+              })()}
+            </div>
           </div>
         </section>
 
@@ -653,12 +612,13 @@ export default function LandingPage() {
             <h2 className={styles.sectionTitle}>Free, private, and honest about limits.</h2>
             <p className={styles.sectionLead}>Buhay is free to use right now, and it stays clear about your data, your controls, and what the product does not replace.</p>
           </ScrollReveal>
-          <div className={`${styles.beatsGrid} ${styles.trustGrid}`}>
+          
+          <div className={styles.minimalistTrustGrid}>
             {TRUST_POINTS.map((point, idx) => (
-              <ScrollReveal key={point.title} className={styles.beatCard}>
-                <div className={styles.beatNum}>{idx + 1}</div>
-                <div className={styles.beatTitle}>{point.title}</div>
-                <p className={styles.beatDesc}>{point.desc}</p>
+              <ScrollReveal key={point.title} className={styles.trustColumn}>
+                <div className={styles.trustNum}>0{idx + 1}</div>
+                <h3 className={styles.trustTitle}>{point.title}</h3>
+                <p className={styles.trustDesc}>{point.desc}</p>
               </ScrollReveal>
             ))}
           </div>
@@ -670,14 +630,29 @@ export default function LandingPage() {
             <h2 className={styles.sectionTitle}>Quick answers.</h2>
             <p className={styles.sectionLead}>The practical questions people ask before trusting a new app with real life records.</p>
           </ScrollReveal>
-          <div className={`${styles.beatsGrid} ${styles.faqGrid}`}>
-            {FAQ_ITEMS.map((item, idx) => (
-              <ScrollReveal key={item.question} className={styles.beatCard}>
-                <div className={styles.beatNum}>{idx + 1}</div>
-                <div className={styles.beatTitle}>{item.question}</div>
-                <p className={styles.beatDesc}>{item.answer}</p>
-              </ScrollReveal>
-            ))}
+          
+          <div className={styles.faqAccordionContainer}>
+            {FAQ_ITEMS.map((item, idx) => {
+              const isOpen = openFaqIdx === idx
+              return (
+                <ScrollReveal key={item.question} className={`${styles.accordionItem} ${isOpen ? styles.accordionItemOpen : ''}`}>
+                  <button
+                    type="button"
+                    className={styles.accordionHeader}
+                    onClick={() => setOpenFaqIdx(isOpen ? null : idx)}
+                    aria-expanded={isOpen}
+                  >
+                    <span className={styles.accordionQuestion}>{item.question}</span>
+                    <span className={styles.accordionIcon}>{isOpen ? '−' : '+'}</span>
+                  </button>
+                  <div className={styles.accordionPanel}>
+                    <div className={styles.accordionContent}>
+                      <p className={styles.accordionAnswer}>{item.answer}</p>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              )
+            })}
           </div>
         </section>
       </main>

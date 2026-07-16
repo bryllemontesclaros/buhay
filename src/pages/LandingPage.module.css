@@ -2030,3 +2030,339 @@
 }
 
 
+
+
+/* ---------------------------------------------------- */
+/* 5. New Layout Overhaul (Centered Hero & Tabbed UI)   */
+/* ---------------------------------------------------- */
+
+.heroContentCentered {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  position: relative;
+  z-index: 10;
+}
+
+.heroTitleCentered {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.heroSubCentered {
+  font-size: clamp(16px, 2.5vw, 20px);
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.heroActionRowCentered {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+.heroSignalRowCentered {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+  font-size: 13px;
+  color: var(--text-muted);
+  opacity: 0.8;
+  flex-wrap: wrap;
+}
+
+.heroSignal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.heroSignal::before {
+  content: "•";
+  color: var(--accent);
+}
+
+.heroMockupCentered {
+  max-width: min(960px, calc(100% - 40px));
+  margin: var(--space-8) auto 0;
+  position: relative;
+  z-index: 10;
+  transform: translateY(0);
+  transition: transform 0.4s ease;
+}
+
+/* Tabbed Showcase Section */
+
+.tabsContainer {
+  margin-top: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.tabList {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  width: fit-content;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  appearance: none;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: all var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.tabBtn:hover {
+  color: var(--text-primary);
+}
+
+.tabBtnActive {
+  color: var(--text-primary);
+  background: var(--bg-base);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme="dark"]) .tabBtnActive {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tabContentPanel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: var(--space-6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--glass-shadow);
+}
+
+.showcaseGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .showcaseGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+.showcaseCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  text-align: left;
+}
+
+.showcaseToneLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme="dark"]) .showcaseToneLabel {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.showcaseTitle {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -1.0px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.showcaseDesc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.showcasePillRow {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.showcaseAction {
+  margin-top: var(--space-3);
+}
+
+.showcaseMockup {
+  width: 100%;
+}
+
+/* Minimalist Trust Grid */
+
+.minimalistTrustGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  width: 100%;
+}
+
+.trustColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: left;
+}
+
+.trustNum {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.trustTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.trustDesc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* FAQ Accordion Styling */
+
+.faqAccordionContainer {
+  max-width: 760px;
+  margin: var(--space-6) auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.accordionItem {
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordionItemOpen {
+  border-color: var(--accent);
+  box-shadow: var(--glass-shadow);
+}
+
+.accordionHeader {
+  appearance: none;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.accordionHeader:hover {
+  color: var(--accent);
+}
+
+.accordionQuestion {
+  font-size: 16px;
+  letter-spacing: -0.3px;
+}
+
+.accordionIcon {
+  font-size: 18px;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.accordionPanel {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.accordionItemOpen .accordionPanel {
+  max-height: 200px; /* arbitrary height to fit content */
+  opacity: 1;
+  visibility: visible;
+}
+
+.accordionContent {
+  padding: 0 24px 20px;
+}
+
+.accordionAnswer {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Bento Mockup layout styles */
+
+.mockBentoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.mockBentoItem {
+  transition: transform 0.2s ease;
+}
+.mockBentoItem:hover {
+  transform: translateX(4px);
+}
