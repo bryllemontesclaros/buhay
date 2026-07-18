@@ -14,6 +14,6 @@ export function getTakdaBalanceAsOfDate(data = {}, profile = {}, dateKey) {
   const income = Array.isArray(data.income) ? data.income : []
   const expenses = Array.isArray(data.expenses) ? data.expenses : []
   const overrides = getTakdaBalanceOverrides(profile)
-  return getBalanceAtDateWithOverrides(accounts, data.debts || [], income, expenses, dateKey, overrides)
+  return getBalanceAtDateWithOverrides(accounts, Array.isArray(data.transfers) ? data.transfers : [], income, expenses, dateKey, overrides)
 }
 

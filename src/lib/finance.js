@@ -120,6 +120,12 @@ export function getAccountSignedBalance(account = {}) {
   return value
 }
 
+export function getLiquidBalance(accounts = []) {
+  return accounts
+    .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
+    .reduce((sum, account) => sum + getAccountSignedBalance(account), 0)
+}
+
 export function getCurrentBalance(accounts = [], debts = []) {
   const accountIds = new Set(accounts.map(a => a._id))
   const unlinkedDebts = (debts || []).filter(d => !d.accountId || !accountIds.has(d.accountId))
@@ -159,10 +165,42 @@ export function shouldAffectCurrentAccountBalance(tx = {}, referenceDate = today
   return txDate <= anchorDate
 }
 
-export function getActualLedger(income = [], expenses = [], anchorDateStr = null) {
+export function getActualLedger(accounts = [], transfers = [], income = [], expenses = [], anchorDateStr = null) {
+  const accountLookup = new Map(accounts.map(a => [a._id, a]))
+  
+  function isLiquid(accountId) {
+    if (!accountId) return true // Unlinked = cashflow
+    const account = accountLookup.get(accountId)
+    if (!account) return true
+    return ['Cash', 'Bank', 'E-wallet'].includes(account.type)
+  }
+
+  const incomeEntries = income
+    .filter(tx => isLiquid(tx.accountId))
+    .map(tx => toLedgerEntry(tx, 1, anchorDateStr))
+    
+  const expenseEntries = expenses
+    .filter(tx => isLiquid(tx.accountId))
+    .map(tx => toLedgerEntry(tx, -1, anchorDateStr))
+    
+  const transferEntries = transfers.map(tx => {
+    const fromLiquid = isLiquid(tx.fromAccountId)
+    const toLiquid = isLiquid(tx.toAccountId)
+    
+    if (fromLiquid && toLiquid) return null
+    if (!fromLiquid && !toLiquid) return null
+    
+    let sign = 0
+    if (fromLiquid && !toLiquid) sign = -1
+    if (!fromLiquid && toLiquid) sign = 1
+    
+    return toLedgerEntry({ ...tx, accountBalanceApplied: true }, sign, anchorDateStr)
+  })
+
   return [
-    ...income.map(tx => toLedgerEntry(tx, 1, anchorDateStr)),
-    ...expenses.map(tx => toLedgerEntry(tx, -1, anchorDateStr)),
+    ...incomeEntries,
+    ...expenseEntries,
+    ...transferEntries
   ]
     .filter(Boolean)
     .sort((a, b) => {
@@ -287,14 +325,14 @@ export function getBalanceOverrides(dailyBalanceOverrides = {}, monthStartBalanc
   }
 }
 
-export function getBalanceAtDate(accounts = [], debts = [], income = [], expenses = [], targetDate, anchorDate = today()) {
-  const currentBalance = getCurrentBalance(accounts, debts)
+export function getBalanceAtDate(accounts = [], transfers = [], income = [], expenses = [], targetDate, anchorDate = today()) {
+  const currentBalance = getLiquidBalance(accounts)
   const target = normalizeDate(targetDate)
   const anchor = normalizeDate(anchorDate)
 
   if (!target || !anchor || target === anchor) return currentBalance
 
-  const actualLedger = getActualLedger(income, expenses, anchor)
+  const actualLedger = getActualLedger(accounts, transfers, income, expenses, anchor)
 
   if (target < anchor) {
     const deltaAfterTarget = actualLedger
@@ -312,35 +350,25 @@ export function getBalanceAtDate(accounts = [], debts = [], income = [], expense
   return currentBalance + deltaUntilTarget
 }
 
-export function getBalanceAtDateWithOverrides(accounts = [], debts = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
+export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
   const target = normalizeDate(targetDate)
-  if (!target) return getCurrentBalance(accounts)
+  if (!target) return getLiquidBalance(accounts)
 
-  const sortedOverrideDates = Object.keys(balanceOverrides)
-    .filter(d => d <= target)
-    .sort((a, b) => b.localeCompare(a))
-
-  const closestOverrideDate = sortedOverrideDates[0]
-  if (closestOverrideDate) {
-    const overrideVal = Number(balanceOverrides[closestOverrideDate])
-    if (Number.isFinite(overrideVal)) {
-      const actualLedger = getActualLedger(income, expenses, anchor)
-      const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, closestOverrideDate, target)
-      
-      const deltaUntilTarget = [...actualLedger, ...projectedLedger]
-        .filter(entry => entry.date >= closestOverrideDate && entry.date <= target)
-        .reduce((sum, entry) => sum + entry.signedAmount, 0)
-      
-      return overrideVal + deltaUntilTarget
-    }
+  if (balanceOverrides[target] !== undefined) {
+    return balanceOverrides[target]
   }
 
-  return getBalanceAtDate(accounts, debts, income, expenses, target)
+  return getBalanceAtDate(accounts, transfers, income, expenses, target)
 }
 
-export function getMonthStartBalance(accounts = [], debts = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
-  const targetAnchorDate = toDateKey(new Date(year, month, 0))
-  return getBalanceAtDateWithOverrides(accounts, debts, income, expenses, targetAnchorDate, balanceOverrides)
+export function getMonthStartBalance(accounts = [], transfers = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
+  const mKey = toMonthKey(year, month)
+  if (balanceOverrides[mKey] !== undefined) {
+    return balanceOverrides[mKey]
+  }
+
+  const targetAnchorDate = `${mKey}-01`
+  return getBalanceAtDateWithOverrides(accounts, transfers, income, expenses, targetAnchorDate, balanceOverrides)
 }
 
 export function getMonthForecast(
