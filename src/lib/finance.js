@@ -373,6 +373,7 @@ export function getMonthStartBalance(accounts = [], transfers = [], income = [],
 
 export function getMonthForecast(
   accounts = [],
+  transfers = [],
   income = [],
   expenses = [],
   projectedIncome = [],
@@ -381,7 +382,7 @@ export function getMonthForecast(
   month,
   balanceOverrides = {},
 ) {
-  const startingBalance = getMonthStartBalance(accounts, income, expenses, year, month, balanceOverrides)
+  const startingBalance = getMonthStartBalance(accounts, transfers, income, expenses, year, month, balanceOverrides)
   const allIncome = [
     ...getPaidTransactions(getMonthTransactions(income, year, month)),
     ...getMonthTransactions(projectedIncome, year, month),
@@ -396,6 +397,7 @@ export function getMonthForecast(
 
 export function getMonthEndBalanceForView(
   accounts = [],
+  transfers = [],
   income = [],
   expenses = [],
   projectedIncome = [],
@@ -407,6 +409,7 @@ export function getMonthEndBalanceForView(
   return getEndOfMonthBalance(
     getMonthForecast(
       accounts,
+      transfers,
       income,
       expenses,
       projectedIncome,
