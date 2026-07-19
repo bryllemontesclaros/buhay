@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { fsAdd, fsUpdate } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { today, formatDisplayDate } from '../lib/utils'
+import { getBalanceAtDate } from '../lib/finance'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
 import styles from './Dashboard.module.css'
 
@@ -10,6 +11,14 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3) // 1-5 scale (neutral is 3)
   const todayStr = today()
+
+  // Find today's checkin to initialize daily focus
+  const todayCheckin = useMemo(() => {
+    return (data.talaCheckins || []).find(c => c.date === todayStr) || {}
+  }, [data.talaCheckins, todayStr])
+
+  const [dailyFocus, setDailyFocus] = useState(todayCheckin.priority || '')
+
 
 
   // 1. Personalized greeting based on local time
@@ -155,6 +164,81 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     }
   }
 
+  // 6. Micro-Charts (Sparklines) Data
+  const sparklines = useMemo(() => {
+    const days = Array.from({length: 7}, (_, i) => dateDaysAgo(6 - i))
+    
+    // Net Worth Sparkline
+    const nwData = days.map(d => getBalanceAtDate(data.accounts || [], data.transfers || [], data.income || [], data.expenses || [], d))
+    const nwMin = Math.min(...nwData)
+    const nwMax = Math.max(...nwData)
+    const nwRange = nwMax - nwMin || 1
+    const nwPoints = nwData.map((val, idx) => {
+      const x = (idx / 6) * 100
+      const y = 100 - (((val - nwMin) / nwRange) * 100)
+      return `${x},${y}`
+    }).join(' ')
+
+    // Mood Sparkline
+    const moodMap = { 'very_sad': 1, 'sad': 2, 'neutral': 3, 'happy': 4, 'very_happy': 5 }
+    const moodData = days.map(d => {
+      const checkin = (data.talaCheckins || []).find(c => c.date === d)
+      const journal = (data.talaJournal || []).find(j => j.date === d)
+      if (checkin?.energy) return checkin.energy
+      if (journal?.mood) return moodMap[journal.mood] || 3
+      return 3
+    })
+    const moodPoints = moodData.map((val, idx) => {
+      const x = (idx / 6) * 100
+      const y = 100 - (((val - 1) / 4) * 100)
+      return `${x},${y}`
+    }).join(' ')
+
+    return { nwPoints, moodPoints }
+  }, [data, todayStr])
+
+  // 7. The Pulse (Recent Activity)
+  const pulseFeed = useMemo(() => {
+    const activities = []
+    
+    ;(data.expenses || []).forEach(tx => {
+      activities.push({ id: tx._id, date: tx.date, type: 'expense', label: `Logged expense`, meta: tx.desc || tx.cat, amount: tx.amount, icon: '💳' })
+    })
+    ;(data.income || []).forEach(tx => {
+      activities.push({ id: tx._id, date: tx.date, type: 'income', label: `Logged income`, meta: tx.desc || tx.cat, amount: tx.amount, icon: '💰' })
+    })
+    ;(data.lakasWorkouts || []).forEach(w => {
+      activities.push({ id: w._id, date: w.date, type: 'workout', label: `Completed workout`, meta: w.title || w.type, icon: '🏃‍♂️' })
+    })
+    ;(data.talaJournal || []).forEach(j => {
+      activities.push({ id: j._id, date: j.date, type: 'journal', label: `Saved reflection`, meta: j.title || 'Journal entry', icon: '🧠' })
+    })
+
+    return activities
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 5)
+  }, [data])
+
+  // Handle Daily Focus
+  const handleSaveFocus = async () => {
+    if (!user?.uid) return
+    const payload = {
+      date: todayStr,
+      priority: dailyFocus.trim(),
+      source: 'tala'
+    }
+    try {
+      if (todayCheckin._id) {
+        await fsUpdate(user.uid, 'talaCheckins', todayCheckin._id, { ...todayCheckin, priority: dailyFocus.trim() })
+      } else {
+        await fsAdd(user.uid, 'talaCheckins', payload)
+      }
+      notifyApp({ title: 'Focus set', message: 'Your daily priority is locked in.', tone: 'success' })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   // Format currency helpers
   const fmt = (val) => {
     if (privacyMode) return '••••'
@@ -184,6 +268,18 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
         <div className={styles.greetingGroup}>
           <h1 className={styles.title}>{greeting}</h1>
           <p className={styles.subtitle}>Your life control center — all in one view.</p>
+          <div className={styles.dailyFocusWrap}>
+            <input 
+              type="text" 
+              className={styles.dailyFocusInput} 
+              placeholder="What's your #1 priority today?"
+              value={dailyFocus}
+              onChange={(e) => setDailyFocus(e.target.value)}
+              onBlur={handleSaveFocus}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.target.blur() } }}
+              aria-label="Daily focus"
+            />
+          </div>
         </div>
         <div className={styles.streakBadge} title="Combined wealth, health, and mind consistency streak">
           <span className={styles.streakEmoji}>🔥</span>
@@ -197,6 +293,11 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
       {/* ── STAT STRIP ─────────────────────── */}
       <div className={styles.statStrip} aria-label="Today's key numbers">
         <div className={styles.statChip}>
+          <div className={styles.sparklineWrap}>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className={styles.sparklineSvg}>
+              <polyline points={sparklines.nwPoints} className={styles.sparklinePathWealth} />
+            </svg>
+          </div>
           <span className={styles.statChipIcon} aria-hidden="true">💳</span>
           <div className={styles.statChipBody}>
             <span className={styles.statChipLabel}>Net Worth</span>
@@ -217,6 +318,11 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
         </div>
         <div className={styles.statDivider} aria-hidden="true" />
         <div className={styles.statChip}>
+          <div className={styles.sparklineWrap}>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className={styles.sparklineSvg}>
+              <polyline points={sparklines.moodPoints} className={styles.sparklinePathMind} />
+            </svg>
+          </div>
           <span className={styles.statChipIcon} aria-hidden="true">{getMoodEmoji(moodRating)}</span>
           <div className={styles.statChipBody}>
             <span className={styles.statChipLabel}>Mood</span>
@@ -394,6 +500,36 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
           >
             Open Tala <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
           </button>
+        </section>
+
+
+        {/* THE PULSE */}
+        <section className={`${styles.card} ${styles.pulseCard}`} aria-label="Recent activity">
+          <div className={styles.cardHeader}>
+            <div className={styles.cardTitleBlock}>
+              <span className={styles.cardEmoji} aria-hidden="true">⚡</span>
+              <h2 className={styles.cardTitle}>The Pulse</h2>
+            </div>
+            <span className={styles.cardTag}>Activity</span>
+          </div>
+          <div className={styles.pulseFeed}>
+            {pulseFeed.length > 0 ? pulseFeed.map(item => (
+              <div key={item.id} className={styles.pulseItem}>
+                <span className={styles.pulseIcon} aria-hidden="true">{item.icon}</span>
+                <div className={styles.pulseBody}>
+                  <span className={styles.pulseLabel}>{item.label}</span>
+                  <span className={styles.pulseMeta}>{item.meta}</span>
+                </div>
+                {item.amount && (
+                  <span className={`${styles.pulseAmount} ${item.type === 'expense' ? styles.subMetricValRed : styles.metricValWealth}`}>
+                    {item.type === 'expense' ? '-' : '+'}{fmt(item.amount)}
+                  </span>
+                )}
+              </div>
+            )) : (
+              <p className={styles.emptyText}>No recent activity.</p>
+            )}
+          </div>
         </section>
 
       </div>

@@ -667,3 +667,139 @@
   .statDivider { width: 100%; height: 1px; }
   .habitsGrid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── DAILY FOCUS ─────────────────────────────── */
+.dailyFocusWrap {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.dailyFocusInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--type-p);
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dailyFocusInput::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.dailyFocusInput:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ── SPARKLIINES ─────────────────────────────── */
+.statChip {
+  position: relative;
+  overflow: hidden;
+}
+
+.sparklineWrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  z-index: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.sparklineSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sparklinePathWealth {
+  fill: none;
+  stroke: var(--takda-green);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.sparklinePathMind {
+  fill: none;
+  stroke: var(--tala-purple);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── THE PULSE ───────────────────────────────── */
+.pulseCard {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+}
+
+.pulseFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.pulseItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.pulseItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pulseIcon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.pulseBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pulseLabel {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--type-small);
+}
+
+.pulseMeta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.pulseAmount {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--type-p);
+}
+
