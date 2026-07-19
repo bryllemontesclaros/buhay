@@ -113,38 +113,30 @@ function toLedgerEntry(tx, sign, anchorDateStr) {
 }
 
 export function getAccountSignedBalance(account = {}) {
-  const value = Number(account?.balance) || 0
-  if (String(account?.type || '').toLowerCase() === 'credit card') {
-    return -value
-  }
-  return value
+  // Takda stores credit card balances as negative values in the accounts collection.
+  // So the signed balance is just the raw balance itself.
+  return Number(account?.balance) || 0
 }
 
 export function getLiquidBalance(accounts = []) {
   return accounts
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
-    .reduce((sum, account) => sum + getAccountSignedBalance(account), 0)
+    .reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {
   const accountIds = new Set(accounts.map(a => a._id))
   const unlinkedDebts = (debts || []).filter(d => !d.accountId || !accountIds.has(d.accountId))
-  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
-  const accountsBalance = accounts.reduce((sum, account) => sum + getAccountSignedBalance(account), 0)
+  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d.balance) || 0), 0)
+  
+  // Summing all account balances automatically subtracts credit cards because they are stored as negative
+  const accountsBalance = accounts.reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
   return accountsBalance - totalDebt
 }
 
 export function getAccountBalanceDelta(account = {}, txType, amount = 0) {
   const normalizedAmount = Math.abs(Number(amount) || 0)
   if (!normalizedAmount) return 0
-
-  const isCreditCard = String(account?.type || '').toLowerCase() === 'credit card'
-  if (isCreditCard) {
-    if (txType === 'income') {
-      return -normalizedAmount
-    }
-    return normalizedAmount
-  }
 
   if (txType === 'income') {
     return normalizedAmount
