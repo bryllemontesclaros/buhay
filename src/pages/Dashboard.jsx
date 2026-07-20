@@ -269,10 +269,11 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
           <h1 className={styles.title}>{greeting}</h1>
           <p className={styles.subtitle}>Your life control center — all in one view.</p>
           <div className={styles.dailyFocusWrap}>
+            <span className={styles.dailyFocusIcon} aria-hidden="true">🎯</span>
             <input 
               type="text" 
               className={styles.dailyFocusInput} 
-              placeholder="What's your #1 priority today?"
+              placeholder="Set your #1 priority for today..."
               value={dailyFocus}
               onChange={(e) => setDailyFocus(e.target.value)}
               onBlur={handleSaveFocus}
