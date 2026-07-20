@@ -523,3 +523,5 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     </div>
   )
 }
+
+// cache bust HMR
