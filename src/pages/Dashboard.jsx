@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { fsAdd, fsUpdate } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { today, formatDisplayDate } from '../lib/utils'
@@ -24,6 +24,12 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
   const [moodRating, setMoodRating] = useState(3)
   const [isEditing, setIsEditing] = useState(false)
   const [layout, setLayout] = useState(data.profile?.dashboardLayout || DEFAULT_LAYOUT)
+
+  useEffect(() => {
+    if (data.profile?.dashboardLayout) {
+      setLayout(data.profile.dashboardLayout)
+    }
+  }, [data.profile?.dashboardLayout])
   
   const todayStr = today()
 
