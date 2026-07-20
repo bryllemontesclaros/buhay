@@ -497,19 +497,27 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
       {isEditing && (
         <div className={styles.widgetDrawer}>
           <h3 className={styles.drawerTitle}>Widget Library</h3>
-          <p className={styles.drawerSubtitle}>Add widgets to your dashboard.</p>
-          {availableWidgets.length === 0 ? (
-            <p className={styles.drawerEmpty}>All widgets are added!</p>
-          ) : (
-            <div className={styles.drawerList}>
-              {availableWidgets.map(id => (
-                <button key={id} className={styles.drawerItem} onClick={() => addWidget(id)}>
+          <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
+          <div className={styles.drawerList}>
+            {Object.keys(WIDGET_TITLES).map(id => {
+              const isAdded = layout.includes(id)
+              return (
+                <button 
+                  key={id} 
+                  className={`${styles.drawerItem} ${isAdded ? styles.drawerItemDisabled : ''}`} 
+                  onClick={() => addWidget(id)}
+                  disabled={isAdded}
+                >
                   <span className={styles.drawerItemTitle}>{WIDGET_TITLES[id]}</span>
-                  <span className={styles.drawerItemAdd}>+ Add</span>
+                  {isAdded ? (
+                    <span className={styles.drawerItemAdded}>Added</span>
+                  ) : (
+                    <span className={styles.drawerItemAdd}>+ Add</span>
+                  )}
                 </button>
-              ))}
-            </div>
-          )}
+              )
+            })}
+          </div>
         </div>
       )}
       

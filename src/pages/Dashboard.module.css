@@ -1062,3 +1062,23 @@
   padding: 4px 10px;
   border-radius: 100px;
 }
+
+.drawerItemDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.drawerItemDisabled:hover {
+  background: var(--surface2);
+  border-color: var(--border);
+  transform: none;
+}
+
+.drawerItemAdded {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-tertiary);
+  background: var(--surface3);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
