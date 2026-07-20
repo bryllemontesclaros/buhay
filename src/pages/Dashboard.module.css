@@ -912,7 +912,7 @@
 
 /* ── JIGGLE EDIT MODE ─────────────────── */
 .isEditingContainer {
-  padding-bottom: 120px; /* space for drawer */
+  padding-bottom: 350px; /* massive space to ensure drawer never covers widgets */
 }
 
 @keyframes jiggle {
