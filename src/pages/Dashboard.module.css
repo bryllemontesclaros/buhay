@@ -959,9 +959,9 @@
 }
 
 .editDashboardBtn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--text-secondary);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
   padding: 6px 16px;
   border-radius: 100px;
   font-size: 13px;
@@ -971,8 +971,9 @@
 }
 
 .editDashboardBtn:hover {
-  background: rgba(255,255,255,0.1);
-  color: var(--text-primary);
+  background: var(--blue);
+  color: var(--surface);
+  border-color: var(--blue);
 }
 
 /* ── WIDGET DRAWER ────────────────────── */
@@ -981,9 +982,9 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(30,30,35,0.95);
+  background: var(--surface);
   backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--border);
   padding: 24px;
   z-index: 100;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1029,8 +1030,8 @@
 
 .drawerItem {
   flex: 0 0 auto;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--surface2);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 16px 20px;
   display: flex;
@@ -1042,8 +1043,8 @@
 }
 
 .drawerItem:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
+  background: var(--surface3);
+  border-color: var(--border2);
   transform: translateY(-2px);
 }
 
@@ -1057,7 +1058,7 @@
   font-size: 12px;
   font-weight: bold;
   color: var(--blue);
-  background: rgba(59, 130, 246, 0.15);
+  background: var(--blue-dim);
   padding: 4px 10px;
   border-radius: 100px;
 }
