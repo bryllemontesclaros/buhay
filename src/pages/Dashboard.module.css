@@ -105,6 +105,63 @@
   color: var(--text3);
 }
 
+/* ── INSIGHT BANNER ────────────────────────────── */
+.insightBanner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.insightIcon {
+  font-size: 24px;
+}
+
+.insightContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.insightTitle {
+  font-size: var(--type-body-sm);
+  font-family: var(--font-header);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.insightMessage {
+  font-size: var(--type-caption);
+  color: var(--text2);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Tone Variants */
+.insight_positive {
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.insight_positive .insightTitle { color: var(--accent); }
+
+.insight_warning {
+  background: color-mix(in srgb, var(--peach) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--peach) 20%, transparent);
+}
+.insight_warning .insightTitle { color: var(--peach); }
+
+.insight_neutral {
+  background: var(--surface);
+}
+
 /* ── STAT STRIP ──────────────────────────────── */
 .statStrip {
   display: flex;

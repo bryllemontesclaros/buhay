@@ -4,6 +4,7 @@ import { notifyApp } from '../lib/appFeedback'
 import { today, formatDisplayDate } from '../lib/utils'
 import { getBalanceAtDate } from '../lib/finance'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
+import { generateDashboardInsight } from '../lib/insights'
 import styles from './Dashboard.module.css'
 
 
@@ -11,6 +12,10 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3) // 1-5 scale (neutral is 3)
   const todayStr = today()
+
+  const dailyInsight = useMemo(() => {
+    return generateDashboardInsight(data, todayStr)
+  }, [data, todayStr])
 
   // Find today's checkin to initialize daily focus
   const todayCheckin = useMemo(() => {
@@ -290,6 +295,15 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
           </div>
         </div>
       </header>
+
+      {/* ── DAILY INSIGHT BANNER ───────────── */}
+      <div className={`${styles.insightBanner} ${styles['insight_' + dailyInsight.type]}`}>
+        <span className={styles.insightIcon}>{dailyInsight.icon}</span>
+        <div className={styles.insightContent}>
+          <strong className={styles.insightTitle}>{dailyInsight.title}</strong>
+          <p className={styles.insightMessage}>{dailyInsight.message}</p>
+        </div>
+      </div>
 
       {/* ── STAT STRIP ─────────────────────── */}
       <div className={styles.statStrip} aria-label="Today's key numbers">
