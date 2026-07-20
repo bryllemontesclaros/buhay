@@ -19,17 +19,17 @@ const WIDGET_TITLES = {
   pulseFeed: 'The Pulse Feed',
 }
 
-export default function Dashboard({ user, data, onNavigate, privacyMode = false, s = '₱' }) {
+export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱' }) {
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3)
   const [isEditing, setIsEditing] = useState(false)
-  const [layout, setLayout] = useState(data.profile?.dashboardLayout || DEFAULT_LAYOUT)
+  const [layout, setLayout] = useState(profile?.dashboardLayout || DEFAULT_LAYOUT)
 
   useEffect(() => {
-    if (data.profile?.dashboardLayout) {
-      setLayout(data.profile.dashboardLayout)
+    if (profile?.dashboardLayout) {
+      setLayout(profile.dashboardLayout)
     }
-  }, [data.profile?.dashboardLayout])
+  }, [profile?.dashboardLayout])
   
   const todayStr = today()
 
