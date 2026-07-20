@@ -202,26 +202,61 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     return { nwPoints, moodPoints }
   }, [data, todayStr])
 
-  // 7. The Pulse (Recent Activity)
+  // 7. The Pulse (Smart Grouping)
   const pulseFeed = useMemo(() => {
-    const activities = []
+    const raw = []
     
     ;(data.expenses || []).forEach(tx => {
-      activities.push({ id: tx._id, date: tx.date, type: 'expense', label: `Logged expense`, meta: tx.desc || tx.cat, amount: tx.amount, icon: '💳' })
+      raw.push({ id: tx._id, date: tx.date, type: 'expense', label: `Logged expense`, meta: tx.desc || tx.cat, amount: Number(tx.amount) || 0, icon: '💳' })
     })
     ;(data.income || []).forEach(tx => {
-      activities.push({ id: tx._id, date: tx.date, type: 'income', label: `Logged income`, meta: tx.desc || tx.cat, amount: tx.amount, icon: '💰' })
+      raw.push({ id: tx._id, date: tx.date, type: 'income', label: `Logged income`, meta: tx.desc || tx.cat, amount: Number(tx.amount) || 0, icon: '💰' })
     })
     ;(data.lakasWorkouts || []).forEach(w => {
-      activities.push({ id: w._id, date: w.date, type: 'workout', label: `Completed workout`, meta: w.title || w.type, icon: '🏃‍♂️' })
+      raw.push({ id: w._id, date: w.date, type: 'workout', label: `Completed workout`, meta: w.title || w.type, icon: '🏃‍♂️' })
     })
     ;(data.talaJournal || []).forEach(j => {
-      activities.push({ id: j._id, date: j.date, type: 'journal', label: `Saved reflection`, meta: j.title || 'Journal entry', icon: '🧠' })
+      raw.push({ id: j._id, date: j.date, type: 'journal', label: `Saved reflection`, meta: j.title || 'Journal entry', icon: '🧠' })
     })
 
-    return activities
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 5)
+    // Group by Date -> Type
+    const grouped = {}
+    raw.forEach(item => {
+      if (!item.date) return
+      if (!grouped[item.date]) grouped[item.date] = {}
+      
+      if (!grouped[item.date][item.type]) {
+        grouped[item.date][item.type] = { ...item, count: 1 }
+      } else {
+        const g = grouped[item.date][item.type]
+        g.count += 1
+        g.amount = (g.amount || 0) + (item.amount || 0)
+        
+        if (item.type === 'expense') {
+          g.label = `Logged ${g.count} expenses`
+          g.meta = 'Multiple transactions'
+        } else if (item.type === 'income') {
+          g.label = `Received ${g.count} incomes`
+          g.meta = 'Multiple sources'
+        } else if (item.type === 'workout') {
+          g.label = `Completed ${g.count} workouts`
+          g.meta = 'Multiple sessions'
+        } else if (item.type === 'journal') {
+          g.label = `Saved ${g.count} reflections`
+          g.meta = 'Multiple entries'
+        }
+      }
+    })
+
+    // Flatten and sort
+    const finalFeed = []
+    Object.keys(grouped).sort((a, b) => b.localeCompare(a)).forEach(dateStr => {
+      // Prioritize showing health/mind first within the same day if desired, or just push
+      const dayItems = Object.values(grouped[dateStr])
+      finalFeed.push(...dayItems)
+    })
+
+    return finalFeed.slice(0, 5)
   }, [data])
 
   // Handle Daily Focus
