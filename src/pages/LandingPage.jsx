@@ -33,8 +33,8 @@ const HERO_SPACES = [
 
 const SPACE_FEATURES = [
   {
-    title: 'Buhay Bento',
-    desc: 'Brings together cash balance projections, physical training habits, and mood check-in circles onto a single central screen.',
+    title: 'Buhay Home',
+    desc: 'A fully customizable widget dashboard. Brings together cash balance projections, physical training habits, and mood check-in circles. Add, remove, and arrange widgets freely.',
     tone: 'buhay',
   },
   {
@@ -56,11 +56,11 @@ const SPACE_FEATURES = [
 
 const FLOW_BEATS = [
   {
-    title: 'Central Bento Dashboard',
-    desc: 'Launch from a single cockpit screen. View your net worth, check off daily physical habits, and log today\'s reflection in one step.',
+    title: 'Customizable Widget Dashboard',
+    desc: 'Launch from a fully customizable widget dashboard. Handpick what you want to see—from smart insights to daily fitness progress—all in one step.',
     beat: 'Cockpit',
     tone: 'buhay',
-    pills: ['Bento', 'Unified', 'Home'],
+    pills: ['Widgets', 'Unified', 'Home'],
     mock: 'spaces',
   },
   {
@@ -117,7 +117,7 @@ const TRUST_POINTS = [
 
 const SPACE_PROMISES = [
   {
-    label: 'Bento Dashboard',
+    label: 'Custom Dashboard',
     promise: 'Aggregates your net worth, daily training habits, and reflection prompts onto a single screen.',
     meta: 'Central Cockpit',
     tone: 'buhay',
@@ -354,19 +354,46 @@ function BentoMockup() {
         <div className={styles.mockupUrl}>buhay.app/dashboard</div>
       </div>
       <div className={styles.mockupContent}>
-        <div className={styles.mockBentoGrid}>
-          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--blue)', padding: '8px', marginBottom: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-            <div className={styles.mockCardLabel}>Takda · Wealth</div>
-            <div className={styles.mockBalance} style={{ fontSize: '15px', fontWeight: 'bold', margin: '2px 0' }}>₱45,210.50</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+           <div style={{ fontSize: '10px', opacity: 0.6 }}>Good morning, Brylle</div>
+           <button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '9px', padding: '3px 6px', cursor: 'pointer' }}>Edit Layout</button>
+        </div>
+        
+        <div className={styles.mockBentoGrid} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {/* Smart Insight Banner */}
+          <div style={{ padding: '8px', background: 'rgba(var(--blue-rgb), 0.1)', border: '1px solid rgba(var(--blue-rgb), 0.2)', borderRadius: '6px', color: 'var(--blue)' }}>
+            <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '2px' }}>💡 Smart Insight</div>
+            <div style={{ fontSize: '11px' }}>Your daily cashflow is on track.</div>
           </div>
-          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--accent)', padding: '8px', marginBottom: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-            <div className={styles.mockCardLabel}>Lakas · Fitness</div>
-            <div style={{ fontSize: '12px', fontWeight: '500', margin: '2px 0' }}>🏆 Ghost Racer: 1st place</div>
+
+          {/* Key Stats Strip */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>₱45k</div>
+              <div style={{ fontSize: '8px', opacity: 0.6 }}>Net Worth</div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>5.2k</div>
+              <div style={{ fontSize: '8px', opacity: 0.6 }}>Run (km)</div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>14🔥</div>
+              <div style={{ fontSize: '8px', opacity: 0.6 }}>Streak</div>
+            </div>
           </div>
-          <div className={styles.mockBentoItem} style={{ borderLeft: '3px solid var(--purple)', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-            <div className={styles.mockCardLabel}>Tala · Mind</div>
-            <div style={{ fontSize: '11px', opacity: 0.8, margin: '2px 0' }}>⛈️ Grounded Reflection Active</div>
+
+          {/* Widgets */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+             <div style={{ borderLeft: '3px solid var(--blue)', padding: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+               <div style={{ fontSize: '9px', opacity: 0.7, marginBottom: '2px' }}>Takda Wealth</div>
+               <div style={{ fontSize: '11px', fontWeight: '500' }}>Budget: 75%</div>
+             </div>
+             <div style={{ borderLeft: '3px solid var(--accent)', padding: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+               <div style={{ fontSize: '9px', opacity: 0.7, marginBottom: '2px' }}>Lakas Health</div>
+               <div style={{ fontSize: '11px', fontWeight: '500' }}>🏆 1st Place</div>
+             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -560,10 +587,10 @@ export default function LandingPage() {
             <div className={styles.heroKicker}>Wealth · Health · Mind</div>
             <h1 className={styles.heroTitleCentered}>
               The Unified Life System.{' '}
-              <span className={styles.heroHighlight}>All in one calm bento cockpit.</span>
+              <span className={styles.heroHighlight}>Your fully customizable widget dashboard.</span>
             </h1>
             <p className={styles.heroSubCentered}>
-              Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a single home dashboard. Control your wealth, health, and mind from one unified space.
+              Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a fully customizable home dashboard with a rich widget library. Control your wealth, health, and mind your way.
             </p>
 
             <div className={styles.heroActionRowCentered}>
