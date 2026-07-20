@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { fsAdd, fsUpdate } from '../lib/firestore'
+import { fsAdd, fsUpdate, fsSetProfile } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { today, formatDisplayDate } from '../lib/utils'
 import { getBalanceAtDate } from '../lib/finance'
@@ -228,13 +228,7 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     setLayout(newLayout)
     if (!user?.uid) return
     try {
-      // Assuming profile exists, or create logic
-      const profile = data.profile || {}
-      if (profile._id) {
-        await fsUpdate(user.uid, 'profile', profile._id, { ...profile, dashboardLayout: newLayout })
-      } else {
-        await fsAdd(user.uid, 'profile', { dashboardLayout: newLayout })
-      }
+      await fsSetProfile(user.uid, { dashboardLayout: newLayout })
     } catch(err) {
       console.error('Failed to save widget layout', err)
     }
