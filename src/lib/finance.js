@@ -279,20 +279,6 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
     })
 }
 
-function getBalanceFromAnchor(accounts = [], income = [], expenses = [], anchorDate, anchorBalance = 0, targetDate) {
-  const anchor = normalizeDate(anchorDate)
-  const target = normalizeDate(targetDate)
-
-  if (!anchor || !target || target <= anchor) return Number(anchorBalance) || 0
-
-  const actualLedger = getActualLedger(income, expenses, anchor)
-  const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, anchor, target)
-  const deltaUntilTarget = [...actualLedger, ...projectedLedger]
-    .filter(entry => entry.date > anchor && entry.date <= target)
-    .reduce((sum, entry) => sum + entry.signedAmount, 0)
-
-  return (Number(anchorBalance) || 0) + deltaUntilTarget
-}
 
 function getMonthStartAnchorDate(monthKey) {
   const [yearText, monthText] = String(monthKey).split('-')
@@ -317,12 +303,12 @@ export function getBalanceOverrides(dailyBalanceOverrides = {}, monthStartBalanc
   }
 }
 
-export function getBalanceAtDate(accounts = [], transfers = [], income = [], expenses = [], targetDate, anchorDate = today()) {
-  const currentBalance = getLiquidBalance(accounts)
+export function getBalanceAtDate(accounts = [], transfers = [], income = [], expenses = [], targetDate, anchorDate = today(), anchorBalance = null) {
+  const currentBalance = anchorBalance !== null ? Number(anchorBalance) : getLiquidBalance(accounts)
   const target = normalizeDate(targetDate)
   const anchor = normalizeDate(anchorDate)
 
-  if (!target || !anchor || target === anchor) return currentBalance
+  if (!target || !anchor || target === anchor) return currentBalance || 0
 
   const actualLedger = getActualLedger(accounts, transfers, income, expenses, anchor)
 
@@ -331,7 +317,7 @@ export function getBalanceAtDate(accounts = [], transfers = [], income = [], exp
       .filter(entry => entry.date > target && entry.date <= anchor)
       .reduce((sum, entry) => sum + entry.signedAmount, 0)
 
-    return currentBalance - deltaAfterTarget
+    return (currentBalance || 0) - deltaAfterTarget
   }
 
   const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, anchor, target)
@@ -339,7 +325,7 @@ export function getBalanceAtDate(accounts = [], transfers = [], income = [], exp
     .filter(entry => entry.date > anchor && entry.date <= target)
     .reduce((sum, entry) => sum + entry.signedAmount, 0)
 
-  return currentBalance + deltaUntilTarget
+  return (currentBalance || 0) + deltaUntilTarget
 }
 
 export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
@@ -348,6 +334,17 @@ export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], inc
 
   if (balanceOverrides[target] !== undefined) {
     return balanceOverrides[target]
+  }
+
+  const overrideEntries = Object.entries(balanceOverrides)
+    .filter(([date, val]) => Number.isFinite(Number(val)))
+    .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
+
+  const nearestPastOverride = overrideEntries.find(([date]) => date < target)
+
+  if (nearestPastOverride) {
+    const [anchorDate, anchorBalance] = nearestPastOverride
+    return getBalanceAtDate(accounts, transfers, income, expenses, target, anchorDate, anchorBalance)
   }
 
   return getBalanceAtDate(accounts, transfers, income, expenses, target)
