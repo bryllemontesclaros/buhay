@@ -250,7 +250,6 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
     }
   }
 
-  const availableWidgets = Object.keys(WIDGET_TITLES).filter(id => !layout.includes(id))
 
   // --- WIDGET RENDERERS ---
   const widgets = {
@@ -473,7 +472,7 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
 
       {/* ── WIDGET BOARD ─────────────────────── */}
       <div className={styles.widgetBoard}>
-        {layout.map(widgetId => (
+        {(layout || []).map(widgetId => (
           <div 
             key={widgetId} 
             className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetJiggle : ''}`}
@@ -500,7 +499,7 @@ export default function Dashboard({ user, data, onNavigate, privacyMode = false,
           <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
           <div className={styles.drawerList}>
             {Object.keys(WIDGET_TITLES).map(id => {
-              const isAdded = layout.includes(id)
+              const isAdded = (layout || []).includes(id)
               return (
                 <button 
                   key={id} 
