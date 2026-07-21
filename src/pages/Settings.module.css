@@ -1371,3 +1371,20 @@
     flex: 1;
   }
 }
+
+/* Domain-Themed Buttons */
+.btnLakas {
+  background: var(--space-fitness) !important;
+  color: var(--bg-deep) !important;
+}
+.btnLakas:hover {
+  background: color-mix(in srgb, var(--space-fitness) 85%, white) !important;
+}
+
+.btnTala {
+  background: var(--space-reflection) !important;
+  color: var(--bg-deep) !important;
+}
+.btnTala:hover {
+  background: color-mix(in srgb, var(--space-reflection) 85%, white) !important;
+}

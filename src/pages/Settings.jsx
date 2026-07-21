@@ -1423,7 +1423,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           </div>
         </div>
         <div className={settStyles.settingsActionRow}>
-          <Button type="button" variant="primary" fullWidth onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
+          <Button type="button" className={settStyles.btnLakas} fullWidth onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
             {savingLakasSettings ? 'Saving...' : 'Save Lakas preferences'}
           </Button>
         </div>
@@ -1465,7 +1465,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           </div>
         </div>
         <div className={settStyles.settingsActionRow}>
-          <Button type="button" variant="primary" fullWidth onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
+          <Button type="button" className={settStyles.btnTala} fullWidth onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
             {savingTalaSettings ? 'Saving...' : 'Save Tala defaults'}
           </Button>
         </div>
