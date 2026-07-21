@@ -1141,13 +1141,15 @@ export default function AppShell({ user }) {
     bills: Bills,
     subscriptions: Subscriptions,
   }
-  const PageComponent = activeSpace === 'dashboard'
-    ? (page === 'settings' ? Settings : Dashboard)
-    : activeSpace === 'lakas'
-      ? Lakas
-      : activeSpace === 'tala'
-        ? Tala
-        : financePages[page] || Calendar
+  const PageComponent = page === 'settings'
+    ? Settings
+    : activeSpace === 'dashboard'
+      ? Dashboard
+      : activeSpace === 'lakas'
+        ? Lakas
+        : activeSpace === 'tala'
+          ? Tala
+          : financePages[page] || Calendar
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
     ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
@@ -1756,16 +1758,7 @@ export default function AppShell({ user }) {
               type="button"
               className={styles.btnSettings}
               onClick={() => {
-                if (activeSpace === 'dashboard') setPage('settings')
-                else if (activeSpace === 'lakas') {
-                  openSpace('lakas')
-                  setLakasPage('settings')
-                } else if (activeSpace === 'tala') {
-                  openSpace('tala')
-                  setTalaPage('settings')
-                } else {
-                  navigateToFinancePage('settings')
-                }
+                setPage('settings')
               }}
               title="Settings"
             >

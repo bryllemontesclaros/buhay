@@ -12,6 +12,8 @@ import {
 import { deleteField } from 'firebase/firestore'
 import { auth, getEmailActionSettings, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsAdd, fsDel, fsDeleteAccountData, fsResetFinancialData, fsRestoreBackup, fsSetProfile, fsUpdate } from '../lib/firestore'
+import { getLakasSettings, sanitizeLakasSettings } from '../lib/lakasHelpers'
+import { getTalaSettings, sanitizeTalaSettings, WEEK_DAYS } from './Tala'
 import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '../lib/legal'
 import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs } from '../lib/notifications'
 import { generateMonthlyReport } from '../lib/report'
@@ -286,6 +288,58 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [jsonExportDone, setJsonExportDone] = useState(false)
   const [rates, setRates] = useState(null)
   const [ratesLoading, setRatesLoading] = useState(false)
+
+  const [lakasSettingsForm, setLakasSettingsForm] = useState(() => getLakasSettings(profile))
+  const [savingLakasSettings, setSavingLakasSettings] = useState(false)
+
+  const [talaSettingsForm, setTalaSettingsForm] = useState(() => getTalaSettings(profile))
+  const [savingTalaSettings, setSavingTalaSettings] = useState(false)
+
+  // Sync lakas and tala settings when profile changes
+  useEffect(() => {
+    setLakasSettingsForm(getLakasSettings(profile))
+    setTalaSettingsForm(getTalaSettings(profile))
+  }, [profile])
+
+  function updateLakasSettingGroup(group, key, value) {
+    setLakasSettingsForm(current => ({
+      ...current,
+      [group]: { ...current[group], [key]: value },
+    }))
+  }
+
+  function updateTalaSettings(key, value) {
+    setTalaSettingsForm(current => ({ ...current, [key]: value }))
+  }
+
+  async function handleSaveLakasSettings() {
+    setSavingLakasSettings(true)
+    try {
+      const nextSettings = sanitizeLakasSettings(lakasSettingsForm)
+      await fsSetProfile(user.uid, { lakasSettings: nextSettings })
+      setLakasSettingsForm(nextSettings)
+      setNotifMsg({ text: 'Lakas preferences saved.', ok: true })
+    } catch {
+      setNotifMsg({ text: 'Could not save Lakas preferences.', ok: false })
+    } finally {
+      setSavingLakasSettings(false)
+    }
+  }
+
+  async function handleSaveTalaSettings() {
+    setSavingTalaSettings(true)
+    try {
+      const nextSettings = sanitizeTalaSettings(talaSettingsForm)
+      await fsSetProfile(user.uid, { talaSettings: nextSettings })
+      setTalaSettingsForm(nextSettings)
+      setNotifMsg({ text: 'Tala preferences saved.', ok: true })
+    } catch {
+      setNotifMsg({ text: 'Could not save Tala preferences.', ok: false })
+    } finally {
+      setSavingTalaSettings(false)
+    }
+  }
+
 
   const [accountForm, setAccountForm] = useState({ displayName: '', newEmail: '', password: '' })
   const [accountMsg, setAccountMsg] = useState({ text: '', ok: false })
@@ -1326,6 +1380,90 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
             </div>
           </details>
         </div>
+      </DisclosureCard>
+
+      
+      <DisclosureCard
+        className={settingsWideCardClass}
+        eyebrow="Fitness"
+        title="Lakas preferences"
+        description="Set your preferred units and core fitness settings."
+      >
+        <div className={styles.formRow} style={{ marginBottom: 12 }}>
+          <div className={styles.formGroup}>
+            <label>Weight unit</label>
+            <select value={lakasSettingsForm.units.weight} onChange={event => updateLakasSettingGroup('units', 'weight', event.target.value)}>
+              <option value="kg">Kilograms (kg)</option>
+              <option value="lb">Pounds (lb)</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Body measurements</label>
+            <select value={lakasSettingsForm.units.body} onChange={event => updateLakasSettingGroup('units', 'body', event.target.value)}>
+              <option value="cm">Centimeters (cm)</option>
+              <option value="in">Inches (in)</option>
+            </select>
+          </div>
+        </div>
+        <div className={styles.formRow} style={{ marginBottom: 12 }}>
+          <div className={styles.formGroup}>
+            <label>Distance unit</label>
+            <select value={lakasSettingsForm.units.distance} onChange={event => updateLakasSettingGroup('units', 'distance', event.target.value)}>
+              <option value="km">Kilometers (km)</option>
+              <option value="mi">Miles (mi)</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Show BMI</label>
+            <select value={lakasSettingsForm.display.showBmi ? 'yes' : 'no'} onChange={event => updateLakasSettingGroup('display', 'showBmi', event.target.value === 'yes')}>
+              <option value="yes">Show BMI</option>
+              <option value="no">Hide BMI</option>
+            </select>
+          </div>
+        </div>
+        <button className={`${settStyles.btnSave} ${settStyles.btnResetWide}`} onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
+          {savingLakasSettings ? 'Saving...' : 'Save Lakas preferences'}
+        </button>
+      </DisclosureCard>
+
+      <DisclosureCard
+        className={settingsWideCardClass}
+        eyebrow="Habits"
+        title="Tala defaults"
+        description="Configure how Tala guides your journaling and routines."
+      >
+        <div className={styles.formRow} style={{ marginBottom: 12 }}>
+          <div className={styles.formGroup}>
+            <label>Reminder time</label>
+            <input type="time" value={talaSettingsForm.reminderTime} onChange={event => updateTalaSettings('reminderTime', event.target.value)} />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Weekly review day</label>
+            <select value={talaSettingsForm.weeklyReviewDay} onChange={event => updateTalaSettings('weeklyReviewDay', event.target.value)}>
+              {WEEK_DAYS.map(day => <option key={day}>{day}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className={styles.formRow} style={{ marginBottom: 12 }}>
+          <div className={styles.formGroup}>
+            <label>Prompt style</label>
+            <select value={talaSettingsForm.promptStyle} onChange={event => updateTalaSettings('promptStyle', event.target.value)}>
+              <option>Gentle</option>
+              <option>Direct</option>
+              <option>Reflective</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Journal default privacy</label>
+            <select value={talaSettingsForm.privateByDefault ? 'private' : 'open'} onChange={event => updateTalaSettings('privateByDefault', event.target.value === 'private')}>
+              <option value="private">Private by default</option>
+              <option value="open">Open by default</option>
+            </select>
+          </div>
+        </div>
+        <button className={`${settStyles.btnSave} ${settStyles.btnResetWide}`} onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
+          {savingTalaSettings ? 'Saving...' : 'Save Tala defaults'}
+        </button>
       </DisclosureCard>
 
       <div className={settingsDangerCardClass}>

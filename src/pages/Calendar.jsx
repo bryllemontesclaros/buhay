@@ -683,8 +683,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           presetKey: form.presetKey || '',
           recur: form.recur,
           paymentStatus: form.paymentStatus,
-          accountId: form.accountId,
-          accountBalanceLinked: Boolean(form.accountId),
+          accountId: form.accountId || defaultAccountId,
+          accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
         }, data.accounts)
       } else {
         const col = modalType === 'income' ? 'income' : 'expenses'
@@ -698,8 +698,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           recur: form.recur,
           type: modalType,
           paymentStatus: form.paymentStatus,
-          accountId: form.accountId,
-          accountBalanceLinked: Boolean(form.accountId),
+          accountId: form.accountId || defaultAccountId,
+          accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
         }, data.accounts)
       }
       showEntryFeedback(buildEntryFeedback())

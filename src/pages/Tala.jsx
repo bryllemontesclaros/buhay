@@ -14,7 +14,7 @@ const ENERGY_OPTIONS = ['1', '2', '3', '4', '5']
 const STRESS_OPTIONS = ['1', '2', '3', '4', '5']
 const PRIORITIES = ['Low', 'Medium', 'High']
 const LIFE_AREAS = ['Self', 'Family', 'Work', 'School', 'Health', 'Money', 'Faith', 'Creative', 'Custom']
-const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+export const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const JOURNAL_PROMPTS = [
   {
     title: 'What felt heavy?',
@@ -33,7 +33,7 @@ const JOURNAL_PROMPTS = [
   },
 ]
 
-const DEFAULT_TALA_SETTINGS = {
+export const DEFAULT_TALA_SETTINGS = {
   reminderTime: '20:30',
   weeklyReviewDay: 'Sunday',
   promptStyle: 'Gentle',
@@ -244,14 +244,14 @@ function getTalaCalmPlan(insights = {}, journal = [], moods = []) {
   }
 }
 
-function getTalaSettings(profile = {}) {
+export function getTalaSettings(profile = {}) {
   return {
     ...DEFAULT_TALA_SETTINGS,
     ...(profile?.talaSettings || {}),
   }
 }
 
-function sanitizeTalaSettings(settings = {}) {
+export function sanitizeTalaSettings(settings = {}) {
   return {
     reminderTime: settings.reminderTime || DEFAULT_TALA_SETTINGS.reminderTime,
     weeklyReviewDay: WEEK_DAYS.includes(settings.weeklyReviewDay) ? settings.weeklyReviewDay : DEFAULT_TALA_SETTINGS.weeklyReviewDay,
@@ -765,6 +765,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
 
     const getCompletedDate = ts => {
       if (!ts) return null
+      if (typeof ts === 'string' && ts.includes('-')) return ts
       const d = new Date(ts)
       const y = d.getFullYear()
       const m = String(d.getMonth() + 1).padStart(2, '0')
@@ -1380,7 +1381,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   <strong>{task.title}</strong>
                   <span>{task.priority} · Due today</span>
                 </div>
-                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: true, completedAt: Date.now() }); }}>Done</button>
+                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: true, completedAt: Date.now(), completedDate: today() }); }}>Done</button>
               </div>
             ))}
           </div>
@@ -1660,7 +1661,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                 {task.notes && <small>{task.notes}</small>}
               </div>
               <div className={tStyles.rowActions}>
-                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: !task.done, completedAt: task.done ? 0 : Date.now() }); }}>{task.done ? 'Reopen' : 'Done'}</button>
+                <button type="button" onClick={() => { playTick(); fsUpdate(user.uid, 'talaTasks', task._id, { done: !task.done, completedAt: task.done ? 0 : Date.now(), completedDate: task.done ? null : today() }); }}>{task.done ? 'Reopen' : 'Done'}</button>
                 <button type="button" onClick={async () => { playTick(); if (await confirmDeleteApp(task.title)) await fsDel(user.uid, 'talaTasks', task._id); }}>Delete</button>
               </div>
             </div>
@@ -1996,106 +1997,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
       </div>
       )}
 
-      {showSettings && (
-      <div className={tStyles.settingsWorkspace}>
-        <div className={tStyles.settingsColumn}>
-          <section className={tStyles.panel}>
-            <div className={tStyles.sectionHeader}>
-              <div>
-                <div className={tStyles.sectionKicker}>Basics</div>
-                <h3>Tala defaults</h3>
-                <p className={tStyles.sectionHint}>Set the defaults that make Tala feel gentle, private, and easy to return to.</p>
-              </div>
-            </div>
-            <div className={tStyles.formGrid}>
-              <label>
-                <span>Reminder time</span>
-                <input type="time" value={settingsForm.reminderTime} onChange={event => { playTick(); updateSettings('reminderTime', event.target.value); }} />
-              </label>
-              <label>
-                <span>Weekly review</span>
-                <select value={settingsForm.weeklyReviewDay} onChange={event => { playTick(); updateSettings('weeklyReviewDay', event.target.value); }}>
-                  {WEEK_DAYS.map(day => <option key={day}>{day}</option>)}
-                </select>
-              </label>
-              <label>
-                <span>Prompt style</span>
-                <select value={settingsForm.promptStyle} onChange={event => { playTick(); updateSettings('promptStyle', event.target.value); }}>
-                  <option>Gentle</option>
-                  <option>Direct</option>
-                  <option>Reflective</option>
-                </select>
-              </label>
-              <label>
-                <span>Journal privacy by default</span>
-                <select value={settingsForm.privateByDefault ? 'private' : 'open'} onChange={event => { playTick(); updateSettings('privateByDefault', event.target.value === 'private'); }}>
-                  <option value="private">Private by default</option>
-                  <option value="open">Open by default</option>
-                </select>
-              </label>
-              <label className={tStyles.full}>
-                <span>Show mood insights</span>
-                <select value={settingsForm.showMoodInsights ? 'show' : 'hide'} onChange={event => { playTick(); updateSettings('showMoodInsights', event.target.value === 'show'); }}>
-                  <option value="show">Show mood insights</option>
-                  <option value="hide">Hide mood insights</option>
-                </select>
-              </label>
-            </div>
-            <div className={tStyles.settingsSaveNotice}>
-              <div>
-                <strong>Pending changes</strong>
-                <span>Update the basics here, then save when you are ready.</span>
-              </div>
-              <Button type="button" variant="primary" fullWidth onClick={() => { playTick(); handleSaveSettings(); }} disabled={savingSettings}>
-                {savingSettings ? 'Saving...' : 'Save Tala settings'}
-              </Button>
-            </div>
-          </section>
-        </div>
-
-        <div className={tStyles.settingsColumn}>
-          <section className={tStyles.panel}>
-            <div className={tStyles.sectionHeader}>
-              <div>
-                <div className={tStyles.sectionKicker}>Account tools</div>
-                <h3>Export, clear, and log out</h3>
-                <p className={tStyles.sectionHint}>Use these only when needed so Tala stays light and focused the rest of the time.</p>
-              </div>
-            </div>
-            <div className={tStyles.settingsStack}>
-              <div className={tStyles.settingsActionBlock}>
-                <div className={tStyles.settingsActionCopy}>
-                  <strong>Keep a copy</strong>
-                  <span>Download your Tala entries before making bigger changes.</span>
-                </div>
-                <Button type="button" variant="secondary" onClick={() => { playTick(); handleExportTalaData(); }} fullWidth>Export Tala data</Button>
-              </div>
-
-              <div className={tStyles.settingsActionBlock}>
-                <div className={tStyles.settingsActionCopy}>
-                  <strong>Clear Tala logs</strong>
-                  <span>Remove Tala entries from this account while keeping your Tala defaults.</span>
-                </div>
-                <Button type="button" variant="ghost" onClick={() => { playTick(); handleDeleteTalaData(); }} fullWidth disabled={deletingTalaData}>
-                  {deletingTalaData ? 'Deleting...' : 'Delete Tala logs'}
-                </Button>
-                <EmptyState compact>Your Tala settings stay if you delete Tala logs.</EmptyState>
-              </div>
-
-              <div className={tStyles.settingsActionBlock}>
-                <div className={tStyles.settingsActionCopy}>
-                  <strong>Log out</strong>
-                  <span>Leave this account safely without changing your Tala settings.</span>
-                </div>
-                <Button type="button" variant="ghost" onClick={() => { playTick(); handleLogout(); }} fullWidth>
-                  Log out
-                </Button>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-      )}
+      
     </div>
   )
 }
