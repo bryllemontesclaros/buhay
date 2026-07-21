@@ -1307,3 +1307,67 @@
 .donateCard {
   border-radius: 20px;
 }
+
+/* Form Refinements */
+.settingsFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.settingsFormGroup label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-left: 4px;
+}
+
+.settingsSelect {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3 5.25L7 9.25L11 5.25' stroke='%23a8b6d9' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.03);
+}
+
+.settingsSelect:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 76%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent-glow) 6%, var(--surface2) 94%);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.settingsActionRow {
+  margin-top: 24px;
+  padding-bottom: 24px;
+}
+
+.settingsFormRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .settingsFormRow {
+    flex-direction: row;
+    gap: 16px;
+  }
+  .settingsFormRow > * {
+    flex: 1;
+  }
+}

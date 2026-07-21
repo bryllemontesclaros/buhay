@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
 import {
   deleteUser,
   EmailAuthProvider,
@@ -1389,41 +1390,43 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         title="Lakas preferences"
         description="Set your preferred units and core fitness settings."
       >
-        <div className={styles.formRow} style={{ marginBottom: 12 }}>
-          <div className={styles.formGroup}>
+        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Weight unit</label>
-            <select value={lakasSettingsForm.units.weight} onChange={event => updateLakasSettingGroup('units', 'weight', event.target.value)}>
+            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.weight} onChange={event => updateLakasSettingGroup('units', 'weight', event.target.value)}>
               <option value="kg">Kilograms (kg)</option>
               <option value="lb">Pounds (lb)</option>
             </select>
           </div>
-          <div className={styles.formGroup}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Body measurements</label>
-            <select value={lakasSettingsForm.units.body} onChange={event => updateLakasSettingGroup('units', 'body', event.target.value)}>
+            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.body} onChange={event => updateLakasSettingGroup('units', 'body', event.target.value)}>
               <option value="cm">Centimeters (cm)</option>
               <option value="in">Inches (in)</option>
             </select>
           </div>
         </div>
-        <div className={styles.formRow} style={{ marginBottom: 12 }}>
-          <div className={styles.formGroup}>
+        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Distance unit</label>
-            <select value={lakasSettingsForm.units.distance} onChange={event => updateLakasSettingGroup('units', 'distance', event.target.value)}>
+            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.distance} onChange={event => updateLakasSettingGroup('units', 'distance', event.target.value)}>
               <option value="km">Kilometers (km)</option>
               <option value="mi">Miles (mi)</option>
             </select>
           </div>
-          <div className={styles.formGroup}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Show BMI</label>
-            <select value={lakasSettingsForm.display.showBmi ? 'yes' : 'no'} onChange={event => updateLakasSettingGroup('display', 'showBmi', event.target.value === 'yes')}>
+            <select className={settStyles.settingsSelect} value={lakasSettingsForm.display.showBmi ? 'yes' : 'no'} onChange={event => updateLakasSettingGroup('display', 'showBmi', event.target.value === 'yes')}>
               <option value="yes">Show BMI</option>
               <option value="no">Hide BMI</option>
             </select>
           </div>
         </div>
-        <button className={`${settStyles.btnSave} ${settStyles.btnResetWide}`} onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
-          {savingLakasSettings ? 'Saving...' : 'Save Lakas preferences'}
-        </button>
+        <div className={settStyles.settingsActionRow}>
+          <Button type="button" variant="primary" fullWidth onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
+            {savingLakasSettings ? 'Saving...' : 'Save Lakas preferences'}
+          </Button>
+        </div>
       </DisclosureCard>
 
       <DisclosureCard
@@ -1432,38 +1435,40 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         title="Tala defaults"
         description="Configure how Tala guides your journaling and routines."
       >
-        <div className={styles.formRow} style={{ marginBottom: 12 }}>
-          <div className={styles.formGroup}>
+        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Reminder time</label>
-            <input type="time" value={talaSettingsForm.reminderTime} onChange={event => updateTalaSettings('reminderTime', event.target.value)} />
+            <input type="time" className={settStyles.settingsSelect} value={talaSettingsForm.reminderTime} onChange={event => updateTalaSettings('reminderTime', event.target.value)} />
           </div>
-          <div className={styles.formGroup}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Weekly review day</label>
-            <select value={talaSettingsForm.weeklyReviewDay} onChange={event => updateTalaSettings('weeklyReviewDay', event.target.value)}>
+            <select className={settStyles.settingsSelect} value={talaSettingsForm.weeklyReviewDay} onChange={event => updateTalaSettings('weeklyReviewDay', event.target.value)}>
               {WEEK_DAYS.map(day => <option key={day}>{day}</option>)}
             </select>
           </div>
         </div>
-        <div className={styles.formRow} style={{ marginBottom: 12 }}>
-          <div className={styles.formGroup}>
+        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Prompt style</label>
-            <select value={talaSettingsForm.promptStyle} onChange={event => updateTalaSettings('promptStyle', event.target.value)}>
+            <select className={settStyles.settingsSelect} value={talaSettingsForm.promptStyle} onChange={event => updateTalaSettings('promptStyle', event.target.value)}>
               <option>Gentle</option>
               <option>Direct</option>
               <option>Reflective</option>
             </select>
           </div>
-          <div className={styles.formGroup}>
+          <div className={settStyles.settingsFormGroup}>
             <label>Journal default privacy</label>
-            <select value={talaSettingsForm.privateByDefault ? 'private' : 'open'} onChange={event => updateTalaSettings('privateByDefault', event.target.value === 'private')}>
+            <select className={settStyles.settingsSelect} value={talaSettingsForm.privateByDefault ? 'private' : 'open'} onChange={event => updateTalaSettings('privateByDefault', event.target.value === 'private')}>
               <option value="private">Private by default</option>
               <option value="open">Open by default</option>
             </select>
           </div>
         </div>
-        <button className={`${settStyles.btnSave} ${settStyles.btnResetWide}`} onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
-          {savingTalaSettings ? 'Saving...' : 'Save Tala defaults'}
-        </button>
+        <div className={settStyles.settingsActionRow}>
+          <Button type="button" variant="primary" fullWidth onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
+            {savingTalaSettings ? 'Saving...' : 'Save Tala defaults'}
+          </Button>
+        </div>
       </DisclosureCard>
 
       <div className={settingsDangerCardClass}>
