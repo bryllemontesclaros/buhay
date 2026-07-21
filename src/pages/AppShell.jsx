@@ -1215,7 +1215,10 @@ export default function AppShell({ user }) {
     .filter(item => ['settings'].includes(item.id))
     .map(item => ({ ...item, space: 'tala' }))
   talaMoreNav.unshift({ id: 'insights', label: 'Insights', iconKey: 'insights', section: 'Review', space: 'tala' })
-  const mobileMoreNav = activeSpace === 'lakas' ? lakasMoreNav : activeSpace === 'tala' ? talaMoreNav : financeMoreNav
+  const mobileMoreNav = [
+    ...(activeSpace === 'lakas' ? lakasMoreNav : activeSpace === 'tala' ? talaMoreNav : financeMoreNav),
+    { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'System', space: 'system' }
+  ]
   const mobileMoreTitle = activeSpace === 'lakas' ? 'More Lakas' : activeSpace === 'tala' ? 'More Tala' : 'More'
   const mobileMoreMeta = activeSpace === 'lakas'
     ? 'Open Lakas settings and account controls.'
@@ -2014,7 +2017,9 @@ export default function AppShell({ user }) {
                   type="button"
                   className={`${styles.mobileNavLink} ${n.space === 'lakas' ? resolvedLakasPage === n.id ? styles.mobileNavLinkActive : '' : n.space === 'tala' ? talaPage === n.id ? styles.mobileNavLinkActive : '' : page === n.id ? styles.mobileNavLinkActive : ''}`}
                   onClick={() => {
-                    if (n.space === 'lakas') {
+                    if (n.id === 'settings') {
+                      setPage('settings')
+                    } else if (n.space === 'lakas') {
                       openSpace('lakas')
                       setLakasPage(n.id)
                     } else if (n.space === 'tala') {
