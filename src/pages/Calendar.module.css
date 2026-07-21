@@ -2051,3 +2051,30 @@
   border: 4px solid var(--nb-stroke);
   box-shadow: 12px 12px 0 var(--nb-stroke);
 }
+
+.viewToggleWrap {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border1);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.viewToggleBtn {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text3);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.viewToggleActive {
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 2px 8px var(--brand-shadow);
+}

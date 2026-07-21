@@ -127,6 +127,15 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [dayBalanceDraft, setDayBalanceDraft] = useState('')
   const [dayBalanceSaving, setDayBalanceSaving] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false)
+  const [calendarViewMode, setCalendarViewMode] = useState('cash')
+
+  const totalSavings = useMemo(() => {
+    return (data.savings || []).reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
+  }, [data.savings])
+
+  const totalDebts = useMemo(() => {
+    return (data.debts || []).reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
+  }, [data.debts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
@@ -1789,6 +1798,18 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             </label>
             <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">→</button>
           </div>
+          <div className={calStyles.viewToggleWrap}>
+            <button 
+              type="button"
+              className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'cash' ? calStyles.viewToggleActive : ''}`}
+              onClick={() => setCalendarViewMode('cash')}
+            >Cash</button>
+            <button 
+              type="button"
+              className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'netWorth' ? calStyles.viewToggleActive : ''}`}
+              onClick={() => setCalendarViewMode('netWorth')}
+            >Net Worth</button>
+          </div>
         </div>
 
         <div className={calStyles.monthBoard}>
@@ -1818,7 +1839,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isSelected = selected === ds
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
-              const balanceLabel = forecast ? formatCellBalance(forecast.runningBalance) : ''
+              const baseValue = forecast ? forecast.runningBalance : 0
+              const displayValue = calendarViewMode === 'netWorth' ? (baseValue + totalSavings - totalDebts) : baseValue
+              const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
               const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
@@ -1898,7 +1921,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       {!privacyMode && (
                         <div
                           className={calStyles.cellBalance}
-                          title={formatRoundedBalance(forecast?.runningBalance || 0, s)}
+                          title={formatRoundedBalance(displayValue, s)}
                         >
                           {balanceLabel}
                         </div>
