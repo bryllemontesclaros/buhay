@@ -84,7 +84,9 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
     const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a.balance || 0), 0)
     const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a.balance || 0), 0)
-    const netWorth = totalCash - totalCCDebt
+    const totalSavings = (data.goals || []).reduce((sum, g) => sum + (Number(g.currentAmount) || 0), 0)
+    const totalDebts = (data.debts || []).reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
+    const netWorth = totalCash - totalCCDebt + totalSavings - totalDebts
 
     const upcomingBills = (data.bills || [])
       .filter(b => !b.isPaid && b.dueDate >= todayStr)

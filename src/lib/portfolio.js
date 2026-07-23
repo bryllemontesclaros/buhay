@@ -31,8 +31,8 @@ export function normalizePortfolioHolding(holding = {}, exchangeRates = null) {
     const holdingCurrency = String(holding.currency).toUpperCase()
     const rate = Number(exchangeRates[holdingCurrency])
     if (rate > 0) {
-      marketValue = marketValue / rate
-      totalCost = totalCost / rate
+      marketValue = marketValue * rate
+      totalCost = totalCost * rate
     }
   }
 
