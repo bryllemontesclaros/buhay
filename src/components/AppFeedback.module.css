@@ -35,7 +35,7 @@
 
 .toastTitle {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   line-height: 1.2;
 }
@@ -145,7 +145,7 @@
   padding: 11px 14px;
   font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition:
     transform var(--motion-duration-fast) var(--motion-ease-out),

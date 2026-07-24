@@ -245,7 +245,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
   text-decoration: none;
   color: var(--text-primary);
-  font-weight: 800;
+  font-weight: 600;
   font-size: 13px;
   padding: 8px 10px;
   border-radius: 999px;
@@ -351,7 +351,7 @@
   color: var(--text-primary);
   padding: 6px 12px;
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 12px;
   box-shadow: 0 3px 0 rgba(16, 16, 16, 0.08);
   transition:
@@ -403,7 +403,7 @@
 
 .heroTitle {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  font-weight: 800;
+  font-weight: 600;
   font-size: clamp(44px, 5.5vw, 84px);
   letter-spacing: -1.5px;
   line-height: 0.95;
@@ -650,7 +650,7 @@
   border: 1px solid var(--glass-border);
   background-color: var(--surface);
   padding: 0 42px 0 16px;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 16px;
   color: var(--text-primary);
   appearance: none;
@@ -705,7 +705,7 @@
   color: inherit;
   cursor: pointer;
   text-decoration: underline;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .heroSpotlight {
@@ -785,7 +785,7 @@
 .heroSharedStrip strong {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 700;
   color: inherit;
 }
 
@@ -960,7 +960,7 @@
 
 .sectionTitle {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  font-weight: 800;
+  font-weight: 600;
   font-size: clamp(38px, 4.8vw, 68px);
   letter-spacing: -1.0px;
   line-height: 0.96;
@@ -2035,7 +2035,7 @@
 .heroTitleCentered {
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
   font-size: clamp(32px, 5vw, 64px);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -1.5px;
   color: var(--text-primary);
@@ -2188,7 +2188,7 @@
 
 .showcaseTitle {
   font-size: clamp(24px, 4vw, 36px);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -1.0px;
   margin: 0;
   color: var(--text-primary);

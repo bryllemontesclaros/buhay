@@ -54,7 +54,7 @@
   background: color-mix(in srgb, var(--accent-glow) 72%, var(--glass-1) 28%);
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -81,7 +81,7 @@
 .boardStreamLabel {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -171,7 +171,7 @@
   z-index: 1;
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.9px;
   text-transform: uppercase;
   margin-bottom: 7px;
@@ -215,7 +215,7 @@
 .statCard span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -272,7 +272,7 @@
 .heroCompanionCopy strong {
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -482,14 +482,14 @@
   color: var(--space-reflection-ink);
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent) 74%, var(--purple) 26%));
   font-size: var(--type-support);
-  font-weight: 900;
+  font-weight: 700;
   /* box-shadow flattened */
 }
 
 .quickWinCard span:last-child {
   color: var(--text2);
   font-size: var(--type-support);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 
@@ -580,7 +580,7 @@
 .advancedGrid label span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -650,7 +650,7 @@
   padding: 10px 12px;
   color: var(--text2);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   list-style: none;
 }
@@ -711,7 +711,7 @@
   display: block;
   color: var(--text);
   font-size: var(--type-body);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
@@ -772,7 +772,7 @@
   display: block;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -809,7 +809,7 @@
 .calmPlanTop span {
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -1137,7 +1137,7 @@
 .monthLabelEyebrow {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
@@ -1169,7 +1169,7 @@
 .calendarHead {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -1378,7 +1378,7 @@
   color: var(--text2);
   padding: 7px 11px;
   font-size: var(--type-support);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .empty {
@@ -1622,7 +1622,7 @@
 .boardTodayLabel {
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -1882,7 +1882,7 @@
   color: var(--text2);
   padding: 6px 12px;
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
 }
@@ -1915,7 +1915,7 @@
   display: block;
   color: var(--text2);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .moodBtnGrid {
@@ -1951,7 +1951,7 @@
 
 .moodText {
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
 }
 
@@ -2037,14 +2037,14 @@
 .sliderHeader span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
 
 .sliderHeader strong {
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   transition: color 0.2s ease;
 }
 
@@ -2150,7 +2150,7 @@
 .calmPlanKicker {
   color: color-mix(in srgb, var(--accent) 82%, var(--purple) 18%);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -2208,14 +2208,14 @@
   align-items: center;
   justify-content: center;
   font-size: var(--type-caption);
-  font-weight: 900;
+  font-weight: 700;
   /* box-shadow flattened */
 }
 
 .timelineContent {
   color: var(--text2);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .boundaryTag {
@@ -2238,7 +2238,7 @@
   height: 24px;
   border-radius: 50%;
   font-size: var(--type-support);
-  font-weight: 800;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
@@ -2385,7 +2385,7 @@
 
 .dayItemKicker {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text3);
@@ -2445,7 +2445,7 @@
 
 .chartPrivateOverlay span {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text3);
@@ -2470,7 +2470,7 @@
 .chartTooltip strong {
   font-size: var(--type-body-sm);
   color: var(--text);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .chartTooltip span {
@@ -2492,7 +2492,7 @@
 .donutTitle {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -2530,7 +2530,7 @@
 
 .donutPrivateOverlay span {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text3);
@@ -2565,7 +2565,7 @@
 
 .donutLegendCount {
   color: var(--text3);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 /* Weighted pills & Tag Cloud classes */
@@ -2596,7 +2596,7 @@
   background: rgba(255, 255, 255, 0.12);
   color: inherit;
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .emptyCloudText {
@@ -2674,7 +2674,7 @@
 .progressText {
   position: absolute;
   font-size: var(--type-caption);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--text);
 }
 
@@ -2687,7 +2687,7 @@
 
 .goalSliderWrapper span {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2737,7 +2737,7 @@
 
 .climateKicker {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2748,7 +2748,7 @@
 .climateHeader h4 {
   margin: 0;
   font-size: var(--type-title-xl);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--text);
 }
 
@@ -2780,7 +2780,7 @@
 
 .orbDay {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   line-height: 1;
   margin-bottom: 2px;
@@ -2891,7 +2891,7 @@
 
 .tooltipTitle {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -3003,7 +3003,7 @@
 .correlationHeader h4 {
   margin: 0;
   font-size: var(--type-body);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
 }
 
@@ -3022,14 +3022,14 @@
 
 .correlationMetric strong {
   font-size: var(--type-title-xl);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--accent);
   line-height: 1.1;
 }
 
 .correlationMetric span {
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -3139,7 +3139,7 @@
   border-radius: 10px;
   padding: 5px 10px;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s;
 }
@@ -3155,7 +3155,7 @@
   border-radius: 10px;
   padding: 5px 10px;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }

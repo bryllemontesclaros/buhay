@@ -70,7 +70,7 @@
 }
 
 .brandName {
-  font-weight: 800;
+  font-weight: 600;
   font-size: 20px;
   letter-spacing: -0.5px;
 }
@@ -139,7 +139,7 @@
 
 .heroTitle {
   font-size: clamp(48px, 8vw, 80px);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -2px;
   margin: 0 0 24px;
@@ -187,7 +187,7 @@
 
 .sectionTitle {
   font-size: 36px;
-  font-weight: 800;
+  font-weight: 600;
   margin-bottom: 16px;
   text-align: center;
   letter-spacing: -1px;
@@ -237,7 +237,7 @@
 
 .featureTitle {
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -263,7 +263,7 @@
 
 .privacyTitle {
   font-size: 40px;
-  font-weight: 800;
+  font-weight: 600;
   margin-bottom: 24px;
   letter-spacing: -1px;
 }

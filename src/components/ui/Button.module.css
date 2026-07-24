@@ -5,15 +5,15 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-height: 42px;
-  padding: 0 16px;
-  border-radius: 99px;
+  min-height: 40px;
+  padding: 8px 20px;
+  border-radius: 8px;
   border: 1px solid var(--border2);
   font-family: var(--font-body);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
 }
 
@@ -28,14 +28,15 @@
 }
 
 .primaryBtn {
-  color: #071018;
-  background: var(--text); color: var(--bg); border-color: transparent;
-  border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
+  color: #ffffff;
+  background: var(--accent);
+  border-color: transparent;
 }
 
 :global([data-theme="light"]) .primaryBtn,
 :global(.force-light-theme) .primaryBtn {
   color: #ffffff;
+  background: var(--text);
 }
 
 .primaryBtn:disabled,
@@ -72,29 +73,32 @@
 
 .primaryBtn:hover,
 .primaryBtn:focus-visible {
-  transform: scale(1.02);
-  border-color: color-mix(in srgb, var(--accent) 88%, white 12%);
-  background: var(--text); color: var(--bg); border-color: transparent;
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent) 85%, white);
+  border-color: transparent;
+  box-shadow: var(--glass-shadow-soft);
 }
 
 :global([data-theme="light"]) .primaryBtn:hover,
 :global([data-theme="light"]) .primaryBtn:focus-visible,
 :global(.force-light-theme) .primaryBtn:hover,
 :global(.force-light-theme) .primaryBtn:focus-visible {
-  background: var(--text); color: var(--bg); border-color: transparent;
+  background: color-mix(in srgb, var(--text) 85%, white);
+  border-color: transparent;
 }
 
 .dangerBtn {
   color: #ffffff;
-  background: var(--text); color: var(--bg); border-color: transparent;
-  border-color: color-mix(in srgb, var(--red) 58%, var(--glass-border));
+  background: var(--red);
+  border-color: transparent;
 }
 
 .dangerBtn:hover,
 .dangerBtn:focus-visible {
-  transform: scale(1.02);
-  border-color: color-mix(in srgb, var(--red) 88%, white 12%);
-  background: var(--text); color: var(--bg); border-color: transparent;
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--red) 85%, white);
+  border-color: transparent;
+  box-shadow: var(--glass-shadow-soft);
 }
 
 /* Neo Theme overrides */

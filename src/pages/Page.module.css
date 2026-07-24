@@ -294,7 +294,7 @@
   z-index: 1;
   margin-bottom: 10px;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text3);
@@ -596,7 +596,7 @@
   padding: 10px 12px;
   color: var(--text2);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   list-style: none;
 }
@@ -728,7 +728,7 @@
   border-radius: 14px;
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   font-family: var(--font-body);
 }
@@ -1116,7 +1116,7 @@ tbody tr:hover td {
 .header > :first-child::before {
   content: 'Takda';
   font-size: 10px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--accent);
 }

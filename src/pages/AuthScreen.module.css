@@ -61,7 +61,7 @@
 .cardEyebrow {
   font-size: var(--type-caption);
   color: var(--accent);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -168,7 +168,7 @@
 .intentStreamLabel {
   display: block;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text3);
@@ -296,7 +296,7 @@
   color: var(--accent);
   font-family: var(--font-mono);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .previewDayHot {
@@ -381,7 +381,7 @@
   background: color-mix(in srgb, var(--accent-glow) 82%, var(--surface) 18%);
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -414,7 +414,7 @@
   background: color-mix(in srgb, var(--surface2) 82%, transparent);
   color: var(--text3);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
@@ -458,7 +458,7 @@
 .passwordToggle:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 1px; }
 .checkRow { display: flex; align-items: center; gap: 10px; font-size: var(--type-body-sm); color: var(--text2); margin-bottom: 12px; cursor: pointer; user-select: none; }
 .checkRow input { width: 16px; height: 16px; accent-color: var(--accent); }
-.btnPrimary { width: 100%; min-height: 50px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius); font-size: var(--type-body); font-weight: 800; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; /* box-shadow flattened */ }
+.btnPrimary { width: 100%; min-height: 50px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius); font-size: var(--type-body); font-weight: 600; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; /* box-shadow flattened */ }
 .btnPrimary:hover { opacity: 0.94; transform: translateY(-1px); }
 .btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
 .legalNotice {
@@ -504,7 +504,7 @@
   background: color-mix(in srgb, var(--surface2) 82%, transparent);
   color: var(--text3);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -854,7 +854,7 @@
 
 .storyMetric span {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text3);

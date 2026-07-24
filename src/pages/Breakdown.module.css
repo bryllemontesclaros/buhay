@@ -136,7 +136,7 @@
 .detailsSectionTitle {
   font-size: var(--type-support);
   color: var(--text2);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
 }
@@ -162,7 +162,7 @@
 .detailsDayLabel {
   font-size: 11px;
   color: var(--text3);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-top: 16px;
@@ -194,7 +194,7 @@
 }
 
 .detailsRowDesc {
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   letter-spacing: -0.01em;
   font-size: 15px;
@@ -708,7 +708,7 @@
 
 .pulseTitle {
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text3);

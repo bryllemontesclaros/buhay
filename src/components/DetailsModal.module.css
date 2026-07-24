@@ -77,7 +77,7 @@
   background: color-mix(in srgb, var(--glass-1) 70%, var(--surface) 30%);
   color: var(--text);
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
 }
 

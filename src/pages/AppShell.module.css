@@ -137,7 +137,7 @@
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
   color: var(--text2);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -155,7 +155,7 @@
   margin-top: 2px;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -187,7 +187,7 @@
   display: block;
   font-size: var(--type-overline);
   color: var(--text3);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -196,7 +196,7 @@
   margin-top: 4px;
   color: var(--text);
   font-size: var(--type-title-sm);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -215,7 +215,7 @@
   align-items: center;
   justify-content: center;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   /* box-shadow flattened */
 }
 
@@ -295,7 +295,7 @@
   display: block;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -305,7 +305,7 @@
   margin-top: 8px;
   color: var(--text);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.02em;
 }
@@ -579,7 +579,7 @@
 .financeGroupEyebrow {
   color: var(--accent);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -636,7 +636,7 @@
   display: block;
   color: inherit;
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .financeGroupTab span {
@@ -740,7 +740,7 @@
 .topBarKicker {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -837,7 +837,7 @@
 .workspaceDropdownHeader {
   font-size: var(--type-overline);
   color: var(--text3);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 8px 12px;
@@ -891,7 +891,7 @@
 
 .workspaceDropdownName {
   font-size: var(--type-body);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
 }
 
@@ -903,7 +903,7 @@
 
 .workspaceDropdownCheck {
   color: var(--accent);
-  font-weight: 800;
+  font-weight: 600;
 }
 .topBarRight { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .topBarStatus {
@@ -1059,7 +1059,7 @@
 }
 .syncBannerTitle {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   line-height: 1.2;
 }
@@ -1087,7 +1087,7 @@
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--amber);
 }
 .syncBannerDismiss {
@@ -1353,7 +1353,7 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 600;
   background: color-mix(in srgb, var(--fab-tone) 16%, var(--glass-1));
   color: var(--fab-tone);
   flex-shrink: 0;
@@ -1936,7 +1936,7 @@
     /* box-shadow flattened */
   }
   .bottomNavIcon { display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; }
-  .bottomNavLabel { font-size: 10px; font-weight: 800; letter-spacing: 0.01em; line-height: 1; }
+  .bottomNavLabel { font-size: 10px; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
   .mobileNavBackdrop {
     display: block;
     position: fixed;
@@ -2232,7 +2232,7 @@
   padding: 0 1rem;
   color: var(--text3);
   font-size: 10px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -2290,7 +2290,7 @@
 .stripValue {
   font-family: var(--font-display);
   font-size: var(--type-heading-sm);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -2362,7 +2362,7 @@
   border-radius: 14px;
   padding: 4px 10px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text3);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2389,7 +2389,7 @@
 
 .badgeVal {
   color: var(--text);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .activeBadge {
@@ -2481,7 +2481,7 @@
   padding: 6px 12px;
   border-radius: 99px;
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 16px;

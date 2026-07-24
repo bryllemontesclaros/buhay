@@ -58,7 +58,7 @@
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--glass-1) 30%);
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -85,7 +85,7 @@
 .boardStreamLabel {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -192,7 +192,7 @@
   z-index: 1;
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.9px;
   text-transform: uppercase;
   margin-bottom: 7px;
@@ -236,7 +236,7 @@
 .statCard span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -293,7 +293,7 @@
 .heroCompanionCopy strong {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -426,7 +426,7 @@
 .bodyOverviewCard span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -508,7 +508,7 @@
 .bodyQuickStartNote span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -573,14 +573,14 @@
   color: var(--space-fitness-ink);
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 76%, var(--blue) 24%));
   font-size: var(--type-support);
-  font-weight: 900;
+  font-weight: 700;
   /* box-shadow flattened */
 }
 
 .quickWinText {
   color: var(--text2);
   font-size: var(--type-support);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
 }
 
@@ -649,7 +649,7 @@
   display: block;
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -762,7 +762,7 @@
   display: block;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -893,7 +893,7 @@
   display: block;
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -986,7 +986,7 @@
 
 .workoutLaunchCard span {
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1015,7 +1015,7 @@
   background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
   color: var(--text2);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: normal;
   text-transform: none;
 }
@@ -1112,7 +1112,7 @@
 
 .workoutSecondaryAction span {
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1244,7 +1244,7 @@
 .todayGuidanceEyebrow {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1326,7 +1326,7 @@
 .nutritionCoachHeader span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1428,7 +1428,7 @@
 .gymSessionEyebrow {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1466,7 +1466,7 @@
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   color: var(--text3);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .gymSessionActions {
@@ -1532,7 +1532,7 @@
   background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .gymExerciseTop strong {
@@ -1554,7 +1554,7 @@
   background: color-mix(in srgb, var(--surface3) 68%, transparent);
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .gymExerciseCard p,
@@ -1594,7 +1594,7 @@
   padding: 8px 10px;
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1638,7 +1638,7 @@
   display: inline-flex;
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .gymSessionSafety {
@@ -1683,7 +1683,7 @@
 .gymKnowledgeSummary span {
   color: var(--text);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -1756,7 +1756,7 @@
 .gymModeEyebrow {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.9px;
   text-transform: uppercase;
 }
@@ -1786,7 +1786,7 @@
   padding: 8px 13px;
   font-family: var(--font-body);
   font-size: var(--type-body-sm);
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -1810,7 +1810,7 @@
   display: block;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -1874,7 +1874,7 @@
   display: block;
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -1944,7 +1944,7 @@
   list-style: none;
   color: var(--text2);
   font-size: var(--type-support);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .gymModeSupportSummary::-webkit-details-marker {
@@ -1994,7 +1994,7 @@
   padding: 11px 13px;
   color: var(--text3);
   font-size: var(--type-support);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .gymModeVideoMeta span {
@@ -2036,7 +2036,7 @@
   color: var(--space-fitness-ink);
   font-family: var(--font-body);
   font-size: var(--type-caption);
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -2063,7 +2063,7 @@
 .gymModeVideoEmpty span {
   color: var(--accent);
   font-size: var(--type-support);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2140,7 +2140,7 @@
   display: block;
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2276,7 +2276,7 @@
 .gymModeSaveBar span {
   color: var(--text);
   font-size: var(--type-body-sm);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .gymModeSaveBar small {
@@ -2340,7 +2340,7 @@
 .gymModeExerciseChip span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .gymModeExerciseChip strong {
@@ -2369,7 +2369,7 @@
 .gymModeExerciseChipDone span::after {
   content: ' done';
   color: var(--text3);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .chartGrid {
@@ -2536,7 +2536,7 @@
 .workoutFollowupBox .advancedSummary span {
   color: var(--text);
   font-size: var(--type-title-sm);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -2554,7 +2554,7 @@
   display: block;
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -2714,7 +2714,7 @@
 .sessionCoachInlineTop span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -2803,7 +2803,7 @@
 .advancedGrid label span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -2868,7 +2868,7 @@
   padding: 10px 12px;
   color: var(--text2);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   list-style: none;
 }
@@ -2979,7 +2979,7 @@
 .exerciseMetrics span {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -3155,7 +3155,7 @@
 .routineSpotlightCard span {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -3233,7 +3233,7 @@
   margin-top: 5px;
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .templateCard small {
@@ -3279,7 +3279,7 @@
 .calendarHead {
   color: var(--text3);
   font-size: var(--type-overline);
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -3449,7 +3449,7 @@
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
 }
@@ -3585,7 +3585,7 @@
   justify-content: center;
   color: var(--text3);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .mealRow button {
@@ -3987,7 +3987,7 @@
 .boardTodayLabel {
   color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -4448,7 +4448,7 @@
     border: 1px solid var(--border2);
     background: color-mix(in srgb, var(--accent-glow) 45%, transparent);
     font-size: var(--type-body-sm);
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .gymModeCurrentCard {
@@ -4563,7 +4563,7 @@
   padding: 8px 14px;
   font-family: var(--font-body);
   font-size: var(--type-body-sm);
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -4652,14 +4652,14 @@
 
 .gymModeRestTimeDisplay span {
   font-size: var(--type-overline);
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--text3);
 }
 
 .gymModeRestTimeDisplay strong {
   font-size: var(--type-heading-xs);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   margin-top: 2px;
 }
@@ -4694,7 +4694,7 @@
   background: color-mix(in srgb, var(--accent-glow) 20%, transparent);
   color: var(--accent);
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease;
 }
@@ -4748,7 +4748,7 @@
 .gymModeToolSummary {
   padding: 8px 12px;
   font-size: var(--type-caption);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text2);
   cursor: pointer;
   background: color-mix(in srgb, var(--surface2) 50%, transparent);
@@ -4829,7 +4829,7 @@
   align-items: center;
   justify-content: center;
   font-size: 8px;
-  font-weight: 900;
+  font-weight: 700;
   border-radius: 3px;
   /* box-shadow flattened */
   border: 1px solid var(--border2);
@@ -4851,7 +4851,7 @@
 
 .warmupTable th {
   color: var(--text3);
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   font-size: var(--type-overline);
   letter-spacing: 0.5px;
@@ -5298,7 +5298,7 @@
   align-items: center;
   justify-content: center;
   font-size: 7px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text2);
   pointer-events: none;
 }
@@ -6105,7 +6105,7 @@
 
 .runStatValue {
   font-size: var(--type-title-xl);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
@@ -6222,7 +6222,7 @@
 
 .leaderboardSectionTitle {
   font-size: var(--type-caption);
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--accent);
@@ -6256,7 +6256,7 @@
 .podiumVal {
   font-family: var(--font-mono);
   font-size: var(--type-body-lg);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 8px;
   text-align: center;
@@ -6281,7 +6281,7 @@
 
 .podiumRank {
   font-size: var(--type-title-xl);
-  font-weight: 900;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.85);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
 }
@@ -6376,7 +6376,7 @@
 .cohortRank strong {
   font-family: var(--font-mono);
   font-size: var(--type-body);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
 }
 
@@ -6390,7 +6390,7 @@
 
 .cohortMeta strong {
   font-size: var(--type-body-sm);
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;

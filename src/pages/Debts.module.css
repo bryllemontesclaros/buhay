@@ -20,7 +20,7 @@
 .heroAsideValue {
   font-family: var(--font-display);
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   line-height: 1.1;
   margin-bottom: 6px;
@@ -54,7 +54,7 @@
 .totalVal {
   font-family: var(--font-display);
   font-size: 48px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--text);
@@ -93,7 +93,7 @@
 .sectionTitle {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
   margin-bottom: 4px;
@@ -155,7 +155,7 @@
 
 .sliderVal {
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--accent);
   font-family: var(--font-display);
 }
@@ -235,7 +235,7 @@
 .metricNum {
   font-family: var(--font-display);
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   line-height: 1.1;
 }
@@ -301,7 +301,7 @@
 .toolbarTitle {
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
   margin-bottom: 4px;
@@ -317,7 +317,7 @@
   color: #000000;
   font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   border: none;
   border-radius: 16px;
   min-height: 48px;
@@ -386,7 +386,7 @@
 .editorEyebrow {
   color: var(--accent);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 4px;
@@ -395,7 +395,7 @@
 .editorTitle {
   font-family: var(--font-display);
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--text);
 }
@@ -451,7 +451,7 @@
 
 .fieldLabel {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--text2);
   letter-spacing: 0.05em;
@@ -596,7 +596,7 @@
 .debtName {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   letter-spacing: -0.01em;
 }
@@ -651,7 +651,7 @@
 
 .detailsLabel {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--text3);
   letter-spacing: 0.05em;
@@ -718,7 +718,7 @@
   border-radius: 12px;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
   padding: 0 16px;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -753,7 +753,7 @@
 .emptyTitle {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 8px;
 }
@@ -928,7 +928,7 @@
   margin: 0 0 8px;
   color: var(--red);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
@@ -960,7 +960,7 @@
 .listSectionTitle {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   letter-spacing: -0.01em;
   margin: 0;
@@ -1112,7 +1112,7 @@
 .celebrationModal h2 {
   font-family: var(--font-display);
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 12px;
 }
@@ -1120,7 +1120,7 @@
 .milestoneLabel {
   font-family: var(--font-display);
   font-size: 32px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--accent);
   margin-bottom: 16px;
   text-shadow: 0 0 10px rgba(34, 216, 122, 0.3);
