@@ -1230,8 +1230,8 @@ export default function AppShell({ user }) {
     : activeSpace === 'tala'
       ? talaMoreNav.some(item => item.id === talaPage)
       : financeMoreNav.some(item => item.id === page)
-  const shouldHideFabWrap = mobileNavMenuOpen || (activeSpace === 'takda' && quickAddSheet.open)
-  const shouldHideBottomNav = quickAddMenuOpen || mobileNavMenuOpen || (activeSpace === 'takda' && quickAddSheet.open)
+  const shouldHideFabWrap = mobileNavMenuOpen || quickAddSheet.open
+  const shouldHideBottomNav = quickAddMenuOpen || mobileNavMenuOpen || quickAddSheet.open
   const isBottomNavItemActive = item => (
     item.space === 'dashboard'
       ? activeSpace === 'dashboard'
@@ -1892,13 +1892,13 @@ export default function AppShell({ user }) {
           </PageErrorBoundary>
         </main>
       </div>
-      {(quickAddMenuOpen || (activeSpace === 'takda' && quickAddSheet.open)) && (
+      {(quickAddMenuOpen || quickAddSheet.open) && (
         <div
           className={styles.fabBackdrop}
           aria-hidden="true"
           onClick={() => {
             setQuickAddMenuOpen(false)
-            if (activeSpace === 'takda') closeQuickAdd()
+            closeQuickAdd()
           }}
         />
       )}
@@ -1928,7 +1928,7 @@ export default function AppShell({ user }) {
           </button>
         </div>
       )}
-      {activeSpace === 'takda' && quickAddSheet.open && (
+      {quickAddSheet.open && (
         <>
           <div className={styles.quickAddBackdrop} onClick={closeQuickAdd} aria-hidden="true" />
           <div className={styles.quickAddLayer}>
