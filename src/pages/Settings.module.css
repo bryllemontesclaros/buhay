@@ -17,7 +17,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 18px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -156,7 +156,7 @@
   border-radius: var(--radius);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -203,7 +203,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+  /* box-shadow flattened */
 }
 
 .accountBadgeName {
@@ -229,7 +229,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+  /* box-shadow flattened */
 }
 
 .overviewStatLabel {
@@ -364,7 +364,7 @@
   font-size: 13px;
   margin-bottom: 1rem;
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .statusBannerOk {
@@ -399,7 +399,7 @@
   font-size: 13px;
   font-weight: 600;
   transition: border-color 0.2s, color 0.2s, background 0.2s, opacity 0.2s;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .toggleButtonActive {
@@ -423,7 +423,7 @@
   font-size: 13px;
   font-weight: 600;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .modeButtonActive {
@@ -444,7 +444,7 @@
   border: 1px solid var(--border2);
   padding: 1rem;
   text-align: center;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .summaryVal {
@@ -476,7 +476,7 @@
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
   text-decoration: none;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .btnExport:hover,
@@ -504,7 +504,7 @@
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
   text-decoration: none;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .btnReset {
@@ -651,7 +651,7 @@
   border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
   overflow: hidden;
 }
 
@@ -1342,14 +1342,14 @@
   background-position: right 16px center;
   background-size: 14px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px -2px rgba(0,0,0,0.03);
+  /* box-shadow flattened */
 }
 
 .settingsSelect:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent) 76%, var(--glass-border));
   background: color-mix(in srgb, var(--accent-glow) 6%, var(--surface2) 94%);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent);
+  /* box-shadow flattened */
 }
 
 .settingsActionRow {

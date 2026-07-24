@@ -125,7 +125,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   isolation: isolate;
 }
@@ -185,9 +185,7 @@
   border-radius: 22px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
-    0 10px 28px rgba(2, 8, 16, 0.08);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -236,7 +234,7 @@
   font-size: var(--type-overline);
   font-weight: 800;
   color: var(--nb-accent-ink);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .sidebarGuideDot:first-child {
@@ -305,9 +303,7 @@
   border-radius: 20px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 18%, transparent),
-    0 10px 24px rgba(2, 8, 16, 0.08);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -432,7 +428,7 @@
   color: var(--text);
   background: color-mix(in srgb, var(--surface2) 80%, transparent);
   border-color: var(--accent);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 15%, transparent);
+  /* box-shadow flattened */
 }
 
 .navItem:active {
@@ -443,9 +439,7 @@
   color: var(--text);
   background: var(--surface);
   border-color: var(--accent);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    0 10px 24px color-mix(in srgb, var(--accent) 15%, rgba(4, 10, 20, 0.12));
+  /* box-shadow flattened */
 }
 .icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .icon svg { width: 18px; height: 18px; }
@@ -470,7 +464,7 @@
   border-radius: 22px;
   padding: 13px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -589,7 +583,7 @@
   border-radius: 28px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -681,9 +675,7 @@
   color: var(--text);
   border-color: color-mix(in srgb, var(--accent) 46%, var(--glass-border));
   background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 48%, transparent),
-    0 14px 26px rgba(4, 10, 20, 0.12);
+  /* box-shadow flattened */
 }
 
 .mainWrap {
@@ -696,7 +688,7 @@
   border: 1px solid var(--glass-border);
   border-radius: 32px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
   animation: shellFrameIn var(--motion-duration-slow) var(--motion-ease-out) both;
@@ -850,7 +842,7 @@
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 12px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.15), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+  /* box-shadow flattened */
   animation: slideDownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
@@ -947,7 +939,7 @@
   border: 1px solid var(--glass-border);
   background: var(--surface);
   overflow: hidden;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
 }
 .topBarStatusBadge {
   display: inline-flex;
@@ -1036,7 +1028,7 @@
   justify-content: center;
   min-width: 40px;
   min-height: 40px;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -1069,7 +1061,7 @@
   border-radius: 22px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -1152,7 +1144,7 @@
   border-radius: 24px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
   animation: toastIn var(--motion-duration-slow) var(--motion-ease-out) both;
@@ -1215,7 +1207,7 @@
   border-radius: 24px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -1327,7 +1319,7 @@
   border-radius: 28px;
   border: 1px solid var(--glass-border);
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
   animation: takdaFloatIn var(--motion-duration-slow) var(--motion-ease-out) both;
@@ -1361,7 +1353,7 @@
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--fab-tone) 38%, var(--glass-border));
   background: var(--surface);
-  box-shadow: 0 14px 28px rgba(8, 12, 18, 0.12);
+  /* box-shadow flattened */
 }
 
 .fabAction:active {
@@ -1430,7 +1422,7 @@
   line-height: 1;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 30%, transparent);
+  /* box-shadow flattened */
   transition:
     transform var(--motion-duration-slow) var(--motion-ease-out),
     box-shadow var(--motion-duration) var(--motion-ease-standard),
@@ -1440,7 +1432,7 @@
   display: grid;
   place-items: center;
 }
-.fabButton:hover { --fab-lift: -1px; box-shadow: 0 8px 16px color-mix(in srgb, var(--accent) 40%, transparent); }
+.fabButton:hover { --fab-lift: -1px; /* box-shadow flattened */ }
 .fabButton:active { --fab-lift: 0px; }
 .fabButtonGlyph {
   display: inline-block;
@@ -1450,7 +1442,7 @@
 .fabButtonOpen {
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
   background: var(--accent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 28%, transparent);
+  /* box-shadow flattened */
 }
 .fabButtonOpen .fabButtonGlyph {
   transform: scale(0.98);
@@ -1490,7 +1482,7 @@
   border: 1px solid var(--glass-border);
   border-radius: 30px;
   padding: 1rem;
-  box-shadow: var(--glass-shadow-strong);
+  /* box-shadow flattened */
   
   
   pointer-events: auto;
@@ -1585,7 +1577,7 @@
   .financeGroupHero:hover {
     transform: translateY(-3px) scale(1.015);
     border-color: var(--accent);
-    box-shadow: var(--glass-shadow-strong), 0 12px 30px color-mix(in srgb, var(--accent) 8%, transparent);
+    /* box-shadow flattened */
   }
 }
 
@@ -1609,7 +1601,7 @@
     border: none;
     border-radius: 0;
     background: transparent;
-    box-shadow: none;
+    /* box-shadow flattened */
     
     
     position: relative !important;
@@ -1700,7 +1692,7 @@
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     background: var(--bg);
-    box-shadow: var(--glass-shadow-soft);
+    /* box-shadow flattened */
     flex-shrink: 0;
     gap: 10px;
     justify-content: space-between;
@@ -1868,7 +1860,7 @@
     width: 58px;
     height: 58px;
     font-size: 24px;
-    box-shadow: 0 18px 34px rgba(9, 18, 14, 0.22);
+    /* box-shadow flattened */
   }
   .fabMenu {
     display: grid;
@@ -1913,7 +1905,7 @@
     min-height: 0;
     border-radius: 28px;
     padding: 12px;
-    box-shadow: var(--glass-shadow-strong);
+    /* box-shadow flattened */
   }
   .quickAddHeader {
     position: sticky;
@@ -1938,7 +1930,7 @@
     z-index: 100;
     min-height: 62px;
     padding: 6px;
-    box-shadow: var(--glass-shadow);
+    /* box-shadow flattened */
     
     
     transition:
@@ -1974,9 +1966,7 @@
   .bottomNavItem.active {
     color: var(--text);
     background: var(--surface);
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
-      0 10px 20px rgba(4, 10, 20, 0.12);
+    /* box-shadow flattened */
   }
   .bottomNavIcon { display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; }
   .bottomNavLabel { font-size: 10px; font-weight: 800; letter-spacing: 0.01em; line-height: 1; }
@@ -2006,7 +1996,7 @@
     border-radius: 28px;
     border: 1px solid var(--glass-border);
     background: var(--surface);
-    box-shadow: var(--glass-shadow-strong);
+    /* box-shadow flattened */
     
     
     animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
@@ -2080,9 +2070,7 @@
   .mobileNavLinkActive {
     border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
     background: var(--surface);
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 54%, transparent),
-      0 10px 20px rgba(4, 10, 20, 0.12);
+    /* box-shadow flattened */
   }
   .mobileNavLinkIcon {
     width: 36px;
@@ -2322,7 +2310,7 @@
   align-items: flex-start;
   text-align: left;
   cursor: pointer;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
   transition: transform 0.15s var(--motion-ease-out), border-color 0.15s ease, background 0.15s ease;
@@ -2510,7 +2498,7 @@
 .changelogModal {
   background: var(--surface);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow-strong), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 20%, transparent);
+  /* box-shadow flattened */
   border-radius: 24px;
   padding: 32px 24px 24px;
   width: 100%;

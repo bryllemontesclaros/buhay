@@ -72,14 +72,14 @@
   background: color-mix(in srgb, var(--peach) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--peach) 25%, transparent);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  /* box-shadow flattened */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
 }
 
 .streakBadge:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--peach) 20%, transparent);
+  /* box-shadow flattened */
   border-color: var(--peach);
 }
 
@@ -114,7 +114,7 @@
   border-radius: 16px;
   background: var(--surface);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: fadeIn 0.5s ease-out;
@@ -170,7 +170,7 @@
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -236,7 +236,7 @@
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   padding: 24px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -255,7 +255,7 @@
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   padding: 24px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -267,7 +267,7 @@
 
 .card:hover {
   transform: translateY(-6px) scale(1.005);
-  box-shadow: var(--glass-shadow), 0 20px 40px rgba(0, 0, 0, 0.05);
+  /* box-shadow flattened */
 }
 
 .wealthCard:hover { border-color: var(--accent); }
@@ -275,7 +275,7 @@
 .mindCard:hover { border-color: var(--purple); }
 
 :global([data-theme="dark"]) .card:hover {
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  /* box-shadow flattened */
 }
 
 :global([data-theme="dark"]) .wealthCard:hover { border-color: var(--accent); }
@@ -481,7 +481,7 @@
 
 .spaceChip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  /* box-shadow flattened */
 }
 
 .spaceChipArrow {
@@ -616,7 +616,7 @@
   border-radius: 50%;
   background: var(--purple);
   cursor: pointer;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--purple) 50%, transparent);
+  /* box-shadow flattened */
   transition: transform 0.1s ease;
 }
 
@@ -644,7 +644,7 @@
 
 .quickJournalInput:focus {
   border-color: var(--purple);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--purple) 16%, transparent);
+  /* box-shadow flattened */
 }
 
 .journalSubmitBtn {
@@ -944,7 +944,7 @@
   justify-content: center;
   cursor: pointer;
   z-index: 20;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  /* box-shadow flattened */
   transition: transform 0.2s;
 }
 
@@ -988,7 +988,7 @@
   padding: 24px;
   z-index: 100;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+  /* box-shadow flattened */
   display: flex;
   flex-direction: column;
   align-items: center;

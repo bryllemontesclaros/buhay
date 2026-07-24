@@ -8,7 +8,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 18px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -68,7 +68,7 @@
   height: 10px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2px var(--accent), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -99,7 +99,7 @@
   border-radius: 18px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -137,7 +137,7 @@
   border-radius: 14px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   color: var(--text);
   font-size: 16px;
   font-family: var(--font-body);
@@ -147,9 +147,7 @@
 .quickContributionInput:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 
@@ -214,14 +212,14 @@
   border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
   overflow: hidden;
 }
 
 :global(.neo) .advancedBox {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
   
   
 }
@@ -307,7 +305,7 @@
   border-radius: 14px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   color: var(--text);
   font-size: 16px;
   font-family: var(--font-body);
@@ -318,9 +316,7 @@
 .fieldInput:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 
@@ -330,9 +326,7 @@
 
 .dateFieldWrap:focus-within .dateFieldDisplay {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 
@@ -416,7 +410,7 @@
   font-weight: 700;
   font-family: var(--font-body);
   cursor: pointer;
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* box-shadow flattened */
   transition: border-color 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
 }
@@ -581,7 +575,7 @@
   height: 10px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2px var(--blue), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -624,7 +618,7 @@
   border-radius: 14px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   color: var(--text);
   font-size: 16px;
   font-family: var(--font-body);
@@ -634,9 +628,7 @@
 .contributionInput:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 

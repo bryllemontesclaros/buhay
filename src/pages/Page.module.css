@@ -81,7 +81,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 18px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   position: relative;
   overflow: hidden;
 }
@@ -113,7 +113,7 @@
 :global(.neo) .pageHeader {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .pageEyebrow {
@@ -141,7 +141,7 @@
     linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
   background-size: 22px 22px, auto, auto;
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -187,7 +187,7 @@
   border: 1px solid var(--border2);
   border-radius: var(--bento-radius-xl);
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
   transition:
@@ -266,7 +266,7 @@
   border-radius: 26px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
   transition:
@@ -324,7 +324,7 @@
   border: 1px solid var(--border2);
   border-radius: 24px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
   transition:
@@ -438,7 +438,7 @@
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--blue) 56%, var(--accent) 44%));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   flex: 0 0 auto;
 }
 
@@ -495,7 +495,7 @@
   border-radius: 18px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
+  /* box-shadow flattened */
   color: var(--text);
   font-size: 16px;
   outline: none;
@@ -511,10 +511,7 @@
 .formGroup select:focus,
 .formGroup textarea:focus {
   border-color: color-mix(in srgb, var(--accent) 76%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+  /* box-shadow flattened */
   background: color-mix(in srgb, var(--accent-glow) 6%, var(--surface2) 94%);
 }
 
@@ -562,9 +559,7 @@
 
 .dateFieldWrap:focus-within .dateFieldDisplay {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
 }
 
 .dateFieldDisplay {
@@ -577,7 +572,7 @@
   padding: 12px 46px 12px 14px;
   background: var(--surface);
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
+  /* box-shadow flattened */
   border-radius: 18px;
   color: var(--text);
   font-size: 16px;
@@ -632,7 +627,7 @@
 .presetToggle,
 .badge,
 .goalDateChip {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
+  /* box-shadow flattened */
 }
 
 .chip {
@@ -674,14 +669,14 @@
   border: 1px solid var(--border2);
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
   overflow: hidden;
 }
 
 :global(.neo) .advancedBox {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
   
   
 }
@@ -708,7 +703,7 @@
   .goalCard:hover {
     transform: translateY(-1px);
     border-color: color-mix(in srgb, var(--glass-highlight) 36%, var(--glass-border));
-    box-shadow: var(--glass-shadow);
+    /* box-shadow flattened */
   }
 
   :global(.neo) .header:hover,
@@ -717,7 +712,7 @@
   :global(.neo) .formCard:hover,
   :global(.neo) .goalCard:hover {
     border-color: var(--nb-stroke);
-    box-shadow: var(--nb-shadow);
+    /* box-shadow flattened */
   }
 }
 
@@ -808,7 +803,7 @@
     radial-gradient(circle at 28% 22%, color-mix(in srgb, white 34%, transparent), transparent 24%),
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 76%, var(--blue) 24%));
   color: var(--nb-accent-ink);
-  box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* box-shadow flattened */
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -818,14 +813,14 @@
 
 .btnAdd:hover {
   transform: translateY(-1px);
-  box-shadow: 0 20px 34px color-mix(in srgb, var(--accent) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .btnAdd:disabled {
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
+  /* box-shadow flattened */
 }
 
 .btnGhost {
@@ -1029,7 +1024,7 @@ tbody tr:hover td {
   height: 13px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2px var(--blue), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -1037,7 +1032,7 @@ tbody tr:hover td {
   background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 76%, white 24%));
 }
 .progressFill.almost::after {
-  box-shadow: 0 0 10px 2px var(--amber), 0 0 4px #ffffff;
+  /* box-shadow flattened */
 }
 
 .goalMeta {
@@ -1080,7 +1075,7 @@ tbody tr:hover td {
   border-radius: 18px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
   color: var(--amber);

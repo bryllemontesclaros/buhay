@@ -45,7 +45,7 @@
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
   border-radius: var(--nb-radius);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -118,7 +118,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: var(--bento-radius-lg);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -207,7 +207,7 @@
 
 .spacePulseActive {
   color: var(--text);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
 }
 
 .spacePulseTakda.spacePulseActive {
@@ -401,7 +401,7 @@
   border-radius: var(--bento-radius-lg);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -419,7 +419,7 @@
   margin-left: -9px;
   border-radius: 18px 18px 18px 12px;
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
   animation: floatDrift 5.8s var(--ease-fluid) infinite;
 }
 
@@ -442,9 +442,7 @@
 }
 
 .guideAvatarActive {
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent),
-    0 0 0 8px color-mix(in srgb, var(--accent) 8%, transparent);
+  /* box-shadow flattened */
 }
 
 .guideEyes {
@@ -551,7 +549,7 @@
   border-radius: var(--bento-radius);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 .recommendedPathLabel {
@@ -668,7 +666,7 @@
   border-radius: var(--bento-radius);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 .spaceCard {
@@ -797,37 +795,27 @@
 
 .choiceCardActive {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
-    0 18px 38px color-mix(in srgb, var(--accent) 14%, transparent);
+  /* box-shadow flattened */
 }
 
 .choiceCardTakda.choiceCardActive {
   border-color: color-mix(in srgb, var(--takda-accent) 54%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
-    0 18px 38px color-mix(in srgb, var(--takda-accent) 16%, transparent);
+  /* box-shadow flattened */
 }
 
 .choiceCardLakas.choiceCardActive {
   border-color: color-mix(in srgb, var(--lakas-accent) 54%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
-    0 18px 38px color-mix(in srgb, var(--lakas-accent) 16%, transparent);
+  /* box-shadow flattened */
 }
 
 .choiceCardTala.choiceCardActive {
   border-color: color-mix(in srgb, var(--tala-accent) 54%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
-    0 18px 38px color-mix(in srgb, var(--tala-accent) 16%, transparent);
+  /* box-shadow flattened */
 }
 
 .choiceCardBuhay.choiceCardActive {
   border-color: color-mix(in srgb, var(--buhay-accent) 54%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 45%, transparent),
-    0 18px 38px color-mix(in srgb, var(--buhay-accent) 16%, transparent);
+  /* box-shadow flattened */
 }
 
 .choiceTop {
@@ -960,7 +948,7 @@
 .dynamicCard,
 .summaryCard,
 .insightCard {
-  box-shadow: none;
+  /* box-shadow flattened */
 }
 
 .sectionCard,
@@ -1047,14 +1035,14 @@
   font-family: var(--font-body);
   box-sizing: border-box;
   line-height: 1.2;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
 }
 
 .inputGroup input:focus,
 .inputGroup select:focus,
 .inputControl:focus {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* box-shadow flattened */
 }
 
 .inputGroup input:disabled,
@@ -1091,7 +1079,7 @@
 
 .dateFieldWrap:focus-within .dateFieldDisplay {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* box-shadow flattened */
 }
 
 .dateFieldDisplay {
@@ -1365,7 +1353,7 @@
   border: 1px solid var(--border2);
   font-size: var(--type-body);
   font-weight: 800;
-  box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* box-shadow flattened */
 }
 
 .btnNext {
@@ -1436,7 +1424,7 @@
     border-radius: 20px;
     border: 1px solid var(--border2);
     background: var(--surface);
-    box-shadow: var(--glass-shadow-soft);
+    /* box-shadow flattened */
     
     
   }
@@ -1449,7 +1437,7 @@
     border-radius: 20px;
     border: 1px solid var(--border2);
     background: var(--surface);
-    box-shadow: var(--glass-shadow-soft);
+    /* box-shadow flattened */
   }
 
   .mobileSetupTop {
@@ -1668,14 +1656,14 @@
   border-radius: 34px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
 }
 
 .brandBlock,
 .progressCard,
 .tipCard {
   border-radius: 26px;
-  box-shadow: none;
+  /* box-shadow flattened */
 }
 
 .brandBlock {
@@ -1699,7 +1687,7 @@
   padding: 1.35rem;
   border-radius: 34px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow-strong);
+  /* box-shadow flattened */
 }
 
 .stageHeader {
@@ -1878,7 +1866,7 @@
   border-radius: 30px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
 }

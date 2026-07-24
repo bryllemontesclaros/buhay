@@ -12,13 +12,13 @@
   border-radius: 30px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .workspaceBoard {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .workspaceBoardTala::before {
@@ -29,7 +29,7 @@
   border: 1px solid var(--border2);
   background: var(--nb-accent-2);
   color: var(--nb-ribbon-ink);
-  box-shadow: 0 6px 0 rgba(16, 16, 16, 0.14);
+  /* box-shadow flattened */
   font-family: var(--nb-font-mono);
 }
 
@@ -41,7 +41,7 @@
 :global(.neo) .boardStream {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .boardStreamLabel {
@@ -110,7 +110,7 @@
   border-radius: 20px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .boardStreamLabel {
@@ -133,7 +133,7 @@
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white 18%), color-mix(in srgb, var(--accent) 62%, var(--purple) 38%));
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* box-shadow flattened */
   animation: talaHaloPulse 2.8s ease-in-out infinite;
 }
 
@@ -164,7 +164,7 @@
   overflow: hidden;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -174,7 +174,7 @@
 :global(.neo) .statCard {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -212,7 +212,7 @@
 :global(.neo) .storyCard {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
   
   
 }
@@ -220,7 +220,7 @@
 :global(.neo) .journalPromptRow {
   background: transparent;
   border: 0;
-  box-shadow: none;
+  /* box-shadow flattened */
 }
 
 .hero,
@@ -344,7 +344,7 @@
   background:
     radial-gradient(circle at 35% 30%, color-mix(in srgb, white 44%, transparent), transparent 28%),
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 56%, var(--purple) 44%));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 44%, transparent), 0 14px 24px rgba(16, 8, 25, 0.18);
+  /* box-shadow flattened */
 }
 
 .heroCompanionAvatar span {
@@ -422,7 +422,7 @@
   border: 1px solid var(--border2);
   border-radius: 24px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   padding: 14px;
 }
 
@@ -544,7 +544,7 @@
   border-radius: 20px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 .quickWinCard::before {
@@ -573,7 +573,7 @@
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent) 74%, var(--purple) 26%));
   font-size: var(--type-support);
   font-weight: 900;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  /* box-shadow flattened */
 }
 
 .quickWinCard span:last-child {
@@ -692,7 +692,7 @@
   outline: none;
   font-size: var(--type-title-sm);
   font-family: var(--font-body);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent);
+  /* box-shadow flattened */
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -705,9 +705,7 @@
 .goalUpdate input:focus,
 .quickEntryPanel textarea:focus {
   border-color: var(--accent);
-  box-shadow:
-    0 0 0 4px color-mix(in srgb, var(--accent) 24%, transparent),
-    0 0 16px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* box-shadow flattened */
   background: color-mix(in srgb, var(--accent) 4%, color-mix(in srgb, var(--glass-1) 80%, var(--surface2) 20%));
 }
 
@@ -729,7 +727,7 @@
   border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
   overflow: hidden;
 }
 
@@ -795,7 +793,7 @@
   border-radius: 18px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 30%, transparent);
+  /* box-shadow flattened */
 }
 
 .settingsSaveNotice strong,
@@ -903,7 +901,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .calmPlanTop span,
@@ -1036,7 +1034,7 @@
 .rowCard:hover,
 .entryCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  /* box-shadow flattened */
 }
 
 .entryCard {
@@ -1157,7 +1155,7 @@
   overflow: hidden;
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface3) 70%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .barFill {
@@ -1188,7 +1186,7 @@
 
 .goalCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  /* box-shadow flattened */
 }
 
 .goalTop {
@@ -1230,7 +1228,7 @@
   border-radius: 22px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .monthLabelWrap {
@@ -1320,9 +1318,7 @@
 .calendarSelected {
   border-color: color-mix(in srgb, var(--accent) 68%, var(--glass-border));
   background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 38%, transparent),
-    0 14px 28px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* box-shadow flattened */
 }
 
 .calendarDots,
@@ -1391,9 +1387,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent),
-    0 18px 36px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
 }
 
 .selectedDayHeader {
@@ -1709,7 +1703,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .boardLead {
@@ -1776,7 +1770,7 @@
 :global(.neo) .statCard,
 :global(.neo) .viewSwitchCard {
   border-width: 3px;
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .focusCard,
@@ -1788,7 +1782,7 @@
 :global(.neo) .selectedDayPanel,
 :global(.neo) .storyCard {
   border-width: 2px;
-  box-shadow: 4px 4px 0 rgba(16, 16, 16, 0.1);
+  /* box-shadow flattened */
 }
 
 @media (max-width: 1024px) {
@@ -1817,7 +1811,7 @@
   border-radius: 22px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .storyCard span,
@@ -1879,7 +1873,7 @@
     border: 0;
     border-radius: 0;
     background: none;
-    box-shadow: none;
+    /* box-shadow flattened */
   }
 
   .workspaceBoardSwitcher::before {
@@ -2101,23 +2095,23 @@
 /* HSL colors for each mood glow */
 .moodBtn_Great.moodSelectBtnActive {
   border-color: #10b981;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+  /* box-shadow flattened */
 }
 .moodBtn_Good.moodSelectBtnActive {
   border-color: #3b82f6;
-  box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+  /* box-shadow flattened */
 }
 .moodBtn_Okay.moodSelectBtnActive {
   border-color: #eab308;
-  box-shadow: 0 0 14px rgba(234, 179, 8, 0.35);
+  /* box-shadow flattened */
 }
 .moodBtn_Low.moodSelectBtnActive {
   border-color: #f97316;
-  box-shadow: 0 0 14px rgba(249, 115, 22, 0.35);
+  /* box-shadow flattened */
 }
 .moodBtn_Heavy.moodSelectBtnActive {
   border-color: #ef4444;
-  box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+  /* box-shadow flattened */
 }
 
 /* Dynamic Calendar Mood Dot overrides */
@@ -2200,7 +2194,7 @@
   margin: 10px 0;
   padding: 0 !important;
   border: none !important;
-  box-shadow: none !important;
+  /* box-shadow flattened */
   cursor: pointer;
 }
 
@@ -2217,7 +2211,7 @@
   height: 20px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 10px var(--accent), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  /* box-shadow flattened */
   cursor: pointer;
   margin-top: -6px;
   transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
@@ -2236,7 +2230,7 @@
   height: 20px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 10px var(--accent), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  /* box-shadow flattened */
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
@@ -2277,7 +2271,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .calmPlanKicker {
@@ -2342,7 +2336,7 @@
   justify-content: center;
   font-size: var(--type-caption);
   font-weight: 900;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 2px 6px color-mix(in srgb, var(--accent) 20%, transparent);
+  /* box-shadow flattened */
 }
 
 .timelineContent {
@@ -2378,31 +2372,31 @@
 .dayMoodGlow_Great {
   background: color-mix(in srgb, #10b981 18%, transparent);
   color: #10b981 !important;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 .dayMoodGlow_Good {
   background: color-mix(in srgb, #3b82f6 18%, transparent);
   color: #3b82f6 !important;
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.25);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 .dayMoodGlow_Okay {
   background: color-mix(in srgb, #eab308 18%, transparent);
   color: #eab308 !important;
-  box-shadow: 0 0 8px rgba(234, 179, 8, 0.25);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 .dayMoodGlow_Low {
   background: color-mix(in srgb, #f97316 18%, transparent);
   color: #f97316 !important;
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.25);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 .dayMoodGlow_Heavy {
   background: color-mix(in srgb, #ef4444 18%, transparent);
   color: #ef4444 !important;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.25);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 
@@ -2480,7 +2474,7 @@
   align-items: center;
   justify-content: center;
   font-size: var(--type-caption);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  /* box-shadow flattened */
 }
 
 .nodeCheckin {
@@ -2595,7 +2589,7 @@
   border-radius: 12px;
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--glass-2) 90%, var(--surface));
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
   pointer-events: none;
   animation: slideUpFade 0.16s ease-out forwards;
 }
@@ -2715,7 +2709,7 @@
 
 .weightedPill:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
 }
 
 .pillCount {
@@ -2928,52 +2922,52 @@
 .orb_Great {
   background: radial-gradient(circle at 35% 35%, hsla(145, 80%, 65%, 0.22) 0%, hsla(145, 80%, 45%, 0.06) 100%);
   border-color: hsla(145, 80%, 65%, 0.3);
-  box-shadow: 0 0 10px hsla(145, 80%, 65%, 0.08);
+  /* box-shadow flattened */
 }
 .orb_Great:hover {
   border-color: hsla(145, 80%, 65%, 0.75);
-  box-shadow: 0 0 16px hsla(145, 80%, 65%, 0.35);
+  /* box-shadow flattened */
 }
 
 .orb_Good {
   background: radial-gradient(circle at 35% 35%, hsla(190, 75%, 60%, 0.22) 0%, hsla(190, 75%, 45%, 0.06) 100%);
   border-color: hsla(190, 75%, 60%, 0.3);
-  box-shadow: 0 0 10px hsla(190, 75%, 60%, 0.08);
+  /* box-shadow flattened */
 }
 .orb_Good:hover {
   border-color: hsla(190, 75%, 60%, 0.75);
-  box-shadow: 0 0 16px hsla(190, 75%, 60%, 0.35);
+  /* box-shadow flattened */
 }
 
 .orb_Okay {
   background: radial-gradient(circle at 35% 35%, hsla(48, 85%, 60%, 0.18) 0%, hsla(48, 85%, 45%, 0.05) 100%);
   border-color: hsla(48, 85%, 60%, 0.25);
-  box-shadow: 0 0 10px hsla(48, 85%, 60%, 0.06);
+  /* box-shadow flattened */
 }
 .orb_Okay:hover {
   border-color: hsla(48, 85%, 60%, 0.65);
-  box-shadow: 0 0 16px hsla(48, 85%, 60%, 0.28);
+  /* box-shadow flattened */
 }
 
 .orb_Low {
   background: radial-gradient(circle at 35% 35%, hsla(28, 85%, 55%, 0.18) 0%, hsla(28, 85%, 40%, 0.05) 100%);
   border-color: hsla(28, 85%, 55%, 0.25);
-  box-shadow: 0 0 10px hsla(28, 85%, 55%, 0.06);
+  /* box-shadow flattened */
 }
 .orb_Low:hover {
   border-color: hsla(28, 85%, 55%, 0.65);
-  box-shadow: 0 0 16px hsla(28, 85%, 55%, 0.28);
+  /* box-shadow flattened */
 }
 
 .orb_Heavy {
   background: radial-gradient(circle at 35% 35%, hsla(0, 85%, 55%, 0.22) 0%, hsla(0, 85%, 40%, 0.06) 100%);
   border-color: hsla(0, 85%, 55%, 0.3);
-  box-shadow: 0 0 10px hsla(0, 85%, 55%, 0.08);
+  /* box-shadow flattened */
   animation: orbGlowBreath 3s infinite ease-in-out;
 }
 .orb_Heavy:hover {
   border-color: hsla(0, 85%, 55%, 0.8);
-  box-shadow: 0 0 16px hsla(0, 85%, 55%, 0.4);
+  /* box-shadow flattened */
 }
 
 .orb_Unlogged {
@@ -2988,11 +2982,11 @@
 
 @keyframes orbGlowBreath {
   0%, 100% {
-    box-shadow: 0 0 8px hsla(0, 85%, 55%, 0.08);
+    /* box-shadow flattened */
     border-color: hsla(0, 85%, 55%, 0.25);
   }
   50% {
-    box-shadow: 0 0 14px hsla(0, 85%, 55%, 0.22);
+    /* box-shadow flattened */
     border-color: hsla(0, 85%, 55%, 0.45);
   }
 }
@@ -3006,7 +3000,7 @@
   padding: 10px;
   background: rgba(18, 20, 29, 0.92);
   border: 1px solid var(--border2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* box-shadow flattened */
   border-radius: 14px;
   pointer-events: none;
   opacity: 0;
@@ -3096,11 +3090,11 @@
   display: inline-block;
 }
 
-.legendGreat { background: hsl(145, 80%, 65%); box-shadow: 0 0 6px hsl(145, 80%, 65%); }
-.legendGood { background: hsl(190, 75%, 60%); box-shadow: 0 0 6px hsl(190, 75%, 60%); }
-.legendOkay { background: hsl(48, 85%, 60%); box-shadow: 0 0 6px hsl(48, 85%, 60%); }
-.legendLow { background: hsl(28, 85%, 55%); box-shadow: 0 0 6px hsl(28, 85%, 55%); }
-.legendHeavy { background: hsl(0, 85%, 55%); box-shadow: 0 0 6px hsl(0, 85%, 55%); }
+.legendGreat { background: hsl(145, 80%, 65%); /* box-shadow flattened */ }
+.legendGood { background: hsl(190, 75%, 60%); /* box-shadow flattened */ }
+.legendOkay { background: hsl(48, 85%, 60%); /* box-shadow flattened */ }
+.legendLow { background: hsl(28, 85%, 55%); /* box-shadow flattened */ }
+.legendHeavy { background: hsl(0, 85%, 55%); /* box-shadow flattened */ }
 
 .correlationGrid {
   display: grid;

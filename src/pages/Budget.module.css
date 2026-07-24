@@ -23,7 +23,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 18px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -103,7 +103,7 @@
   height: 10px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2px var(--accent), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -252,7 +252,7 @@
   height: 14px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2.5px rgba(255, 255, 255, 0.85), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -289,7 +289,7 @@
   border-radius: 14px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   color: var(--text);
   font-size: 16px;
   font-family: var(--font-body);
@@ -300,9 +300,7 @@
 .fieldInput:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 
@@ -336,7 +334,7 @@ select.fieldInput {
   color: #07110d;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* box-shadow flattened */
 }
 
 .primaryButton:hover {
@@ -429,7 +427,7 @@ select.fieldInput {
   height: 12px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 

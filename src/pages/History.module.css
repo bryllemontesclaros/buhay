@@ -22,7 +22,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 18px;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -36,7 +36,7 @@
 :global(.neo) .modal {
   background: var(--nb-surface-card);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -142,7 +142,7 @@
 }
 
 .summaryCardButton:hover {
-  box-shadow: var(--glass-shadow-strong);
+  /* box-shadow flattened */
   transform: translateY(-1px);
 }
 
@@ -354,7 +354,7 @@
   padding: 0 42px 0 14px;
   background: var(--surface);
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   border-radius: 14px;
   color: var(--text);
   font-size: 16px;
@@ -365,9 +365,7 @@
 
 .searchInput:focus {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
   background: var(--surface);
 }
 
@@ -454,7 +452,7 @@
   padding: 10px 12px;
   background: var(--surface);
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent);
+  /* box-shadow flattened */
   border-radius: 14px;
   color: var(--text);
   font-size: 16px;
@@ -466,9 +464,7 @@
 .filterGroup select:focus,
 .filterGroup input:focus {
   border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent),
-    0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  /* box-shadow flattened */
 }
 
 .filterGroup select {
@@ -777,7 +773,7 @@
   
   border: 1px solid var(--border2);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  box-shadow: var(--glass-shadow-strong);
+  /* box-shadow flattened */
   width: min(520px, 100%);
   max-width: 100%;
   padding: 1.25rem;

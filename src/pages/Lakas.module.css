@@ -12,13 +12,13 @@
   border-radius: 30px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .workspaceBoard {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .workspaceBoardLakas::before {
@@ -29,7 +29,7 @@
   border: 1px solid var(--border2);
   background: var(--nb-sun);
   color: var(--nb-ink);
-  box-shadow: 0 6px 0 rgba(16, 16, 16, 0.14);
+  /* box-shadow flattened */
   font-family: var(--nb-font-mono);
 }
 
@@ -41,7 +41,7 @@
 :global(.neo) .boardStream {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .boardStreamLabel {
@@ -113,7 +113,7 @@
   border-radius: 20px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .boardStreamLabel {
@@ -136,7 +136,7 @@
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* box-shadow flattened */
   animation: haloPulse 2.6s ease-in-out infinite;
 }
 
@@ -167,7 +167,7 @@
   overflow: hidden;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   
   
 }
@@ -177,7 +177,7 @@
 :global(.neo) .statCard {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -242,7 +242,7 @@
 :global(.neo) .progressPhotoBox {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
   
   
 }
@@ -250,7 +250,7 @@
 :global(.neo) .workoutSecondaryAction:hover {
   transform: translateY(-3px);
   border-color: var(--nb-stroke);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
 }
 
 .hero,
@@ -391,7 +391,7 @@
   background:
     radial-gradient(circle at 35% 30%, color-mix(in srgb, white 42%, transparent), transparent 28%),
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 86%, white 14%), color-mix(in srgb, var(--accent) 68%, var(--blue) 32%));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 44%, transparent), 0 14px 24px rgba(5, 20, 17, 0.18);
+  /* box-shadow flattened */
 }
 
 .heroCompanionAvatar span {
@@ -473,7 +473,7 @@
   border: 1px solid var(--border2);
   border-radius: 24px;
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
   padding: 14px;
 }
 
@@ -662,7 +662,7 @@
   border-radius: 20px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 .quickWinCard::before {
@@ -691,7 +691,7 @@
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 76%, var(--blue) 24%));
   font-size: var(--type-support);
   font-weight: 900;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+  /* box-shadow flattened */
 }
 
 .quickWinText {
@@ -751,7 +751,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .beginnerCoachTop {
@@ -854,7 +854,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   padding: 12px;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .phaseCard strong,
@@ -924,7 +924,7 @@
   border-radius: 20px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .exerciseSummaryCard {
@@ -1083,7 +1083,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .workoutPrimaryCard {
@@ -1214,7 +1214,7 @@
   cursor: pointer;
   text-align: left;
   font-family: var(--font-body);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
 }
 
@@ -1357,7 +1357,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .todayGuidanceEyebrow {
@@ -1428,7 +1428,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
+  /* box-shadow flattened */
 }
 
 .programCallout {
@@ -1537,7 +1537,7 @@
   border-radius: 22px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .gymSessionSummary {
@@ -1865,7 +1865,7 @@
   border-radius: 34px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34), inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 34%, transparent);
+  /* box-shadow flattened */
   
   
 }
@@ -1972,7 +1972,7 @@
   height: 13px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 10px 2px var(--blue), 0 0 4px #ffffff;
+  /* box-shadow flattened */
   opacity: 0.95;
 }
 
@@ -2057,7 +2057,7 @@
   border-radius: 26px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
+  /* box-shadow flattened */
 }
 
 .gymModeSupportSummary {
@@ -2256,7 +2256,7 @@
   position: sticky;
   top: 10px;
   z-index: 10;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  /* box-shadow flattened */
   
   
 }
@@ -2535,7 +2535,7 @@
   overflow: hidden;
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface3) 70%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 28%, transparent);
+  /* box-shadow flattened */
 }
 
 .barFill {
@@ -2634,7 +2634,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 26%, transparent);
+  /* box-shadow flattened */
 }
 
 .progressCoachPanel {
@@ -2759,13 +2759,13 @@
 .progressCoachMetricGrid div:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 :global(.neo) .progressCoachMetricGrid div:hover {
   transform: translateY(-4px);
   border-color: var(--nb-stroke);
-  box-shadow: var(--nb-shadow-sm);
+  /* box-shadow flattened */
 }
 
 .progressCoachMetricGrid strong {
@@ -2962,7 +2962,7 @@
   outline: none;
   font-size: var(--type-title-sm);
   font-family: var(--font-body);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 36%, transparent);
+  /* box-shadow flattened */
 }
 
 .formGrid select option {
@@ -2983,7 +2983,7 @@
   border: 1px solid var(--border2);
   border-radius: 16px;
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 32%, transparent);
+  /* box-shadow flattened */
   overflow: hidden;
 }
 
@@ -4113,7 +4113,7 @@
   border-radius: 24px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .boardLead {
@@ -4216,7 +4216,7 @@
     border: 0;
     border-radius: 0;
     background: none;
-    box-shadow: none;
+    /* box-shadow flattened */
   }
 
   .workspaceBoardCompact .boardOverview,
@@ -4384,7 +4384,7 @@
 :global(.neo) .workoutLaunchCard {
   border-width: 3px;
   border-radius: 26px;
-  box-shadow: 5px 5px 0 rgba(16, 16, 16, 0.13);
+  /* box-shadow flattened */
 }
 
 .workoutPrimaryCard {
@@ -4398,7 +4398,7 @@
     radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--nb-sun) 34%, transparent), transparent 36%),
     linear-gradient(180deg, color-mix(in srgb, var(--nb-sun) 18%, var(--nb-paper-2)), var(--nb-paper-2));
   border-width: 4px;
-  box-shadow: 8px 8px 0 var(--nb-stroke);
+  /* box-shadow flattened */
 }
 
 .workoutPrimaryCard span {
@@ -4894,7 +4894,7 @@
 
 .barSlot:hover .barFill {
   filter: brightness(1.15);
-  box-shadow: 0 0 10px rgba(var(--accent), 0.35);
+  /* box-shadow flattened */
 }
 
 .barFill {
@@ -4920,7 +4920,7 @@
 }
 
 .gymModeToolDetails[open] {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
   border-color: color-mix(in srgb, var(--accent) 30%, var(--glass-border));
 }
 
@@ -5010,7 +5010,7 @@
   font-size: 8px;
   font-weight: 900;
   border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  /* box-shadow flattened */
   border: 1px solid var(--border2);
 }
 
@@ -5051,7 +5051,7 @@
   padding: 16px;
   margin-bottom: 20px;
   
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
 }
 
 .waterBottleLeft {
@@ -5093,7 +5093,7 @@
   border-radius: 10px 10px 14px 14px;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+  /* box-shadow flattened */
   display: flex;
   flex-direction: column-reverse;
 }
@@ -5103,7 +5103,7 @@
   background: linear-gradient(180deg, #4fc3f7, #0288d1);
   transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  box-shadow: 0 0 10px rgba(3, 169, 244, 0.5);
+  /* box-shadow flattened */
 }
 
 .waterLiquid::before {
@@ -5209,7 +5209,7 @@
   padding: 16px 20px;
   margin-bottom: 20px;
   
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
 }
 
 .macroRingSvgWrapper {
@@ -5451,7 +5451,7 @@
 
 .todayStripDotGreen {
   background: hsl(155 70% 45%);
-  box-shadow: 0 0 6px hsl(155 70% 45% / 0.5);
+  /* box-shadow flattened */
   animation: todayDotPulse 2.4s ease-in-out infinite;
 }
 
@@ -5651,7 +5651,7 @@
 .roadmapStepActive {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 5%, var(--bg-card));
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
 }
 
 .roadmapDot {
@@ -5663,7 +5663,7 @@
   border-radius: 50%;
   background: var(--bg-muted);
   border: 1px solid var(--border2);
-  box-shadow: 0 0 0 1px var(--border);
+  /* box-shadow flattened */
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   z-index: 3;
 }
@@ -5671,25 +5671,25 @@
 .roadmapDotCompleted {
   background: #4caf50;
   border-color: var(--bg);
-  box-shadow: 0 0 0 1px #4caf50;
+  /* box-shadow flattened */
 }
 
 .roadmapDotActive {
   background: var(--accent);
   border-color: var(--bg);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+  /* box-shadow flattened */
   animation: pulse-ring 2s infinite;
 }
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent) 40%, transparent);
+    /* box-shadow flattened */
   }
   70% {
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent);
+    /* box-shadow flattened */
   }
   100% {
-    box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent) 0%, transparent);
+    /* box-shadow flattened */
   }
 }
 
@@ -5891,11 +5891,11 @@
 @keyframes pop-pulse {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    /* box-shadow flattened */
   }
   100% {
     transform: scale(1.05);
-    box-shadow: 0 0 6px 1px rgba(255, 193, 7, 0.2);
+    /* box-shadow flattened */
   }
 }
 
@@ -5962,7 +5962,7 @@
 .celebrationContent {
   background: var(--bg-card);
   border: 1px solid var(--border2);
-  box-shadow: 0 0 30px rgba(33, 150, 243, 0.3), 0 10px 25px rgba(0, 0, 0, 0.4);
+  /* box-shadow flattened */
   border-radius: 16px;
   width: 90%;
   max-width: 400px;
@@ -6148,7 +6148,7 @@
   background: color-mix(in srgb, var(--surface2) 85%, var(--glass-1));
   border: 1px solid var(--border2);
   border-radius: 28px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  /* box-shadow flattened */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -6229,7 +6229,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  /* box-shadow flattened */
   transition: all 0.2s ease;
   user-select: none;
 }
@@ -6255,7 +6255,7 @@
   border-radius: 12px;
   font-size: var(--type-body-sm);
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* box-shadow flattened */
 }
 
 .runDash {
@@ -6321,7 +6321,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* box-shadow flattened */
 }
 
 .runStartBtn {
@@ -6485,7 +6485,7 @@
 /* Podium Heights & Gradient themes */
 .podiumGold .podiumBar {
   background: linear-gradient(180deg, #ffd700 0%, #cca100 100%);
-  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2);
+  /* box-shadow flattened */
 }
 .podiumGold .podiumVal {
   color: #ffd700;
@@ -6493,12 +6493,12 @@
 
 .podiumSilver .podiumBar {
   background: linear-gradient(180deg, #d3d3d3 0%, #a9a9a9 100%);
-  box-shadow: 0 6px 16px rgba(211, 211, 211, 0.15);
+  /* box-shadow flattened */
 }
 
 .podiumSilverWinner .podiumBar {
   background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%) !important;
-  box-shadow: 0 8px 24px var(--accent-glow) !important;
+  /* box-shadow flattened */
 }
 .podiumSilverWinner .podiumVal {
   color: var(--accent) !important;
@@ -6506,7 +6506,7 @@
 
 .podiumBronze .podiumBar {
   background: linear-gradient(180deg, #cd7f32 0%, #8b5a2b 100%);
-  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.1);
+  /* box-shadow flattened */
 }
 .podiumBronze .podiumVal {
   color: #cd7f32;
@@ -6546,7 +6546,7 @@
 .cohortRowUser {
   border-color: var(--accent) !important;
   background: color-mix(in srgb, var(--accent-glow) 20%, var(--surface2) 80%) !important;
-  box-shadow: var(--glass-shadow-soft);
+  /* box-shadow flattened */
 }
 
 .cohortRank {

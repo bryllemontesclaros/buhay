@@ -3,34 +3,34 @@
 :root {
   color-scheme: dark;
 
-  --bg: #071018;
-  --bg-deep: #03070d;
-  --surface: #0c1622;
-  --surface2: #121f2f;
-  --surface3: #192a3e;
-  --surface-solid: #0d1926;
-  --surface-solid-2: #132335;
-  --surface-solid-3: #1b3047;
+  --bg: #0a0a0a;
+  --bg-deep: #000000;
+  --surface: #0a0a0a;
+  --surface2: #111111;
+  --surface3: #1a1a1a;
+  --surface-solid: #0a0a0a;
+  --surface-solid-2: #111111;
+  --surface-solid-3: #1a1a1a;
 
-  --border: rgba(204, 219, 236, 0.09);
-  --border2: rgba(218, 230, 242, 0.16);
-  --glass-1: rgba(255, 255, 255, 0.03);
-  --glass-2: rgba(255, 255, 255, 0.06);
-  --glass-3: rgba(255, 255, 255, 0.09);
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-highlight: rgba(255, 255, 255, 0.18);
-  --glass-shadow-soft: 0 12px 30px rgba(3, 10, 18, 0.14);
-  --glass-shadow: 0 24px 60px rgba(2, 8, 16, 0.24);
-  --glass-shadow-strong: 0 38px 100px rgba(1, 6, 14, 0.3);
+  --border: #333333;
+  --border2: #444444;
+  --glass-1: transparent;
+  --glass-2: transparent;
+  --glass-3: transparent;
+  --glass-bg: transparent;
+  --glass-border: #333333;
+  --glass-highlight: transparent;
+  --glass-shadow-soft: none;
+  --glass-shadow: none;
+  --glass-shadow-strong: none;
   --glass-blur-sm: 6px;
   --glass-blur-md: 12px;
   --glass-blur-lg: 20px;
   --glass-blur-xl: 30px;
 
-  --text: #f6f4ef;
-  --text2: rgba(232, 238, 244, 0.78);
-  --text3: rgba(189, 202, 217, 0.65);
+  --text: #f0f0f0;
+  --text2: #aaaaaa;
+  --text3: #888888;
 
   --accent: #69d4b2;
   --accent-dim: #258a6b;
@@ -85,9 +85,9 @@
   --bento-radius-xl: 40px;
   --bento-gap: 16px;
   --bento-gap-lg: 22px;
-  --bento-surface: #0c1622;
-  --bento-surface-soft: #142232;
-  --bento-border: rgba(211, 223, 238, 0.16);
+  --bento-surface: #0a0a0a;
+  --bento-surface-soft: #111111;
+  --bento-border: #333333;
   --trust-ok: #69d4b2;
   --trust-warn: #dfbd78;
   --trust-risk: #f1909d;
@@ -183,14 +183,14 @@
 [data-theme="light"], .force-light-theme {
   color-scheme: light;
 
-  --bg: #f8f9fa;
-  --bg-deep: #e9ecef;
+  --bg: #ffffff;
+  --bg-deep: #f8f9fa;
   --surface: #ffffff;
   --surface2: #f8f9fa;
-  --surface3: #e9ecef;
+  --surface3: #eaeaea;
   --surface-solid: #ffffff;
   --surface-solid-2: #f8f9fa;
-  --surface-solid-3: #e9ecef;
+  --surface-solid-3: #eaeaea;
 
   /* Neo Brutalism overrides */
   --nb-stroke: #1a1a1a;
@@ -203,22 +203,22 @@
   --nb-ink: #1a1a1a;
   --nb-sun: #fbd34d;
 
-  --border: rgba(0, 0, 0, 0.08);
-  --border2: rgba(0, 0, 0, 0.12);
+  --border: #eaeaea;
+  --border2: #cccccc;
   
-  --glass-1: rgba(0, 0, 0, 0.02);
-  --glass-2: rgba(0, 0, 0, 0.04);
-  --glass-3: rgba(0, 0, 0, 0.06);
-  --glass-bg: rgba(0, 0, 0, 0.03);
-  --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-highlight: rgba(255, 255, 255, 0.8);
-  --glass-shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.04);
-  --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
-  --glass-shadow-strong: 0 38px 100px rgba(0, 0, 0, 0.12);
+  --glass-1: transparent;
+  --glass-2: transparent;
+  --glass-3: transparent;
+  --glass-bg: transparent;
+  --glass-border: #eaeaea;
+  --glass-highlight: transparent;
+  --glass-shadow-soft: none;
+  --glass-shadow: none;
+  --glass-shadow-strong: none;
 
-  --text: #0f172a;
-  --text2: #334155;
-  --text3: #596c80;
+  --text: #111111;
+  --text2: #666666;
+  --text3: #888888;
 
   --accent: #1a8f72;
   --accent-dim: #106850;
@@ -248,9 +248,9 @@
   --space-reflection-dim: rgba(124, 108, 224, 0.12);
   --space-reflection-ink: #5a4bb8;
   
-  --bento-surface: rgba(255, 252, 247, 0.9);
-  --bento-surface-soft: rgba(248, 242, 234, 0.88);
-  --bento-border: rgba(120, 134, 150, 0.18);
+  --bento-surface: #ffffff;
+  --bento-surface-soft: #f8f9fa;
+  --bento-border: #eaeaea;
   --trust-ok: #1a8f72;
   --trust-warn: #b9893b;
   --trust-risk: #d66c7e;
@@ -432,11 +432,8 @@ input, select, textarea {
 .glass-panel {
   background: var(--surface);
   border: 1px solid var(--glass-border);
-  box-shadow: 
-    inset 0 1px 0 0 var(--glass-highlight),
-    var(--glass-shadow-soft);
+  box-shadow: none;
   border-radius: var(--radius);
   transition: transform var(--motion-duration) var(--ease-fluid),
-              box-shadow var(--motion-duration) var(--ease-fluid),
               border-color var(--motion-duration) var(--ease-fluid);
 }

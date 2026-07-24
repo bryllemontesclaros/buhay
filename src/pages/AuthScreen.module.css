@@ -28,7 +28,7 @@
 :global(.neo) .card {
   background: var(--nb-paper-2);
   border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -73,7 +73,7 @@
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: var(--bento-radius-lg);
-  box-shadow: var(--glass-shadow);
+  /* box-shadow flattened */
   
   
 }
@@ -138,7 +138,7 @@
   border-radius: 26px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .companionCluster {
@@ -153,7 +153,7 @@
   margin-left: -10px;
   border-radius: 20px 20px 20px 14px;
   border: 1px solid var(--border2);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
   animation: floatDrift 5.8s var(--ease-fluid) infinite;
 }
 
@@ -245,7 +245,7 @@
   border-radius: var(--bento-radius);
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .previewTop {
@@ -353,7 +353,7 @@
 .previewDayActive {
   background: color-mix(in srgb, var(--blue-dim) 82%, var(--surface) 18%);
   color: var(--blue);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 24%, transparent);
+  /* box-shadow flattened */
 }
 
 .previewMetrics {
@@ -397,7 +397,7 @@
   font-size: var(--type-support);
   font-weight: 700;
   text-align: center;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 22%, transparent);
+  /* box-shadow flattened */
 }
 
 .cardHeader {
@@ -476,13 +476,13 @@
 
 .tabs { display: flex; margin-bottom: 1.5rem; background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%); border: 1px solid var(--border2); border-radius: 18px; padding: 4px; }
 .tab { flex: 1; min-height: 38px; padding: 8px; text-align: center; font-size: var(--type-body-sm); font-weight: 700; color: var(--text3); cursor: pointer; border-radius: 14px; background: none; border: none; transition: all 0.2s; }
-.tab.active { background: var(--surface); color: var(--text); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent); }
+.tab.active { background: var(--surface); color: var(--text); /* box-shadow flattened */ }
 .error { background: var(--red-dim); color: var(--red); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 14px; font-size: var(--type-body-sm); margin-bottom: 1rem; }
 .successMsg { background: var(--accent-glow); color: var(--accent); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 14px; font-size: var(--type-body-sm); margin-bottom: 1rem; }
 .field { margin-bottom: 1rem; }
 .field label { display: block; font-size: var(--type-support); color: var(--text2); margin-bottom: 6px; font-weight: 500; letter-spacing: 0.3px; }
-.field input { width: 100%; min-height: 48px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: var(--type-title-sm); outline: none; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 42%, transparent); transition: border-color 0.2s, box-shadow 0.2s; }
-.field input:focus { border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border)); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-highlight) 58%, transparent), 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent); }
+.field input { width: 100%; min-height: 48px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: var(--type-title-sm); outline: none; /* box-shadow flattened */ transition: border-color 0.2s, box-shadow 0.2s; }
+.field input:focus { border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border)); /* box-shadow flattened */ }
 .passwordInputWrap { position: relative; display: flex; align-items: center; }
 .passwordInputWrap input { padding-right: 72px; }
 .passwordToggle {
@@ -504,7 +504,7 @@
 .passwordToggle:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 1px; }
 .checkRow { display: flex; align-items: center; gap: 10px; font-size: var(--type-body-sm); color: var(--text2); margin-bottom: 12px; cursor: pointer; user-select: none; }
 .checkRow input { width: 16px; height: 16px; accent-color: var(--accent); }
-.btnPrimary { width: 100%; min-height: 50px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius); font-size: var(--type-body); font-weight: 800; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; box-shadow: 0 16px 28px color-mix(in srgb, var(--accent) 18%, transparent); }
+.btnPrimary { width: 100%; min-height: 50px; padding: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 90%, black 10%)); color: #08110d; border: 1px solid var(--border2); border-radius: var(--radius); font-size: var(--type-body); font-weight: 800; cursor: pointer; transition: transform 0.16s ease, opacity 0.2s; margin-top: 4px; /* box-shadow flattened */ }
 .btnPrimary:hover { opacity: 0.94; transform: translateY(-1px); }
 .btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
 .legalNotice {
@@ -842,7 +842,7 @@
   border-radius: 36px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  box-shadow: var(--glass-shadow-strong);
+  /* box-shadow flattened */
   
   
 }
