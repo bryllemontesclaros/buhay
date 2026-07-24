@@ -15,40 +15,6 @@
   /* box-shadow flattened */
 }
 
-:global(.neo) .workspaceBoard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .workspaceBoardLakas::before {
-  display: none;
-}
-
-:global(.neo) .boardBadge {
-  border: 1px solid var(--border2);
-  background: var(--nb-sun);
-  color: var(--nb-ink);
-  /* box-shadow flattened */
-  font-family: var(--nb-font-mono);
-}
-
-:global(.neo) .boardSignature,
-:global(.neo) .boardStreamText {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .boardStream {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .boardStreamLabel {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
-}
-
 .workspaceBoardLakas {
   position: relative;
   overflow: hidden;
@@ -168,89 +134,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
-}
 
-:global(.neo) .hero,
-:global(.neo) .panel,
-:global(.neo) .statCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .hero::before,
-:global(.neo) .panel::before,
-:global(.neo) .statCard::before {
-  display: none;
-}
-
-:global(.neo) .title {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .sub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .heroCard,
-:global(.neo) .viewSwitchCard,
-:global(.neo) .quickWinCard,
-:global(.neo) .beginnerCoachCard,
-:global(.neo) .recordCard,
-:global(.neo) .chartCard,
-:global(.neo) .phaseCard,
-:global(.neo) .formGuideCard,
-:global(.neo) .exerciseSummaryCard,
-:global(.neo) .muscleRow,
-:global(.neo) .yearReviewHero,
-:global(.neo) .gymSessionPanel,
-:global(.neo) .workoutLaunchCard,
-:global(.neo) .todayGuidanceCard,
-:global(.neo) .gymSessionSummary,
-:global(.neo) .gymExerciseCard,
-:global(.neo) .gymModePrepCard,
-:global(.neo) .gymModeVideoCard,
-:global(.neo) .gymModeCurrentCard,
-:global(.neo) .gymModeRestCard,
-:global(.neo) .gymModeNextCard,
-:global(.neo) .gymModeSummaryCard,
-:global(.neo) .progressWidePanel,
-:global(.neo) .settingsSecondaryPanel,
-:global(.neo) .guidedHandoffCard,
-:global(.neo) .progressCoachPanel,
-:global(.neo) .progressCoachMetricGrid div,
-:global(.neo) .workoutFollowupBox,
-:global(.neo) .quickEntryPanel,
-:global(.neo) .advancedBox,
-:global(.neo) .guidanceDetails,
-:global(.neo) .workoutSecondaryAction,
-:global(.neo) .exerciseRow,
-:global(.neo) .previousValueCard,
-:global(.neo) .exerciseIdentityCard,
-:global(.neo) .routineSpotlightCard,
-:global(.neo) .templateCard,
-:global(.neo) .routineCard,
-:global(.neo) .rowCard,
-:global(.neo) .mealRow,
-:global(.neo) .goalCard,
-:global(.neo) .mealPhotoBox,
-:global(.neo) .progressPhotoBox {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .workoutSecondaryAction:hover {
-  transform: translateY(-3px);
-  border-color: var(--nb-stroke);
-  /* box-shadow flattened */
 }
 
 .hero,
@@ -650,7 +534,6 @@
   margin-top: 8px;
 }
 
-
 .quickWinCard {
   position: relative;
   overflow: hidden;
@@ -792,7 +675,6 @@
   display: grid;
   gap: 8px;
 }
-
 
 .beginnerCoachMetricGrid {
   display: grid;
@@ -1163,7 +1045,6 @@
   margin-top: auto;
 }
 
-
 .workoutHeroCard {
   min-height: 0;
 }
@@ -1481,7 +1362,6 @@
   align-content: start;
 }
 
-
 .nutritionCoachHeader {
   display: flex;
   gap: 12px;
@@ -1493,7 +1373,6 @@
   display: grid;
   gap: 6px;
 }
-
 
 .nutritionCoachGrid {
   display: grid;
@@ -1597,7 +1476,6 @@
   margin-top: auto;
   padding-top: 16px;
 }
-
 
 .gymExerciseList {
   display: grid;
@@ -1851,8 +1729,7 @@
   background:
     radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 34%),
     color-mix(in srgb, var(--bg) 72%, rgba(3, 8, 12, 0.72));
-  
-  
+
 }
 
 .gymModeSheet {
@@ -1866,8 +1743,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .gymModeHeader {
@@ -2257,8 +2133,7 @@
   top: 10px;
   z-index: 10;
   /* box-shadow flattened */
-  
-  
+
 }
 
 .gymModeRestCard span {
@@ -2377,7 +2252,6 @@
   padding-top: 14px;
 }
 
-
 .gymModeSaveBar {
   position: sticky;
   bottom: -14px;
@@ -2391,8 +2265,7 @@
   border-top: 1px solid var(--border2);
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--surface) 74%, transparent), color-mix(in srgb, var(--surface) 96%, transparent 4%));
-  
-  
+
 }
 
 .gymModeSaveBar span,
@@ -2411,7 +2284,6 @@
   color: var(--text3);
   font-size: var(--type-caption);
 }
-
 
 .gymModeSummaryCard {
   display: grid;
@@ -2724,7 +2596,6 @@
   gap: 8px;
 }
 
-
 .progressCoachGrid {
   display: grid;
   grid-template-columns: minmax(0, 0.96fr) minmax(240px, 0.74fr);
@@ -2759,12 +2630,6 @@
 .progressCoachMetricGrid div:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
-  /* box-shadow flattened */
-}
-
-:global(.neo) .progressCoachMetricGrid div:hover {
-  transform: translateY(-4px);
-  border-color: var(--nb-stroke);
   /* box-shadow flattened */
 }
 
@@ -2828,7 +2693,6 @@
   font-size: var(--type-support);
   line-height: 1.45;
 }
-
 
 .sessionCoachInline {
   position: relative;
@@ -3076,14 +2940,6 @@
   grid-column: 1 / -1;
 }
 
-
-
-
-
-
-
-
-
 .exerciseBuilder {
   position: relative;
   z-index: 1;
@@ -3212,8 +3068,6 @@
   line-height: 1.4;
 }
 
-
-
 .settingsActions {
   position: relative;
   z-index: 1;
@@ -3253,11 +3107,6 @@
   gap: 10px;
   margin-top: 12px;
 }
-
-
-
-
-
 
 .presetRow {
   position: relative;
@@ -4033,7 +3882,6 @@
     grid-template-columns: 1fr;
   }
 
-
   .gymModeExerciseChip {
     min-width: 142px;
   }
@@ -4041,7 +3889,6 @@
   .settingsActions {
     grid-template-columns: 1fr;
   }
-
 
   .monthControls {
     width: 100%;
@@ -4275,7 +4122,6 @@
     flex-direction: column;
   }
 
-
   .recordGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -4296,7 +4142,6 @@
     display: grid;
     grid-template-columns: 1fr;
   }
-
 
   .settingsWorkspace {
     gap: 10px;
@@ -4357,7 +4202,6 @@
     align-items: stretch;
   }
 
-
   .bodyOverviewCard strong {
     font-size: var(--type-title-sm);
   }
@@ -4368,12 +4212,6 @@
 }
 
 /* Visible Lakas redesign layer: one obvious workout cockpit, support cards secondary. */
-:global(.neo) .workoutLaunchPad {
-  background:
-    radial-gradient(circle at 6% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
-    radial-gradient(circle at 96% 16%, color-mix(in srgb, var(--nb-sun) 22%, transparent), transparent 38%),
-    var(--nb-paper-2);
-}
 
 .workoutLaunchGrid {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
@@ -4381,24 +4219,10 @@
   align-items: stretch;
 }
 
-:global(.neo) .workoutLaunchCard {
-  border-width: 3px;
-  border-radius: 26px;
-  /* box-shadow flattened */
-}
-
 .workoutPrimaryCard {
   min-height: 340px;
   padding: 24px;
   align-content: start;
-}
-
-:global(.neo) .workoutPrimaryCard {
-  background:
-    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--nb-sun) 34%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-sun) 18%, var(--nb-paper-2)), var(--nb-paper-2));
-  border-width: 4px;
-  /* box-shadow flattened */
 }
 
 .workoutPrimaryCard span {
@@ -4684,8 +4508,6 @@
     gap: 8px;
   }
 
-
-
   .gymModeSaveBar {
     position: sticky;
     bottom: 8px;
@@ -4696,7 +4518,6 @@
     padding: 12px;
     border-radius: 20px;
   }
-
 
   .gymModeExerciseStrip {
     display: grid;
@@ -5382,12 +5203,6 @@
 
 .todayStrip::-webkit-scrollbar {
   display: none;
-}
-
-:global(.neo) .todayStrip {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  border-radius: 16px;
 }
 
 .todayStripItem {
@@ -6132,8 +5947,7 @@
   bottom: 0;
   z-index: 1100;
   background: color-mix(in srgb, var(--surface1) 90%, transparent);
-  
-  
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6221,8 +6035,7 @@
   border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--border2);
-  
-  
+
   color: var(--text);
   font-size: var(--type-title-md);
   display: flex;
@@ -6625,10 +6438,4 @@
 :global(.force-light-theme) .ringBg {
   stroke: rgba(0, 0, 0, 0.06);
 }
-
-
-
-
-
-
 

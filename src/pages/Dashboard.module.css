@@ -225,7 +225,6 @@
 
 /* ── BENTO GRID ──────────────────────────────── */
 
-
 /* ── CARD BASE ───────────────────────────────── */
 .card {
   display: flex;
@@ -878,8 +877,6 @@
   font-family: var(--font-mono);
   font-size: var(--type-p);
 }
-
-
 
 /* ── WIDGET BOARD ─────────────────────── */
 .widgetBoard {

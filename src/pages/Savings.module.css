@@ -9,8 +9,7 @@
   border: 1px solid var(--border2);
   border-radius: 18px;
   /* box-shadow flattened */
-  
-  
+
 }
 
 .heroAside {
@@ -100,8 +99,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .quickContributionCopy {
@@ -214,14 +212,6 @@
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
   /* box-shadow flattened */
   overflow: hidden;
-}
-
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
 }
 
 .advancedSummary {
@@ -492,7 +482,6 @@
   text-transform: uppercase;
   color: var(--accent);
 }
-
 
 .goalValueRow {
   display: flex;

@@ -1,12 +1,9 @@
 .page {
   min-height: 100vh;
-  background: var(--nb-paper);
-  color: var(--nb-ink);
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  font-family: var(--nb-font-body);
 }
 
 .page::before {
@@ -16,10 +13,6 @@
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(circle at 12% 22%, var(--nb-ambient-hot), transparent 38%),
-    radial-gradient(circle at 88% 18%, var(--nb-ambient-cool), transparent 44%),
-    radial-gradient(circle at 50% 110%, var(--nb-ambient-mint), transparent 44%),
-    radial-gradient(circle, var(--nb-ambient-dot) 1px, transparent 1px);
   background-size: auto, auto, auto, 28px 28px;
 }
 
@@ -27,10 +20,7 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  background: var(--nb-accent-2);
-  color: var(--nb-ribbon-ink);
   border-bottom: 1px solid var(--border2);
-  font-family: var(--nb-font-mono);
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -74,7 +64,6 @@
   gap: 16px;
   padding: 14px 16px;
   border-radius: 999px;
-  background: var(--nb-paper-2);
   border: 1px solid var(--border2);
   /* box-shadow flattened */
 }
@@ -93,10 +82,8 @@
   height: 38px;
   border-radius: 999px;
   border: 1px solid var(--border2);
-  background: var(--nb-sun);
   display: grid;
   place-items: center;
-  font-family: var(--nb-font-display);
   font-weight: 700;
 }
 
@@ -106,7 +93,6 @@
 }
 
 .navLogo {
-  font-family: var(--nb-font-display);
   font-weight: 700;
   letter-spacing: -0.02em;
   font-size: 18px;
@@ -114,7 +100,6 @@
 
 .navTag {
   font-size: 12px;
-  color: var(--nb-ink-2);
 }
 
 .navActions {
@@ -141,13 +126,9 @@
 }
 
 .navLink {
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
 }
 
 .navButton {
-  background: var(--nb-accent);
-  color: var(--nb-accent-ink);
 }
 
 .navLink:hover,
@@ -186,7 +167,6 @@
 .sectionCard {
   border: 1px solid var(--border2);
   border-radius: 28px;
-  background: var(--nb-paper-2);
   /* box-shadow flattened */
 }
 
@@ -200,9 +180,7 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--nb-accent-2) 16%, var(--nb-paper-2));
   border: 1px solid var(--border2);
-  color: var(--nb-ink);
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
@@ -212,7 +190,6 @@
 }
 
 .title {
-  font-family: var(--nb-font-display);
   font-size: clamp(34px, 4vw, 52px);
   line-height: 0.98;
   letter-spacing: -1.2px;
@@ -222,7 +199,6 @@
 .intro {
   font-size: 15px;
   line-height: 1.75;
-  color: var(--nb-ink-2);
   margin: 0 0 1.4rem;
 }
 
@@ -238,25 +214,20 @@
 }
 
 .metaLabel {
-  font-family: var(--nb-font-mono);
   font-size: 11px;
   font-weight: 700;
-  color: var(--nb-ink-3);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .metaValue {
   font-size: 14px;
-  color: var(--nb-ink);
   line-height: 1.55;
 }
 
 .summaryHeading {
-  font-family: var(--nb-font-mono);
   font-size: 11px;
   font-weight: 700;
-  color: var(--nb-ink-3);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -266,7 +237,6 @@
   padding-left: 1.15rem;
   display: grid;
   gap: 0.6rem;
-  color: var(--nb-ink-2);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -283,7 +253,6 @@
 .sectionTitle {
   font-size: 20px;
   font-weight: 800;
-  color: var(--nb-ink);
   margin-bottom: 0.8rem;
 }
 
@@ -296,7 +265,6 @@
   margin: 0;
   font-size: 15px;
   line-height: 1.75;
-  color: var(--nb-ink-2);
 }
 
 .sectionList {
@@ -307,7 +275,6 @@
 }
 
 .sectionList li {
-  color: var(--nb-ink-2);
   font-size: 15px;
   line-height: 1.7;
 }
@@ -315,7 +282,6 @@
 .sectionLink,
 .footerLink,
 .contactLink {
-  color: color-mix(in srgb, var(--nb-accent) 76%, var(--nb-ink));
   text-decoration: none;
   font-weight: 700;
 }
@@ -326,7 +292,6 @@
   margin-top: 42px;
   border-top: 1px solid var(--border2);
   padding: 1.8rem 1.5rem calc(1.8rem + env(safe-area-inset-bottom));
-  background: var(--nb-paper-2);
 }
 
 .footerInner {
@@ -345,15 +310,12 @@
 }
 
 .footerLogo {
-  font-family: var(--nb-font-display);
   font-size: 22px;
-  color: var(--nb-ink);
 }
 
 .footerTagline,
 .footerCopy {
   font-size: 12px;
-  color: var(--nb-ink-2);
   line-height: 1.6;
 }
 

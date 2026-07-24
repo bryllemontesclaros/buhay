@@ -7,7 +7,7 @@
   flex-shrink: 0;
   min-height: 42px;
   padding: 0 16px;
-  border-radius: 16px;
+  border-radius: 99px;
   border: 1px solid var(--border2);
   font-family: var(--font-body);
   font-size: var(--type-body-sm);
@@ -29,7 +29,7 @@
 
 .primaryBtn {
   color: #071018;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 72%, var(--purple) 28%));
+  background: var(--text); color: var(--bg); border-color: transparent;
   border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border));
 }
 
@@ -74,19 +74,19 @@
 .primaryBtn:focus-visible {
   transform: scale(1.02);
   border-color: color-mix(in srgb, var(--accent) 88%, white 12%);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 98%, white 12%), color-mix(in srgb, var(--accent) 82%, var(--purple) 38%));
+  background: var(--text); color: var(--bg); border-color: transparent;
 }
 
 :global([data-theme="light"]) .primaryBtn:hover,
 :global([data-theme="light"]) .primaryBtn:focus-visible,
 :global(.force-light-theme) .primaryBtn:hover,
 :global(.force-light-theme) .primaryBtn:focus-visible {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, black 12%), color-mix(in srgb, var(--accent) 62%, var(--purple) 28%));
+  background: var(--text); color: var(--bg); border-color: transparent;
 }
 
 .dangerBtn {
   color: #ffffff;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--red) 88%, white 12%), color-mix(in srgb, var(--red) 72%, #8b0000 28%));
+  background: var(--text); color: var(--bg); border-color: transparent;
   border-color: color-mix(in srgb, var(--red) 58%, var(--glass-border));
 }
 
@@ -94,50 +94,8 @@
 .dangerBtn:focus-visible {
   transform: scale(1.02);
   border-color: color-mix(in srgb, var(--red) 88%, white 12%);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--red) 98%, white 12%), color-mix(in srgb, var(--red) 82%, #8b0000 38%));
+  background: var(--text); color: var(--bg); border-color: transparent;
 }
 
 /* Neo Theme overrides */
-:global(.neo) .btn {
-  border: 1px solid var(--border2);
-  box-shadow: var(--nb-shadow-sm);
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
-}
 
-:global(.neo) .primaryBtn {
-  background: var(--nb-accent-2);
-  color: var(--nb-ribbon-ink);
-}
-
-:global(.neo) .secondaryBtn {
-  background: var(--nb-paper);
-}
-
-:global(.neo) .btn:hover,
-:global(.neo) .btn:focus-visible {
-  transform: scale(1.01);
-  box-shadow: var(--nb-shadow);
-  border-color: var(--nb-ink-2);
-}
-
-:global(.neo) .btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 0 rgba(16, 16, 16, 0.14);
-}
-
-:global(.neo) .primaryBtn:hover,
-:global(.neo) .primaryBtn:focus-visible {
-  background: var(--nb-accent);
-}
-
-:global(.neo) .dangerBtn {
-  background: var(--nb-paper);
-  color: var(--nb-ink);
-  border-color: var(--nb-red);
-}
-
-:global(.neo) .dangerBtn:hover {
-  background: var(--nb-red);
-  color: white;
-}

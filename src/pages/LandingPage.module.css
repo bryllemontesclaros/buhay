@@ -111,7 +111,6 @@
   --primary-btn-text: #050505;
 }
 
-
 .backdropWrap {
   position: absolute;
   inset: 0;
@@ -180,7 +179,6 @@
   transition: background-color var(--motion-duration) var(--motion-ease-out), border-color var(--motion-duration) var(--motion-ease-out);
 }
 
-
 .navInner {
   position: relative;
   z-index: 1;
@@ -191,8 +189,6 @@
   padding: 12px var(--space-5);
   min-width: 0;
 }
-
-
 
 .brand {
   display: inline-flex;
@@ -323,7 +319,6 @@
   transition: background-color var(--motion-duration-fast) var(--motion-ease-out), border-color var(--motion-duration-fast) var(--motion-ease-out), transform var(--motion-duration-fast) var(--motion-ease-out), box-shadow var(--motion-duration-fast) var(--motion-ease-out);
 }
 
-
 .btn:hover,
 .btnPrimary:hover,
 .btnGhost:hover {
@@ -331,10 +326,6 @@
   filter: brightness(1.1);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
 }
-
-
-
-
 
 :global([data-theme="dark"]) 
 
@@ -593,7 +584,6 @@
     0 12px 24px rgba(0, 0, 0, 0.08),
     0 24px 48px rgba(0, 0, 0, 0.12);
 }
-
 
 :global([data-theme="dark"]) .heroCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
@@ -1026,7 +1016,6 @@
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-
 :global([data-theme="dark"]) .beatCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
 }
@@ -1142,7 +1131,6 @@
   box-shadow: var(--glass-shadow-strong), 0 0 30px color-mix(in srgb, var(--tone-main, var(--accent)) 10%, transparent);
   border-color: rgba(0, 0, 0, 0.15);
 }
-
 
 :global([data-theme="dark"]) .spaceCard:hover {
   border-color: rgba(255, 255, 255, 0.18);
@@ -1897,8 +1885,6 @@
     width: 100%;
   }
 
-
-
   .flowGrid,
   .spacesGrid,
   .trustGrid,
@@ -2028,9 +2014,6 @@
     transition: none !important;
   }
 }
-
-
-
 
 /* ---------------------------------------------------- */
 /* 5. New Layout Overhaul (Centered Hero & Tabbed UI)   */
@@ -2366,7 +2349,6 @@
 .mockBentoItem:hover {
   transform: translateX(4px);
 }
-
 
 /* ---------------------------------------------------- */
 /* 6. Bento Grid & Interactive Mockup Controls          */

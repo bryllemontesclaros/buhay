@@ -15,40 +15,6 @@
   /* box-shadow flattened */
 }
 
-:global(.neo) .workspaceBoard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .workspaceBoardTala::before {
-  display: none;
-}
-
-:global(.neo) .boardBadge {
-  border: 1px solid var(--border2);
-  background: var(--nb-accent-2);
-  color: var(--nb-ribbon-ink);
-  /* box-shadow flattened */
-  font-family: var(--nb-font-mono);
-}
-
-:global(.neo) .boardSignature,
-:global(.neo) .boardStreamText {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .boardStream {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .boardStreamLabel {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
-}
-
 .workspaceBoardTala {
   position: relative;
   overflow: hidden;
@@ -62,7 +28,6 @@
   pointer-events: none;
   background: var(--surface);
 }
-
 
 .boardCompanionBar {
   position: relative;
@@ -165,62 +130,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
-}
 
-:global(.neo) .hero,
-:global(.neo) .panel,
-:global(.neo) .statCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .hero::before,
-:global(.neo) .panel::before,
-:global(.neo) .statCard::before {
-  display: none;
-}
-
-:global(.neo) .title {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .sub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .heroCard,
-:global(.neo) .viewSwitchCard,
-:global(.neo) .quickWinCard,
-:global(.neo) .quickEntryPanel,
-:global(.neo) .advancedBox,
-:global(.neo) .settingsSaveNotice,
-:global(.neo) .focusCard,
-:global(.neo) .chartCard,
-:global(.neo) .entryCard,
-:global(.neo) .rowCard,
-:global(.neo) .goalCard,
-:global(.neo) .calmPlanCard,
-:global(.neo) .journalPromptRow,
-:global(.neo) .selectedDayPanel,
-:global(.neo) .boardTodayCard,
-:global(.neo) .storyCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .journalPromptRow {
-  background: transparent;
-  border: 0;
-  /* box-shadow flattened */
 }
 
 .hero,
@@ -838,20 +748,6 @@
 .full {
   grid-column: 1 / -1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .focusCard,
 .chartCard,
@@ -1550,7 +1446,6 @@
     flex-direction: column;
   }
 
-
   .selectedDayGrid {
     grid-template-columns: 1fr;
   }
@@ -1577,7 +1472,6 @@
   .settingsSaveNotice {
     grid-template-columns: 1fr;
   }
-
 
   .settingsColumn {
     gap: 12px;
@@ -1655,7 +1549,6 @@
 .quickEntryPanel textarea {
   min-height: 150px;
 }
-
 
 @media (max-width: 1024px) {
   .quickEntryPanel {
@@ -1764,25 +1657,6 @@
 .panel,
 .statCard {
   border-radius: 24px;
-}
-
-:global(.neo) .panel,
-:global(.neo) .statCard,
-:global(.neo) .viewSwitchCard {
-  border-width: 3px;
-  /* box-shadow flattened */
-}
-
-:global(.neo) .focusCard,
-:global(.neo) .chartCard,
-:global(.neo) .entryCard,
-:global(.neo) .rowCard,
-:global(.neo) .goalCard,
-:global(.neo) .calmPlanCard,
-:global(.neo) .selectedDayPanel,
-:global(.neo) .storyCard {
-  border-width: 2px;
-  /* box-shadow flattened */
 }
 
 @media (max-width: 1024px) {
@@ -1935,7 +1809,6 @@
     padding: 12px;
     border-radius: 18px;
   }
-
 
   .settingsActionCopy span,
   .settingsSaveNotice span {
@@ -2850,8 +2723,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  
-  
+
 }
 
 .climateHeader {
@@ -3008,8 +2880,7 @@
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
   z-index: 100;
   text-align: left;
-  
-  
+
 }
 
 .climateOrb:hover .orbTooltip {
@@ -3203,8 +3074,7 @@
   flex-direction: column;
   gap: 10px;
   background: rgba(255, 255, 255, 0.02);
-  
-  
+
   animation: promptSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -3340,6 +3210,4 @@
   animation: talaRowSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--stagger-delay, 0ms);
 }
-
-
 

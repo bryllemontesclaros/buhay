@@ -14,47 +14,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-:global(.neo).screen {
-  background:
-    radial-gradient(circle at 12% 22%, rgba(255, 91, 79, 0.18), transparent 38%),
-    radial-gradient(circle at 88% 18%, rgba(70, 103, 255, 0.16), transparent 44%),
-    radial-gradient(circle, rgba(16, 16, 16, 0.04) 1px, transparent 1px),
-    var(--nb-paper);
-  background-size: auto, auto, 28px 28px, auto;
-  color: var(--nb-ink);
-}
-
-:global(.neo) .storyPanel,
-:global(.neo) .card {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-
-
-:global(.neo) .logo {
-  font-family: var(--nb-font-display);
-  color: var(--nb-accent-2);
-}
-
-:global(.neo) .storyKicker,
-:global(.neo) .cardEyebrow {
-  font-family: var(--nb-font-mono);
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .storyTitle {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .storyText {
-  color: var(--nb-ink-2);
-}
-
 .shell {
   min-height: calc(100dvh - 56px);
   width: min(1040px, 100%);
@@ -74,8 +33,7 @@
   border: 1px solid var(--border2);
   border-radius: var(--bento-radius-lg);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .storyPanel {
@@ -89,16 +47,12 @@
   position: relative;
 }
 
-
-
 .card {
   max-width: 420px;
   padding: 2rem;
   position: relative;
   overflow: hidden;
 }
-
-
 
 .logo { font-family: var(--font-display); font-size: 34px; color: var(--accent); margin-bottom: 4px; letter-spacing: -1px; }
 .tagline { font-size: var(--type-body-sm); color: var(--text3); margin-bottom: 2rem; }
@@ -843,8 +797,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .storyPanel {

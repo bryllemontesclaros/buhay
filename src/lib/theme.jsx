@@ -12,7 +12,7 @@ function readStoredTheme() {
     const next = localStorage.getItem(THEME_KEY) || localStorage.getItem(LEGACY_THEME_KEY)
     if (next === 'dark' || next === 'light') return next
   } catch {}
-  return 'dark'
+  return 'light'
 }
 
 export function ThemeProvider({ children }) {

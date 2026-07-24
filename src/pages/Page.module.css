@@ -33,31 +33,6 @@
   z-index: -1;
 }
 
-:global(.neo) .page::before {
-  display: none;
-}
-
-:global(.neo) .page {
-  color: var(--nb-ink);
-}
-
-:global(.neo) .page::after {
-  opacity: 0.18;
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
-    repeating-linear-gradient(135deg, transparent 0 26px, var(--nb-texture-line) 26px 27px);
-  background-size: 24px 24px, auto;
-}
-
-:global(.neo) .title {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .sub {
-  color: var(--nb-ink-2);
-}
-
 /* Global Hero Section Layout */
 .pageHero {
   display: grid;
@@ -110,60 +85,6 @@
   margin-top: 4px;
 }
 
-:global(.neo) .pageHeader {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .pageEyebrow {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .pageTitle {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .pageSub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .header,
-:global(.neo) .trustCard,
-:global(.neo) .stat,
-:global(.neo) .card,
-:global(.neo) .formCard,
-:global(.neo) .goalCard {
-  background:
-    radial-gradient(circle, var(--nb-texture-dot) 0.8px, transparent 0.8px),
-    repeating-linear-gradient(135deg, transparent 0 24px, var(--nb-texture-line) 24px 25px),
-    linear-gradient(180deg, color-mix(in srgb, var(--nb-paper-2) 98%, white 2%), color-mix(in srgb, var(--nb-paper-2) 99%, black 1%));
-  background-size: 22px 22px, auto, auto;
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .header::before,
-:global(.neo) .trustCard::before,
-:global(.neo) .stat::before,
-:global(.neo) .card::before,
-:global(.neo) .formCard::before,
-:global(.neo) .goalCard::before {
-  display: none;
-}
-
-:global(.neo) .trustCard span,
-:global(.neo) .trustCard small {
-  color: var(--nb-ink-3);
-}
-
-:global(.neo) .trustCard strong {
-  color: var(--nb-ink);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -188,8 +109,7 @@
   border-radius: var(--bento-radius-xl);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -267,8 +187,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -325,8 +244,7 @@
   border-radius: 24px;
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
   transition:
     transform var(--motion-duration) var(--motion-ease-out),
     border-color var(--motion-duration) var(--motion-ease-standard),
@@ -345,10 +263,6 @@
 .stat:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--accent) 18%, var(--glass-border));
-}
-
-:global(.neo) .stat:hover {
-  border-color: var(--nb-stroke);
 }
 
 .stat::before,
@@ -673,14 +587,6 @@
   overflow: hidden;
 }
 
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
 .advancedSummary {
   display: flex;
   align-items: center;
@@ -706,14 +612,6 @@
     /* box-shadow flattened */
   }
 
-  :global(.neo) .header:hover,
-  :global(.neo) .trustCard:hover,
-  :global(.neo) .card:hover,
-  :global(.neo) .formCard:hover,
-  :global(.neo) .goalCard:hover {
-    border-color: var(--nb-stroke);
-    /* box-shadow flattened */
-  }
 }
 
 .advancedSummary::-webkit-details-marker {
@@ -802,7 +700,6 @@
   background:
     radial-gradient(circle at 28% 22%, color-mix(in srgb, white 34%, transparent), transparent 24%),
     linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 76%, var(--blue) 24%));
-  color: var(--nb-accent-ink);
   /* box-shadow flattened */
   font-size: 13px;
   font-weight: 700;
@@ -894,8 +791,7 @@ th {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: color-mix(in srgb, var(--surface) 86%, transparent);
-  
-  
+
 }
 
 td {
@@ -1076,8 +972,7 @@ tbody tr:hover td {
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
   color: var(--amber);
   font-size: 13px;
   line-height: 1.55;

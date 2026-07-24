@@ -23,47 +23,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-:global(.neo).screen {
-  background:
-    radial-gradient(circle at 12% 22%, rgba(255, 91, 79, 0.18), transparent 38%),
-    radial-gradient(circle at 88% 18%, rgba(70, 103, 255, 0.16), transparent 44%),
-    radial-gradient(circle, rgba(16, 16, 16, 0.04) 1px, transparent 1px),
-    var(--nb-paper);
-  background-size: auto, auto, 28px 28px, auto;
-  color: var(--nb-ink);
-}
-
-:global(.neo) .brandBlock,
-:global(.neo) .progressCard,
-:global(.neo) .liveCard,
-:global(.neo) .tipCard,
-:global(.neo) .card,
-:global(.neo) .sectionCard,
-:global(.neo) .dynamicCard,
-:global(.neo) .summaryCard,
-:global(.neo) .insightCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  border-radius: var(--nb-radius);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .logo {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-  background: none;
-  -webkit-background-clip: initial;
-  background-clip: initial;
-}
-
-:global(.neo) .sideKicker,
-:global(.neo) .progressLabel {
-  font-family: var(--nb-font-mono);
-  color: var(--nb-ink-2);
-}
-
 :global([data-theme="light"]) .screen {
   --takda-accent: #16b88a;
   --takda-glow: rgba(22, 184, 138, 0.14);
@@ -119,8 +78,7 @@
   border: 1px solid var(--border2);
   border-radius: var(--bento-radius-lg);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .brandBlock,
@@ -402,8 +360,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .guideCluster {
@@ -1425,8 +1382,7 @@
     border: 1px solid var(--border2);
     background: var(--surface);
     /* box-shadow flattened */
-    
-    
+
   }
 
   .mobileGuide {
@@ -1867,8 +1823,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .brandBlock,

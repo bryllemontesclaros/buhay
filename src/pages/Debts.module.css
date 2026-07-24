@@ -944,70 +944,6 @@
 }
 
 /* Neo Brutalist Theme Overrides */
-:global(.neo) .heroCopy,
-:global(.neo) .heroAside,
-:global(.neo) .totalCard,
-:global(.neo) .optimizerCard,
-:global(.neo) .toolbar,
-:global(.neo) .editorCard,
-:global(.neo) .debtCard,
-:global(.neo) .emptyCard,
-:global(.neo) .adviceBox,
-:global(.neo) .chartContainer,
-:global(.neo) .deficitWarningCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .pageTitle {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .pageSub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .pageEyebrow,
-:global(.neo) .heroAsideLabel,
-:global(.neo) .toolbarTitle,
-:global(.neo) .editorEyebrow,
-:global(.neo) .detailsLabel {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
-}
-
-:global(.neo) .payBtn,
-:global(.neo) .primaryButton {
-  border: 1px solid var(--border2);
-  background: var(--nb-mint);
-  color: var(--nb-ink);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .secondaryButton,
-:global(.neo) .cardAction {
-  border: 1px solid var(--border2);
-  background: var(--nb-paper-2);
-  color: var(--nb-ink);
-  /* box-shadow flattened */
-}
-
-:global(.neo) .cardActionDanger {
-  color: var(--red);
-}
-
-:global(.neo) .strategySelectors {
-  background: var(--nb-surface-card);
-  border: 1px solid var(--border2);
-}
-
-:global(.neo) .strategyBtnActive {
-  background: var(--nb-mint);
-  color: var(--nb-ink);
-  /* box-shadow flattened */
-}
 
 .sectionsWrapper {
   display: flex;
@@ -1031,11 +967,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-:global(.neo) .listSectionTitle {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
 }
 
 /* Transaction History Section */

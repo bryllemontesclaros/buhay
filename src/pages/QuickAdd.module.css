@@ -105,13 +105,6 @@
   overflow: hidden;
 }
 
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
 .advancedSummary {
   display: flex;
   align-items: center;

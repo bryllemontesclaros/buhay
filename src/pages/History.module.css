@@ -23,22 +23,7 @@
   border: 1px solid var(--border2);
   border-radius: 18px;
   /* box-shadow flattened */
-  
-  
-}
 
-:global(.neo) .heroCopy,
-:global(.neo) .heroAside,
-:global(.neo) .summaryCard,
-:global(.neo) .searchShell,
-:global(.neo) .dateGroupCard,
-:global(.neo) .emptyCard,
-:global(.neo) .modal {
-  background: var(--nb-surface-card);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
 }
 
 .heroCopy {
@@ -752,8 +737,7 @@
   position: fixed;
   inset: 0;
   background: var(--glass-3);
-  
-  
+
   z-index: 300;
   display: flex;
   align-items: flex-end;
@@ -769,8 +753,7 @@
 
 .modal {
   background: var(--surface);
-  
-  
+
   border: 1px solid var(--border2);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   /* box-shadow flattened */

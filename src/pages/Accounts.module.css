@@ -12,34 +12,7 @@
   border: 1px solid var(--border2);
   border-radius: 18px;
   /* box-shadow flattened */
-  
-  
-}
 
-:global(.neo) .heroCopy,
-:global(.neo) .heroAside,
-:global(.neo) .totalCard,
-:global(.neo) .syncNotice,
-:global(.neo) .summaryCard,
-:global(.neo) .toolbar,
-:global(.neo) .editorCard,
-:global(.neo) .accountCard,
-:global(.neo) .emptyCard {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .heroAsideLabel,
-:global(.neo) .summaryLabel,
-:global(.neo) .toolbarTitle,
-:global(.neo) .editorEyebrow,
-:global(.neo) .accountBalanceLabel,
-:global(.neo) .accountState {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
 }
 
 .heroAsideLabel,
@@ -329,14 +302,6 @@
   background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
   /* box-shadow flattened */
   overflow: hidden;
-}
-
-:global(.neo) .advancedBox {
-  background: var(--nb-paper-2);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
 }
 
 .advancedSummary {

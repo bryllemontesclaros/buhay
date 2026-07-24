@@ -18,8 +18,7 @@
   border: 1px solid var(--border2);
   border-radius: 18px;
   /* box-shadow flattened */
-  
-  
+
 }
 
 .heroCopy {
@@ -157,8 +156,7 @@
   border: 1px solid var(--border2);
   background: var(--surface);
   /* box-shadow flattened */
-  
-  
+
 }
 
 .overviewHeader {
@@ -1001,8 +999,7 @@
   position: fixed;
   inset: 0;
   background: var(--glass-3);
-  
-  
+
   z-index: 320;
   display: flex;
   align-items: center;
@@ -1015,8 +1012,7 @@
   max-height: 90vh;
   overflow-y: auto;
   background: var(--surface);
-  
-  
+
   border: 1px solid var(--border2);
   border-radius: var(--radius-lg);
   padding: 1.25rem;

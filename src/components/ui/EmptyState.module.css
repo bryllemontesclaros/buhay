@@ -51,19 +51,4 @@
 }
 
 /* Neo Theme overrides */
-:global(.neo) .emptyState {
-  background: var(--nb-paper-2);
-  border: 1px dashed var(--nb-ink-2);
-  box-shadow: none;
-}
 
-:global(.neo) .title {
-  color: var(--nb-ink);
-  font-family: var(--nb-font-display);
-}
-
-:global(.neo) .description, 
-:global(.neo) .content,
-:global(.neo) .icon {
-  color: var(--nb-ink-2);
-}

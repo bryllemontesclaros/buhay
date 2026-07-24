@@ -21,37 +21,7 @@
   border: 1px solid var(--border2);
   border-radius: 18px;
   /* box-shadow flattened */
-  
-  
-}
 
-:global(.neo) .heroCopy,
-:global(.neo) .heroAside,
-:global(.neo) .summaryCard,
-:global(.neo) .toolbar,
-:global(.neo) .surfaceCard {
-  background: var(--nb-surface-card);
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
-  
-  
-}
-
-:global(.neo) .pageTitle {
-  font-family: var(--nb-font-display);
-  color: var(--nb-ink);
-}
-
-:global(.neo) .pageSub {
-  color: var(--nb-ink-2);
-}
-
-:global(.neo) .pageEyebrow,
-:global(.neo) .heroAsideLabel,
-:global(.neo) .summaryLabel,
-:global(.neo) .sectionTitle {
-  color: var(--nb-ink-2);
-  font-family: var(--nb-font-mono);
 }
 
 .heroCopy {
