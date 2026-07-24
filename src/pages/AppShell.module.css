@@ -56,11 +56,13 @@
 }
 
 .shellDashboard::before {
-  background:
+  display: none !important;
+
+  /* background:
     radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 28%),
     radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--purple) 12%, transparent), transparent 28%),
     radial-gradient(circle at 50% 85%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent) !important;
+    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent) !important; flat */
 }
 
 .shellLakas {
@@ -88,26 +90,30 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background:
+  /* background:
     radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 24%),
     radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 28%),
     radial-gradient(circle at 66% 82%, color-mix(in srgb, var(--rose) 10%, transparent), transparent 24%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
+    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent); flat */
   opacity: 0.75;
 }
 
 .shellLakas::before {
-  background:
+  display: none !important;
+
+  /* background:
     radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 24%),
     radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
+    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent); flat */
 }
 
 .shellTala::before {
-  background:
+  display: none !important;
+
+  /* background:
     radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--purple) 15%, transparent), transparent 24%),
     radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent);
+    linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent); flat */
 }
 
 /* SIDEBAR — desktop */
@@ -242,15 +248,15 @@
 }
 
 .sidebarGuideDotTakda {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--space-finance) 28%, white 10%), color-mix(in srgb, var(--space-finance) 80%, black 20%));
+  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-finance) 28%, white 10%), color-mix(in srgb, var(--space-finance) 80%, black 20%)); flat */
 }
 
 .sidebarGuideDotLakas {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--space-fitness) 28%, white 10%), color-mix(in srgb, var(--space-fitness) 80%, black 20%));
+  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-fitness) 28%, white 10%), color-mix(in srgb, var(--space-fitness) 80%, black 20%)); flat */
 }
 
 .sidebarGuideDotTala {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--space-reflection) 28%, white 10%), color-mix(in srgb, var(--space-reflection) 80%, black 20%));
+  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-reflection) 28%, white 10%), color-mix(in srgb, var(--space-reflection) 80%, black 20%)); flat */
 }
 
 .sidebarGuideDotActive {
@@ -286,7 +292,7 @@
   margin-left: 6px;
   vertical-align: text-bottom;
   border-radius: 999px;
-  background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--blue) 46%, var(--accent)));
+  /* background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--blue) 46%, var(--accent))); flat */
   animation: streamBlink 1.05s steps(1, end) infinite;
 }
 
@@ -1269,7 +1275,7 @@
   color: var(--text2);
 }
 .verifyBannerPrimary {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--amber) 82%, white 18%), color-mix(in srgb, var(--amber) 88%, black 12%));
+  /* background: linear-gradient(180deg, color-mix(in srgb, var(--amber) 82%, white 18%), color-mix(in srgb, var(--amber) 88%, black 12%)); flat */
   border: 1px solid var(--glass-border);
   color: var(--nb-accent-ink);
 }
@@ -2530,7 +2536,7 @@
 :global(.force-light-theme) .changelogBadge,
 
 .changelogBadge {
-  background: linear-gradient(135deg, var(--accent), var(--purple));
+  /* background: linear-gradient(135deg, var(--accent), var(--purple)); flat */
   color: white;
   padding: 6px 12px;
   border-radius: 99px;
