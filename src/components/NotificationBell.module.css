@@ -144,9 +144,3 @@
 }
 .dismissBtn:hover { color: var(--red); }
 
-:global([data-theme="light"]) .dropdown,
-:global(.force-light-theme) .dropdown,
-
-:global([data-theme="light"]) .alertItem,
-:global(.force-light-theme) .alertItem,
-

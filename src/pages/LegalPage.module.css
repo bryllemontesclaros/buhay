@@ -6,15 +6,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.page::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-  background-size: auto, auto, auto, 28px 28px;
-}
+
 
 .ribbon {
   position: sticky;
