@@ -336,3 +336,109 @@
     transform: translateY(0);
   }
 }
+
+/* ---------------------------------------------------- */
+/* Responsive Adjustments (Tablet & Mobile)           */
+/* ---------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .hero {
+    padding: 100px 24px 60px;
+  }
+  .heroTitle {
+    font-size: clamp(40px, 7vw, 64px);
+  }
+  .heroSub {
+    font-size: 20px;
+    margin-bottom: 40px;
+  }
+  .featureGrid {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navInner {
+    padding: 12px 20px;
+  }
+  
+  .brandName {
+    font-size: 18px;
+  }
+
+  .navActions {
+    gap: 8px;
+  }
+  
+  .navActions .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 60px 20px 40px;
+  }
+
+  .heroTitle {
+    font-size: clamp(36px, 10vw, 48px);
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+
+  .heroSub {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 60px;
+  }
+
+  .heroActions .btn {
+    width: 100%;
+  }
+
+  .features {
+    padding: 60px 20px;
+  }
+
+  .sectionTitle {
+    font-size: 28px;
+  }
+
+  .sectionSub {
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+  
+  .featureCard {
+    padding: 32px 24px;
+  }
+
+  .privacy {
+    padding: 60px 20px;
+  }
+
+  .privacyTitle {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .privacyDesc {
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  .privacyGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .privacyItem {
+    padding: 24px;
+  }
+}
+
