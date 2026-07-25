@@ -6,6 +6,7 @@ import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
+import { Button } from '../components/ui/Button'
 import styles from './Page.module.css'
 import bStyles from './Bills.module.css'
 
@@ -384,9 +385,9 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
               <div className={styles.title}>Bills</div>
               <div className={styles.sub}>Plan recurring bills here, then mark a period paid only when money actually leaves an account.</div>
             </div>
-            <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
+            <Button type="button" variant="primary" onClick={() => setShowDrawer(true)}>
               + Add Bill
-            </button>
+            </Button>
           </div>
         )}
         
@@ -395,9 +396,9 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
             <div style={{ color: 'var(--text2)', fontSize: '14px' }}>
               Plan recurring bills, then mark them paid when money leaves an account.
             </div>
-            <button type="button" className={styles.btnAdd} style={{ width: 'auto', margin: 0 }} onClick={() => setShowDrawer(true)}>
+            <Button type="button" variant="primary" onClick={() => setShowDrawer(true)}>
               + Add Bill
-            </button>
+            </Button>
           </div>
         )}
 
@@ -464,8 +465,9 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
           {sortedBillsWithStatus.length === 0 && (
             <div className={bStyles.emptyState}>
               <h4>No active bills yet</h4>
-              <p>Add your first recurring bill to see upcoming payments and track them here.</p>
-              <button className={styles.btnAdd} style={{ width: 'auto', marginTop: 12 }} onClick={() => setShowDrawer(true)}>+ Add Bill</button>
+              <div style={{ marginTop: '16px' }}>
+                <Button type="button" variant="primary" onClick={() => setShowDrawer(true)}>+ Add Bill</Button>
+              </div>
             </div>
           )}
         </div>
