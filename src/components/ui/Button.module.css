@@ -33,6 +33,20 @@
   border-color: transparent;
 }
 
+.incomeBtn {
+  color: #ffffff;
+  background: var(--income);
+  border-color: transparent;
+}
+
+.incomeBtn:hover,
+.incomeBtn:focus-visible {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--income) 85%, white);
+  border-color: transparent;
+  box-shadow: var(--glass-shadow-soft);
+}
+
 .primaryBtn:disabled,
 .secondaryBtn:disabled,
 .ghostBtn:disabled,

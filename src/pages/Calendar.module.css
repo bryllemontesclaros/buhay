@@ -983,7 +983,7 @@
 .logBtn:disabled,
 .recurBtn:disabled { opacity: 0.55; cursor: not-allowed; }
 .editBtn:hover { color: var(--accent); background: color-mix(in srgb, var(--glass-1) 80%, transparent); }
-.statusBtnPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.statusBtnPaid { color: var(--income); background: color-mix(in srgb, var(--income) 12%, transparent); }
 .statusBtnUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber-dim) 72%, transparent); }
 .delBtnSm { background: transparent; border: none; color: var(--text3); cursor: pointer; font-size: var(--type-caption); font-weight: 500; padding: 0 10px; border-radius: 8px; min-height: 28px; transition: color 0.15s ease, background 0.15s ease; }
 .delBtnSm:hover { color: var(--red); background: color-mix(in srgb, var(--red) 12%, transparent); }
@@ -991,11 +991,11 @@
 .statusBtn:disabled,
 .delBtnSm:disabled { opacity: 0.55; cursor: not-allowed; }
 .statusBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
-.statusPaid { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.statusPaid { color: var(--income); background: color-mix(in srgb, var(--income) 14%, transparent); }
 .statusUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, transparent); }
 .impactBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .impactLinked { color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, transparent); }
-.impactOn { color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.impactOn { color: var(--income); background: color-mix(in srgb, var(--income) 12%, transparent); }
 .impactDue { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
 .impactFuture { color: var(--purple); background: color-mix(in srgb, var(--purple) 8%, transparent); }
 .impactOff { color: var(--text3); background: color-mix(in srgb, var(--surface2) 42%, transparent); }

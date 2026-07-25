@@ -674,9 +674,9 @@
 }
 
 .statusPaid {
-  color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--income);
+  border-color: color-mix(in srgb, var(--income) 24%, var(--border));
+  background: color-mix(in srgb, var(--income) 10%, var(--surface));
 }
 
 .statusUnpaid {
