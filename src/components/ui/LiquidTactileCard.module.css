@@ -1,0 +1,150 @@
+.glassCard {
+  position: relative;
+  background: color-mix(in srgb, var(--surface2, #111111) 82%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--text, #ffffff) 10%, transparent);
+  border-radius: var(--radius, 16px);
+  padding: var(--space-5, 24px);
+  box-shadow: 
+    0 1px 2px -1px rgba(0, 0, 0, 0.12),
+    0 4px 12px -2px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  user-select: none;
+
+  /* Hardware Acceleration */
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+
+  /* Riot Tactile Physics Spring Transition */
+  transition: 
+    transform 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.20s ease;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+/* Hover Physics: Spring Lift & Ambient Glow */
+.glassCard:hover {
+  transform: translateY(-4px) scale(1.012);
+  border-color: color-mix(in srgb, var(--text, #ffffff) 22%, transparent);
+  box-shadow: 
+    0 2px 4px -1px rgba(0, 0, 0, 0.14),
+    0 12px 28px -4px rgba(0, 0, 0, 0.24),
+    0 24px 56px -8px rgba(0, 0, 0, 0.32);
+}
+
+/* Active Press Physics: Tactile Snap */
+.glassCard:active {
+  transform: translateY(1px) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Specular Glow Layer */
+.glowReflector {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.topEdgeHighlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+/* Layout Elements */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 12px);
+  margin-bottom: var(--space-4, 16px);
+}
+
+.titleWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.cardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm, 10px);
+  background: color-mix(in srgb, var(--text, #ffffff) 6%, transparent);
+  font-size: 18px;
+}
+
+.cardTitle {
+  font-family: var(--font-sans);
+  font-size: var(--type-title-sm, 16px);
+  font-weight: 650;
+  color: var(--text, #ffffff);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.cardSubtitle {
+  font-size: var(--type-support, 12px);
+  color: var(--text3, #888888);
+  margin-top: 2px;
+}
+
+/* Financial Readout */
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3, 12px);
+}
+
+.financialValue {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  color: var(--text, #ffffff);
+  font-variant-numeric: tabular-nums lining-nums slashed-zero;
+  letter-spacing: -0.03em;
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.trendUp {
+  background: var(--income-dim, rgba(48, 209, 88, 0.16));
+  color: var(--income, #30d158);
+}
+
+.trendDown {
+  background: var(--expense-dim, rgba(255, 69, 58, 0.16));
+  color: var(--expense, #ff453a);
+}
+
+.trendNeutral {
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--text2);
+}
+
+.cardBody {
+  margin-top: var(--space-4, 16px);
+}
