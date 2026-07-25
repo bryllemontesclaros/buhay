@@ -32,9 +32,9 @@
   --text2: #aaaaaa;
   --text3: #888888;
 
-  --accent: #ff4500;
-  --accent-dim: rgba(255, 69, 0, 0.16);
-  --accent-glow: rgba(255, 69, 0, 0.22);
+  --accent: #10b981;
+  --accent-dim: rgba(16, 185, 129, 0.14);
+  --accent-glow: rgba(16, 185, 129, 0.20);
   --income: #30d158;
   --income-dim: rgba(48, 209, 88, 0.16);
   --income-glow: rgba(48, 209, 88, 0.22);
@@ -52,18 +52,18 @@
   --amber-dim: rgba(255, 214, 10, 0.12);
   --blue: #0a84ff;
   --blue-dim: rgba(10, 132, 255, 0.14);
-  --purple: #bf5af2;
-  --purple-dim: rgba(191, 90, 242, 0.14);
+  --purple: #c084fc;
+  --purple-dim: rgba(192, 132, 252, 0.14);
   --teal: #64d2ff;
   --teal-dim: rgba(100, 210, 255, 0.14);
 
-  --space-fitness: #e11d48;
-  --space-fitness-dim: rgba(225, 29, 72, 0.14);
-  --space-fitness-ink: #e11d48;
+  --space-fitness: #ff4500;
+  --space-fitness-dim: rgba(255, 69, 0, 0.14);
+  --space-fitness-ink: #ff4500;
 
-  --space-reflection: #af52de;
-  --space-reflection-dim: rgba(175, 82, 222, 0.14);
-  --space-reflection-ink: #af52de;
+  --space-reflection: #c084fc;
+  --space-reflection-dim: rgba(192, 132, 252, 0.14);
+  --space-reflection-ink: #c084fc;
 
   --space-1: 4px;
   --space-2: 8px;
