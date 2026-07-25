@@ -253,8 +253,8 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
     }
   }
 
-  const typeColor = { income: 'var(--accent)', expense: 'var(--red)', transfer: 'var(--text2)' }
-  const typeBg = { income: 'var(--accent-glow)', expense: 'var(--red-dim)', transfer: 'var(--border)' }
+  const typeColor = { income: 'var(--income)', expense: 'var(--expense)', transfer: 'var(--text2)' }
+  const typeBg = { income: 'var(--income-dim)', expense: 'var(--expense-dim)', transfer: 'var(--border)' }
   const typeSign = { income: '+', expense: '−', transfer: '' }
   const editCats = editTx ? getTransactionCategories(editTx.type) : []
   const editSubcats = editTx ? getTransactionSubcategories(editTx.type, editForm.cat) : []

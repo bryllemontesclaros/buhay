@@ -35,6 +35,11 @@
   --accent: #ff4500;
   --accent-dim: rgba(255, 69, 0, 0.16);
   --accent-glow: rgba(255, 69, 0, 0.22);
+  --income: #30d158;
+  --income-dim: rgba(48, 209, 88, 0.16);
+  --income-glow: rgba(48, 209, 88, 0.22);
+  --expense: #ff453a;
+  --expense-dim: rgba(255, 69, 58, 0.16);
   --peach: #ff9f0a;
   --peach-dim: rgba(255, 159, 10, 0.14);
   --iris: #5e5ce6;
@@ -209,6 +214,11 @@
   --accent: #ff4500;
   --accent-dim: rgba(255, 69, 0, 0.12);
   --accent-glow: rgba(255, 69, 0, 0.16);
+  --income: #28cd41;
+  --income-dim: rgba(40, 205, 65, 0.14);
+  --income-glow: rgba(40, 205, 65, 0.20);
+  --expense: #ff3b30;
+  --expense-dim: rgba(255, 59, 48, 0.14);
   --red: #ff3b30;
   --red-dim: rgba(255, 59, 48, 0.12);
   --amber: #ffcc00;

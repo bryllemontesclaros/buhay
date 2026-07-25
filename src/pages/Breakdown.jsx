@@ -484,7 +484,7 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
                       {list.map((tx, index) => {
                         const isIncome = tx.type === 'income'
                         const sign = isIncome ? '+' : '−'
-                        const tone = isIncome ? 'var(--accent)' : 'var(--red)'
+                        const tone = isIncome ? 'var(--income)' : 'var(--red)'
                         const projectedBadge = tx._projected || tx.isProjected || tx.projected ? 'Projected cycle' : ''
                         
                         const displayDesc = tx.desc || tx.cat || 'Untitled'

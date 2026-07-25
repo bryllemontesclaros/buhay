@@ -2272,7 +2272,7 @@ function DayTxRow({
       style={{ animationDelay }}
     >
       <div className={calStyles.txLeft}>
-        <div className={calStyles.txIcon} style={{ background: isIncome ? 'var(--accent-glow)' : 'var(--red-dim)', color: isIncome ? 'var(--accent)' : 'var(--red)' }}>
+        <div className={calStyles.txIcon} style={{ background: isIncome ? 'var(--income-dim)' : 'var(--red-dim)', color: isIncome ? 'var(--income)' : 'var(--red)' }}>
           {isIncome ? '+' : '−'}
         </div>
         <div className={calStyles.txInfoBlock}>

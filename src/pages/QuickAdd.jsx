@@ -214,8 +214,8 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
       setError('Could not save this entry right now. Check your connection and try again.')
     }
   }
-  const color = isIncome ? 'var(--accent)' : 'var(--red)'
-  const bgColor = isIncome ? 'var(--accent-glow)' : 'var(--red-dim)'
+  const color = isIncome ? 'var(--income)' : 'var(--expense)'
+  const bgColor = isIncome ? 'var(--income-dim)' : 'var(--expense-dim)'
 
 
 
