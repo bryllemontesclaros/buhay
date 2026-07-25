@@ -466,7 +466,7 @@
 .activityDotInc {
   width: 5px;
   height: 5px;
-  background: var(--accent);
+  background: var(--income);
   border-radius: 50%;
   transition: transform 0.2s ease;
 }

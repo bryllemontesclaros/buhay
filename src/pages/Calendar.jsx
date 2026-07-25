@@ -1506,7 +1506,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             {selectedIncome.length > 0 && (
               <div className={calStyles.daySection}>
                 <div className={calStyles.daySectionHeader}>
-                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--accent)' }}>Income</div>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--income)' }}>Income</div>
                   <div className={calStyles.daySectionCount}>{selectedIncome.length}</div>
                 </div>
                 {selectedIncome.map((tx, index) => (
@@ -2054,7 +2054,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             )}
 
             <div className={calStyles.amountField}>
-              <span className={calStyles.amountSign} style={{ color: isIncome ? 'var(--accent)' : 'var(--red)' }}>
+              <span className={calStyles.amountSign} style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}>
                 {isIncome ? '+' : '−'}
               </span>
               <span className={calStyles.amountSymbol}>{s}</span>
@@ -2066,7 +2066,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 value={form.amount}
                 disabled={formSaving}
                 onChange={event => set('amount', event.target.value)}
-                style={{ color: isIncome ? 'var(--accent)' : 'var(--red)' }}
+                style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}
                 aria-label={`${isIncome ? 'Income' : 'Expense'} amount`}
               />
             </div>
@@ -2078,9 +2078,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   key={item.key}
                   className={`${calStyles.quickCat} ${form.presetKey === item.key ? calStyles.quickCatActive : ''}`}
                   style={form.presetKey === item.key ? {
-                    borderColor: isIncome ? 'var(--accent)' : 'var(--red)',
-                    background: isIncome ? 'var(--accent-glow)' : 'var(--red-dim)',
-                    color: isIncome ? 'var(--accent)' : 'var(--red)',
+                    borderColor: isIncome ? 'var(--income)' : 'var(--red)',
+                    background: isIncome ? 'var(--income-dim)' : 'var(--red-dim)',
+                    color: isIncome ? 'var(--income)' : 'var(--red)',
                   } : {}}
                   disabled={formSaving}
                   onClick={() => {
@@ -2296,7 +2296,7 @@ function DayTxRow({
         </div>
       </div>
       <div className={`${calStyles.txRight} ${isProjected ? calStyles.projectedTxRight : ''}`}>
-        <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? 'var(--accent)' : 'var(--red)') }}>
+        <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? 'var(--income)' : 'var(--red)') }}>
           {privacyMode ? 'Hidden' : `${isIncome ? '+' : '−'}${fmt(t.amount, s)}`}
         </div>
         {t._projected ? (
@@ -2311,9 +2311,9 @@ function DayTxRow({
                 style={recurringActionPending
                   ? undefined
                   : {
-                    background: isIncome ? 'var(--accent)' : 'var(--red)',
-                    borderColor: isIncome ? 'var(--accent)' : 'var(--red)',
-                    color: isIncome ? '#0a0a0f' : '#fff',
+                    background: isIncome ? 'var(--income)' : 'var(--red)',
+                    borderColor: isIncome ? 'var(--income)' : 'var(--red)',
+                    color: '#ffffff',
                   }}
               >
                 {recurringActionPending ? 'Saving...' : isIncome ? 'Record now' : 'Pay now'}
