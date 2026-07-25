@@ -1187,6 +1187,139 @@
   gap: 10px;
   margin-bottom: 14px;
 }
+/* Apple Spatial Program Card */
+.spatialProgramCard {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+  margin-bottom: 24px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, color-mix(in srgb, var(--text) 10%, transparent));
+  background: color-mix(in srgb, var(--surface2) 88%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: var(--shadow-resting);
+}
+
+.spatialProgramHeader {
+  display: grid;
+  gap: 12px;
+}
+
+.spatialProgramEyebrow {
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.spatialSegmentRail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.spatialSegmentRail::-webkit-scrollbar {
+  display: none;
+}
+
+.spatialSegmentBtn {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text2);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 0.22s var(--ease-spring-snap), background 0.2s ease, border-color 0.2s ease;
+}
+
+.spatialSegmentBtn:hover {
+  transform: translateY(-2px);
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.spatialSegmentActive {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--text);
+  box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.spatialSegmentBtn strong {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.spatialSegmentBtn span {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.spatialProgramDetails {
+  display: grid;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.spatialProgramInfo {
+  display: grid;
+  gap: 6px;
+}
+
+.spatialProgramTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spatialActiveBadge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+
+.spatialProgramInfo h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.spatialProgramInfo p {
+  font-size: 13px;
+  color: var(--text2);
+  margin: 0;
+}
+
+.spatialProgramInfo small {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.spatialLibraryActionRow {
+  margin-top: 6px;
+  width: 100%;
+}
 
 .guidanceDetails {
   position: relative;

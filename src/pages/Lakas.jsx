@@ -3315,58 +3315,42 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 	            </div>
 	          </div>
 
-	          <details
-	            ref={workoutPathRef}
-	            className={lStyles.guidanceDetails}
-	            open={pathChooserOpen}
-	            onToggle={event => setPathChooserOpen(event.currentTarget.open)}
-	          >
-	            <summary className={lStyles.advancedSummary}>
-	              <span>Change the program or open the routines library</span>
-	              <small>Only open this when today needs a different workout shape.</small>
-	            </summary>
-	            <div className={lStyles.sessionPicker} aria-label="Choose today&apos;s workout program">
-	              {todayPathOptions.map(option => (
-	                <button
-	                  key={option.key}
-	                  type="button"
-	                  className={`${lStyles.sessionChip} ${selectedGymSessionKey === option.key ? lStyles.sessionChipActive : ''}`}
-	                  onClick={() => setSelectedGymSessionKey(option.key)}
-	                  aria-pressed={selectedGymSessionKey === option.key}
-	                >
-	                  <strong>{option.title}</strong>
-	                  <span>{option.meta}</span>
-	                </button>
-	              ))}
+	          <div className={lStyles.spatialProgramCard}>
+	            <div className={lStyles.spatialProgramHeader}>
+	              <span className={lStyles.spatialProgramEyebrow}>Workout Program</span>
+	              <div className={lStyles.spatialSegmentRail} aria-label="Choose workout program">
+	                {todayPathOptions.map(option => (
+	                  <button
+	                    key={option.key}
+	                    type="button"
+	                    className={`${lStyles.spatialSegmentBtn} ${selectedGymSessionKey === option.key ? lStyles.spatialSegmentActive : ''}`}
+	                    onClick={() => setSelectedGymSessionKey(option.key)}
+	                    aria-pressed={selectedGymSessionKey === option.key}
+	                  >
+	                    <strong>{option.title}</strong>
+	                    <span>{option.meta}</span>
+	                  </button>
+	                ))}
+	              </div>
 	            </div>
-	            <div className={`${lStyles.todayGuidanceGrid} ${lStyles.pathChooserSupport}`}>
-	              <article className={lStyles.todayGuidanceCard}>
-	                <span className={lStyles.todayGuidanceEyebrow}>Current program</span>
-	                <div className={lStyles.todayGuidanceList}>
-	                  <div className={lStyles.todayGuidanceNote}>
-	                    <strong>{selectedGymSession.label}</strong>
-	                    <span>{coachingSystem.workout.selectedPathReason}</span>
-	                    <small>{todayPathOptions.find(option => option.key === selectedGymSessionKey)?.meta || selectedGymSession.desc}</small>
-	                  </div>
+
+	            <div className={lStyles.spatialProgramDetails}>
+	              <div className={lStyles.spatialProgramInfo}>
+	                <div className={lStyles.spatialProgramTitleRow}>
+	                  <span className={lStyles.spatialActiveBadge}>Active</span>
+	                  <h4>{selectedGymSession.label}</h4>
 	                </div>
-	              </article>
-	              <article className={lStyles.todayGuidanceCard}>
-	                <span className={lStyles.todayGuidanceEyebrow}>Routines library</span>
-	                <div className={lStyles.todayGuidanceList}>
-	                  <div className={lStyles.todayGuidanceNote}>
-	                    <strong>Saved routines and starter programs</strong>
-	                    <span>Browse the full library without losing today&apos;s recommended start.</span>
-	                    <small>Use this when you want to repeat a saved workout or pick a more deliberate program.</small>
-	                  </div>
-	                </div>
-	                <div className={lStyles.workoutLaunchActions}>
-	                  <Button type="button" variant="ghost" fullWidth onClick={openProgramsPanel}>
-	                    Open routines library
-	                  </Button>
-	                </div>
-	              </article>
+	                <p>{coachingSystem.workout.selectedPathReason}</p>
+	                <small>{todayPathOptions.find(option => option.key === selectedGymSessionKey)?.meta || selectedGymSession.desc}</small>
+	              </div>
+
+	              <div className={lStyles.spatialLibraryActionRow}>
+	                <Button type="button" variant="outline" fullWidth onClick={openProgramsPanel}>
+	                  Open Routines & Program Library ➔
+	                </Button>
+	              </div>
 	            </div>
-	          </details>
+	          </div>
 
           <details className={lStyles.advancedBox}>
             <summary className={lStyles.advancedSummary}>
