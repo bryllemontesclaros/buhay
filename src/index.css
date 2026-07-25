@@ -57,13 +57,13 @@
   --teal: #64d2ff;
   --teal-dim: rgba(100, 210, 255, 0.14);
 
-  --space-fitness: #f1909d;
-  --space-fitness-dim: rgba(241, 144, 157, 0.13);
-  --space-fitness-ink: #f1909d;
+  --space-fitness: #e11d48;
+  --space-fitness-dim: rgba(225, 29, 72, 0.14);
+  --space-fitness-ink: #e11d48;
 
-  --space-reflection: #9ca5ff;
-  --space-reflection-dim: rgba(156, 165, 255, 0.14);
-  --space-reflection-ink: #9ca5ff;
+  --space-reflection: #af52de;
+  --space-reflection-dim: rgba(175, 82, 222, 0.14);
+  --space-reflection-ink: #af52de;
 
   --space-1: 4px;
   --space-2: 8px;
