@@ -236,13 +236,13 @@
   --teal: #5ac8fa;
   --teal-dim: rgba(90, 200, 250, 0.12);
   
-  --space-fitness: #d66c7e;
-  --space-fitness-dim: rgba(214, 108, 126, 0.12);
-  --space-fitness-ink: #a82b41;
+  --space-fitness: #ff4500;
+  --space-fitness-dim: rgba(255, 69, 0, 0.14);
+  --space-fitness-ink: #ea580c;
 
-  --space-reflection: #7c6ce0;
-  --space-reflection-dim: rgba(124, 108, 224, 0.12);
-  --space-reflection-ink: #5a4bb8;
+  --space-reflection: #c084fc;
+  --space-reflection-dim: rgba(192, 132, 252, 0.14);
+  --space-reflection-ink: #a855f7;
   
   --bento-surface: #ffffff;
   --bento-surface-soft: #f8f9fa;

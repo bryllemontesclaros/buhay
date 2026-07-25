@@ -2435,12 +2435,14 @@
 /* Light theme high-contrast space accents */
 :global([data-theme="light"]) .shellLakas,
 :global(.force-light-theme) .shellLakas {
-  --accent: var(--space-fitness-ink);
+  --accent: #ff4500;
+  --accent-dim: rgba(255, 69, 0, 0.14);
 }
 
 :global([data-theme="light"]) .shellTala,
 :global(.force-light-theme) .shellTala {
-  --accent: var(--space-reflection-ink);
+  --accent: #c084fc;
+  --accent-dim: rgba(192, 132, 252, 0.14);
 }
 
 /* Changelog Modal Overlay */
