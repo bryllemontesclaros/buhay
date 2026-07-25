@@ -229,18 +229,16 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  border: 1px solid var(--border2);
   border-radius: 24px;
   padding: 24px;
-  /* box-shadow flattened */
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s var(--ease-spring-snap),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
   overflow: hidden;
   animation: cardEntrance 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -248,38 +246,50 @@
 :global([data-theme="dark"]) .card {
   display: flex;
   flex-direction: column;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  border: 1px solid var(--border2);
   border-radius: 24px;
   padding: 24px;
-  /* box-shadow flattened */
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s var(--ease-spring-snap),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
   overflow: hidden;
   animation: cardEntrance 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .card:hover {
-  transform: translateY(-6px) scale(1.005);
-  /* box-shadow flattened */
+  transform: translateY(-4px) scale(1.005);
 }
 
-.wealthCard:hover { border-color: var(--accent); }
-.healthCard:hover { border-color: var(--blue); }
-.mindCard:hover { border-color: var(--purple); }
-
-:global([data-theme="dark"]) .card:hover {
-  /* box-shadow flattened */
+.wealthCard {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
 }
 
-:global([data-theme="dark"]) .wealthCard:hover { border-color: var(--accent); }
-:global([data-theme="dark"]) .healthCard:hover { border-color: var(--blue); }
-:global([data-theme="dark"]) .mindCard:hover { border-color: var(--purple); }
+.wealthCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--accent) 25%, rgba(0, 0, 0, 0.4));
+}
+
+.healthCard {
+  border-color: color-mix(in srgb, var(--space-fitness) 30%, var(--border2));
+}
+
+.healthCard:hover {
+  border-color: var(--space-fitness);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--space-fitness) 25%, rgba(0, 0, 0, 0.4));
+}
+
+.mindCard {
+  border-color: color-mix(in srgb, var(--purple) 30%, var(--border2));
+}
+
+.mindCard:hover {
+  border-color: var(--purple);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--purple) 25%, rgba(0, 0, 0, 0.4));
+}
 
 /* Wealth spans both rows */
 .wealthCard {
