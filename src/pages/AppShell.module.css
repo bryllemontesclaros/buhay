@@ -39,24 +39,43 @@
     linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent) !important; flat */
 }
 
+.shellTakda {
+  --accent: #10b981;
+  --accent-dim: rgba(16, 185, 129, 0.14);
+  --accent-glow: rgba(16, 185, 129, 0.20);
+}
+
+:global([data-theme="light"]) .shellTakda,
+:global(.force-light-theme) .shellTakda {
+  --accent: #059669;
+  --accent-dim: rgba(5, 150, 105, 0.12);
+  --accent-glow: rgba(5, 150, 105, 0.18);
+}
+
 .shellLakas {
-  --accent: var(--space-fitness);
-  --accent-dim: color-mix(in srgb, var(--space-fitness) 74%, black 26%);
-  --accent-glow: var(--space-fitness-dim);
-  --blue: color-mix(in srgb, var(--space-fitness) 72%, white 28%);
-  --blue-dim: color-mix(in srgb, var(--space-fitness-dim) 88%, white 12%);
-  --purple: color-mix(in srgb, var(--space-fitness) 48%, white 52%);
-  --purple-dim: color-mix(in srgb, var(--space-fitness-dim) 82%, white 18%);
+  --accent: #ff4500;
+  --accent-dim: rgba(255, 69, 0, 0.14);
+  --accent-glow: rgba(255, 69, 0, 0.20);
+}
+
+:global([data-theme="light"]) .shellLakas,
+:global(.force-light-theme) .shellLakas {
+  --accent: #ea580c;
+  --accent-dim: rgba(234, 88, 12, 0.12);
+  --accent-glow: rgba(234, 88, 12, 0.18);
 }
 
 .shellTala {
-  --accent: var(--space-reflection);
-  --accent-dim: color-mix(in srgb, var(--space-reflection) 74%, black 26%);
-  --accent-glow: var(--space-reflection-dim);
-  --blue: color-mix(in srgb, var(--space-reflection) 62%, white 38%);
-  --blue-dim: color-mix(in srgb, var(--space-reflection-dim) 88%, white 12%);
-  --purple: color-mix(in srgb, var(--space-reflection) 42%, white 58%);
-  --purple-dim: color-mix(in srgb, var(--space-reflection-dim) 82%, white 18%);
+  --accent: #c084fc;
+  --accent-dim: rgba(192, 132, 252, 0.14);
+  --accent-glow: rgba(192, 132, 252, 0.20);
+}
+
+:global([data-theme="light"]) .shellTala,
+:global(.force-light-theme) .shellTala {
+  --accent: #9333ea;
+  --accent-dim: rgba(147, 51, 234, 0.12);
+  --accent-glow: rgba(147, 51, 234, 0.18);
 }
 
 .shell::before {

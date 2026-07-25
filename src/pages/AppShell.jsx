@@ -1685,7 +1685,7 @@ export default function AppShell({ user }) {
           ]
 
   return (
-    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
+    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'takda' ? styles.shellTakda : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
       <a href="#app-main" className="skipLink">Skip to main content</a>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
