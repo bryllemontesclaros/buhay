@@ -129,11 +129,12 @@
   font-size: 12px;
   font-weight: 600;
   border-radius: 12px;
-  border: 1px solid var(--border2);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, white 16%), color-mix(in srgb, var(--accent) 72%, var(--blue) 28%));
-  color: var(--space-finance-ink);
+  border: none;
+  background: var(--accent);
+  color: #ffffff !important;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 28%, transparent);
+  transition: transform 0.22s var(--ease-spring-snap), box-shadow 0.22s var(--ease-spring-smooth);
 }
 
 .payBtn:active {
