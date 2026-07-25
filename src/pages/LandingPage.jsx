@@ -552,6 +552,31 @@ export default function LandingPage() {
           
           <div className={styles.featureGrid}>
             <div className={styles.featureCard}>
+              <div className={`${styles.featureLabel} ${styles.labelBuhay}`}>Buhay Home</div>
+              <h3 className={styles.featureTitle}>Dashboard</h3>
+              <p className={styles.featureDesc}>
+                A customizable cockpit dashboard bringing together cash flow projections, daily workout habits, and mood check-in circles on one screen.
+              </p>
+              <div style={{ marginTop: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ background: 'var(--bg-base)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Central Cockpit</div>
+                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
+                    <span>💵 Takda Net Cashflow</span>
+                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>+₱45,210</span>
+                  </div>
+                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
+                    <span>🔥 Lakas Fitness Ring</span>
+                    <span style={{ color: '#ff4500', fontWeight: 'bold' }}>80% Completed</span>
+                  </div>
+                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
+                    <span>✨ Tala Daily Mood</span>
+                    <span style={{ color: '#c084fc', fontWeight: 'bold' }}>Calm & Focused</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.featureCard}>
               <div className={`${styles.featureLabel} ${styles.labelTakda}`}>Takda</div>
               <h3 className={styles.featureTitle}>Money</h3>
               <p className={styles.featureDesc}>

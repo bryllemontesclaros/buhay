@@ -3,9 +3,10 @@
   --text-primary: #111111;
   --text-muted: #666666;
   --border-light: #eaeaea;
-  --accent: #ff4500;
-  --blue: #007aff;
-  --purple: #af52de;
+  --accent: #111111;
+  --takda: #10b981;
+  --lakas: #ff4500;
+  --tala: #c084fc;
   --font-main: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
   
   background: var(--bg-base);
@@ -21,6 +22,7 @@
   --text-primary: #f0f0f0;
   --text-muted: #888888;
   --border-light: #333333;
+  --accent: #ffffff;
 }
 
 /* Base layout containers */
@@ -231,9 +233,10 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.labelTakda { color: var(--blue); }
-.labelLakas { color: var(--accent); }
-.labelTala { color: var(--purple); }
+.labelBuhay { color: var(--text-primary); }
+.labelTakda { color: var(--takda); }
+.labelLakas { color: var(--lakas); }
+.labelTala { color: var(--tala); }
 
 .featureTitle {
   font-size: 28px;
