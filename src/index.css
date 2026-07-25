@@ -196,29 +196,27 @@
 [data-theme="light"], .force-light-theme {
   color-scheme: light;
 
-  --bg: #ffffff;
-  --bg-deep: #f8f9fa;
+  --bg: #f5f6f8;
+  --bg-deep: #ebedef;
   --surface: #ffffff;
-  --surface2: #f8f9fa;
-  --surface3: #eaeaea;
+  --surface2: color-mix(in srgb, var(--accent) 3%, #ffffff);
+  --surface3: color-mix(in srgb, var(--accent) 6%, #ffffff);
   --surface-solid: #ffffff;
   --surface-solid-2: #f8f9fa;
-  --surface-solid-3: #eaeaea;
+  --surface-solid-3: #f0f2f5;
 
-  /* Neo Brutalism overrides */
-
-  --border: #eaeaea;
-  --border2: #cccccc;
+  --border: color-mix(in srgb, var(--text) 8%, transparent);
+  --border2: color-mix(in srgb, var(--text) 14%, transparent);
   
-  --glass-1: transparent;
-  --glass-2: transparent;
-  --glass-3: transparent;
-  --glass-bg: transparent;
-  --glass-border: #eaeaea;
-  --glass-highlight: transparent;
-  --glass-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.04);
-  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-  --glass-shadow-strong: 0 24px 80px rgba(0, 0, 0, 0.12);
+  --glass-1: rgba(255, 255, 255, 0.75);
+  --glass-2: rgba(255, 255, 255, 0.85);
+  --glass-3: rgba(255, 255, 255, 0.95);
+  --glass-bg: rgba(255, 255, 255, 0.80);
+  --glass-border: color-mix(in srgb, var(--text) 8%, transparent);
+  --glass-highlight: rgba(255, 255, 255, 0.80);
+  --glass-shadow-soft: 0 2px 8px -1px rgba(0, 0, 0, 0.04);
+  --glass-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.06);
+  --glass-shadow-strong: 0 16px 48px -4px rgba(0, 0, 0, 0.10);
 
   --text: #111111;
   --text2: #666666;

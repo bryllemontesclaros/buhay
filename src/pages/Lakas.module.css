@@ -5900,9 +5900,12 @@
   }
   
   .guidanceDetails .sessionPicker .sessionChip {
-    flex: 0 0 auto !important;
-    min-width: 132px !important;
-    min-height: 48px !important;
+    flex: 1 1 140px !important;
+    min-width: 140px !important;
+    max-width: 100% !important;
+    min-height: 52px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
     scroll-snap-align: start !important;
   }
 

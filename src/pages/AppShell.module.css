@@ -1610,8 +1610,8 @@
   .main {
     flex: 1;
     overflow-y: auto;
-    /* Extra breathing room so key stats don't sit under the fixed bottom nav + mobile browser UI. */
-    padding-bottom: calc(var(--app-mobile-bottom-offset) + 32px);
+    /* Extra breathing room so key stats don't sit under the fixed bottom nav + floating action buttons. */
+    padding-bottom: calc(var(--app-mobile-bottom-offset) + 110px);
     -webkit-overflow-scrolling: touch;
     position: relative !important;
     z-index: 1 !important;
