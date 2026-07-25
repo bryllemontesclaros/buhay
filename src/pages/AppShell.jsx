@@ -1385,6 +1385,14 @@ export default function AppShell({ user }) {
   // The neo palette itself flips via `[data-theme="dark"] .neo` tokens in `index.css`.
   const neoEnabled = false
 
+  function openSettings() {
+    playTick()
+    setActiveSpace('takda')
+    setPage('settings')
+    setMobileNavMenuOpen(false)
+    setWorkspaceDropdownOpen(false)
+  }
+
   function openSpace(nextSpace) {
     setMobileNavMenuOpen(false)
     setWorkspaceDropdownOpen(false)
@@ -1726,7 +1734,7 @@ export default function AppShell({ user }) {
                   }
                   if (activeSpace === 'dashboard') {
                     // Stay in Buhay space — just switch sub-page (main, settings)
-                    if (n.id === 'settings') setPage('settings')
+                    if (n.id === 'settings') openSettings()
                     else setPage('main')
                     return
                   }
@@ -1763,9 +1771,7 @@ export default function AppShell({ user }) {
             <button
               type="button"
               className={styles.btnSettings}
-              onClick={() => {
-                setPage('settings')
-              }}
+              onClick={openSettings}
               title="Settings"
             >
               <span className={styles.icon} aria-hidden="true">{NAV_ICONS.settings}</span>
@@ -2021,7 +2027,7 @@ export default function AppShell({ user }) {
                   className={`${styles.mobileNavLink} ${n.space === 'lakas' ? resolvedLakasPage === n.id ? styles.mobileNavLinkActive : '' : n.space === 'tala' ? talaPage === n.id ? styles.mobileNavLinkActive : '' : page === n.id ? styles.mobileNavLinkActive : ''}`}
                   onClick={() => {
                     if (n.id === 'settings') {
-                      setPage('settings')
+                      openSettings()
                     } else if (n.space === 'lakas') {
                       openSpace('lakas')
                       setLakasPage(n.id)
