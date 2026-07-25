@@ -7,14 +7,32 @@
   flex-shrink: 0;
   min-height: 40px;
   padding: 8px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border2);
   font-family: var(--font-body);
   font-size: var(--type-body);
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
+
+  /* Hardware Accelerated Spring Physics */
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  transition: 
+    transform 0.22s var(--ease-spring-snap, cubic-bezier(0.175, 0.885, 0.32, 1.275)),
+    box-shadow 0.22s var(--ease-spring-smooth, cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.015);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.96);
+  transition-duration: 0.08s;
 }
 
 .btnSm {

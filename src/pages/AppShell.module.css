@@ -341,12 +341,14 @@
   background: color-mix(in srgb, var(--glass-1) 70%, transparent);
   color: var(--text2);
   cursor: pointer;
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
   transition:
-    transform var(--motion-duration) var(--motion-ease-out),
-    border-color var(--motion-duration) var(--motion-ease-standard),
-    background var(--motion-duration) var(--motion-ease-standard),
-    color var(--motion-duration) var(--motion-ease-standard),
-    box-shadow var(--motion-duration) var(--motion-ease-standard);
+    transform 0.22s var(--ease-spring-snap, cubic-bezier(0.175, 0.885, 0.32, 1.275)),
+    border-color 0.20s ease,
+    background 0.20s ease,
+    color 0.20s ease,
+    box-shadow 0.20s ease;
 }
 
 .spaceRailBtn svg {
@@ -355,24 +357,27 @@
 }
 
 .spaceRailBtn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.04);
   color: var(--text);
   border-color: color-mix(in srgb, var(--glass-highlight) 32%, var(--glass-border));
 }
 
 .spaceRailBtn:active {
-  transform: translateY(0);
+  transform: translateY(1px) scale(0.95);
+  transition-duration: 0.08s;
 }
 
 .spaceRailBtnActive {
   background: color-mix(in srgb, var(--accent) 18%, var(--glass-1));
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
+  box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .spaceRailBtnActive:hover {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
+  transform: translateY(-2px) scale(1.04);
 }
 
 .sidebarNav {
