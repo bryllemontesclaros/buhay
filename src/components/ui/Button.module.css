@@ -49,68 +49,81 @@
   color: #ffffff;
   background: var(--accent);
   border-color: transparent;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.primaryBtn:hover,
+.primaryBtn:focus-visible {
+  transform: translateY(-2px) scale(1.015);
+  background: color-mix(in srgb, var(--accent) 90%, #ffffff);
+  border-color: transparent;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 38%, transparent);
 }
 
 .incomeBtn {
   color: #ffffff;
   background: var(--income);
   border-color: transparent;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--income) 28%, transparent);
 }
 
 .incomeBtn:hover,
 .incomeBtn:focus-visible {
-  transform: translateY(-1px);
-  background: color-mix(in srgb, var(--income) 85%, white);
+  transform: translateY(-2px) scale(1.015);
+  background: color-mix(in srgb, var(--income) 90%, #ffffff);
   border-color: transparent;
-  box-shadow: var(--glass-shadow-soft);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--income) 38%, transparent);
 }
 
-.primaryBtn:disabled,
-.secondaryBtn:disabled,
-.ghostBtn:disabled,
-.dangerBtn:disabled,
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.secondaryBtn,
-.ghostBtn {
-  color: var(--text2);
-  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  border-color: color-mix(in srgb, var(--glass-border) 58%, var(--border));
+.secondaryBtn {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .secondaryBtn:hover,
-.ghostBtn:hover {
-  background: color-mix(in srgb, var(--glass-2) 74%, var(--surface3) 26%);
-  border-color: color-mix(in srgb, var(--glass-highlight) 28%, var(--border2));
+.secondaryBtn:focus-visible {
+  transform: translateY(-2px) scale(1.012);
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface2));
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.outlineBtn {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.outlineBtn:hover,
+.outlineBtn:focus-visible {
+  transform: translateY(-2px) scale(1.01);
+  background: color-mix(in srgb, var(--surface2) 90%, transparent);
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
 }
 
 .ghostBtn {
+  color: var(--text2);
   background: transparent;
   border-color: transparent;
 }
 
-.ghostBtn:hover {
-  background: var(--glass-1);
+.ghostBtn:hover,
+.ghostBtn:focus-visible {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
 }
 
-.primaryBtn:hover,
-.primaryBtn:focus-visible {
-  transform: translateY(-1px);
-  background: color-mix(in srgb, var(--accent) 85%, white);
-  border-color: transparent;
-  box-shadow: var(--glass-shadow-soft);
-}
-
-:global([data-theme="light"]) .primaryBtn:hover,
-:global([data-theme="light"]) .primaryBtn:focus-visible,
-:global(.force-light-theme) .primaryBtn:hover,
-:global(.force-light-theme) .primaryBtn:focus-visible {
-  background: color-mix(in srgb, var(--text) 85%, white);
-  border-color: transparent;
+.primaryBtn:disabled,
+.secondaryBtn:disabled,
+.outlineBtn:disabled,
+.ghostBtn:disabled,
+.dangerBtn:disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .dangerBtn {

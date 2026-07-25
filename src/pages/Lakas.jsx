@@ -3689,13 +3689,13 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                   <small>{template.duration || estimateRoutineMinutes(template.exercises)} min · {normalizeRows(template.exercises).length} exercises</small>
                 </div>
                 <div className={lStyles.routineActions}>
-                  <button type="button" onClick={() => openGymSessionMode(template, {
+                  <Button type="button" variant="primary" size="sm" onClick={() => openGymSessionMode(template, {
                     key: normalizeExerciseKey(template.name),
                     label: template.name,
                     templateName: template.name,
                     desc: template.notes || 'Guided routine',
-                  })}>Start</button>
-                  <button type="button" onClick={() => applyRoutineTemplate(template)}>Edit</button>
+                  })}>Start</Button>
+                  <Button type="button" variant="secondary" size="sm" onClick={() => applyRoutineTemplate(template)}>Edit</Button>
                 </div>
               </article>
             ))}
