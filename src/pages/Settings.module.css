@@ -1398,6 +1398,29 @@
     padding-bottom: calc(var(--app-mobile-bottom-offset, 80px) + 120px);
   }
   
+  .heroSection {
+    margin-bottom: 0.5rem;
+  }
+
+  .heroCopy {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .pageEyebrow {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+    line-height: 1.1;
+  }
+
+  .pageSub {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
   .settingsSelect {
     min-height: 48px;
     font-size: 16px; /* Prevents auto-zoom on mobile iOS */

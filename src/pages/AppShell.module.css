@@ -2636,19 +2636,34 @@
 
 @media (max-width: 768px) {
   .settingsModalOverlay {
-    padding: 12px;
+    padding: calc(env(safe-area-inset-top, 44px) + 8px) 10px calc(env(safe-area-inset-bottom, 16px) + 10px) 10px;
     align-items: flex-end;
   }
   .settingsModalContent {
-    max-height: 90vh;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    max-height: calc(100vh - env(safe-area-inset-top, 44px) - 20px);
+    border-radius: 20px;
+    box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.5);
   }
   .settingsModalHeader {
-    padding: 16px 20px;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--surface) 96%, var(--bg));
+  }
+  .settingsModalTitle {
+    font-size: 17px;
+  }
+  .settingsModalSub {
+    font-size: 11px;
+  }
+  .settingsModalIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
   .settingsModalBody {
-    padding: 16px;
+    padding: 12px;
   }
 }
 
