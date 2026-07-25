@@ -238,15 +238,15 @@
 }
 
 .sidebarGuideDotTakda {
-  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-finance) 28%, white 10%), color-mix(in srgb, var(--space-finance) 80%, black 20%)); flat */
+  background: #10b981;
 }
 
 .sidebarGuideDotLakas {
-  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-fitness) 28%, white 10%), color-mix(in srgb, var(--space-fitness) 80%, black 20%)); flat */
+  background: #ff4500;
 }
 
 .sidebarGuideDotTala {
-  /* background: linear-gradient(180deg, color-mix(in srgb, var(--space-reflection) 28%, white 10%), color-mix(in srgb, var(--space-reflection) 80%, black 20%)); flat */
+  background: #c084fc;
 }
 
 .sidebarGuideDotActive {
