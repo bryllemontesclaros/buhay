@@ -633,12 +633,20 @@
 .advancedBox {
   position: relative;
   z-index: 1;
-  margin-top: 10px;
-  border: 1px solid var(--border2);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  /* box-shadow flattened */
+  margin-top: 14px;
+  border: 1px solid color-mix(in srgb, var(--purple) 25%, var(--border2));
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.25), 0 0 0 1px color-mix(in srgb, var(--purple) 12%, transparent);
   overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.advancedBox:hover {
+  border-color: color-mix(in srgb, var(--purple) 45%, var(--border2));
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--purple) 22%, rgba(0, 0, 0, 0.35));
 }
 
 .advancedSummary {
@@ -646,13 +654,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 46px;
-  padding: 10px 12px;
-  color: var(--text2);
-  font-size: var(--type-body-sm);
-  font-weight: 600;
+  min-height: 52px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 650;
   cursor: pointer;
   list-style: none;
+  background: color-mix(in srgb, var(--purple) 4%, transparent);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.advancedSummary:hover {
+  background: color-mix(in srgb, var(--purple) 10%, transparent);
 }
 
 .advancedSummary::-webkit-details-marker {
@@ -660,28 +674,32 @@
 }
 
 .advancedSummary::after {
-  content: '+';
-  width: 24px;
-  height: 24px;
+  content: '✦';
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface2) 78%, white 22%);
-  color: var(--text3);
-  font-family: var(--font-mono);
-  font-size: var(--type-title-sm);
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--purple) 35%, transparent);
+  background: color-mix(in srgb, var(--purple) 14%, var(--surface2));
+  color: var(--purple);
+  font-size: 12px;
   line-height: 1;
+  transition: transform 0.25s var(--ease-spring-snap), background 0.2s ease, color 0.2s ease;
 }
 
 .advancedBox[open] .advancedSummary::after {
-  content: '-';
+  content: '✕';
+  transform: rotate(90deg);
+  background: var(--purple);
+  color: #ffffff !important;
 }
 
 .advancedSummary small {
-  color: var(--text3);
-  font-size: var(--type-caption);
-  font-weight: 650;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .advancedGrid {
