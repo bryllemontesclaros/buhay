@@ -537,6 +537,7 @@ function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pag
 
 export default function AppShell({ user }) {
   const [activeSpace, setActiveSpace] = useState('dashboard')
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
   const [lakasPage, setLakasPage] = useState(DEFAULT_SPACE_PAGES.lakas)
   const [talaPage, setTalaPage] = useState(DEFAULT_SPACE_PAGES.tala)
@@ -1387,8 +1388,7 @@ export default function AppShell({ user }) {
 
   function openSettings() {
     playTick()
-    setActiveSpace('takda')
-    setPage('settings')
+    setIsSettingsOpen(true)
     setMobileNavMenuOpen(false)
     setWorkspaceDropdownOpen(false)
   }
@@ -1402,9 +1402,6 @@ export default function AppShell({ user }) {
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
     const normalizedSpace = ['dashboard', 'takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'dashboard'
     setActiveSpace(normalizedSpace)
-    if (page === 'settings') {
-      setPage(DEFAULT_SPACE_PAGES.takda)
-    }
     if (normalizedSpace === 'takda') setPage(DEFAULT_SPACE_PAGES.takda)
     if (normalizedSpace === 'lakas') setLakasPage(DEFAULT_SPACE_PAGES.lakas)
     if (normalizedSpace === 'tala') setTalaPage(DEFAULT_SPACE_PAGES.tala)
@@ -2103,6 +2100,34 @@ export default function AppShell({ user }) {
               <Button type="button" variant="primary" fullWidth onClick={dismissChangelog}>
                 Awesome, got it!
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isSettingsOpen && (
+        <div className={styles.settingsModalOverlay} onClick={() => setIsSettingsOpen(false)}>
+          <div className={styles.settingsModalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.settingsModalHeader}>
+              <div className={styles.settingsModalTitleGroup}>
+                <span className={styles.settingsModalIcon}>{NAV_ICONS.settings}</span>
+                <div>
+                  <h3 className={styles.settingsModalTitle}>Settings</h3>
+                  <div className={styles.settingsModalSub}>
+                    Preferences & system defaults for {activeSpaceConfig.label}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.settingsModalCloseBtn}
+                onClick={() => setIsSettingsOpen(false)}
+                aria-label="Close Settings"
+              >
+                ✕
+              </button>
+            </div>
+            <div className={styles.settingsModalBody}>
+              <Settings {...pageProps} />
             </div>
           </div>
         </div>
