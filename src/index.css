@@ -41,9 +41,9 @@
   --text2: #aaaaaa;
   --text3: #888888;
 
-  --accent: #10b981;
-  --accent-dim: rgba(16, 185, 129, 0.14);
-  --accent-glow: rgba(16, 185, 129, 0.20);
+  --accent: #ffffff;
+  --accent-dim: rgba(255, 255, 255, 0.12);
+  --accent-glow: rgba(255, 255, 255, 0.16);
   --income: #30d158;
   --income-dim: rgba(48, 209, 88, 0.16);
   --income-glow: rgba(48, 209, 88, 0.22);
@@ -222,9 +222,9 @@
   --text2: #666666;
   --text3: #888888;
 
-  --accent: #ff4500;
-  --accent-dim: rgba(255, 69, 0, 0.12);
-  --accent-glow: rgba(255, 69, 0, 0.16);
+  --accent: #111111;
+  --accent-dim: rgba(17, 17, 17, 0.08);
+  --accent-glow: rgba(17, 17, 17, 0.12);
   --income: #28cd41;
   --income-dim: rgba(40, 205, 65, 0.14);
   --income-glow: rgba(40, 205, 65, 0.20);
