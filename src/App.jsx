@@ -1,16 +1,19 @@
-import { useEffect, useState, createContext, useContext } from 'react'
+import { useEffect, useState, createContext, useContext, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './lib/firebase'
 import { doc, onSnapshot } from 'firebase/firestore'
-import AuthScreen from './pages/AuthScreen'
-import AppShell from './pages/AppShell'
-import Onboarding from './pages/Onboarding'
-import LandingPage from './pages/LandingPage'
-import PrivacyPolicy from './pages/PrivacyPolicy'
-import TermsPage from './pages/TermsPage'
 import { PageLoader } from './components/Loading'
 import AppFeedback from './components/AppFeedback'
+import ErrorBoundary from './components/ErrorBoundary'
+
+// Lazy-loaded route components for performance code-splitting
+const LandingPage = lazy(() => import('./pages/LandingPage'))
+const AuthScreen = lazy(() => import('./pages/AuthScreen'))
+const AppShell = lazy(() => import('./pages/AppShell'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
 
 const AUTH_FLASH_KEY = 'takda_auth_flash'
 
@@ -150,17 +153,21 @@ export default function App() {
   const authState = useAuth()
 
   return (
-    <AuthContext.Provider value={authState}>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<AuthRoute />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/app" element={<ProtectedRoute />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <AppFeedback />
-    </AuthContext.Provider>
+    <ErrorBoundary>
+      <AuthContext.Provider value={authState}>
+        <Suspense fallback={<PageLoader message="Loading..." />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<AuthRoute />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/app" element={<ProtectedRoute />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+        <AppFeedback />
+      </AuthContext.Provider>
+    </ErrorBoundary>
   )
 }
 

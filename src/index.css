@@ -32,9 +32,9 @@
   --text2: #aaaaaa;
   --text3: #888888;
 
-  --accent: #ffffff;
-  --accent-dim: #cccccc;
-  --accent-glow: rgba(255, 255, 255, 0.16);
+  --accent: #ff4500;
+  --accent-dim: rgba(255, 69, 0, 0.16);
+  --accent-glow: rgba(255, 69, 0, 0.22);
   --peach: #ff9f0a;
   --peach-dim: rgba(255, 159, 10, 0.14);
   --iris: #5e5ce6;
