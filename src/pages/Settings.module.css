@@ -1384,3 +1384,31 @@
 .btnTala:hover {
   background: color-mix(in srgb, var(--space-reflection) 85%, white) !important;
 }
+
+/* Responsive Layout Optimizations (Desktop, Tablet, Mobile) */
+@media (max-width: 900px) {
+  .heroSection {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settingsPage {
+    padding-bottom: calc(var(--app-mobile-bottom-offset, 80px) + 120px);
+  }
+  
+  .settingsSelect {
+    min-height: 48px;
+    font-size: 16px; /* Prevents auto-zoom on mobile iOS */
+  }
+
+  .settingsFormGroup label {
+    font-size: 12px;
+  }
+
+  .settingsActionRow {
+    margin-top: 16px;
+    padding-bottom: 32px;
+  }
+}
