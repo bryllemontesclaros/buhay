@@ -2106,17 +2106,6 @@ export default function AppShell({ user }) {
       )}
       {isSettingsOpen && (
         <div className={styles.settingsModalOverlay} onClick={() => setIsSettingsOpen(false)}>
-          <button
-            type="button"
-            className={styles.settingsFloatingCloseBtn}
-            onClick={(e) => {
-              e.stopPropagation()
-              setIsSettingsOpen(false)
-            }}
-            aria-label="Close Settings"
-          >
-            Done ✕
-          </button>
           <div className={styles.settingsModalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.settingsModalHeader}>
               <div className={styles.settingsModalTitleGroup}>
@@ -2128,23 +2117,14 @@ export default function AppShell({ user }) {
                   </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button
-                  type="button"
-                  className={styles.settingsHeaderDoneBtn}
-                  onClick={() => setIsSettingsOpen(false)}
-                >
-                  Done
-                </button>
-                <button
-                  type="button"
-                  className={styles.settingsModalCloseBtn}
-                  onClick={() => setIsSettingsOpen(false)}
-                  aria-label="Close Settings"
-                >
-                  ✕
-                </button>
-              </div>
+              <button
+                type="button"
+                className={styles.settingsModalCloseBtn}
+                onClick={() => setIsSettingsOpen(false)}
+                aria-label="Close Settings"
+              >
+                ✕
+              </button>
             </div>
             <div className={styles.settingsModalBody}>
               <Settings {...pageProps} />
