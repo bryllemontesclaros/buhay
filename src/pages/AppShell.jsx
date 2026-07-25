@@ -1141,14 +1141,14 @@ export default function AppShell({ user }) {
     bills: Bills,
     subscriptions: Subscriptions,
   }
-  const PageComponent = page === 'settings'
-    ? Settings
-    : activeSpace === 'dashboard'
-      ? Dashboard
-      : activeSpace === 'lakas'
-        ? Lakas
-        : activeSpace === 'tala'
-          ? Tala
+  const PageComponent = activeSpace === 'dashboard'
+    ? Dashboard
+    : activeSpace === 'lakas'
+      ? Lakas
+      : activeSpace === 'tala'
+        ? Tala
+        : page === 'settings'
+          ? Settings
           : financePages[page] || Calendar
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
@@ -1394,6 +1394,9 @@ export default function AppShell({ user }) {
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
     const normalizedSpace = ['dashboard', 'takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'dashboard'
     setActiveSpace(normalizedSpace)
+    if (page === 'settings') {
+      setPage(DEFAULT_SPACE_PAGES.takda)
+    }
     if (normalizedSpace === 'takda') setPage(DEFAULT_SPACE_PAGES.takda)
     if (normalizedSpace === 'lakas') setLakasPage(DEFAULT_SPACE_PAGES.lakas)
     if (normalizedSpace === 'tala') setTalaPage(DEFAULT_SPACE_PAGES.tala)
