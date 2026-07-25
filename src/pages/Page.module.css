@@ -541,7 +541,7 @@
 .presetToggle,
 .badge,
 .goalDateChip {
-  /* box-shadow flattened */
+  box-shadow: var(--shadow-resting);
 }
 
 .chip {
@@ -924,11 +924,9 @@ tbody tr:hover td {
   opacity: 0.95;
 }
 
-.progressFill.almost {
-  background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 76%, white 24%));
-}
 .progressFill.almost::after {
-  /* box-shadow flattened */
+  content: '';
+  box-shadow: 0 0 10px var(--amber);
 }
 
 .goalMeta {
