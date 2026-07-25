@@ -1194,10 +1194,13 @@
   display: grid;
   gap: 10px;
   margin-top: 10px;
-  margin-bottom: 14px;
-  border-radius: 22px;
-  border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
+  margin-bottom: 20px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  background: color-mix(in srgb, var(--surface2) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-resting);
   overflow: hidden;
 }
 
@@ -1234,11 +1237,10 @@
 .todayGuidanceCard {
   display: grid;
   gap: 12px;
-  padding: 18px;
-  border-radius: 24px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
 }
 
 .todayGuidanceEyebrow {
@@ -5900,10 +5902,11 @@
   }
   
   .guidanceDetails .sessionPicker .sessionChip {
-    flex: 1 1 140px !important;
-    min-width: 140px !important;
-    max-width: 100% !important;
-    min-height: 52px !important;
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    max-width: 220px !important;
+    min-height: 54px !important;
+    padding: 10px 16px !important;
     white-space: normal !important;
     word-break: break-word !important;
     scroll-snap-align: start !important;
