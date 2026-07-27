@@ -389,6 +389,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
   const safeDebts = useMemo(() => Array.isArray(data.debts) ? data.debts.filter(Boolean) : [], [data.debts])
   const safeAccounts = useMemo(() => Array.isArray(data.accounts) ? data.accounts.filter(Boolean) : [], [data.accounts])
+  const accounts = safeAccounts
 
   const creditCardAccounts = useMemo(() => safeAccounts.filter(a => a && a.type === 'Credit Card'), [safeAccounts])
 
