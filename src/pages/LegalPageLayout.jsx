@@ -22,25 +22,14 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
         path={metaPath || '/'}
       />
       <a href="#legal-main" className="skipLink">Skip to main content</a>
-      <div className={styles.ribbon} aria-hidden="true">
-        <div className={styles.ribbonTrack}>
-          <span className={styles.ribbonItem}>Privacy and trust · one calm account · clear limits</span>
-          <span className={styles.ribbonItem}>Privacy and trust · one calm account · clear limits</span>
-          <span className={styles.ribbonItem}>Privacy and trust · one calm account · clear limits</span>
-        </div>
-      </div>
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <Link to="/" className={styles.navBrand}>
-            <span className={styles.navBrandMark} aria-hidden="true">↗</span>
-            <span className={styles.navBrandText}>
-              <span className={styles.navLogo}>Buhay</span>
-              <span className={styles.navTag}>Takda, Lakas, Tala in one account</span>
-            </span>
+            <span className={styles.navLogo}>Buhay</span>
           </Link>
           <div className={styles.navActions}>
             <Link className={styles.navLink} to="/">Home</Link>
-            <Link className={styles.navLink} to="/login">Log in</Link>
+            {!isSignedIn && <Link className={styles.navLink} to="/login">Sign in</Link>}
             <Link className={styles.navButton} to={primaryHref}>{primaryLabel}</Link>
           </div>
         </div>
@@ -100,15 +89,10 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <div className={styles.footerBrand}>
-            <div className={styles.footerLogo}>Buhay</div>
-            <div className={styles.footerTagline}>Takda, Lakas, and Tala in one calm account.</div>
-            <div className={styles.footerCopy}>Privacy and support: <a className={styles.contactLink} href={LEGAL_CONTACT_HREF}>{LEGAL_CONTACT_EMAIL}</a></div>
-          </div>
+          <p>© {new Date().getFullYear()} Buhay. Bawat araw, mas malinaw.</p>
           <div className={styles.footerLinks}>
             <Link className={styles.footerLink} to="/privacy">Privacy Policy</Link>
             <Link className={styles.footerLink} to="/terms">Terms of Use</Link>
-            <Link className={styles.footerLink} to={primaryHref}>{primaryLabel}</Link>
           </div>
         </div>
       </footer>
