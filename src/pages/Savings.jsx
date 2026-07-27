@@ -8,8 +8,8 @@ import sStyles from './Savings.module.css'
 
 export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {}, hideHeader = false }) {
   const s = symbol || '₱'
-  const accounts = data.accounts || []
-  const bankAccounts = accounts.filter(acc => acc.type !== 'Credit Card')
+  const accounts = Array.isArray(data.accounts) ? data.accounts.filter(Boolean) : []
+  const bankAccounts = accounts.filter(acc => acc && acc.type !== 'Credit Card')
   const [form, setForm] = useState({ name: '', target: '', current: '', date: '', accountId: '' })
   const [contribs, setContribs] = useState({})
   const handledActionTokenRef = useRef(null)

@@ -78,12 +78,12 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
   }, [data.income, data.expenses, data.transfers, data.lakasWorkouts, data.talaJournal, data.talaCheckins, todayStr])
 
   const wealthInfo = useMemo(() => {
-    const accounts = data.accounts || []
-    const cashAccounts = accounts.filter(a => a.type !== 'Credit Card')
-    const creditCardAccounts = accounts.filter(a => a.type === 'Credit Card')
+    const accounts = Array.isArray(data.accounts) ? data.accounts.filter(Boolean) : []
+    const cashAccounts = accounts.filter(a => a && a.type !== 'Credit Card')
+    const creditCardAccounts = accounts.filter(a => a && a.type === 'Credit Card')
 
-    const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a.balance || 0), 0)
-    const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a.balance || 0), 0)
+    const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a?.balance || 0), 0)
+    const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a?.balance || 0), 0)
     const netWorth = totalCash - totalCCDebt
 
     const upcomingBills = (data.bills || [])

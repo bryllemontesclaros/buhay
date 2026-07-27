@@ -447,10 +447,10 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
               </span>
             </div>
             <div className={hStyles.dateGroupCard}>
-              {txs.map((tx, index) => {
-                const lifecycle = getTakdaTransactionLifecycle(tx, today())
-                const recurrenceCycleLabel = tx.recurrenceOccurrenceKey ? formatRecurringDateLabel(tx.recurrenceOccurrenceKey) : ''
-                const recordedEarly = isRecurringRecordedOffDueDate(tx)
+              {(txs || []).filter(Boolean).map((tx, index) => {
+                const lifecycle = getTakdaTransactionLifecycle(tx || {}, today())
+                const recurrenceCycleLabel = tx?.recurrenceOccurrenceKey ? formatRecurringDateLabel(tx.recurrenceOccurrenceKey) : ''
+                const recordedEarly = isRecurringRecordedOffDueDate(tx || {})
                 const impactClassName = {
                   [TAKDA_BALANCE_IMPACT.NONE]: hStyles.impactOff,
                   [TAKDA_BALANCE_IMPACT.IN_ACCOUNT]: hStyles.impactOn,
