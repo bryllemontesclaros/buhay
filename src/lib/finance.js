@@ -330,15 +330,23 @@ export function getBalanceAtDate(accounts = [], transfers = [], income = [], exp
   return (currentBalance || 0) + deltaUntilTarget
 }
 
+export function hasDailyBalanceOverride(targetDate, balanceOverrides = {}) {
+  const safeOverrides = balanceOverrides || {}
+  const target = normalizeDate(targetDate)
+  if (!target) return false
+  return safeOverrides[target] !== undefined && safeOverrides[target] !== null && Number.isFinite(Number(safeOverrides[target]))
+}
+
 export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], income = [], expenses = [], targetDate, balanceOverrides = {}) {
   const safeOverrides = balanceOverrides || {}
   const target = normalizeDate(targetDate)
   if (!target) return getLiquidBalance(accounts)
 
-  if (safeOverrides[target] !== undefined) {
-    return safeOverrides[target]
+  if (safeOverrides[target] !== undefined && safeOverrides[target] !== null && Number.isFinite(Number(safeOverrides[target]))) {
+    return Number(safeOverrides[target])
   }
 
+  const todayKey = today()
   const overrideEntries = Object.entries(safeOverrides)
     .filter(([date, val]) => val !== null && val !== undefined && Number.isFinite(Number(val)))
     .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
@@ -347,7 +355,9 @@ export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], inc
 
   if (nearestPastOverride) {
     const [anchorDate, anchorBalance] = nearestPastOverride
-    return getBalanceAtDate(accounts, transfers, income, expenses, target, anchorDate, anchorBalance)
+    if (target <= todayKey || anchorDate >= todayKey) {
+      return getBalanceAtDate(accounts, transfers, income, expenses, target, anchorDate, anchorBalance)
+    }
   }
 
   return getBalanceAtDate(accounts, transfers, income, expenses, target)
