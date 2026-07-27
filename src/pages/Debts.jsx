@@ -40,8 +40,56 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
   const s = symbol || '₱'
   const debts = data.debts || []
   
-  const [extraBudget, setExtraBudget] = useState(0)
-  const [strategy, setStrategy] = useState('avalanche')
+  const [extraBudget, setExtraBudget] = useState(() => {
+    if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
+      return Number(profile.debtPayoffPrefs.extraBudget) || 0
+    }
+    const saved = localStorage.getItem('takda_debt_extra_budget')
+    return saved !== null ? Number(saved) || 0 : 0
+  })
+
+  const [strategy, setStrategy] = useState(() => {
+    if (profile?.debtPayoffPrefs?.strategy) {
+      return profile.debtPayoffPrefs.strategy
+    }
+    return localStorage.getItem('takda_debt_strategy') || 'avalanche'
+  })
+
+  useEffect(() => {
+    if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
+      setExtraBudget(Number(profile.debtPayoffPrefs.extraBudget) || 0)
+    }
+    if (profile?.debtPayoffPrefs?.strategy) {
+      setStrategy(profile.debtPayoffPrefs.strategy)
+    }
+  }, [profile?.debtPayoffPrefs?.extraBudget, profile?.debtPayoffPrefs?.strategy])
+
+  function handleExtraBudgetChange(val) {
+    const numeric = Math.max(0, Number(val) || 0)
+    setExtraBudget(numeric)
+    localStorage.setItem('takda_debt_extra_budget', String(numeric))
+    if (user?.uid) {
+      fsUpdate(user.uid, 'profiles', {
+        debtPayoffPrefs: {
+          extraBudget: numeric,
+          strategy,
+        },
+      }).catch(() => {})
+    }
+  }
+
+  function handleStrategyChange(strat) {
+    setStrategy(strat)
+    localStorage.setItem('takda_debt_strategy', strat)
+    if (user?.uid) {
+      fsUpdate(user.uid, 'profiles', {
+        debtPayoffPrefs: {
+          extraBudget,
+          strategy: strat,
+        },
+      }).catch(() => {})
+    }
+  }
   const [form, setForm] = useState(EMPTY_FORM)
   const [payments, setPayments] = useState({})
   const [paymentSources, setPaymentSources] = useState({})
@@ -769,14 +817,14 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
               <button
                 type="button"
                 className={`${dStyles.strategyBtn} ${strategy === 'avalanche' ? dStyles.strategyBtnActive : ''}`}
-                onClick={() => { playTick(); setStrategy('avalanche'); }}
+                onClick={() => { playTick(); handleStrategyChange('avalanche'); }}
               >
                 Avalanche (APR)
               </button>
               <button
                 type="button"
                 className={`${dStyles.strategyBtn} ${strategy === 'snowball' ? dStyles.strategyBtnActive : ''}`}
-                onClick={() => { playTick(); setStrategy('snowball'); }}
+                onClick={() => { playTick(); handleStrategyChange('snowball'); }}
               >
                 Snowball (Balance)
               </button>
@@ -787,7 +835,27 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
             <div className={dStyles.sliderBox}>
               <div className={dStyles.sliderLabelRow}>
                 <span>Extra Monthly Payment</span>
-                <strong className={dStyles.sliderVal}>{money(extraBudget)}</strong>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {extraBudget > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => { playTick(); handleExtraBudgetChange(0); }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text3)',
+                        fontSize: 'var(--type-caption)',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        padding: 0,
+                      }}
+                      title="Reset extra payment to ₱0"
+                    >
+                      Reset
+                    </button>
+                  )}
+                  <strong className={dStyles.sliderVal}>{money(extraBudget)}</strong>
+                </div>
               </div>
               <input
                 type="range"
@@ -796,7 +864,7 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
                 max="50000"
                 step="500"
                 value={extraBudget}
-                onChange={event => setExtraBudget(Number(event.target.value))}
+                onChange={event => handleExtraBudgetChange(Number(event.target.value))}
               />
               <div className={dStyles.sliderMinMax}>
                 <span>{s}0</span>
