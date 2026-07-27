@@ -13,6 +13,7 @@ import RouteMeta from '../components/RouteMeta'
 import { auth, sendVerificationEmailSafe } from '../lib/firebase'
 import { getStartSpaceIntent, setStartSpaceIntent } from '../lib/startIntent'
 import styles from './AuthScreen.module.css'
+import BrandLogo from '../components/BrandLogo'
 
 const ERROR_MSGS = {
   'auth/user-not-found': 'No account found with this email.',
@@ -173,7 +174,9 @@ export default function AuthScreen() {
       <div className={styles.shell}>
         <aside className={styles.storyPanel}>
           <div className={styles.storyIntro}>
-            <div className={styles.logo}>Buhay</div>
+            <div className={styles.logoWrap} style={{ marginBottom: '16px' }}>
+              <BrandLogo to="/" />
+            </div>
             <div className={styles.storyKicker}>Bawat araw, mas malinaw.</div>
             <h1 className={styles.storyTitle}>One calm app for money, fitness, and reflection.</h1>
             <p className={styles.storyText}>

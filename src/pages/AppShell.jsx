@@ -1,4 +1,5 @@
 import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import BrandLogo from '../components/BrandLogo'
 import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
@@ -1698,7 +1699,7 @@ export default function AppShell({ user }) {
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>
           <div className={styles.logoWrap}>
-            <div className={styles.logo}>Buhay</div>
+            <BrandLogo to="/" />
           </div>
         </div>
         <div className={styles.sidebarSpaceRail}>
