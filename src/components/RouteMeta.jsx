@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const DEFAULT_ORIGIN = 'https://buhay.vercel.app'
+const DEFAULT_ORIGIN = 'https://buhay-app.vercel.app'
 const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/og-image.svg`
 const DEFAULT_OG_IMAGE_ALT = 'Buhay all-in-one life tracker for Filipinos'
 
