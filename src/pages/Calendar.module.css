@@ -804,12 +804,14 @@
   width: 100%;
   max-height: calc(100vh - 120px);
   overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 96%, var(--bg));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border2));
+  border-radius: 24px;
   box-sizing: border-box;
   scroll-margin-top: 18px;
-  /* box-shadow flattened */
+  box-shadow: var(--shadow-resting);
 }
 .dayPanelHandle {
   display: none;
@@ -1710,9 +1712,9 @@
     grid-column: 1 / -1;
     width: 100%;
     max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));
-    border-width: 3px;
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border2));
     border-radius: 24px;
-    /* box-shadow flattened */
+    box-shadow: var(--shadow-resting);
   }
 
   .dayPanelTop {
