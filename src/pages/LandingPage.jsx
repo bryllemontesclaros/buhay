@@ -352,46 +352,56 @@ function BentoMockup() {
           <span className={mockStyles.dotYellow}></span>
           <span className={mockStyles.dotGreen}></span>
         </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/dashboard</div>
+        <div className={mockStyles.mockupUrl}>buhay.app/app</div>
       </div>
       <div className={mockStyles.mockupContent}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-           <div style={{ fontSize: '10px', opacity: 0.6 }}>Good morning, Brylle</div>
-           <button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '9px', padding: '3px 6px', cursor: 'pointer' }}>Edit Layout</button>
+           <div style={{ fontSize: '10px', opacity: 0.7, fontWeight: '600' }}>Good morning</div>
+           <button style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: 'white', borderRadius: '99px', fontSize: '9px', padding: '3px 8px', cursor: 'pointer', fontWeight: '600' }}>Edit Layout</button>
         </div>
         
-        <div className={mockStyles.mockBentoGrid} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className={mockStyles.mockBentoGrid} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {/* Daily Priority Focus */}
+          <div style={{ padding: '6px 10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>🎯</span>
+            <span style={{ color: 'var(--text-primary, #f0f0f0)', fontWeight: '500' }}>Priority: Lock in main goals for today</span>
+          </div>
+
           {/* Smart Insight Banner */}
-          <div style={{ padding: '8px', background: 'rgba(var(--blue-rgb), 0.1)', border: '1px solid rgba(var(--blue-rgb), 0.2)', borderRadius: '6px', color: 'var(--blue)' }}>
-            <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '2px' }}>💡 Smart Insight</div>
-            <div style={{ fontSize: '11px' }}>Your daily cashflow is on track.</div>
+          <div style={{ padding: '8px 10px', background: 'color-mix(in srgb, var(--accent) 12%, rgba(0,0,0,0.3))', border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)', borderRadius: '10px', color: 'var(--text)' }}>
+            <div style={{ fontSize: '9px', fontWeight: '700', marginBottom: '2px', color: 'var(--accent)' }}>💡 Smart Insight</div>
+            <div style={{ fontSize: '11px', opacity: 0.9 }}>Your daily cashflow & fitness rhythm are fully on track.</div>
           </div>
 
           {/* Key Stats Strip */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
-            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>₱45k</div>
-              <div style={{ fontSize: '8px', opacity: 0.6 }}>Net Worth</div>
+            <div style={{ background: 'color-mix(in srgb, #10b981 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #10b981 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#10b981' }}>₱45k</div>
+              <div style={{ fontSize: '8px', opacity: 0.75 }}>Net Worth</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>5.2k</div>
-              <div style={{ fontSize: '8px', opacity: 0.6 }}>Run (km)</div>
+            <div style={{ background: 'color-mix(in srgb, #ff4500 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #ff4500 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#ff4500' }}>14🔥</div>
+              <div style={{ fontSize: '8px', opacity: 0.75 }}>Fitness Streak</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '6px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold' }}>14🔥</div>
-              <div style={{ fontSize: '8px', opacity: 0.6 }}>Streak</div>
+            <div style={{ background: 'color-mix(in srgb, #c084fc 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #c084fc 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#c084fc' }}>4 📝</div>
+              <div style={{ fontSize: '8px', opacity: 0.75 }}>Reflections</div>
             </div>
           </div>
 
-          {/* Widgets */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-             <div style={{ borderLeft: '3px solid var(--blue)', padding: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-               <div style={{ fontSize: '9px', opacity: 0.7, marginBottom: '2px' }}>Takda Wealth</div>
-               <div style={{ fontSize: '11px', fontWeight: '500' }}>Budget: 75%</div>
+          {/* 3-Space Bento Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+             <div style={{ borderLeft: '3px solid #10b981', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#10b981' }}>
+               <div style={{ fontSize: '9px', fontWeight: '700', color: '#10b981', marginBottom: '3px' }}>Takda Wealth</div>
+               <div style={{ fontSize: '10px', fontWeight: '500' }}>Budget: 75%</div>
              </div>
-             <div style={{ borderLeft: '3px solid var(--accent)', padding: '6px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-               <div style={{ fontSize: '9px', opacity: 0.7, marginBottom: '2px' }}>Lakas Health</div>
-               <div style={{ fontSize: '11px', fontWeight: '500' }}>🏆 1st Place</div>
+             <div style={{ borderLeft: '3px solid #ff4500', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#ff4500' }}>
+               <div style={{ fontSize: '9px', fontWeight: '700', color: '#ff4500', marginBottom: '3px' }}>Lakas Health</div>
+               <div style={{ fontSize: '10px', fontWeight: '500' }}>Upper Body 🏋️‍♂️</div>
+             </div>
+             <div style={{ borderLeft: '3px solid #c084fc', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#c084fc' }}>
+               <div style={{ fontSize: '9px', fontWeight: '700', color: '#c084fc', marginBottom: '3px' }}>Tala Mind</div>
+               <div style={{ fontSize: '10px', fontWeight: '500' }}>Calm & Grateful</div>
              </div>
           </div>
           
