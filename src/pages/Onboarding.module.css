@@ -399,7 +399,8 @@
 }
 
 .guideAvatarActive {
-  /* box-shadow flattened */
+  transform: scale(1.05);
+  border-color: var(--accent);
 }
 
 .guideEyes {
@@ -905,7 +906,7 @@
 .dynamicCard,
 .summaryCard,
 .insightCard {
-  /* box-shadow flattened */
+  box-shadow: var(--shadow-resting);
 }
 
 .sectionCard,
