@@ -1676,7 +1676,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             )}
 
             {selectedIncome.length === 0 && selectedExpenses.length === 0 && selectedTransfers.length === 0 && selectedDueDebts.length === 0 && selectedStatementDebts.length === 0 && (
-              <EmptyState compact>No entries on this day yet.</EmptyState>
+              <EmptyState
+                compact
+                description="No entries on this day yet."
+                action={
+                  <button
+                    type="button"
+                    onClick={() => { playTick(); setShowModal(true); }}
+                    style={{
+                      background: 'color-mix(in srgb, var(--accent) 12%, transparent)',
+                      border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
+                      color: 'var(--text)',
+                      borderRadius: '999px',
+                      padding: '4px 12px',
+                      fontSize: 'var(--type-caption)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      marginTop: '8px'
+                    }}
+                  >
+                    + Add Transaction
+                  </button>
+                }
+              />
             )}
 
             
