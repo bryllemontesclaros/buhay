@@ -2250,8 +2250,9 @@ function DayTxRow({
   accountLabel = '',
   animationDelay = '0ms',
 }) {
-  const isIncome = t.type === 'income'
-  const lifecycle = getTakdaTransactionLifecycle(t, today())
+  if (!t) return null
+  const isIncome = t?.type === 'income'
+  const lifecycle = getTakdaTransactionLifecycle(t || {}, today())
   const isPaid = lifecycle.paid
   const isProjected = lifecycle.projected
   const classification = [t.cat, t.subcat].filter(Boolean).join(' · ')
