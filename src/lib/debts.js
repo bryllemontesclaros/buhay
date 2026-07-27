@@ -6,10 +6,10 @@
 
 export function calculatePayoffSchedule(debts = [], extraBudget = 0, strategy = 'avalanche') {
   // Filter active debts (debts with positive balance)
-  const activeDebts = debts
-    .filter(d => (Number(d.balance) || 0) > 0)
+  const activeDebts = (debts || [])
+    .filter(d => d && (Number(d.balance) || 0) > 0)
     .map(d => ({
-      id: d._id || d.id,
+      id: d._id || d.id || 'debt',
       name: d.name || 'Unnamed Debt',
       balance: Number(d.balance) || 0,
       originalAmount: Number(d.originalAmount) || Number(d.balance) || 0,

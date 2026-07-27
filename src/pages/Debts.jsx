@@ -21,6 +21,17 @@ const COLORS = [
   { name: 'Gray', value: 'var(--text3)' },
 ]
 
+function formatPayoffDate(dateObj, options) {
+  if (!dateObj) return ''
+  try {
+    const d = new Date(dateObj)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleString('default', options)
+  } catch {
+    return ''
+  }
+}
+
 const EMPTY_FORM = {
   name: '',
   type: 'Credit Card',
@@ -819,7 +830,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           {schedule.error ? (
             <span className={dStyles.growWarning}>⚠️ {schedule.error}</span>
           ) : schedule.payoffDate ? (
-            `Projected Debt-Free: ${schedule.payoffDate.toLocaleString('default', { month: 'long', year: 'numeric' })} (${schedule.months} months)`
+            `Projected Debt-Free: ${formatPayoffDate(schedule.payoffDate, { month: 'long', year: 'numeric' })} (${schedule.months} months)`
           ) : (
             'Add outstanding balances to simulate payoff targets.'
           )}
@@ -978,7 +989,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
               </div>
               <div className={dStyles.chartFooter}>
                 <span>Now ({money(totalDebtOwed)})</span>
-                <span>{schedule.payoffDate?.toLocaleString('default', { month: 'short', year: 'numeric' })} ({s}0)</span>
+                <span>{formatPayoffDate(schedule.payoffDate, { month: 'short', year: 'numeric' })} ({s}0)</span>
               </div>
             </div>
           )}
