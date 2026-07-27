@@ -143,6 +143,17 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayRef = useRef(null)
   const transactionModalRef = useRef(null)
   const recurringDateModalRef = useRef(null)
+  const amountInputRef = useRef(null)
+
+  useEffect(() => {
+    if (showModal) {
+      const timer = setTimeout(() => {
+        amountInputRef.current?.focus()
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [showModal])
+
   const overlayOpen = Boolean(selected || showModal || recurringDateTarget)
 
   const todayStr = today()
@@ -2082,6 +2093,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </span>
               <span className={calStyles.amountSymbol}>{s}</span>
               <input
+                ref={amountInputRef}
                 className={calStyles.amountInput}
                 type="number"
                 min="0"

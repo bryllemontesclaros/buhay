@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { fsAddTransaction } from '../lib/firestore'
 import {
   findPresetByLabel,
@@ -62,6 +62,15 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [error, setError] = useState('')
   const isIncome = type === 'income'
   const selectedAccount = accounts.find(account => account._id === accountId) || null
+
+  const amountRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      amountRef.current?.focus()
+    }, 50)
+    return () => clearTimeout(timer)
+  }, [])
 
 
   const quickPresets = getQuickItems(type)
@@ -243,6 +252,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
       <div className={styles.amountDisplay} style={{ color, borderColor: color, background: bgColor }}>
         <span className={styles.currencySign}>{s}</span>
         <input
+          ref={amountRef}
           className={styles.amountInput}
           inputMode="decimal"
           aria-label="Amount"
