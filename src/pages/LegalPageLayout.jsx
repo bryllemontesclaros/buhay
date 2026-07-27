@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import RouteMeta from '../components/RouteMeta'
 import { auth } from '../lib/firebase'
 import {
@@ -8,11 +8,13 @@ import {
   LEGAL_OPERATOR_NAME,
 } from '../lib/legal'
 import styles from './LegalPage.module.css'
+import navStyles from './LandingPageClean.module.css'
 
 export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, sections, metaTitle, metaDescription, metaPath }) {
+  const navigate = useNavigate()
   const isSignedIn = Boolean(auth.currentUser)
   const primaryHref = isSignedIn ? '/app' : '/login'
-  const primaryLabel = isSignedIn ? 'Open the app' : 'Start free'
+  const primaryLabel = isSignedIn ? 'Open App' : 'Join Beta'
 
   return (
     <div className={`${styles.page} neo`}>
@@ -22,15 +24,21 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
         path={metaPath || '/'}
       />
       <a href="#legal-main" className="skipLink">Skip to main content</a>
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link to="/" className={styles.navBrand}>
-            <span className={styles.navLogo}>Buhay</span>
+      <nav className={navStyles.nav}>
+        <div className={navStyles.navInner}>
+          <Link to="/" className={navStyles.brand}>
+            <span className={navStyles.brandMark}>↗</span>
+            <span className={navStyles.brandName}>Buhay</span>
           </Link>
-          <div className={styles.navActions}>
-            <Link className={styles.navLink} to="/">Home</Link>
-            {!isSignedIn && <Link className={styles.navLink} to="/login">Sign in</Link>}
-            <Link className={styles.navButton} to={primaryHref}>{primaryLabel}</Link>
+          <div className={navStyles.navActions}>
+            {!isSignedIn && (
+              <button type="button" className={`${navStyles.btn} ${navStyles.btnGhost}`} onClick={() => navigate('/login')}>
+                Sign in
+              </button>
+            )}
+            <Link className={`${navStyles.btn} ${navStyles.btnPrimary}`} to={primaryHref}>
+              {primaryLabel}
+            </Link>
           </div>
         </div>
       </nav>
@@ -87,12 +95,12 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerInner}>
+      <footer className={navStyles.footer}>
+        <div className={navStyles.footerInner}>
           <p>© {new Date().getFullYear()} Buhay. Bawat araw, mas malinaw.</p>
-          <div className={styles.footerLinks}>
-            <Link className={styles.footerLink} to="/privacy">Privacy Policy</Link>
-            <Link className={styles.footerLink} to="/terms">Terms of Use</Link>
+          <div className={navStyles.footerLinks}>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Use</Link>
           </div>
         </div>
       </footer>
