@@ -2255,49 +2255,40 @@ function DayTxRow({
   const isPaid = lifecycle.paid
   const isProjected = lifecycle.projected
   const classification = [t.cat, t.subcat].filter(Boolean).join(' · ')
-  const balanceImpactClassName = {
-    [TAKDA_BALANCE_IMPACT.NONE]: calStyles.impactOff,
-    [TAKDA_BALANCE_IMPACT.IN_ACCOUNT]: calStyles.impactOn,
-    [TAKDA_BALANCE_IMPACT.DUE_TO_SYNC]: calStyles.impactDue,
-    [TAKDA_BALANCE_IMPACT.APPLIES_ON_DATE]: calStyles.impactFuture,
-    [TAKDA_BALANCE_IMPACT.LINKED]: calStyles.impactLinked,
-    [TAKDA_BALANCE_IMPACT.REFERENCE_ONLY]: calStyles.impactLinked,
-    [TAKDA_BALANCE_IMPACT.LEDGER_ONLY]: calStyles.impactLinked,
-  }[lifecycle.balanceImpactKey]
-  const statusBadgeClassName = lifecycle.statusKey === TAKDA_TRANSACTION_STATUS.FORECAST
-    ? calStyles.statusProjected
-    : (lifecycle.statusKey === TAKDA_TRANSACTION_STATUS.PAID ? calStyles.statusPaid : calStyles.statusUnpaid)
+  const metaParts = [
+    classification || t.cat,
+    accountLabel,
+    t.recur ? `every ${t.recur}` : null,
+  ].filter(Boolean)
+  const metaSubtitle = metaParts.join(' · ')
+
   return (
     <div
       className={`${calStyles.txRow} ${calStyles.dayTxRowStaggered} ${isPaid ? '' : calStyles.txRowUnpaid} ${isProjected ? calStyles.projectedTxRow : ''}`}
       style={{ animationDelay }}
     >
       <div className={calStyles.txLeft}>
-        <div className={calStyles.txIcon} style={{ background: isIncome ? 'var(--income-dim)' : 'var(--red-dim)', color: isIncome ? 'var(--income)' : 'var(--red)' }}>
+        <div
+          className={calStyles.txIcon}
+          style={{
+            background: isIncome ? 'color-mix(in srgb, #30d158 16%, transparent)' : 'color-mix(in srgb, #ff453a 16%, transparent)',
+            color: isIncome ? '#30d158' : '#ff453a',
+          }}
+        >
           {isIncome ? '+' : '−'}
         </div>
         <div className={calStyles.txInfoBlock}>
           <div className={calStyles.txDesc}>
-            {t.desc}
+            {t.desc || t.cat}
             {t._projected && <span className={calStyles.projBadge}>recurring</span>}
           </div>
-          <div className={calStyles.txMeta}>
-            {classification || t.cat}
-            <span className={`${calStyles.statusBadge} ${statusBadgeClassName}`}>
-              {lifecycle.statusLabel}
-            </span>
-            {lifecycle.balanceImpactLabel && !t._projected && (
-              <span className={`${calStyles.impactBadge} ${balanceImpactClassName}`}>
-                {lifecycle.balanceImpactLabel}
-              </span>
-            )}
-            {accountLabel && <span className={calStyles.accountBadge}>{accountLabel}</span>}
-            {t.recur && <span className={calStyles.recurBadge}>{t.recur}</span>}
+          <div className={calStyles.txMeta} title={metaSubtitle}>
+            {metaSubtitle}
           </div>
         </div>
       </div>
       <div className={`${calStyles.txRight} ${isProjected ? calStyles.projectedTxRight : ''}`}>
-        <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? 'var(--income)' : 'var(--red)') }}>
+        <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? '#30d158' : '#ff453a') }}>
           {privacyMode ? 'Hidden' : `${isIncome ? '+' : '−'}${fmt(t.amount, s)}`}
         </div>
         {t._projected ? (
@@ -2312,8 +2303,8 @@ function DayTxRow({
                 style={recurringActionPending
                   ? undefined
                   : {
-                    background: isIncome ? 'var(--income)' : 'var(--red)',
-                    borderColor: isIncome ? 'var(--income)' : 'var(--red)',
+                    background: isIncome ? '#30d158' : '#ff453a',
+                    borderColor: isIncome ? '#30d158' : '#ff453a',
                     color: '#ffffff',
                   }}
               >
@@ -2372,18 +2363,20 @@ function DayTxRow({
               className={calStyles.editBtn}
               onClick={() => onEdit(t)}
               aria-label={`Edit ${t.desc || t.cat}`}
+              title="Edit transaction"
               disabled={locked}
             >
-              Edit
+              ✏️
             </button>
             <button
               type="button"
               className={calStyles.delBtnSm}
               onClick={() => onDelete(t)}
               aria-label={`Delete ${t.desc || t.cat}`}
+              title="Delete transaction"
               disabled={locked}
             >
-              Delete
+              🗑️
             </button>
           </div>
         )}

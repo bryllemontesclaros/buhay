@@ -873,7 +873,19 @@
 }
 
 /* TX ROWS */
-.txRow { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border2); }
+.txRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border-bottom: 1px solid var(--border2);
+  transition: background 0.15s ease;
+}
+.txRow:hover {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
 .txRow:last-child { border-bottom: none; }
 .txRowUnpaid { opacity: 0.88; }
 
@@ -891,11 +903,29 @@
   align-items: start;
   gap: 12px;
 }
-.txLeft { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.txInfoBlock { min-width: 0; }
-.txIcon { width: 24px; height: 24px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: var(--type-support); font-weight: 700; flex-shrink: 0; }
+.txLeft { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.txInfoBlock { min-width: 0; flex: 1; }
+.txIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
 .txDesc { font-size: var(--type-body-sm); font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
-.txMeta { font-size: var(--type-overline); color: var(--text3); display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.txMeta {
+  font-size: var(--type-caption);
+  color: var(--text3);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
 .accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; margin-left: 6px; }
