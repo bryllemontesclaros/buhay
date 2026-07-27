@@ -121,9 +121,26 @@
 }
 
 .navLink {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: color 0.18s ease;
 }
 
 .navButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.18s var(--ease-spring-snap);
 }
 
 .navLink:hover,
