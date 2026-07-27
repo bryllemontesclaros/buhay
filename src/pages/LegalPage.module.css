@@ -54,10 +54,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 16px;
+  padding: 14px 20px;
   border-radius: 999px;
-  border: 1px solid var(--border2);
-  /* box-shadow flattened */
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border2));
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.3);
 }
 
 .navBrand {
@@ -157,9 +160,12 @@
 
 .summaryCard,
 .sectionCard {
-  border: 1px solid var(--border2);
-  border-radius: 28px;
-  /* box-shadow flattened */
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border2));
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.3);
 }
 
 .summaryCard {
