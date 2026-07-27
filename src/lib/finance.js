@@ -119,18 +119,20 @@ export function getAccountSignedBalance(account = {}) {
 }
 
 export function getLiquidBalance(accounts = []) {
-  return accounts
-    .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
-    .reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  return safeAccounts
+    .filter(account => account && ['Cash', 'Bank', 'E-wallet'].includes(account.type))
+    .reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {
-  const accountIds = new Set(accounts.map(a => a._id))
-  const unlinkedDebts = (debts || []).filter(d => !d.accountId || !accountIds.has(d.accountId))
-  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d.balance) || 0), 0)
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
+  const accountIds = new Set(safeAccounts.map(a => a?._id).filter(Boolean))
+  const unlinkedDebts = safeDebts.filter(d => !d?.accountId || !accountIds.has(d.accountId))
+  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
   
-  // Summing all account balances automatically subtracts credit cards because they are stored as negative
-  const accountsBalance = accounts.reduce((sum, account) => sum + (Number(account.balance) || 0), 0)
+  const accountsBalance = safeAccounts.reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
   return accountsBalance - totalDebt
 }
 
@@ -158,7 +160,12 @@ export function shouldAffectCurrentAccountBalance(tx = {}, referenceDate = today
 }
 
 export function getActualLedger(accounts = [], transfers = [], income = [], expenses = [], anchorDateStr = null) {
-  const accountLookup = new Map(accounts.map(a => [a._id, a]))
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const safeTransfers = Array.isArray(transfers) ? transfers.filter(Boolean) : []
+  const safeIncome = Array.isArray(income) ? income.filter(Boolean) : []
+  const safeExpenses = Array.isArray(expenses) ? expenses.filter(Boolean) : []
+
+  const accountLookup = new Map(safeAccounts.map(a => [a?._id, a]))
   
   function isLiquid(accountId) {
     if (!accountId) return true // Unlinked = cashflow
@@ -167,15 +174,16 @@ export function getActualLedger(accounts = [], transfers = [], income = [], expe
     return ['Cash', 'Bank', 'E-wallet'].includes(account.type)
   }
 
-  const incomeEntries = income
-    .filter(tx => isLiquid(tx.accountId))
+  const incomeEntries = safeIncome
+    .filter(tx => tx && isLiquid(tx.accountId))
     .map(tx => toLedgerEntry(tx, 1, anchorDateStr))
     
-  const expenseEntries = expenses
-    .filter(tx => isLiquid(tx.accountId))
+  const expenseEntries = safeExpenses
+    .filter(tx => tx && isLiquid(tx.accountId))
     .map(tx => toLedgerEntry(tx, -1, anchorDateStr))
     
-  const transferEntries = transfers.map(tx => {
+  const transferEntries = safeTransfers.map(tx => {
+    if (!tx) return null
     const fromLiquid = isLiquid(tx.fromAccountId)
     const toLiquid = isLiquid(tx.toAccountId)
     
@@ -196,7 +204,7 @@ export function getActualLedger(accounts = [], transfers = [], income = [], expe
   ]
     .filter(Boolean)
     .sort((a, b) => {
-      if (a.date !== b.date) return a.date.localeCompare(b.date)
+      if (a.date !== b.date) return (a.date || '').localeCompare(b.date || '')
       return (a.createdAt || 0) - (b.createdAt || 0)
     })
 }
