@@ -38,11 +38,20 @@
   display: grid;
   gap: 7px;
   min-height: 96px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
+  padding: 16px 18px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border2));
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.22s var(--ease-spring-snap), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.monthStoryCard:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--border2));
+  box-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.4);
 }
 
 .monthStoryCard span,
@@ -54,9 +63,9 @@
 }
 
 .monthStoryCard span {
-  color: var(--text3);
+  color: var(--accent);
   font-size: var(--type-overline);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -75,16 +84,24 @@
 }
 
 .balanceRail {
-  border-radius: 20px;
-  background: var(--surface);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border2));
 }
 
 .dayPanel {
-  border-radius: 24px;
+  border-radius: 24px 24px 0 0;
+  background: color-mix(in srgb, var(--surface) 96%, var(--bg));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border2));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 200;
+  box-shadow: 0 -12px 40px -4px rgba(0, 0, 0, 0.4);
 }
 
 .dayPanelTop {
-  background: var(--surface);
+  background: transparent;
 }
 
 .dayBalanceCard {
@@ -402,11 +419,38 @@
 
 /* DOTS ONLY — no amount text in cells */
 .manualBalancePin {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--blue);
-  /* box-shadow flattened */
+  background: #007aff;
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.incomeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #30d158;
+  box-shadow: 0 0 8px rgba(48, 209, 88, 0.4);
+  flex-shrink: 0;
+}
+
+.expenseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff453a;
+  box-shadow: 0 0 8px rgba(255, 69, 58, 0.4);
+  flex-shrink: 0;
+}
+
+.transferDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #007aff;
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
   flex-shrink: 0;
 }
 
