@@ -37,8 +37,20 @@ import NotificationBell from '../components/NotificationBell'
 import GuidedTour from '../components/GuidedTour'
 import styles from './AppShell.module.css'
 
-const Lakas = lazy(() => import('./Lakas'))
-const Tala = lazy(() => import('./Tala'))
+function safeLazy(importFn) {
+  return lazy(() => {
+    return importFn().catch(error => {
+      console.warn('Failed to load dynamic chunk, reloading...', error)
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
+      return { default: () => null }
+    })
+  })
+}
+
+const Lakas = safeLazy(() => import('./Lakas'))
+const Tala = safeLazy(() => import('./Tala'))
 
 const LAKAS_COLLECTIONS = [
   'lakasRoutines',
