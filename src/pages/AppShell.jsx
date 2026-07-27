@@ -65,12 +65,13 @@ class PageErrorBoundary extends Component {
     this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
   }
 
   componentDidCatch(error, info) {
     console.error('Buhay page failed to render', error, info)
+    this.setState({ error, info })
   }
 
   render() {
@@ -93,6 +94,13 @@ class PageErrorBoundary extends Component {
         <p style={{ margin: 0, color: 'var(--text2)', maxWidth: 560, lineHeight: 1.55 }}>
           Buhay is still running. Go back Home, then try opening the page again.
         </p>
+        {this.state.error && (
+          <pre style={{ marginTop: 14, padding: 12, background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,69,58,0.3)', borderRadius: 12, fontSize: 12, color: '#ff453a', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+            {String(this.state.error)}
+            {'\n'}
+            {this.state.error.stack}
+          </pre>
+        )}
         <button
           type="button"
           onClick={this.props.onRecover}
