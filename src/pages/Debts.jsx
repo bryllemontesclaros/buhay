@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
+import { isTransactionPaid } from '../lib/finance'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, playTick, today, getMonthKey } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
@@ -90,6 +91,15 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
       }).catch(() => {})
     }
   }
+
+  const availableSurplus = useMemo(() => {
+    const incList = (data.income || []).filter(isTransactionPaid)
+    const expList = (data.expenses || []).filter(isTransactionPaid)
+    const totalInc = incList.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const totalExp = expList.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    return Math.max(0, totalInc - totalExp)
+  }, [data.income, data.expenses])
+
   const [form, setForm] = useState(EMPTY_FORM)
   const [payments, setPayments] = useState({})
   const [paymentSources, setPaymentSources] = useState({})
@@ -835,7 +845,26 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
             <div className={dStyles.sliderBox}>
               <div className={dStyles.sliderLabelRow}>
                 <span>Extra Monthly Payment</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  {availableSurplus > 0 && extraBudget !== availableSurplus && (
+                    <button
+                      type="button"
+                      onClick={() => { playTick(); handleExtraBudgetChange(availableSurplus); }}
+                      style={{
+                        background: 'color-mix(in srgb, var(--accent) 12%, transparent)',
+                        border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
+                        color: 'var(--accent)',
+                        fontSize: 'var(--type-caption)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        borderRadius: '999px',
+                        padding: '2px 8px',
+                      }}
+                      title="Use your real-time monthly budget cashflow surplus"
+                    >
+                      Use {money(availableSurplus)} Surplus
+                    </button>
+                  )}
                   {extraBudget > 0 && (
                     <button
                       type="button"
@@ -854,14 +883,21 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
                       Reset
                     </button>
                   )}
-                  <strong className={dStyles.sliderVal}>{money(extraBudget)}</strong>
+                  <strong className={dStyles.sliderVal} style={{ color: (availableSurplus > 0 && extraBudget > availableSurplus) ? 'var(--amber)' : undefined }}>
+                    {money(extraBudget)}
+                  </strong>
+                  {availableSurplus > 0 && extraBudget > availableSurplus && (
+                    <span style={{ fontSize: 'var(--type-caption)', color: 'var(--amber)', fontWeight: 600 }}>
+                      (⚠️ {money(extraBudget - availableSurplus)} over budget)
+                    </span>
+                  )}
                 </div>
               </div>
               <input
                 type="range"
                 className={dStyles.sliderRange}
                 min="0"
-                max="50000"
+                max={Math.max(50000, availableSurplus)}
                 step="500"
                 value={extraBudget}
                 onChange={event => handleExtraBudgetChange(Number(event.target.value))}
