@@ -37,23 +37,31 @@ const EMPTY_FORM = {
   creditLimit: '',
 }
 
-export default function Debts({ user, data, symbol, privacyMode = false, hideHeader = false }) {
+export default function Debts({ user, data, profile = {}, symbol, privacyMode = false, hideHeader = false }) {
   const s = symbol || '₱'
   const debts = data.debts || []
   
   const [extraBudget, setExtraBudget] = useState(() => {
-    if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
-      return Number(profile.debtPayoffPrefs.extraBudget) || 0
+    try {
+      if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
+        return Number(profile.debtPayoffPrefs.extraBudget) || 0
+      }
+      const saved = localStorage.getItem('takda_debt_extra_budget')
+      return saved !== null ? Number(saved) || 0 : 0
+    } catch {
+      return 0
     }
-    const saved = localStorage.getItem('takda_debt_extra_budget')
-    return saved !== null ? Number(saved) || 0 : 0
   })
 
   const [strategy, setStrategy] = useState(() => {
-    if (profile?.debtPayoffPrefs?.strategy) {
-      return profile.debtPayoffPrefs.strategy
+    try {
+      if (profile?.debtPayoffPrefs?.strategy) {
+        return profile.debtPayoffPrefs.strategy
+      }
+      return localStorage.getItem('takda_debt_strategy') || 'avalanche'
+    } catch {
+      return 'avalanche'
     }
-    return localStorage.getItem('takda_debt_strategy') || 'avalanche'
   })
 
   useEffect(() => {
@@ -368,15 +376,18 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
     }
   }
 
-  const accounts = data.accounts || []
-  const creditCardAccounts = accounts.filter(a => a.type === 'Credit Card')
+  const safeDebts = useMemo(() => Array.isArray(data.debts) ? data.debts.filter(Boolean) : [], [data.debts])
+  const safeAccounts = useMemo(() => Array.isArray(data.accounts) ? data.accounts.filter(Boolean) : [], [data.accounts])
+
+  const creditCardAccounts = useMemo(() => safeAccounts.filter(a => a && a.type === 'Credit Card'), [safeAccounts])
 
   const mappedDebts = useMemo(() => {
-    const existingDebtAccIds = new Set(debts.map(d => d.accountId).filter(Boolean))
+    const existingDebtAccIds = new Set(safeDebts.map(d => d?.accountId).filter(Boolean))
 
-    const baseDebts = debts.map(d => {
+    const baseDebts = safeDebts.map(d => {
+      if (!d) return null
       if (d.accountId) {
-        const linkedAcc = accounts.find(a => a._id === d.accountId)
+        const linkedAcc = safeAccounts.find(a => a && a._id === d.accountId)
         if (linkedAcc) {
           return {
             ...d,
@@ -385,13 +396,13 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
         }
       }
       return d
-    })
+    }).filter(Boolean)
 
-    const synthesizedDebts = accounts
-      .filter(a => a.type === 'Credit Card' && !existingDebtAccIds.has(a._id))
+    const synthesizedDebts = safeAccounts
+      .filter(a => a && a.type === 'Credit Card' && !existingDebtAccIds.has(a._id))
       .map(a => ({
         _id: `synth_${a._id}`,
-        name: a.name,
+        name: a.name || 'Unnamed Card',
         type: 'Credit Card',
         balance: Math.abs(Number(a.balance) || 0),
         originalAmount: Math.abs(Number(a.balance) || 0),
@@ -406,7 +417,7 @@ export default function Debts({ user, data, symbol, privacyMode = false, hideHea
       }))
 
     return [...baseDebts, ...synthesizedDebts]
-  }, [debts, accounts])
+  }, [safeDebts, safeAccounts])
 
   const creditCards = useMemo(() => mappedDebts.filter(d => d.type === 'Credit Card'), [mappedDebts])
   const loansAndOthers = useMemo(() => mappedDebts.filter(d => d.type !== 'Credit Card'), [mappedDebts])

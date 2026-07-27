@@ -97,6 +97,7 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
         <Debts
           user={user}
           data={data}
+          profile={profile}
           symbol={symbol}
           privacyMode={privacyMode}
           hideHeader={true}
