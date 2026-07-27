@@ -651,8 +651,12 @@ export default function LandingPage() {
       </main>
 
       <footer className={styles.footer}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div className={styles.footerInner}>
           <p>© {new Date().getFullYear()} Buhay. Bawat araw, mas malinaw.</p>
+          <div className={styles.footerLinks}>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Use</Link>
+          </div>
         </div>
       </footer>
     </div>
