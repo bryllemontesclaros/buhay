@@ -29,11 +29,18 @@
   width: 100%;
   margin: auto;
   box-sizing: border-box;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--bento-radius-lg);
-  /* box-shadow flattened */
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border2));
+  border-radius: 24px;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
 
+.storyPanel:hover,
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border2));
 }
 
 .storyPanel {
