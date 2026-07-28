@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import { fsAddTransaction } from '../lib/firestore'
 import {
   findPresetByLabel,
@@ -62,16 +62,11 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [error, setError] = useState('')
   const isIncome = type === 'income'
   const selectedAccount = accounts.find(account => account._id === accountId) || null
-
   const amountRef = useRef(null)
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      amountRef.current?.focus()
-    }, 50)
-    return () => clearTimeout(timer)
+  useLayoutEffect(() => {
+    amountRef.current?.focus()
   }, [])
-
 
   const quickPresets = getQuickItems(type)
   const presetGroups = getPresetGroups(type)

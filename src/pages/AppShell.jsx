@@ -1,4 +1,5 @@
 import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import BrandLogo from '../components/BrandLogo'
 import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
@@ -1511,7 +1512,9 @@ export default function AppShell({ user }) {
   function openQuickAdd(type) {
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(false)
-    setQuickAddSheet({ open: true, mode: 'manual', type, initialEntry: null })
+    flushSync(() => {
+      setQuickAddSheet({ open: true, mode: 'manual', type, initialEntry: null })
+    })
   }
 
   function openLakasFabAction(type) {

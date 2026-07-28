@@ -35,7 +35,7 @@ import {
 } from '../lib/transactionOptions'
 import { fmt, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
-import { createPortal } from 'react-dom'
+import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
 import { Button } from '../components/ui/Button'
@@ -419,13 +419,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     playTick()
     const nextDraft = getEmptyForm(type, defaultAccountId)
     closeDayBalanceEditor()
-    setEditTx(null)
-    setModalType(type)
-    setForm(nextDraft)
-    setShowPresetBrowser(false)
-    setDescTouched(false)
-    setFormError('')
-    setShowModal(true)
+    flushSync(() => {
+      setEditTx(null)
+      setModalType(type)
+      setForm(nextDraft)
+      setShowPresetBrowser(false)
+      setDescTouched(false)
+      setFormError('')
+      setShowModal(true)
+    })
+    amountInputRef.current?.focus()
   }
 
   function openComposerForDate(type = 'income', targetDate = selected || todayStr) {
@@ -521,25 +524,28 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     const nextSubcat = sanitizeTransactionSubcategory(nextType, nextCat, tx.subcat || nextMatchedPreset?.subcat)
     const nextDesc = tx.desc || ''
     closeDayBalanceEditor()
-    setEditTx(tx)
-    setModalType(nextType)
-    setShowPresetBrowser(false)
-    setForm({
-      desc: nextDesc,
-      amount: String(tx.amount || ''),
-      type: nextType,
-      cat: nextCat,
-      subcat: nextSubcat,
-      presetKey: nextMatchedPreset && !nextMatchedPreset.isCustom && nextMatchedPreset.cat === nextCat && nextMatchedPreset.subcat === nextSubcat
-        ? nextMatchedPreset.key
-        : '',
-      recur: tx.recur || '',
-      accountId: tx.accountId || '',
-      paymentStatus: tx.paymentStatus || 'paid',
+    flushSync(() => {
+      setEditTx(tx)
+      setModalType(nextType)
+      setShowPresetBrowser(false)
+      setForm({
+        desc: nextDesc,
+        amount: String(tx.amount || ''),
+        type: nextType,
+        cat: nextCat,
+        subcat: nextSubcat,
+        presetKey: nextMatchedPreset && !nextMatchedPreset.isCustom && nextMatchedPreset.cat === nextCat && nextMatchedPreset.subcat === nextSubcat
+          ? nextMatchedPreset.key
+          : '',
+        recur: tx.recur || '',
+        accountId: tx.accountId || '',
+        paymentStatus: tx.paymentStatus || 'paid',
+      })
+      setDescTouched(Boolean(nextDesc))
+      setFormError('')
+      setShowModal(true)
     })
-    setDescTouched(Boolean(nextDesc))
-    setFormError('')
-    setShowModal(true)
+    amountInputRef.current?.focus()
   }
 
   function closeTransactionEditor() {
