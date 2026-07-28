@@ -507,28 +507,37 @@
   justify-content: flex-start;
 }
 
-.activityDotInc {
-  width: 5px;
-  height: 5px;
-  background: var(--income);
+.activityDotInc, .activityDotExp, .activityDotTrsf {
   border-radius: 50%;
-  transition: transform 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  width: 5px; /* fallback */
+  height: 5px;
 }
 
-.activityDotExp {
-  width: 5px;
-  height: 5px;
-  background: var(--red);
-  border-radius: 50%;
-  transition: transform 0.2s ease;
+.activityDotInc { background: var(--income); color: var(--income); }
+.activityDotExp { background: var(--red); color: var(--red); }
+.activityDotTrsf { background: var(--blue); color: var(--blue); }
+
+.activityDotInc[data-size="small"],
+.activityDotExp[data-size="small"],
+.activityDotTrsf[data-size="small"] {
+  width: 4px;
+  height: 4px;
 }
 
-.activityDotTrsf {
-  width: 5px;
-  height: 5px;
-  background: var(--blue);
-  border-radius: 50%;
-  transition: transform 0.2s ease;
+.activityDotInc[data-size="medium"],
+.activityDotExp[data-size="medium"],
+.activityDotTrsf[data-size="medium"] {
+  width: 6px;
+  height: 6px;
+}
+
+.activityDotInc[data-size="large"],
+.activityDotExp[data-size="large"],
+.activityDotTrsf[data-size="large"] {
+  width: 8px;
+  height: 8px;
+  box-shadow: 0 0 8px currentColor;
 }
 
 .cell:hover .activityDotInc,

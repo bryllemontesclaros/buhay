@@ -1946,9 +1946,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     
                       {(hasIncome || hasExpense || hasTransfer) && (
                         <div className={calStyles.activityDots}>
-                          {hasIncome && <div className={calStyles.activityDotInc} title="Income recorded" />}
-                          {hasExpense && <div className={calStyles.activityDotExp} title="Expense recorded" />}
-                          {hasTransfer && <div className={calStyles.activityDotTrsf} title="Transfer recorded" />}
+                          {hasIncome && <div className={calStyles.activityDotInc} data-size={incPct < 25 ? 'small' : incPct < 75 ? 'medium' : 'large'} title="Income recorded" />}
+                          {hasExpense && <div className={calStyles.activityDotExp} data-size={expPct < 25 ? 'small' : expPct < 75 ? 'medium' : 'large'} title="Expense recorded" />}
+                          {hasTransfer && <div className={calStyles.activityDotTrsf} data-size="small" title="Transfer recorded" />}
                         </div>
                       )}
     
