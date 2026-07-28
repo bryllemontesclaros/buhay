@@ -1430,11 +1430,11 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <span>Entry</span>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
                 {[
-                  { label: 'Masaya', emoji: '😊', mood: 'Great' },
-                  { label: 'Kilig', emoji: '🥰', mood: 'Good' },
-                  { label: 'Pagod', emoji: '😴', mood: 'Okay' },
-                  { label: 'Malungkot', emoji: '🥺', mood: 'Low' },
-                  { label: 'Stress', emoji: '😤', mood: 'Heavy' },
+                  { label: 'Happy', emoji: '😊', mood: 'Great' },
+                  { label: 'Excited', emoji: '🥰', mood: 'Good' },
+                  { label: 'Tired', emoji: '😴', mood: 'Okay' },
+                  { label: 'Sad', emoji: '🥺', mood: 'Low' },
+                  { label: 'Stressed', emoji: '😤', mood: 'Heavy' },
                 ].map(m => (
                   <button
                     key={m.label}

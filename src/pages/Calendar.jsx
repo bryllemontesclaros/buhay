@@ -41,6 +41,18 @@ import calStyles from './Calendar.module.css'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 
+function normalizeAmountInput(value) {
+  const cleaned = value.replace(/[^\d.]/g, '')
+  if (!cleaned) return ''
+
+  const parts = cleaned.split('.')
+  const integerPart = (parts[0] || '0').replace(/^0+(?=\d)/, '') || '0'
+  const decimalPart = parts.slice(1).join('').slice(0, 2)
+
+  if (parts.length > 1 || cleaned.endsWith('.')) return `${integerPart}.${decimalPart}`
+  return integerPart
+}
+
 function formatRoundedBalance(value, symbol = '') {
   const numericValue = Number(value) || 0
   const rounded = new Intl.NumberFormat('en-PH', {
@@ -2126,12 +2138,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               <input
                 ref={amountInputRef}
                 className={calStyles.amountInput}
-                type="number"
-                min="0"
+                type="text"
+                inputMode="decimal"
                 placeholder="0.00"
                 value={form.amount}
                 disabled={formSaving}
-                onChange={event => set('amount', event.target.value)}
+                onChange={event => set('amount', normalizeAmountInput(event.target.value))}
                 style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}
                 aria-label={`${isIncome ? 'Income' : 'Expense'} amount`}
                 autoFocus
