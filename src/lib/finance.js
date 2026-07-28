@@ -394,15 +394,42 @@ export function getMonthForecast(
   balanceOverrides = {},
 ) {
   const startingBalance = getMonthStartBalance(accounts, transfers, income, expenses, year, month, balanceOverrides)
-  const allIncome = [
+
+  const accountLookup = new Map(accounts.map(a => [a?._id, a]))
+  function isLiquid(accountId) {
+    if (!accountId) return true // Unlinked = cashflow
+    const account = accountLookup.get(accountId)
+    if (!account) return true
+    return ['Cash', 'Bank', 'E-wallet'].includes(account.type)
+  }
+
+  const allIncomeRaw = [
     ...getPaidTransactions(getMonthTransactions(income, year, month)),
     ...getMonthTransactions(projectedIncome, year, month),
   ]
-  const allExpenses = [
+  const allExpensesRaw = [
     ...getPaidTransactions(getMonthTransactions(expenses, year, month)),
     ...getMonthTransactions(projectedExpenses, year, month),
   ]
-  const baseForecast = buildForecast(allIncome, allExpenses, year, month, startingBalance)
+  const allTransfersRaw = getPaidTransactions(getMonthTransactions(transfers, year, month))
+
+  // Map effective Liquid Income (True Cash Additions)
+  const effectiveLiquidIncome = [
+    ...allIncomeRaw.filter(tx => isLiquid(tx.accountId)),
+    ...allTransfersRaw
+      .filter(tx => !isLiquid(tx.fromAccountId) && isLiquid(tx.toAccountId))
+      .map(tx => ({ ...tx, amount: tx.amount, date: tx.date })),
+  ]
+
+  // Map effective Liquid Expenses (True Cash Deductions)
+  const effectiveLiquidExpenses = [
+    ...allExpensesRaw.filter(tx => isLiquid(tx.accountId)),
+    ...allTransfersRaw
+      .filter(tx => isLiquid(tx.fromAccountId) && !isLiquid(tx.toAccountId))
+      .map(tx => ({ ...tx, amount: tx.amount, date: tx.date })),
+  ]
+
+  const baseForecast = buildForecast(effectiveLiquidIncome, effectiveLiquidExpenses, year, month, startingBalance)
   return applyBalanceOverridesToForecast(baseForecast, year, month, balanceOverrides, startingBalance)
 }
 
