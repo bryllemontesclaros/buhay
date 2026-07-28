@@ -1428,6 +1428,40 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
             </label>
             <label className={tStyles.full}>
               <span>Entry</span>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                {[
+                  { label: 'Masaya', emoji: '😊', mood: 'Great' },
+                  { label: 'Kilig', emoji: '🥰', mood: 'Good' },
+                  { label: 'Pagod', emoji: '😴', mood: 'Okay' },
+                  { label: 'Malungkot', emoji: '🥺', mood: 'Low' },
+                  { label: 'Stress', emoji: '😤', mood: 'Heavy' },
+                ].map(m => (
+                  <button
+                    key={m.label}
+                    type="button"
+                    onClick={() => {
+                      playTick()
+                      setJournalForm(current => ({ ...current, mood: m.mood }))
+                    }}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '999px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      border: `1px solid ${journalForm.mood === m.mood ? 'var(--accent)' : 'color-mix(in srgb, var(--text) 15%, transparent)'}`,
+                      background: journalForm.mood === m.mood ? 'color-mix(in srgb, var(--accent) 15%, transparent)' : 'color-mix(in srgb, var(--text) 6%, transparent)',
+                      color: journalForm.mood === m.mood ? 'var(--accent)' : 'var(--text2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <span>{m.emoji}</span> {m.label}
+                  </button>
+                ))}
+              </div>
               <textarea ref={journalBodyInputRef} className={panicHide ? tStyles.blurActive : ''} value={journalForm.body} placeholder="Write without performing. Tala can hold it." onChange={event => setJournalForm(current => ({ ...current, body: event.target.value }))} />
             </label>
           </div>

@@ -261,6 +261,45 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
           onChange={handleAmountChange}
         />
       </div>
+      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
+        {[100, 500, 1000, 5000].map(v => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setAmount(prev => String(Number(prev || 0) + v))}
+            style={{
+              flex: '1 1 0',
+              padding: '6px 0',
+              fontSize: '12px',
+              fontWeight: 600,
+              borderRadius: '999px',
+              border: '1px solid color-mix(in srgb, var(--text) 15%, transparent)',
+              background: 'color-mix(in srgb, var(--text) 6%, transparent)',
+              color: 'var(--text2)',
+              cursor: 'pointer',
+            }}
+          >
+            +{v.toLocaleString()}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setAmount('')}
+          style={{
+            flex: '1 1 0',
+            padding: '6px 0',
+            fontSize: '12px',
+            fontWeight: 600,
+            borderRadius: '999px',
+            border: '1px solid color-mix(in srgb, var(--red, #ff453a) 30%, transparent)',
+            background: 'color-mix(in srgb, var(--red, #ff453a) 8%, transparent)',
+            color: 'var(--red, #ff453a)',
+            cursor: 'pointer',
+          }}
+        >
+          Clear
+        </button>
+      </div>
 
       <div className={styles.utilityRow}>
         <button
