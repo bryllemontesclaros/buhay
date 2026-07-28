@@ -606,6 +606,7 @@ export default function AppShell({ user }) {
   const quickAddFocusProxyRef = useRef(null)
   const [syncIssue, setSyncIssue] = useState(null)
   const [billPaymentTarget, setBillPaymentTarget] = useState(null)
+  const [debtPaymentTarget, setDebtPaymentTarget] = useState(null)
   const [chromeMode, setChromeMode] = useState({ compact: false, hidden: false })
   const [exchangeRates, setExchangeRates] = useState(null)
   const syncingDueTransactionsRef = useRef(false)
@@ -1627,6 +1628,9 @@ export default function AppShell({ user }) {
     if (action.type === 'payBill' && action.billId) {
       setBillPaymentTarget({ billId: action.billId, at: Date.now() })
     }
+    if (action.type === 'payDebt' && action.debtId) {
+      setDebtPaymentTarget({ debtId: action.debtId, at: Date.now() })
+    }
   }
 
   function handleCommandNavigate(nextPage) {
@@ -1657,12 +1661,14 @@ export default function AppShell({ user }) {
     subTab: page === 'breakdown' ? 'insights' : page,
 
     billPaymentTarget,
+    debtPaymentTarget,
     activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,
     financeToolSelections,
     onFinanceToolSelect: handleFinanceToolSelect,
     onTogglePrivacy: togglePrivacy,
     onSelectedDateChange: setCalendarQuickAddDate,
     onPayBill: (billId) => handleNotificationAction({ action: { type: 'payBill', page: 'bills', billId } }),
+    onPayDebt: (debtId) => handleNotificationAction({ action: { type: 'payDebt', page: 'debts', debtId } }),
     actionRequest: activeSpace === 'takda'
       ? (takdaActionRequest?.space === 'takda' ? takdaActionRequest : null)
       : (spaceActionRequest?.space === activeSpace ? spaceActionRequest : null),

@@ -1,5 +1,5 @@
 import { getCurrencySymbol, getMonthKey, maskMoney, today as todayKey, toMonthKey } from './utils'
-import { getBillPeriodInfo } from './bills'
+import { getBillPeriodInfo, getVirtualBills } from './bills'
 import { getAccountSignedBalance } from './finance'
 
 // Notification engine — generates in-app alerts based on user data
@@ -57,19 +57,25 @@ export function getAlerts(data, profile, privacyMode = false) {
     })
   }
 
-  // 2. Bills due soon (within next 3 days or overdue this month)
   if (prefs.bills) {
-    data.bills.forEach(b => {
+    const virtualBills = getVirtualBills(data)
+    const allBills = [...data.bills, ...virtualBills]
+    allBills.forEach(b => {
       const period = getBillPeriodInfo(b, now)
       if (period.paid) return
+      
+      const action = b.isVirtual
+        ? { type: 'payDebt', label: 'Pay now', page: 'debts', debtId: b.originalDebtId }
+        : { type: 'payBill', label: 'Mark paid', page: 'bills', billId: b._id }
+        
       if (period.daysUntil < 0) {
         alerts.push({
           id: `bill-overdue-${b._id}-${period.key}`,
           type: 'danger',
           icon: '📄',
-          title: `Bill overdue — ${b.name}`,
+          title: `${b.isVirtual ? 'Debt' : 'Bill'} overdue — ${b.name}`,
           body: `${b.name} was due on day ${b.due}. Mark it paid when settled.`,
-          action: { type: 'payBill', label: 'Mark paid', page: 'bills', billId: b._id },
+          action,
           priority: 1,
         })
       } else if (period.daysUntil <= 3) {
@@ -77,9 +83,9 @@ export function getAlerts(data, profile, privacyMode = false) {
           id: `bill-due-${b._id}-${period.key}`,
           type: 'warning',
           icon: '📄',
-          title: `Bill due in ${period.daysUntil === 0 ? 'today' : period.daysUntil + ' day' + (period.daysUntil > 1 ? 's' : '')} — ${b.name}`,
+          title: `${b.isVirtual ? 'Debt' : 'Bill'} due in ${period.daysUntil === 0 ? 'today' : period.daysUntil + ' day' + (period.daysUntil > 1 ? 's' : '')} — ${b.name}`,
           body: `${b.name} payment of ${privacyMode ? maskMoney(symbol) : formatOver(b.amount || 0, false, symbol)} is due ${period.daysUntil === 0 ? 'today' : `in ${period.daysUntil} days`}.`,
-          action: { type: 'payBill', label: 'Mark paid', page: 'bills', billId: b._id },
+          action,
           priority: 2,
         })
       }

@@ -21,6 +21,8 @@ const COLORS = [
   { name: 'Gray', value: 'var(--text3)' },
 ]
 
+let globalHandledDebtTargetAt = 0
+
 function formatPayoffDate(dateObj, options) {
   if (!dateObj) return ''
   try {
@@ -48,7 +50,7 @@ const EMPTY_FORM = {
   creditLimit: '',
 }
 
-export default function Debts({ user, data, profile = {}, symbol, privacyMode = false, hideHeader = false }) {
+export default function Debts({ user, data, profile = {}, symbol, privacyMode = false, hideHeader = false, debtPaymentTarget = null }) {
   const s = symbol || '₱'
   const debts = data.debts || []
   
@@ -128,6 +130,30 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const [showModal, setShowModal] = useState(false)
   const [expandedHistory, setExpandedHistory] = useState({})
   const [activeMilestone, setActiveMilestone] = useState(null)
+
+  useEffect(() => {
+    if (!debtPaymentTarget?.debtId) return
+    if (globalHandledDebtTargetAt === debtPaymentTarget.at) return
+    const target = data.debts.find(d => d._id === debtPaymentTarget.debtId)
+    if (!target) return
+    
+    // Auto-expand the history to show the payment form
+    setExpandedHistory(prev => ({ ...prev, [target._id]: true }))
+    
+    // Auto-focus the payment input by setting the payment state to active
+    setPayments(prev => ({
+      ...prev,
+      [target._id]: String(target.minPayment || '')
+    }))
+    
+    // Scroll to the debt card
+    setTimeout(() => {
+      const el = document.getElementById(`debt-card-${target._id}`)
+      if (el) safeScrollIntoView(el)
+    }, 100)
+
+    globalHandledDebtTargetAt = debtPaymentTarget.at
+  }, [debtPaymentTarget?.at, debtPaymentTarget?.debtId, data.debts])
   
   const getDebtTransactions = useMemo(() => {
     const income = (data.income || []).map(tx => ({ ...tx, type: 'income' }))

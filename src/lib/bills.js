@@ -149,3 +149,46 @@ export function getBillPaidPeriodEntries(bill = {}) {
       dueDate: payment.dueDate || '',
     }))
 }
+
+export function getVirtualBills(data = {}) {
+  const debts = Array.isArray(data.debts) ? data.debts : []
+  const accounts = Array.isArray(data.accounts) ? data.accounts : []
+  const bills = Array.isArray(data.bills) ? data.bills : []
+  
+  // Find accounts that are already explicitly linked to a bill
+  const explicitBillAccountIds = new Set(bills.map(b => b.accountId).filter(Boolean))
+  
+  const virtualBills = []
+  debts.forEach(debt => {
+    // Only link debts that have a specified due date and aren't already linked to a manual bill
+    if (!debt.dueDate) return
+    if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return
+    
+    // Look up the exact current balance from the linked account
+    let balance = Number(debt.balance) || 0
+    if (debt.accountId) {
+      const acc = accounts.find(a => a._id === debt.accountId)
+      if (acc) {
+        balance = Math.abs(Number(acc.balance) || 0)
+      }
+    }
+    
+    if (balance <= 0) return
+    
+    // Create the virtual bill mapping
+    virtualBills.push({
+      _id: `virtual-debt-${debt._id}`,
+      name: `${debt.name} (Debt)`,
+      amount: balance,
+      due: debt.dueDate,
+      freq: 'monthly',
+      cat: debt.type === 'Credit Card' ? 'Credit Card' : 'Debt',
+      accountId: debt.accountId || '',
+      isVirtual: true,
+      originalDebtId: debt._id,
+      paidPeriods: {}, // We rely on real-time balance for these rather than paid periods
+    })
+  })
+  
+  return virtualBills
+}

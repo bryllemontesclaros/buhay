@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { deleteField } from 'firebase/firestore'
 import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
-import { getBillPeriodInfo } from '../lib/bills'
+import { getBillPeriodInfo, getVirtualBills } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import { Button } from '../components/ui/Button'
@@ -310,11 +310,12 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
   useEffect(() => {
     if (!billPaymentTarget?.billId) return
     if (globalHandledTargetAt === billPaymentTarget.at) return
-    const target = (data?.bills || []).find(bill => bill._id === billPaymentTarget.billId)
+    const allBills = [...(data?.bills || []), ...getVirtualBills(data)]
+    const target = allBills.find(bill => bill._id === billPaymentTarget.billId)
     if (!target) return
     openPayment(target)
     globalHandledTargetAt = billPaymentTarget.at
-  }, [billPaymentTarget?.at, billPaymentTarget?.billId, data?.bills])
+  }, [billPaymentTarget?.at, billPaymentTarget?.billId, data])
 
   const paymentPeriod = paymentBill ? getBillPeriodInfo(paymentBill) : null
   const paymentAccountName = paymentForm.accountId ? accountNameById.get(paymentForm.accountId) || 'Selected account' : ''

@@ -238,24 +238,38 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (!data?.debts || !Array.isArray(data.debts)) return map
     
     const currentMonthKey = `${year}-${String(month + 1).padStart(2, '0')}`
+    
+    const explicitBillAccountIds = new Set((data?.bills || []).map(b => b.accountId).filter(Boolean))
 
     data.debts.forEach(debt => {
       if (debt.paidPeriods && debt.paidPeriods[currentMonthKey]) return
+      if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return // already explicitly tracked
 
       const dayStr = String(debt.dueDate || '').trim()
       if (!dayStr) return
       const day = parseInt(dayStr, 10)
       if (isNaN(day) || day < 1 || day > 31) return
       
+      let currentBalance = Number(debt.balance) || 0
+      if (debt.accountId && Array.isArray(data.accounts)) {
+        const linkedAccount = data.accounts.find(a => a._id === debt.accountId)
+        if (linkedAccount) {
+          currentBalance = Math.abs(Number(linkedAccount.balance) || 0)
+        }
+      }
+      
+      // Do not show debt alerts on the calendar if the balance is fully paid off
+      if (currentBalance <= 0) return
+      
       const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
       const effectiveDay = Math.min(day, lastDayOfMonth)
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(effectiveDay).padStart(2, '0')}`
       
       if (!map[dateKey]) map[dateKey] = []
-      map[dateKey].push(debt)
+      map[dateKey].push({ ...debt, balance: currentBalance }) // Inject real-time balance
     })
     return map
-  }, [data?.debts, year, month])
+  }, [data?.debts, data?.accounts, data?.bills, year, month])
 
   const statementDebtsByDateKey = useMemo(() => {
     const map = {}
