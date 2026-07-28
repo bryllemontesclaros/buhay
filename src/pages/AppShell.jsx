@@ -603,6 +603,7 @@ export default function AppShell({ user }) {
   const [emailVerified, setEmailVerified] = useState(() => Boolean(auth.currentUser?.emailVerified || user?.emailVerified))
   const [verifyBannerMsg, setVerifyBannerMsg] = useState({ text: '', ok: false })
   const [verifySending, setVerifySending] = useState(false)
+  const quickAddFocusProxyRef = useRef(null)
   const [syncIssue, setSyncIssue] = useState(null)
   const [billPaymentTarget, setBillPaymentTarget] = useState(null)
   const [chromeMode, setChromeMode] = useState({ compact: false, hidden: false })
@@ -1512,6 +1513,7 @@ export default function AppShell({ user }) {
   function openQuickAdd(type) {
     setMobileNavMenuOpen(false)
     setQuickAddMenuOpen(false)
+    quickAddFocusProxyRef.current?.focus()
     flushSync(() => {
       setQuickAddSheet({ open: true, mode: 'manual', type, initialEntry: null })
     })
@@ -1718,6 +1720,7 @@ export default function AppShell({ user }) {
 
   return (
     <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'takda' ? styles.shellTakda : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
+      <input ref={quickAddFocusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'absolute', top: -9999, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <a href="#app-main" className="skipLink">Skip to main content</a>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarTop}>

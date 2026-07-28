@@ -156,6 +156,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const transactionModalRef = useRef(null)
   const recurringDateModalRef = useRef(null)
   const amountInputRef = useRef(null)
+  const focusProxyRef = useRef(null)
+  const dayBalanceInputRef = useRef(null)
 
   useEffect(() => {
     if (showModal) {
@@ -417,6 +419,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   function openComposer(type = 'income') {
     playTick()
+    focusProxyRef.current?.focus()
     const nextDraft = getEmptyForm(type, defaultAccountId)
     closeDayBalanceEditor()
     flushSync(() => {
@@ -523,6 +526,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       || findPresetByLabel(nextType, tx.desc || '')
     const nextSubcat = sanitizeTransactionSubcategory(nextType, nextCat, tx.subcat || nextMatchedPreset?.subcat)
     const nextDesc = tx.desc || ''
+    focusProxyRef.current?.focus()
     closeDayBalanceEditor()
     flushSync(() => {
       setEditTx(tx)
@@ -1848,6 +1852,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   return (
     <div className={styles.page}>
+      <input ref={focusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'absolute', top: -9999, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <div className={styles.pageHero}>
         <div className={styles.pageHeader}>
           <div className={styles.pageEyebrow}>Calendar</div>
