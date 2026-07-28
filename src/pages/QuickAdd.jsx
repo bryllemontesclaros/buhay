@@ -186,7 +186,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     try {
       const col = type === 'income' ? 'income' : 'expenses'
       const trimmedDesc = desc.trim()
-      await fsAddTransaction(user.uid, col, {
+      fsAddTransaction(user.uid, col, {
         desc: trimmedDesc,
         amount: parseFloat(amount),
         date: entryDate,
@@ -198,7 +198,9 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         paymentStatus,
         accountId,
         accountBalanceLinked: Boolean(accountId),
-      }, accounts)
+      }, accounts).catch(err => {
+        console.error('Failed to save transaction:', err)
+      })
 
       setDone(true)
       setTimeout(() => {
@@ -259,6 +261,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
           placeholder="0"
           value={amount}
           onChange={handleAmountChange}
+          autoFocus
         />
       </div>
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>

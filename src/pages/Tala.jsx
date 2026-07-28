@@ -1462,7 +1462,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
                   </button>
                 ))}
               </div>
-              <textarea ref={journalBodyInputRef} className={panicHide ? tStyles.blurActive : ''} value={journalForm.body} placeholder="Write without performing. Tala can hold it." onChange={event => setJournalForm(current => ({ ...current, body: event.target.value }))} />
+              <textarea ref={journalBodyInputRef} className={panicHide ? tStyles.blurActive : ''} value={journalForm.body} placeholder="Write without performing. Tala can hold it." onChange={event => setJournalForm(current => ({ ...current, body: event.target.value }))} autoFocus />
             </label>
           </div>
           <details className={tStyles.advancedBox}>

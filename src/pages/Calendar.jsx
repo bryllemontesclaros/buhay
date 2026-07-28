@@ -11,7 +11,7 @@ import {
   TAKDA_BALANCE_IMPACT,
   TAKDA_TRANSACTION_STATUS,
 } from '../lib/finance'
-import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsDeleteTransfer, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
+import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsDeleteTransfer, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction, fsTransferAccounts } from '../lib/firestore'
 import { getTransactionImpact } from '../lib/forecast'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import {
@@ -682,45 +682,39 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       setFormError('Pick a date on the calendar before saving.')
       return
     }
-    setFormSaving(true)
-    try {
-      const trimmedDesc = form.desc.trim()
-      if (editTx) {
-        const col = editTx.type === 'income' ? 'income' : 'expenses'
-        await fsUpdateTransaction(user.uid, col, editTx, {
-          desc: trimmedDesc,
-          amount,
-          cat: form.cat,
-          subcat: form.subcat,
-          presetKey: form.presetKey || '',
-          recur: form.recur,
-          paymentStatus: form.paymentStatus,
-          accountId: form.accountId || defaultAccountId,
-          accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
-        }, data.accounts)
-      } else {
-        const col = modalType === 'income' ? 'income' : 'expenses'
-        await fsAddTransaction(user.uid, col, {
-          desc: trimmedDesc,
-          amount,
-          date: selected,
-          cat: form.cat,
-          subcat: form.subcat,
-          presetKey: form.presetKey || '',
-          recur: form.recur,
-          type: modalType,
-          paymentStatus: form.paymentStatus,
-          accountId: form.accountId || defaultAccountId,
-          accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
-        }, data.accounts)
-      }
-      showEntryFeedback(buildEntryFeedback())
-      closeTransactionEditor()
-    } catch {
-      setFormError('Could not save this transaction. Try again.')
-    } finally {
-      setFormSaving(false)
+    
+    const trimmedDesc = form.desc.trim()
+    if (editTx) {
+      const col = editTx.type === 'income' ? 'income' : 'expenses'
+      fsUpdateTransaction(user.uid, col, editTx, {
+        desc: trimmedDesc,
+        amount,
+        cat: form.cat,
+        subcat: form.subcat,
+        presetKey: form.presetKey || '',
+        recur: form.recur,
+        paymentStatus: form.paymentStatus,
+        accountId: form.accountId || defaultAccountId,
+        accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
+      }, data.accounts).catch(err => console.error(err))
+    } else {
+      const col = modalType === 'income' ? 'income' : 'expenses'
+      fsAddTransaction(user.uid, col, {
+        desc: trimmedDesc,
+        amount,
+        date: selected,
+        cat: form.cat,
+        subcat: form.subcat,
+        presetKey: form.presetKey || '',
+        recur: form.recur,
+        type: modalType,
+        paymentStatus: form.paymentStatus,
+        accountId: form.accountId || defaultAccountId,
+        accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
+      }, data.accounts).catch(err => console.error(err))
     }
+    showEntryFeedback(buildEntryFeedback())
+    closeTransactionEditor()
   }
 
   async function handleDelete(tx) {
@@ -740,7 +734,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       cancelLabel: 'Keep it',
       tone: 'danger',
     }))) return
-    await fsDeleteTransaction(user.uid, tx.type === 'income' ? 'income' : 'expenses', tx, data.accounts)
+    fsDeleteTransaction(user.uid, tx.type === 'income' ? 'income' : 'expenses', tx, data.accounts).catch(e => console.error(e))
   }
 
   async function handleDeleteTransfer(transfer) {
@@ -753,7 +747,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       cancelLabel: 'Keep it',
       tone: 'danger',
     }))) return
-    await fsDeleteTransfer(user.uid, transfer, data.accounts)
+    fsDeleteTransfer(user.uid, transfer, data.accounts).catch(e => console.error(e))
   }
 
   async function handleTogglePaymentStatus(tx) {
@@ -787,6 +781,33 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       })
     }
   }
+
+  function handleFastPayDebt(debt, amount, dateKey) {
+    if (!user?.uid || !debt?.accountId || !amount) {
+      notifyApp({ title: 'Cannot pay', message: 'Missing account or amount.', tone: 'warning' })
+      return
+    }
+    const defaultCash = (data.accounts || []).find(a => String(a.type || '').toLowerCase() === 'cash' || String(a.type || '').toLowerCase() === 'bank') || data.accounts?.[0]
+    if (!defaultCash) {
+      notifyApp({ title: 'No cash account', message: 'You need a cash or bank account to pay from.', tone: 'warning' })
+      return
+    }
+    playTick()
+    fsTransferAccounts(user.uid, {
+      amount: Number(amount),
+      fromAccountId: defaultCash._id,
+      toAccountId: debt.accountId,
+      date: dateKey,
+      desc: `Payment: ${debt.name}`
+    }, data.accounts).catch(e => console.error(e))
+    
+    notifyApp({
+      title: 'Payment Sent',
+      message: `${fmt(amount, symbol)} was transferred from ${defaultCash.name} to ${debt.name}.`,
+      tone: 'success'
+    })
+  }
+
 
   async function handleLogProjected(tx) {
     playTick()
@@ -1628,17 +1649,27 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                         <div style={{ background: 'var(--bg2)', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '0.8rem', marginTop: '4px' }}>
                           <div style={{ fontWeight: 'bold', marginBottom: '6px', color: 'var(--text2)' }}>Payment Recommendations</div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <span>1. Pay Minimum:</span>
-                              <span style={{ color: isMinOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
-                                {privacyMode ? 'Hidden' : fmt(minAmount, s)}
-                              </span>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <span style={{ color: isMinOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
+                                  {privacyMode ? 'Hidden' : fmt(minAmount, s)}
+                                </span>
+                                {debt.accountId && minAmount > 0 && (
+                                  <Button size="small" variant="ghost" onClick={() => handleFastPayDebt(debt, minAmount, selected)}>Pay now</Button>
+                                )}
+                              </div>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
                               <span>2. Pay Full Balance:</span>
-                              <span style={{ color: isFullOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
-                                {privacyMode ? 'Hidden' : fmt(statementAmount, s)}
-                              </span>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <span style={{ color: isFullOverdraft ? 'var(--red)' : 'var(--accent)', fontWeight: 'bold' }}>
+                                  {privacyMode ? 'Hidden' : fmt(statementAmount, s)}
+                                </span>
+                                {debt.accountId && statementAmount > 0 && (
+                                  <Button size="small" variant="ghost" onClick={() => handleFastPayDebt(debt, statementAmount, selected)}>Pay now</Button>
+                                )}
+                              </div>
                             </div>
                           </div>
                           {(isMinOverdraft || isFullOverdraft) && (
@@ -2103,6 +2134,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 onChange={event => set('amount', event.target.value)}
                 style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}
                 aria-label={`${isIncome ? 'Income' : 'Expense'} amount`}
+                autoFocus
               />
             </div>
 
