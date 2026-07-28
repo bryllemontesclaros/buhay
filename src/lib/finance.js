@@ -377,7 +377,8 @@ export function getMonthStartBalance(accounts = [], transfers = [], income = [],
     return balanceOverrides[mKey]
   }
 
-  const targetAnchorDate = `${mKey}-01`
+  const prevMonthDate = new Date(year, month, 0)
+  const targetAnchorDate = toDateKey(prevMonthDate)
   return getBalanceAtDateWithOverrides(accounts, transfers, income, expenses, targetAnchorDate, balanceOverrides)
 }
 
