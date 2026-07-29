@@ -1102,9 +1102,9 @@
 }
 
 .floatingDonePill {
-  background: var(--text);
-  color: var(--bg);
-  border: 1px solid var(--text);
+  background: #10b981;
+  color: #ffffff !important;
+  border: 1px solid #10b981;
   padding: 10px 22px;
   border-radius: 999px;
   font-size: 13px;
@@ -1113,14 +1113,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .floatingDonePill:hover {
   transform: translateY(-2px) scale(1.03);
-  filter: opacity(0.9);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.08);
+  box-shadow: 0 16px 40px rgba(16, 185, 129, 0.5);
 }
 
 .floatingDonePill:active {
@@ -1272,19 +1272,21 @@
 }
 
 .modalDoneBtn {
-  background: var(--accent);
-  color: #000;
+  background: #10b981;
+  color: #ffffff !important;
   border: none;
   padding: 8px 24px;
   border-radius: 99px;
   font-size: 13px;
   font-weight: 750;
   cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
   transition: transform 0.15s ease;
 }
 
 .modalDoneBtn:hover {
   transform: scale(1.03);
+  filter: brightness(1.08);
 }
 
 .openLibraryBtn:hover {
@@ -1868,15 +1870,26 @@
   }
   .modalContainer {
     border-radius: 28px 28px 0 0 !important;
-    max-height: 86vh !important;
+    max-height: 82vh !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .modalHeader {
+    flex-shrink: 0 !important;
+    padding: 18px 20px 14px !important;
   }
   .modalList {
-    max-height: 60vh !important;
-    padding: 16px 18px !important;
+    flex: 1 !important;
+    max-height: 52vh !important;
+    padding: 12px 18px !important;
     grid-template-columns: 1fr !important;
+  }
+  .modalFooter {
+    flex-shrink: 0 !important;
+    padding: 12px 20px !important;
   }
 }
