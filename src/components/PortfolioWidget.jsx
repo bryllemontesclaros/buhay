@@ -4,6 +4,14 @@ import { fetchCryptoPrices, fetchStockPrices } from '../lib/portfolio'
 import { notifyApp } from '../lib/appFeedback'
 import styles from './PortfolioWidget.module.css'
 
+const ASSET_TYPES = [
+  { id: 'stock', label: 'Stock / ETF', icon: '📈' },
+  { id: 'crypto', label: 'Crypto', icon: '₿' },
+  { id: 'bond', label: 'Bonds', icon: '🏛️' },
+  { id: 'real_estate', label: 'Real Estate', icon: '🏠' },
+  { id: 'other', label: 'Other', icon: '💎' },
+]
+
 export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
   const [showPortfolioModal, setShowPortfolioModal] = useState(false)
   const [showAllHoldingsModal, setShowAllHoldingsModal] = useState(false)
@@ -127,7 +135,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     const averageBuyPrice = parseFloat(portfolioForm.averageBuyPrice) || currentPrice || 0
 
     if (!name && !symbol) {
-      notifyApp({ title: 'Asset Identifier Required', message: 'Enter a name or ticker symbol for this asset.', tone: 'warning' })
+      notifyApp({ title: 'Asset Identifier Required', message: 'Enter a ticker symbol or name for this asset.', tone: 'warning' })
       return
     }
 
@@ -253,50 +261,63 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
       {showPortfolioModal && (
         <div className={styles.modalOverlay} onClick={closePortfolioModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{editingHolding ? 'Edit Asset' : 'Add Asset'}</h3>
-              <button className={styles.closeModalBtn} onClick={closePortfolioModal}>✕</button>
+              <div className={styles.modalHeaderTitleGroup}>
+                <span className={styles.modalHeaderIcon}>📈</span>
+                <h3 className={styles.modalTitle}>{editingHolding ? 'Edit Holding' : 'Add Asset'}</h3>
+              </div>
+              <button className={styles.closeModalBtn} onClick={closePortfolioModal} aria-label="Close">✕</button>
             </div>
+
             <div className={styles.modalBody}>
-              <label className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Asset Type</span>
-                <select 
-                  className={styles.inputField} 
-                  value={portfolioForm.assetType} 
-                  onChange={e => setPortfolioForm({ ...portfolioForm, assetType: e.target.value })}
-                >
-                  <option value="stock">Stock / ETF</option>
-                  <option value="crypto">Cryptocurrency</option>
-                  <option value="bond">Bonds / Fixed Income</option>
-                  <option value="real_estate">Real Estate / REIT</option>
-                  <option value="other">Other Asset</option>
-                </select>
-              </label>
+              
+              {/* Asset Type Selector Pills */}
+              <div className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Asset Class</span>
+                <div className={styles.pillGrid}>
+                  {ASSET_TYPES.map(type => (
+                    <button
+                      key={type.id}
+                      type="button"
+                      className={`${styles.pillBtn} ${portfolioForm.assetType === type.id ? styles.pillBtnActive : ''}`}
+                      onClick={() => setPortfolioForm({ ...portfolioForm, assetType: type.id })}
+                    >
+                      <span className={styles.pillIcon}>{type.icon}</span>
+                      <span>{type.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              <label className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Symbol or Ticker</span>
-                <input 
-                  className={styles.inputField} 
-                  type="text" 
-                  placeholder="e.g. AAPL, BTC" 
-                  value={portfolioForm.symbol} 
-                  onChange={e => setPortfolioForm({ ...portfolioForm, symbol: e.target.value.toUpperCase() })} 
-                />
-              </label>
-
-              <label className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Asset Name</span>
-                <input 
-                  className={styles.inputField} 
-                  type="text" 
-                  placeholder="e.g. Apple Inc." 
-                  value={portfolioForm.name} 
-                  onChange={e => setPortfolioForm({ ...portfolioForm, name: e.target.value })} 
-                />
-              </label>
-
+              {/* Ticker & Name */}
               <div className={styles.inputRow}>
-                <label className={styles.inputGroup}>
+                <div className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>Ticker / Symbol</span>
+                  <input 
+                    className={styles.inputField} 
+                    type="text" 
+                    placeholder="e.g. AAPL, BTC" 
+                    value={portfolioForm.symbol} 
+                    onChange={e => setPortfolioForm({ ...portfolioForm, symbol: e.target.value.toUpperCase() })} 
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>Asset Name</span>
+                  <input 
+                    className={styles.inputField} 
+                    type="text" 
+                    placeholder="e.g. Apple Inc." 
+                    value={portfolioForm.name} 
+                    onChange={e => setPortfolioForm({ ...portfolioForm, name: e.target.value })} 
+                  />
+                </div>
+              </div>
+
+              {/* Quantity & Buy Price */}
+              <div className={styles.inputRow}>
+                <div className={styles.inputGroup}>
                   <span className={styles.inputLabel}>Shares / Amount</span>
                   <input 
                     className={styles.inputField} 
@@ -306,10 +327,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                     value={portfolioForm.quantity} 
                     onChange={e => setPortfolioForm({ ...portfolioForm, quantity: e.target.value })} 
                   />
-                </label>
+                </div>
 
-                <label className={styles.inputGroup}>
-                  <span className={styles.inputLabel}>Avg Buy Price</span>
+                <div className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>Avg Buy Price ({s})</span>
                   <input 
                     className={styles.inputField} 
                     type="number" 
@@ -318,20 +339,22 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                     value={portfolioForm.averageBuyPrice} 
                     onChange={e => setPortfolioForm({ ...portfolioForm, averageBuyPrice: e.target.value })} 
                   />
-                </label>
+                </div>
               </div>
 
-              <label className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Current Price (fallback)</span>
+              {/* Fallback Current Price */}
+              <div className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Current Market Price ({s})</span>
                 <input 
                   className={styles.inputField} 
                   type="number" 
                   step="any" 
-                  placeholder="Overrides live price if unavailable" 
+                  placeholder="Optional: Live price fallback" 
                   value={portfolioForm.currentPrice} 
                   onChange={e => setPortfolioForm({ ...portfolioForm, currentPrice: e.target.value })} 
                 />
-              </label>
+              </div>
+
             </div>
 
             <div className={styles.modalFooter}>
@@ -341,7 +364,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                   className={styles.deleteAssetBtn} 
                   onClick={() => handleDeletePortfolioHolding(editingHolding)}
                 >
-                  Delete
+                  Delete Asset
                 </button>
               )}
               <button 
@@ -350,9 +373,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                 onClick={handleSavePortfolioHolding} 
                 disabled={isSavingHolding || (!portfolioForm.symbol && !portfolioForm.name) || !portfolioForm.quantity}
               >
-                {isSavingHolding ? 'Saving...' : 'Save Asset'}
+                {isSavingHolding ? 'Saving...' : editingHolding ? 'Save Changes' : 'Add to Portfolio'}
               </button>
             </div>
+
           </div>
         </div>
       )}
@@ -361,10 +385,15 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
       {showAllHoldingsModal && (
         <div className={styles.modalOverlay} onClick={() => setShowAllHoldingsModal(false)}>
           <div className={`${styles.modalContent} ${styles.modalContentLarge}`} onClick={e => e.stopPropagation()}>
+            
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>All Portfolio Assets</h3>
+              <div className={styles.modalHeaderTitleGroup}>
+                <span className={styles.modalHeaderIcon}>📊</span>
+                <h3 className={styles.modalTitle}>All Portfolio Assets ({holdings.length})</h3>
+              </div>
               <button className={styles.closeModalBtn} onClick={() => setShowAllHoldingsModal(false)}>✕</button>
             </div>
+
             <div className={styles.modalBody}>
               <div className={styles.allHoldingsList}>
                 {holdings.map((asset, i) => {
@@ -398,6 +427,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                 })}
               </div>
             </div>
+
           </div>
         </div>
       )}
