@@ -5,27 +5,27 @@
  */
 
 export const POPULAR_ASSETS = [
-  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', assetType: 'crypto', defaultPriceUSD: 65000, defaultPricePHP: 3800000 },
-  { id: 'eth', name: 'Ethereum', symbol: 'ETH', assetType: 'crypto', defaultPriceUSD: 3400, defaultPricePHP: 200000 },
-  { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto', defaultPriceUSD: 80, defaultPricePHP: 4650 },
-  { id: 'usdt', name: 'Tether USD', symbol: 'USDT', assetType: 'crypto', defaultPriceUSD: 1.00, defaultPricePHP: 58.5 },
-  { id: 'bnb', name: 'BNB', symbol: 'BNB', assetType: 'crypto', defaultPriceUSD: 570, defaultPricePHP: 33300 },
-  { id: 'xrp', name: 'XRP', symbol: 'XRP', assetType: 'crypto', defaultPriceUSD: 0.60, defaultPricePHP: 35 },
-  { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPriceUSD: 0.40, defaultPricePHP: 23.5 },
-  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPriceUSD: 0.13, defaultPricePHP: 7.6 },
+  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', assetType: 'crypto', defaultPriceUSD: 63735, defaultPricePHP: 3930000 },
+  { id: 'eth', name: 'Ethereum', symbol: 'ETH', assetType: 'crypto', defaultPriceUSD: 1915, defaultPricePHP: 118000 },
+  { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto', defaultPriceUSD: 73.5, defaultPricePHP: 4500 },
+  { id: 'usdt', name: 'Tether USD', symbol: 'USDT', assetType: 'crypto', defaultPriceUSD: 1.00, defaultPricePHP: 61.4 },
+  { id: 'bnb', name: 'BNB', symbol: 'BNB', assetType: 'crypto', defaultPriceUSD: 568, defaultPricePHP: 35000 },
+  { id: 'xrp', name: 'XRP', symbol: 'XRP', assetType: 'crypto', defaultPriceUSD: 1.07, defaultPricePHP: 65 },
+  { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPriceUSD: 0.17, defaultPricePHP: 9.8 },
+  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPriceUSD: 0.07, defaultPricePHP: 4.35 },
 
-  { id: 'aapl', name: 'Apple Inc.', symbol: 'AAPL', assetType: 'stock', defaultPriceUSD: 225, defaultPricePHP: 13160 },
-  { id: 'nvda', name: 'Nvidia Corp', symbol: 'NVDA', assetType: 'stock', defaultPriceUSD: 120, defaultPricePHP: 7020 },
-  { id: 'tsla', name: 'Tesla Inc.', symbol: 'TSLA', assetType: 'stock', defaultPriceUSD: 245, defaultPricePHP: 14330 },
-  { id: 'voo', name: 'Vanguard S&P 500 ETF', symbol: 'VOO', assetType: 'stock', defaultPriceUSD: 500, defaultPricePHP: 29250 },
-  { id: 'qqq', name: 'Invesco QQQ Trust', symbol: 'QQQ', assetType: 'stock', defaultPriceUSD: 480, defaultPricePHP: 28080 },
-  { id: 'msft', name: 'Microsoft Corp', symbol: 'MSFT', assetType: 'stock', defaultPriceUSD: 420, defaultPricePHP: 24570 },
-  { id: 'amzn', name: 'Amazon.com Inc.', symbol: 'AMZN', assetType: 'stock', defaultPriceUSD: 180, defaultPricePHP: 10530 },
+  { id: 'aapl', name: 'Apple Inc.', symbol: 'AAPL', assetType: 'stock', defaultPriceUSD: 225, defaultPricePHP: 13815 },
+  { id: 'nvda', name: 'Nvidia Corp', symbol: 'NVDA', assetType: 'stock', defaultPriceUSD: 120, defaultPricePHP: 7368 },
+  { id: 'tsla', name: 'Tesla Inc.', symbol: 'TSLA', assetType: 'stock', defaultPriceUSD: 245, defaultPricePHP: 15040 },
+  { id: 'voo', name: 'Vanguard S&P 500 ETF', symbol: 'VOO', assetType: 'stock', defaultPriceUSD: 500, defaultPricePHP: 30700 },
+  { id: 'qqq', name: 'Invesco QQQ Trust', symbol: 'QQQ', assetType: 'stock', defaultPriceUSD: 480, defaultPricePHP: 29470 },
+  { id: 'msft', name: 'Microsoft Corp', symbol: 'MSFT', assetType: 'stock', defaultPriceUSD: 420, defaultPricePHP: 25780 },
+  { id: 'amzn', name: 'Amazon.com Inc.', symbol: 'AMZN', assetType: 'stock', defaultPriceUSD: 180, defaultPricePHP: 11050 },
 
-  { id: 'sm', name: 'SM Investments Corp', symbol: 'SM', assetType: 'stock', defaultPriceUSD: 15.70, defaultPricePHP: 920 },
-  { id: 'bdo', name: 'BDO Unibank Inc', symbol: 'BDO', assetType: 'stock', defaultPriceUSD: 2.65, defaultPricePHP: 155 },
-  { id: 'ali', name: 'Ayala Land Inc', symbol: 'ALI', assetType: 'stock', defaultPriceUSD: 0.55, defaultPricePHP: 32 },
-  { id: 'tel', name: 'PLDT Inc', symbol: 'TEL', assetType: 'stock', defaultPriceUSD: 24.80, defaultPricePHP: 1450 },
+  { id: 'sm', name: 'SM Investments Corp', symbol: 'SM', assetType: 'stock', defaultPriceUSD: 15.00, defaultPricePHP: 920 },
+  { id: 'bdo', name: 'BDO Unibank Inc', symbol: 'BDO', assetType: 'stock', defaultPriceUSD: 2.52, defaultPricePHP: 155 },
+  { id: 'ali', name: 'Ayala Land Inc', symbol: 'ALI', assetType: 'stock', defaultPriceUSD: 0.52, defaultPricePHP: 32 },
+  { id: 'tel', name: 'PLDT Inc', symbol: 'TEL', assetType: 'stock', defaultPriceUSD: 23.60, defaultPricePHP: 1450 },
 ]
 
 const COINGECKO_MAP = {
@@ -115,7 +115,7 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
 
     for (const [id, value] of Object.entries(data || {})) {
       if (value && symbolToId[id]) {
-        const fetchedPrice = isUSD ? (value.usd ?? value.php / 58.5) : (value.php ?? value.usd * 58.5)
+        const fetchedPrice = isUSD ? (value.usd ?? value.php / 61.4) : (value.php ?? value.usd * 61.4)
         if (typeof fetchedPrice === 'number' && fetchedPrice > 0) {
           result[symbolToId[id]] = fetchedPrice
         }
@@ -162,7 +162,7 @@ export async function fetchStockPrices(symbols = [], currencySymbol = '₱') {
         const data = await res.json()
         if (data && typeof data.c === 'number' && data.c > 0) {
           // Finnhub quotes US stocks in USD. Convert to PHP if currency is ₱
-          result[s] = isUSD ? data.c : (data.c * 58.5)
+          result[s] = isUSD ? data.c : (data.c * 61.4)
         }
       } catch {
         // Ignore single stock errors safely
