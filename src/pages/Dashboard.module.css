@@ -1211,15 +1211,32 @@
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-.drawerItemDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.drawerItemActive {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface2));
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }
 
-.drawerItemDisabled:hover {
-  background: var(--surface2);
-  border-color: var(--border);
-  transform: none;
+.drawerItemActive:hover {
+  background: color-mix(in srgb, #ef4444 14%, var(--surface2));
+  border-color: color-mix(in srgb, #ef4444 40%, var(--border));
+  transform: translateY(-2px);
+}
+
+.drawerItemAdded {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: all 0.2s ease;
+}
+
+.drawerItemActive:hover .drawerItemAdded {
+  color: #ef4444;
+  background: color-mix(in srgb, #ef4444 20%, transparent);
+  border-color: color-mix(in srgb, #ef4444 40%, transparent);
 }
 
 /* ── DESKTOP WIDGET DRAWER SCROLLING FIX ────────────────── */
@@ -1255,16 +1272,6 @@
     flex: 0 1 calc(33.333% - 12px);
     min-width: 190px;
   }
-}
-
-.drawerItemAdded {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text3);
-  background: var(--surface3);
-  padding: 3px 10px;
-  border-radius: 100px;
-  border: 1px solid var(--border2);
 }
 
 /* cache bust HMR */

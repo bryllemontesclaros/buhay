@@ -294,10 +294,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     saveLayout(newLayout)
   }
 
-  const addWidget = (id) => {
-    if (!layout.includes(id)) {
-      const newLayout = [...layout, id]
-      saveLayout(newLayout)
+  const toggleWidget = (id) => {
+    if ((layout || []).includes(id)) {
+      removeWidget(id)
+    } else {
+      addWidget(id)
     }
   }
 
@@ -578,13 +579,14 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               return (
                 <button 
                   key={id} 
-                  className={`${styles.drawerItem} ${isAdded ? styles.drawerItemDisabled : ''}`} 
-                  onClick={() => addWidget(id)}
-                  disabled={isAdded}
+                  type="button"
+                  className={`${styles.drawerItem} ${isAdded ? styles.drawerItemActive : ''}`} 
+                  onClick={() => toggleWidget(id)}
+                  title={isAdded ? `Remove ${WIDGET_TITLES[id]}` : `Add ${WIDGET_TITLES[id]}`}
                 >
                   <span className={styles.drawerItemTitle}>{WIDGET_TITLES[id]}</span>
                   {isAdded ? (
-                    <span className={styles.drawerItemAdded}>Added</span>
+                    <span className={styles.drawerItemAdded}>✓ Added</span>
                   ) : (
                     <span className={styles.drawerItemAdd}>+ Add</span>
                   )}
