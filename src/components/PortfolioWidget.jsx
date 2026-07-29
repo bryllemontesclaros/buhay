@@ -28,6 +28,17 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     currentPrice: ''
   })
 
+  // Lock background scrolling when modal is active
+  useEffect(() => {
+    if (showPortfolioModal || showAllHoldingsModal) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [showPortfolioModal, showAllHoldingsModal])
+
   // Safely extract holdings array
   const holdings = useMemo(() => {
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
