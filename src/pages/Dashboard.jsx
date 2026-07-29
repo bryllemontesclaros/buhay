@@ -54,7 +54,8 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
   // Calculate Portfolio Summary (Holdings, Market Value, Gain/Loss)
   const portfolioSummary = useMemo(() => {
     const holdingsWithLivePrices = (data.portfolioHoldings || []).map(h => {
-      if (assetPrices && assetPrices[h.symbol]) {
+      if (!h) return h
+      if (assetPrices && h.symbol && assetPrices[h.symbol]) {
         return { ...h, currentPrice: assetPrices[h.symbol], isLivePrice: true }
       }
       return h
@@ -563,21 +564,22 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             </div>
             {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
               <div className={styles.holdingsList}>
-                {data.portfolioHoldings.slice(0, 4).map(asset => {
-                  const qty = asset.quantity ?? asset.shares ?? 0
-                  const currentPrice = assetPrices?.[asset.symbol] ?? asset.currentPrice ?? asset.price ?? exchangeRates?.[asset.symbol] ?? 0
+                {data.portfolioHoldings.slice(0, 4).map((asset, i) => {
+                  if (!asset) return null
+                  const qty = asset?.quantity ?? asset?.shares ?? 0
+                  const currentPrice = assetPrices?.[asset?.symbol] ?? asset?.currentPrice ?? asset?.price ?? exchangeRates?.[asset?.symbol] ?? 0
                   const assetValue = qty * currentPrice
                   return (
-                    <div key={asset._id} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
+                    <div key={asset?._id || i} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
                       <div className={styles.holdingDetails}>
-                        <span className={styles.holdingSymbol}>{asset.symbol}</span>
-                        <span className={styles.holdingName}>{asset.name}</span>
+                        <span className={styles.holdingSymbol}>{asset?.symbol || 'Unknown'}</span>
+                        <span className={styles.holdingName}>{asset?.name || 'Unnamed'}</span>
                       </div>
                       <div className={styles.holdingValues}>
                         <span className={styles.holdingValue}>{fmt(assetValue || 0)}</span>
                         <span className={styles.holdingShares}>
-                          {qty} {asset.assetType === 'crypto' ? 'coins' : 'shares'}
-                          {assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price"> ⚡</span>}
+                          {qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'}
+                          {asset?.symbol && assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price"> ⚡</span>}
                         </span>
                       </div>
                     </div>
@@ -784,21 +786,22 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             <div className={styles.modalBody}>
               {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
                 <div className={styles.allHoldingsList}>
-                  {data.portfolioHoldings.map(asset => {
-                    const qty = asset.quantity ?? asset.shares ?? 0
-                    const currentPrice = assetPrices?.[asset.symbol] ?? asset.currentPrice ?? asset.price ?? exchangeRates?.[asset.symbol] ?? 0
-                    const avgBuyPrice = asset.averageBuyPrice ?? asset.avgPrice ?? 0
+                  {data.portfolioHoldings.map((asset, i) => {
+                    if (!asset) return null
+                    const qty = asset?.quantity ?? asset?.shares ?? 0
+                    const currentPrice = assetPrices?.[asset?.symbol] ?? asset?.currentPrice ?? asset?.price ?? exchangeRates?.[asset?.symbol] ?? 0
+                    const avgBuyPrice = asset?.averageBuyPrice ?? asset?.avgPrice ?? 0
                     const assetValue = qty * currentPrice
                     const assetProfit = assetValue - (qty * avgBuyPrice)
                     return (
-                      <div key={asset._id} className={styles.holdingItemFull} onClick={() => openAddPortfolioHolding(asset)}>
+                      <div key={asset?._id || i} className={styles.holdingItemFull} onClick={() => openAddPortfolioHolding(asset)}>
                         <div className={styles.holdingDetailsFull}>
                           <span className={styles.holdingSymbolFull}>
-                            {asset.symbol}
-                            {assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price">⚡</span>}
+                            {asset?.symbol || 'Unknown'}
+                            {asset?.symbol && assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price">⚡</span>}
                           </span>
-                          <span className={styles.holdingNameFull}>{asset.name}</span>
-                          <span className={styles.holdingTypeFull}>{asset.assetType}</span>
+                          <span className={styles.holdingNameFull}>{asset?.name || 'Unnamed'}</span>
+                          <span className={styles.holdingTypeFull}>{asset?.assetType || 'other'}</span>
                         </div>
                         <div className={styles.holdingValuesFull}>
                           <span className={styles.holdingValueFull}>{fmt(assetValue || 0)}</span>
