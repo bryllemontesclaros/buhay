@@ -1,29 +1,47 @@
 import { useState, useMemo, useEffect } from 'react'
-import { fsAdd, fsUpdate, fsSetProfile } from '../lib/firestore'
+import { fsAdd, fsUpdate, fsSetProfile, fsSavePortfolioHolding, fsDeletePortfolioHolding } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
-import { today, formatDisplayDate } from '../lib/utils'
+import { today, formatDisplayDate, fmt } from '../lib/utils'
 import { getBalanceAtDate } from '../lib/finance'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
 import { generateDashboardInsight } from '../lib/insights'
+import { getPortfolioSummary, PORTFOLIO_ASSET_TYPES } from '../lib/portfolio'
 import styles from './Dashboard.module.css'
 
 // Default layout if user has no saved layout
-const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'healthCard', 'mindCard', 'pulseFeed']
+const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'portfolioWidget', 'healthCard', 'mindCard', 'pulseFeed']
 
 const WIDGET_TITLES = {
   insightBanner: 'Smart Insight',
   statStrip: 'Key Stats Strip',
   wealthCard: 'Takda Wealth Card',
+  portfolioWidget: 'Investment Portfolio',
   healthCard: 'Lakas Health Card',
   mindCard: 'Tala Mind Card',
   pulseFeed: 'The Pulse Feed',
 }
 
-export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱' }) {
+export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱', exchangeRates = null }) {
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3)
   const [isEditing, setIsEditing] = useState(false)
   const [layout, setLayout] = useState(profile?.dashboardLayout || DEFAULT_LAYOUT)
+
+  // Portfolio Widget Modal States
+  const [showPortfolioModal, setShowPortfolioModal] = useState(false)
+  const [editingHolding, setEditingHolding] = useState(null)
+  const [portfolioForm, setPortfolioForm] = useState({
+    name: '',
+    symbol: '',
+    assetType: 'stock',
+    quantity: '',
+    averageBuyPrice: '',
+    currentPrice: '',
+    currency: 'PHP',
+  })
+  const [showAllHoldingsModal, setShowAllHoldingsModal] = useState(false)
+  const [portfolioFilter, setPortfolioFilter] = useState('all')
+  const [isSavingHolding, setIsSavingHolding] = useState(false)
 
   useEffect(() => {
     if (profile?.dashboardLayout) {
@@ -32,6 +50,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
   }, [profile?.dashboardLayout])
   
   const todayStr = today()
+
+  // Calculate Portfolio Summary (Holdings, Market Value, Gain/Loss)
+  const portfolioSummary = useMemo(() => {
+    return getPortfolioSummary(data.portfolioHoldings || [], exchangeRates)
+  }, [data.portfolioHoldings, exchangeRates])
 
   // Find today's checkin to initialize daily focus
   const todayCheckin = useMemo(() => {
@@ -84,14 +107,15 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
     const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a?.balance || 0), 0)
     const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a?.balance || 0), 0)
-    const netWorth = totalCash - totalCCDebt
+    const portfolioMarketValue = portfolioSummary.marketValue || 0
+    const netWorth = totalCash + portfolioMarketValue - totalCCDebt
 
     const upcomingBills = (data.bills || [])
       .filter(b => !b.isPaid && b.dueDate >= todayStr)
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
 
-    return { netWorth, totalCash, totalCCDebt, nextBill: upcomingBills[0] }
-  }, [data.accounts, data.bills, todayStr])
+    return { netWorth, totalCash, totalCCDebt, portfolioMarketValue, nextBill: upcomingBills[0] }
+  }, [data.accounts, data.bills, todayStr, portfolioSummary])
 
   const todayHabit = useMemo(() => {
     return (data.lakasHabits || []).find(h => h.date === todayStr) || {}
@@ -250,6 +274,99 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     }
   }
 
+  const openAddPortfolioHolding = () => {
+    setEditingHolding(null)
+    setPortfolioForm({
+      name: '',
+      symbol: '',
+      assetType: 'stock',
+      quantity: '',
+      averageBuyPrice: '',
+      currentPrice: '',
+      currency: profile?.currency || 'PHP',
+    })
+    setShowPortfolioModal(true)
+  }
+
+  const openEditPortfolioHolding = (holding) => {
+    setEditingHolding(holding)
+    setPortfolioForm({
+      name: holding.name || '',
+      symbol: holding.symbol || '',
+      assetType: holding.assetType || 'stock',
+      quantity: String(holding.quantity ?? ''),
+      averageBuyPrice: String(holding.averageBuyPrice ?? ''),
+      currentPrice: String(holding.currentPrice ?? ''),
+      currency: holding.currency || profile?.currency || 'PHP',
+    })
+    setShowPortfolioModal(true)
+  }
+
+  const closePortfolioModal = () => {
+    setShowPortfolioModal(false)
+    setEditingHolding(null)
+  }
+
+  const handleSavePortfolioHolding = async (e) => {
+    if (e) e.preventDefault()
+    if (!user?.uid) return
+    const name = portfolioForm.name.trim()
+    const symbol = portfolioForm.symbol.trim().toUpperCase()
+    const quantity = parseFloat(portfolioForm.quantity)
+    const currentPrice = parseFloat(portfolioForm.currentPrice)
+    const averageBuyPrice = parseFloat(portfolioForm.averageBuyPrice) || currentPrice || 0
+
+    if (!name && !symbol) {
+      notifyApp({ title: 'Holding needs a name', message: 'Enter a name or ticker symbol for this asset.', tone: 'warning' })
+      return
+    }
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      notifyApp({ title: 'Invalid quantity', message: 'Quantity must be greater than zero.', tone: 'warning' })
+      return
+    }
+    if (!Number.isFinite(currentPrice) || currentPrice < 0) {
+      notifyApp({ title: 'Invalid price', message: 'Current price cannot be negative.', tone: 'warning' })
+      return
+    }
+
+    setIsSavingHolding(true)
+    try {
+      await fsSavePortfolioHolding(user.uid, {
+        ...(editingHolding ? { _id: editingHolding._id } : {}),
+        name: name || symbol,
+        symbol: symbol || name,
+        assetType: portfolioForm.assetType,
+        quantity,
+        averageBuyPrice,
+        currentPrice,
+        currency: portfolioForm.currency,
+      })
+      notifyApp({
+        title: editingHolding ? 'Holding updated' : 'Asset added',
+        message: `${name || symbol} saved to your investment portfolio.`,
+        tone: 'success',
+      })
+      closePortfolioModal()
+    } catch (err) {
+      console.error('Failed to save portfolio holding', err)
+      notifyApp({ title: 'Error saving asset', message: 'Check your network connection and try again.', tone: 'error' })
+    } finally {
+      setIsSavingHolding(false)
+    }
+  }
+
+  const handleDeletePortfolioHolding = async (holding) => {
+    if (!user?.uid || !holding?._id) return
+    try {
+      await fsDeletePortfolioHolding(user.uid, holding._id)
+      notifyApp({ title: 'Asset removed', message: `${holding.name || holding.symbol} removed from portfolio.`, tone: 'success' })
+      if (editingHolding?._id === holding._id) closePortfolioModal()
+    } catch (err) {
+      console.error('Failed to delete holding', err)
+      notifyApp({ title: 'Delete failed', message: 'Could not remove holding.', tone: 'error' })
+    }
+  }
+
 
   // --- WIDGET RENDERERS ---
   const widgets = {
@@ -405,6 +522,69 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
         </button>
       </section>
     ),
+    portfolioWidget: (
+      <section className={`${styles.card} ${styles.portfolioCard}`} aria-label="Investment Portfolio">
+        <div className={styles.cardHeader}>
+          <div className={styles.cardTitleBlock}>
+            <span className={styles.cardEmoji} aria-hidden="true">📈</span>
+            <h2 className={styles.cardTitle}>Portfolio</h2>
+          </div>
+          <span className={styles.cardTag}>Takda</span>
+        </div>
+        <div className={styles.bentoBody}>
+          <div className={styles.metricBlock}>
+            <span className={styles.metricLabel}>Total Value</span>
+            <span className={`${styles.metricVal} ${styles.metricValWealth}`}>{fmt(portfolioSummary.marketValue || 0)}</span>
+          </div>
+          <div className={styles.subMetricsGrid}>
+            <div className={styles.subMetric}>
+              <span className={styles.subMetricLabel}>Total Gain/Loss</span>
+              <span className={`${styles.subMetricVal} ${(portfolioSummary.totalProfit || 0) >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+                {(portfolioSummary.totalProfit || 0) >= 0 ? '+' : ''}{fmt(portfolioSummary.totalProfit || 0)}
+              </span>
+            </div>
+            <div className={styles.subMetric}>
+              <span className={styles.subMetricLabel}>Invested</span>
+              <span className={styles.subMetricVal}>{fmt(portfolioSummary.totalInvested || 0)}</span>
+            </div>
+          </div>
+          <div className={styles.widgetDivider} />
+          
+          <div className={styles.portfolioHoldings}>
+            <div className={styles.holdingsHeader}>
+              <h3 className={styles.extraTitle}>Top Assets</h3>
+              <button className={styles.textBtn} onClick={() => setShowAllHoldingsModal(true)}>View All</button>
+            </div>
+            {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
+              <div className={styles.holdingsList}>
+                {data.portfolioHoldings.slice(0, 4).map(asset => {
+                  const assetValue = asset.shares * (exchangeRates[asset.symbol] || asset.price || 0)
+                  return (
+                    <div key={asset._id} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
+                      <div className={styles.holdingDetails}>
+                        <span className={styles.holdingSymbol}>{asset.symbol}</span>
+                        <span className={styles.holdingName}>{asset.name}</span>
+                      </div>
+                      <div className={styles.holdingValues}>
+                        <span className={styles.holdingValue}>{fmt(assetValue)}</span>
+                        <span className={styles.holdingShares}>{asset.shares} {asset.assetType === 'crypto' ? 'coins' : 'shares'}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className={styles.emptyPortfolio}>
+                <p className={styles.emptyText}>No assets yet.</p>
+              </div>
+            )}
+            <button className={styles.addAssetBtn} onClick={() => openAddPortfolioHolding()}>
+              + Add Asset
+            </button>
+          </div>
+        </div>
+      </section>
+    ),
     pulseFeed: (
       <section className={`${styles.card} ${styles.pulseCard}`} aria-label="Recent activity">
         <div className={styles.cardHeader}>
@@ -519,9 +699,111 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
           </div>
         </div>
       )}
+
+      {/* ── PORTFOLIO MODALS ────────────────── */}
+      {showPortfolioModal && (
+        <div className={styles.modalOverlay} onClick={closePortfolioModal}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>{editingHolding ? 'Edit Asset' : 'Add Asset'}</h3>
+              <button className={styles.closeModalBtn} onClick={closePortfolioModal}>✕</button>
+            </div>
+            <div className={styles.modalBody}>
+              <label className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Asset Type</span>
+                <select className={styles.inputField} value={pFormType} onChange={e => setPFormType(e.target.value)}>
+                  <option value="stock">Stock/ETF</option>
+                  <option value="crypto">Cryptocurrency</option>
+                  <option value="bond">Bonds/Fixed Income</option>
+                  <option value="real_estate">Real Estate / REIT</option>
+                  <option value="other">Other Asset</option>
+                </select>
+              </label>
+              <label className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Symbol or Ticker</span>
+                <input className={styles.inputField} type="text" placeholder="e.g. AAPL, BTC" value={pFormSymbol} onChange={e => setPFormSymbol(e.target.value.toUpperCase())} />
+              </label>
+              <label className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Asset Name</span>
+                <input className={styles.inputField} type="text" placeholder="e.g. Apple Inc." value={pFormName} onChange={e => setPFormName(e.target.value)} />
+              </label>
+              <div className={styles.inputRow}>
+                <label className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>Shares / Amount</span>
+                  <input className={styles.inputField} type="number" step="any" placeholder="0.0" value={pFormShares} onChange={e => setPFormShares(e.target.value)} />
+                </label>
+                <label className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>Avg Price (Buy)</span>
+                  <input className={styles.inputField} type="number" step="any" placeholder="0.00" value={pFormAvgPrice} onChange={e => setPFormAvgPrice(e.target.value)} />
+                </label>
+              </div>
+              <label className={styles.inputGroup}>
+                <span className={styles.inputLabel}>Current Price (optional)</span>
+                <input className={styles.inputField} type="number" step="any" placeholder="Overrides automatic pricing if set" value={pFormCurrentPrice} onChange={e => setPFormCurrentPrice(e.target.value)} />
+              </label>
+            </div>
+            <div className={styles.modalFooter}>
+              {editingHolding && (
+                <button 
+                  className={styles.deleteAssetBtn} 
+                  onClick={() => handleDeletePortfolioHolding(editingHolding)}
+                >
+                  Delete
+                </button>
+              )}
+              <button 
+                className={styles.saveAssetBtn} 
+                onClick={handleSavePortfolioHolding} 
+                disabled={isSavingHolding || !pFormSymbol || !pFormShares}
+              >
+                {isSavingHolding ? 'Saving...' : 'Save Asset'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAllHoldingsModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowAllHoldingsModal(false)}>
+          <div className={`${styles.modalContent} ${styles.modalContentLarge}`} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>All Portfolio Assets</h3>
+              <button className={styles.closeModalBtn} onClick={() => setShowAllHoldingsModal(false)}>✕</button>
+            </div>
+            <div className={styles.modalBody}>
+              {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
+                <div className={styles.allHoldingsList}>
+                  {data.portfolioHoldings.map(asset => {
+                    const assetValue = asset.shares * (exchangeRates[asset.symbol] || asset.price || 0)
+                    const assetProfit = assetValue - (asset.shares * asset.avgPrice)
+                    return (
+                      <div key={asset._id} className={styles.holdingItemFull} onClick={() => openAddPortfolioHolding(asset)}>
+                        <div className={styles.holdingDetailsFull}>
+                          <span className={styles.holdingSymbolFull}>{asset.symbol}</span>
+                          <span className={styles.holdingNameFull}>{asset.name}</span>
+                          <span className={styles.holdingTypeFull}>{asset.assetType}</span>
+                        </div>
+                        <div className={styles.holdingValuesFull}>
+                          <span className={styles.holdingValueFull}>{fmt(assetValue)}</span>
+                          <span className={`${styles.holdingProfitFull} ${assetProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+                            {assetProfit >= 0 ? '+' : ''}{fmt(assetProfit)}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <p className={styles.emptyText}>No assets yet.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       
     </div>
   )
 }
 
-// cache bust HMR
+export default Dashboard
