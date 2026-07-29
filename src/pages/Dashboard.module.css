@@ -917,46 +917,107 @@
   .widget_wealthCard { grid-row: span 1; }
 }
 
-/* ── JIGGLE EDIT MODE ─────────────────── */
+/* ── JIGGLE & REORDER EDIT MODE ─────────────────── */
 .isEditingContainer {
   padding-bottom: 350px; /* massive space to ensure drawer never covers widgets */
 }
 
 @keyframes jiggle {
-  0% { transform: rotate(-1deg); }
-  50% { transform: rotate(1.5deg); }
-  100% { transform: rotate(-1deg); }
+  0% { transform: rotate(-0.5deg); }
+  50% { transform: rotate(0.8deg); }
+  100% { transform: rotate(-0.5deg); }
 }
 
-.widgetJiggle {
+.widgetEditing {
   animation: jiggle 0.3s infinite;
   transform-origin: center;
   z-index: 10;
+  cursor: grab;
+}
+
+.widgetEditing:active {
+  cursor: grabbing;
+}
+
+.widgetDragging {
+  opacity: 0.4;
+  transform: scale(0.96);
+  border: 2px dashed var(--accent) !important;
+}
+
+.widgetEditControls {
+  position: absolute;
+  top: -12px;
+  left: 6px;
+  right: 6px;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.moveBtnGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 99px;
+  padding: 3px 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.moveBtn {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.moveBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  transform: scale(1.15);
+}
+
+.moveBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
 }
 
 .removeWidgetBtn {
-  position: absolute;
-  top: -8px;
-  left: -8px;
+  position: relative;
+  top: 0;
+  left: 0;
   width: 28px;
   height: 28px;
-  background: var(--red);
+  background: #ef4444;
   color: white;
-  border: 2px solid var(--bg-primary);
+  border: 2px solid var(--surface);
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 20;
-  /* box-shadow flattened */
-  transition: transform 0.2s;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .removeWidgetBtn:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  background: #dc2626;
 }
 
 .headerRight {

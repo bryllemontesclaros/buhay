@@ -241,7 +241,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     }
   }
 
-  const visibleHoldings = holdings.slice(0, 3)
+  const visibleHoldings = holdings.slice(0, 6)
 
   return (
     <section className={styles.card} aria-label="Asset Portfolio">
@@ -269,7 +269,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
 
       <div className={styles.holdingsHeader}>
         <span className={styles.holdingsTitle}>Holdings</span>
-        {holdings.length > 3 && (
+        {holdings.length > 6 && (
           <button className={styles.textBtn} onClick={() => setShowAllHoldingsModal(true)}>
             View All ({holdings.length})
           </button>

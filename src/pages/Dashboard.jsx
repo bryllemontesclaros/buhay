@@ -241,6 +241,54 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     setIsEditing(!isEditing)
   }
 
+  const moveWidget = (id, direction) => {
+    const currentIndex = layout.indexOf(id)
+    if (currentIndex === -1) return
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+    if (targetIndex < 0 || targetIndex >= layout.length) return
+
+    const newLayout = [...layout]
+    const temp = newLayout[currentIndex]
+    newLayout[currentIndex] = newLayout[targetIndex]
+    newLayout[targetIndex] = temp
+
+    saveLayout(newLayout)
+  }
+
+  const [draggedWidgetId, setDraggedWidgetId] = useState(null)
+
+  const handleDragStart = (e, id) => {
+    setDraggedWidgetId(id)
+    if (e.dataTransfer) {
+      e.dataTransfer.setData('text/plain', id)
+      e.dataTransfer.effectAllowed = 'move'
+    }
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move'
+    }
+  }
+
+  const handleDrop = (e, targetId) => {
+    e.preventDefault()
+    if (!draggedWidgetId || draggedWidgetId === targetId) return
+
+    const fromIndex = layout.indexOf(draggedWidgetId)
+    const toIndex = layout.indexOf(targetId)
+    if (fromIndex === -1 || toIndex === -1) return
+
+    const newLayout = [...layout]
+    const [moved] = newLayout.splice(fromIndex, 1)
+    newLayout.splice(toIndex, 0, moved)
+
+    saveLayout(newLayout)
+    setDraggedWidgetId(null)
+  }
+
   const removeWidget = (id) => {
     const newLayout = layout.filter(w => w !== id)
     saveLayout(newLayout)
@@ -480,20 +528,48 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
       {/* ── WIDGET BOARD ─────────────────────── */}
       <div className={styles.widgetBoard}>
-        {(layout || []).map(widgetId => (
+        {(layout || []).map((widgetId, index) => (
           <div 
             key={widgetId} 
-            className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetJiggle : ''}`}
-            style={{ animationDelay: `${Math.random() * 0.2}s` }}
+            className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetEditing : ''} ${draggedWidgetId === widgetId ? styles.widgetDragging : ''}`}
+            draggable={isEditing}
+            onDragStart={e => handleDragStart(e, widgetId)}
+            onDragOver={handleDragOver}
+            onDrop={e => handleDrop(e, widgetId)}
           >
             {isEditing && (
-              <button 
-                className={styles.removeWidgetBtn} 
-                onClick={() => removeWidget(widgetId)}
-                aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
-              >
-                ✕
-              </button>
+              <div className={styles.widgetEditControls}>
+                <div className={styles.moveBtnGroup}>
+                  <button 
+                    type="button"
+                    className={styles.moveBtn} 
+                    onClick={() => moveWidget(widgetId, 'up')}
+                    disabled={index === 0}
+                    title="Move Left / Up"
+                    aria-label={`Move ${WIDGET_TITLES[widgetId]} Up`}
+                  >
+                    ◄
+                  </button>
+                  <button 
+                    type="button"
+                    className={styles.moveBtn} 
+                    onClick={() => moveWidget(widgetId, 'down')}
+                    disabled={index === (layout || []).length - 1}
+                    title="Move Right / Down"
+                    aria-label={`Move ${WIDGET_TITLES[widgetId]} Down`}
+                  >
+                    ►
+                  </button>
+                </div>
+                <button 
+                  type="button"
+                  className={styles.removeWidgetBtn} 
+                  onClick={() => removeWidget(widgetId)}
+                  aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
+                >
+                  ✕
+                </button>
+              </div>
             )}
             {widgets[widgetId]}
           </div>
