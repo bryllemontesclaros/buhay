@@ -819,5 +819,3 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     </div>
   )
 }
-
-export default Dashboard
