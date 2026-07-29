@@ -805,8 +805,8 @@ export default function AppShell({ user }) {
       return
     }
 
-    const cryptoSymbols = Array.from(new Set(holdings.filter(h => h.assetType === 'crypto').map(h => h.symbol)))
-    const stockSymbols = Array.from(new Set(holdings.filter(h => h.assetType === 'stock' || h.assetType === 'etf').map(h => h.symbol)))
+    const cryptoSymbols = Array.from(new Set(holdings.filter(h => h.assetType === 'crypto' && h.symbol).map(h => h.symbol)))
+    const stockSymbols = Array.from(new Set(holdings.filter(h => (h.assetType === 'stock' || h.assetType === 'etf') && h.symbol).map(h => h.symbol)))
 
     async function loadPrices() {
       const [crypto, stocks] = await Promise.all([

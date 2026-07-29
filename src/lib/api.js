@@ -37,7 +37,8 @@ export async function fetchCryptoPrices(symbols) {
   
   // Find mapping
   symbols.forEach(sym => {
-    const s = sym.toUpperCase()
+    if (!sym) return
+    const s = String(sym).toUpperCase()
     if (COINGECKO_MAP[s]) {
       idsToFetch.push(COINGECKO_MAP[s])
       symbolToId[COINGECKO_MAP[s]] = s
@@ -86,7 +87,8 @@ export async function fetchStockPrices(symbols) {
     // Finnhub requires individual requests for quotes on the free tier
     // We run them concurrently with Promise.all
     const requests = symbols.map(async (sym) => {
-      const s = sym.toUpperCase()
+      if (!sym) return
+      const s = String(sym).toUpperCase()
       const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${s}&token=${apiKey}`)
       if (!res.ok) throw new Error(`Finnhub API failed for ${s}`)
       const data = await res.json()

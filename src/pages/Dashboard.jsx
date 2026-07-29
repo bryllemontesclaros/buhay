@@ -564,8 +564,9 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
               <div className={styles.holdingsList}>
                 {data.portfolioHoldings.slice(0, 4).map(asset => {
-                  const currentPrice = assetPrices?.[asset.symbol] || asset.currentPrice || exchangeRates?.[asset.symbol] || 0
-                  const assetValue = asset.quantity * currentPrice
+                  const qty = asset.quantity ?? asset.shares ?? 0
+                  const currentPrice = assetPrices?.[asset.symbol] ?? asset.currentPrice ?? asset.price ?? exchangeRates?.[asset.symbol] ?? 0
+                  const assetValue = qty * currentPrice
                   return (
                     <div key={asset._id} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
                       <div className={styles.holdingDetails}>
@@ -573,9 +574,9 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
                         <span className={styles.holdingName}>{asset.name}</span>
                       </div>
                       <div className={styles.holdingValues}>
-                        <span className={styles.holdingValue}>{fmt(assetValue)}</span>
+                        <span className={styles.holdingValue}>{fmt(assetValue || 0)}</span>
                         <span className={styles.holdingShares}>
-                          {asset.quantity} {asset.assetType === 'crypto' ? 'coins' : 'shares'}
+                          {qty} {asset.assetType === 'crypto' ? 'coins' : 'shares'}
                           {assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price"> ⚡</span>}
                         </span>
                       </div>
@@ -784,9 +785,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
                 <div className={styles.allHoldingsList}>
                   {data.portfolioHoldings.map(asset => {
-                    const currentPrice = assetPrices?.[asset.symbol] || asset.currentPrice || exchangeRates?.[asset.symbol] || 0
-                    const assetValue = asset.quantity * currentPrice
-                    const assetProfit = assetValue - (asset.quantity * asset.averageBuyPrice)
+                    const qty = asset.quantity ?? asset.shares ?? 0
+                    const currentPrice = assetPrices?.[asset.symbol] ?? asset.currentPrice ?? asset.price ?? exchangeRates?.[asset.symbol] ?? 0
+                    const avgBuyPrice = asset.averageBuyPrice ?? asset.avgPrice ?? 0
+                    const assetValue = qty * currentPrice
+                    const assetProfit = assetValue - (qty * avgBuyPrice)
                     return (
                       <div key={asset._id} className={styles.holdingItemFull} onClick={() => openAddPortfolioHolding(asset)}>
                         <div className={styles.holdingDetailsFull}>
@@ -798,9 +801,9 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
                           <span className={styles.holdingTypeFull}>{asset.assetType}</span>
                         </div>
                         <div className={styles.holdingValuesFull}>
-                          <span className={styles.holdingValueFull}>{fmt(assetValue)}</span>
-                          <span className={`${styles.holdingProfitFull} ${assetProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
-                            {assetProfit >= 0 ? '+' : ''}{fmt(assetProfit)}
+                          <span className={styles.holdingValueFull}>{fmt(assetValue || 0)}</span>
+                          <span className={`${styles.holdingProfitFull} ${(assetProfit || 0) >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+                            {(assetProfit || 0) >= 0 ? '+' : ''}{fmt(assetProfit || 0)}
                           </span>
                         </div>
                       </div>
