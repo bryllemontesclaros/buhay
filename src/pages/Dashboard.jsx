@@ -5,15 +5,18 @@ import { today, formatDisplayDate } from '../lib/utils'
 import { getBalanceAtDate } from '../lib/finance'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
 import { generateDashboardInsight } from '../lib/insights'
+import ErrorBoundary from '../components/ErrorBoundary'
+import PortfolioWidget from '../components/PortfolioWidget'
 import styles from './Dashboard.module.css'
 
 // Default layout if user has no saved layout
-const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'healthCard', 'mindCard', 'pulseFeed']
+const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'portfolioCard', 'healthCard', 'mindCard', 'pulseFeed']
 
 const WIDGET_TITLES = {
   insightBanner: 'Smart Insight',
   statStrip: 'Key Stats Strip',
   wealthCard: 'Takda Wealth Card',
+  portfolioCard: 'Asset Portfolio',
   healthCard: 'Lakas Health Card',
   mindCard: 'Tala Mind Card',
   pulseFeed: 'The Pulse Feed',
@@ -298,6 +301,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
           </div>
         </div>
       </div>
+    ),
+    portfolioCard: (
+      <ErrorBoundary fallback={null}>
+        <PortfolioWidget user={user} data={data} s={s} />
+      </ErrorBoundary>
     ),
     wealthCard: (
       <section className={`${styles.card} ${styles.wealthCard}`} aria-label="Wealth overview">

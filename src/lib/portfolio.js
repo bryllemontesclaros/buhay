@@ -1,79 +1,144 @@
-export const PORTFOLIO_ASSET_TYPES = [
-  { id: 'stock', label: 'Stock' },
-  { id: 'crypto', label: 'Crypto' },
-  { id: 'etf', label: 'ETF' },
-  { id: 'fund', label: 'Fund' },
-  { id: 'cash', label: 'Cash' },
-  { id: 'other', label: 'Other' },
-]
+/**
+ * Portfolio API Helper Library
+ * Provides safe, resilient price fetching for Crypto (CoinGecko) and Stocks (Finnhub),
+ * plus data normalization utilities.
+ */
 
-const ASSET_TYPE_IDS = new Set(PORTFOLIO_ASSET_TYPES.map(type => type.id))
-
-export function numberOrZero(value) {
-  const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : 0
+const COINGECKO_MAP = {
+  'BTC': 'bitcoin',
+  'ETH': 'ethereum',
+  'USDT': 'tether',
+  'USDC': 'usd-coin',
+  'BNB': 'binancecoin',
+  'SOL': 'solana',
+  'XRP': 'ripple',
+  'ADA': 'cardano',
+  'DOGE': 'dogecoin',
+  'AVAX': 'avalanche-2',
+  'LINK': 'chainlink',
+  'MATIC': 'matic-network',
+  'DOT': 'polkadot',
+  'SHIB': 'shiba-inu',
+  'LTC': 'litecoin',
+  'BCH': 'bitcoin-cash',
+  'ATOM': 'cosmos',
+  'XLM': 'stellar',
+  'XMR': 'monero',
 }
 
-export function normalizePortfolioAssetType(value = '') {
-  const key = String(value || '').trim().toLowerCase()
-  return ASSET_TYPE_IDS.has(key) ? key : 'other'
-}
-
-export function normalizePortfolioHolding(holding = {}, exchangeRates = null) {
-  const quantity = Math.max(0, numberOrZero(holding.quantity))
-  const averageBuyPrice = Math.max(0, numberOrZero(holding.averageBuyPrice))
-  const currentPrice = Math.max(0, numberOrZero(holding.currentPrice))
-  
-  let marketValue = quantity * currentPrice
-  let totalCost = quantity * averageBuyPrice
-
-  if (exchangeRates && holding.currency) {
-    const holdingCurrency = String(holding.currency).toUpperCase()
-    const rate = Number(exchangeRates[holdingCurrency])
-    if (rate > 0) {
-      marketValue = marketValue / rate
-      totalCost = totalCost / rate
-    }
-  }
-
-  const gainLoss = marketValue - totalCost
-  const gainLossPct = totalCost > 0 ? (gainLoss / totalCost) * 100 : 0
+/**
+ * Normalizes a portfolio holding object for Firestore storage
+ * @param {Object} holding 
+ * @returns {Object} Cleaned holding object
+ */
+export function normalizePortfolioHolding(holding = {}) {
+  const quantity = parseFloat(holding.quantity ?? holding.shares ?? 0) || 0
+  const currentPrice = parseFloat(holding.currentPrice ?? holding.price ?? 0) || 0
+  const averageBuyPrice = parseFloat(holding.averageBuyPrice ?? holding.avgPrice ?? 0) || currentPrice || 0
 
   return {
-    ...holding,
-    name: String(holding.name || '').trim(),
-    symbol: String(holding.symbol || '').trim().toUpperCase(),
-    assetType: normalizePortfolioAssetType(holding.assetType),
+    ...(holding._id ? { _id: holding._id } : {}),
+    name: String(holding.name || holding.symbol || 'Asset').trim(),
+    symbol: String(holding.symbol || holding.name || 'ASSET').trim().toUpperCase(),
+    assetType: holding.assetType || 'stock',
     quantity,
-    averageBuyPrice,
     currentPrice,
-    lastPriceUpdatedAt: numberOrZero(holding.lastPriceUpdatedAt),
-    marketValue,
-    totalCost,
-    gainLoss,
-    gainLossPct,
+    averageBuyPrice,
+    updatedAt: holding.updatedAt || new Date().toISOString()
   }
 }
 
-export function getPortfolioSummary(holdings = [], exchangeRates = null) {
-  const normalized = holdings.map(holding => normalizePortfolioHolding(holding, exchangeRates))
-  const totals = normalized.reduce((summary, holding) => {
-    summary.marketValue += holding.marketValue
-    summary.totalCost += holding.totalCost
-    summary.assetTypes[holding.assetType] = (summary.assetTypes[holding.assetType] || 0) + holding.marketValue
-    return summary
-  }, {
-    marketValue: 0,
-    totalCost: 0,
-    assetTypes: {},
+/**
+ * Fetch Crypto Prices from CoinGecko (Free API)
+ * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH'])
+ * @returns {Promise<Object>} Object mapping symbol to USD price (e.g. { BTC: 64000 })
+ */
+export async function fetchCryptoPrices(symbols = []) {
+  if (!Array.isArray(symbols) || symbols.length === 0) return {}
+
+  const idsToFetch = []
+  const symbolToId = {}
+
+  symbols.forEach(sym => {
+    if (!sym) return
+    const s = String(sym).trim().toUpperCase()
+    if (COINGECKO_MAP[s]) {
+      idsToFetch.push(COINGECKO_MAP[s])
+      symbolToId[COINGECKO_MAP[s]] = s
+    }
   })
 
-  const gainLoss = totals.marketValue - totals.totalCost
-  return {
-    ...totals,
-    gainLoss,
-    gainLossPct: totals.totalCost > 0 ? (gainLoss / totals.totalCost) * 100 : 0,
-    holdings: normalized,
+  if (idsToFetch.length === 0) return {}
+
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout safeguard
+
+    const idsQuery = idsToFetch.join(',')
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd`, {
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+
+    if (!res.ok) throw new Error(`CoinGecko status ${res.status}`)
+
+    const data = await res.json()
+    const result = {}
+
+    for (const [id, value] of Object.entries(data || {})) {
+      if (value && typeof value.usd === 'number' && symbolToId[id]) {
+        result[symbolToId[id]] = value.usd
+      }
+    }
+    return result
+  } catch (error) {
+    console.warn('Portfolio API: Crypto price fetch failed, using fallbacks:', error.message || error)
+    return {}
   }
 }
 
+/**
+ * Fetch Stock/ETF Prices from Finnhub (requires VITE_FINNHUB_API_KEY)
+ * @param {string[]} symbols Array of stock ticker symbols (e.g. ['AAPL', 'VOO'])
+ * @returns {Promise<Object>} Object mapping symbol to USD price (e.g. { AAPL: 180.5 })
+ */
+export async function fetchStockPrices(symbols = []) {
+  if (!Array.isArray(symbols) || symbols.length === 0) return {}
+
+  const apiKey = import.meta.env?.VITE_FINNHUB_API_KEY
+  if (!apiKey) {
+    return {}
+  }
+
+  const result = {}
+
+  try {
+    const requests = symbols.map(async (sym) => {
+      if (!sym) return
+      const s = String(sym).trim().toUpperCase()
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 4000)
+
+        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${s}&token=${apiKey}`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+
+        if (!res.ok) return
+        const data = await res.json()
+        if (data && typeof data.c === 'number' && data.c > 0) {
+          result[s] = data.c
+        }
+      } catch {
+        // Ignore single stock errors safely
+      }
+    })
+
+    await Promise.allSettled(requests)
+    return result
+  } catch (error) {
+    console.warn('Portfolio API: Stock price fetch failed, using fallbacks:', error.message || error)
+    return {}
+  }
+}
