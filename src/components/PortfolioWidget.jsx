@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { fsSavePortfolioHolding, fsDeletePortfolioHolding } from '../lib/firestore'
 import { fetchCryptoPrices, fetchStockPrices } from '../lib/portfolio'
 import { notifyApp } from '../lib/appFeedback'
@@ -268,8 +269,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
         + Add New Asset
       </button>
 
-      {/* ── ADD/EDIT MODAL ────────────────── */}
-      {showPortfolioModal && (
+      {/* ── ADD/EDIT MODAL (PORTALED DIRECTLY TO BODY) ────────────────── */}
+      {showPortfolioModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closePortfolioModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             
@@ -389,11 +390,12 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* ── VIEW ALL MODAL ────────────────── */}
-      {showAllHoldingsModal && (
+      {/* ── VIEW ALL MODAL (PORTALED DIRECTLY TO BODY) ────────────────── */}
+      {showAllHoldingsModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={() => setShowAllHoldingsModal(false)}>
           <div className={`${styles.modalContent} ${styles.modalContentLarge}`} onClick={e => e.stopPropagation()}>
             
@@ -440,7 +442,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   )
