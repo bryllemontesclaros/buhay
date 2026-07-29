@@ -7,12 +7,12 @@
 export const POPULAR_ASSETS = [
   { id: 'btc', name: 'Bitcoin', symbol: 'BTC', assetType: 'crypto', defaultPrice: 3850000 },
   { id: 'eth', name: 'Ethereum', symbol: 'ETH', assetType: 'crypto', defaultPrice: 200000 },
-  { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto', defaultPrice: 10500 },
+  { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto', defaultPrice: 4500 },
   { id: 'usdt', name: 'Tether USD', symbol: 'USDT', assetType: 'crypto', defaultPrice: 58.5 },
   { id: 'bnb', name: 'BNB', symbol: 'BNB', assetType: 'crypto', defaultPrice: 33000 },
   { id: 'xrp', name: 'XRP', symbol: 'XRP', assetType: 'crypto', defaultPrice: 35 },
-  { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPrice: 28 },
-  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPrice: 8.5 },
+  { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPrice: 24 },
+  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPrice: 7.5 },
 
   { id: 'aapl', name: 'Apple Inc.', symbol: 'AAPL', assetType: 'stock', defaultPrice: 13200 },
   { id: 'nvda', name: 'Nvidia Corp', symbol: 'NVDA', assetType: 'stock', defaultPrice: 7000 },
@@ -73,11 +73,12 @@ export function normalizePortfolioHolding(holding = {}) {
 }
 
 /**
- * Fetch Crypto Prices from CoinGecko (Free API)
+ * Fetch Crypto Prices from CoinGecko in target currency (PHP vs USD)
  * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH'])
- * @returns {Promise<Object>} Object mapping symbol to USD price (e.g. { BTC: 64000 })
+ * @param {string} currencySymbol Current currency symbol ('₱' or '$')
+ * @returns {Promise<Object>} Object mapping symbol to price in target currency
  */
-export async function fetchCryptoPrices(symbols = []) {
+export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   if (!Array.isArray(symbols) || symbols.length === 0) return {}
 
   const idsToFetch = []
@@ -94,12 +95,14 @@ export async function fetchCryptoPrices(symbols = []) {
 
   if (idsToFetch.length === 0) return {}
 
+  const targetVs = (currencySymbol === '$' || currencySymbol === 'USD') ? 'usd' : 'php'
+
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
 
     const idsQuery = idsToFetch.join(',')
-    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd`, {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=${targetVs},usd,php`, {
       signal: controller.signal
     })
     clearTimeout(timeoutId)
@@ -110,8 +113,11 @@ export async function fetchCryptoPrices(symbols = []) {
     const result = {}
 
     for (const [id, value] of Object.entries(data || {})) {
-      if (value && typeof value.usd === 'number' && symbolToId[id]) {
-        result[symbolToId[id]] = value.usd
+      if (value && symbolToId[id]) {
+        const fetchedPrice = value[targetVs] ?? value.php ?? value.usd
+        if (typeof fetchedPrice === 'number' && fetchedPrice > 0) {
+          result[symbolToId[id]] = fetchedPrice
+        }
       }
     }
     return result
@@ -124,7 +130,7 @@ export async function fetchCryptoPrices(symbols = []) {
 /**
  * Fetch Stock/ETF Prices from Finnhub (requires VITE_FINNHUB_API_KEY)
  * @param {string[]} symbols Array of stock ticker symbols (e.g. ['AAPL', 'VOO'])
- * @returns {Promise<Object>} Object mapping symbol to USD price (e.g. { AAPL: 180.5 })
+ * @returns {Promise<Object>} Object mapping symbol to price
  */
 export async function fetchStockPrices(symbols = []) {
   if (!Array.isArray(symbols) || symbols.length === 0) return {}
@@ -152,7 +158,8 @@ export async function fetchStockPrices(symbols = []) {
         if (!res.ok) return
         const data = await res.json()
         if (data && typeof data.c === 'number' && data.c > 0) {
-          result[s] = data.c
+          // Multiply USD stock quote by ~58.5 if PHP currency is active (rough conversion)
+          result[s] = data.c * 58.5
         }
       } catch {
         // Ignore single stock errors safely

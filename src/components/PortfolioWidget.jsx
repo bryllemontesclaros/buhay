@@ -64,7 +64,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
           .map(h => h.symbol)
 
         const [cryptos, stocks] = await Promise.all([
-          fetchCryptoPrices(cryptoSymbols),
+          fetchCryptoPrices(cryptoSymbols, s),
           fetchStockPrices(stockSymbols)
         ])
 
@@ -78,7 +78,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
 
     loadPrices()
     return () => { isMounted = false }
-  }, [holdings])
+  }, [holdings, s])
 
   // Helper number formatter
   const fmt = (num) => {
@@ -133,15 +133,27 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     setShowPortfolioModal(true)
   }
 
-  const handleSelectPresetAsset = (presetId) => {
+  const handleSelectPresetAsset = async (presetId) => {
     setSelectedPresetId(presetId)
     if (!presetId || presetId === 'custom') return
 
     const assetPreset = POPULAR_ASSETS.find(a => a.id === presetId)
     if (!assetPreset) return
 
-    const livePrice = livePrices[assetPreset.symbol]
-    const priceToUse = livePrice || assetPreset.defaultPrice || 0
+    let priceToUse = livePrices[assetPreset.symbol] || assetPreset.defaultPrice || 0
+
+    // Fetch live market price converted to active currency (PHP/USD)
+    if (assetPreset.assetType === 'crypto') {
+      try {
+        const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
+        if (liveMap[assetPreset.symbol]) {
+          priceToUse = liveMap[assetPreset.symbol]
+          setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
+        }
+      } catch (err) {
+        console.warn('Preset live price fetch failed:', err)
+      }
+    }
 
     setPortfolioForm(prev => ({
       ...prev,
@@ -325,7 +337,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                     value={selectedPresetId}
                     onChange={e => handleSelectPresetAsset(e.target.value)}
                   >
-                    <option value="">Pick an Asset (Auto-fills Ticker & Price)...</option>
+                    <option value="">Pick an Asset (Auto-fills Ticker & Live Price)...</option>
                     <optgroup label="Popular Crypto">
                       {POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => (
                         <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
