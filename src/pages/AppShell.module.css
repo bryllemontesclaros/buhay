@@ -1763,8 +1763,16 @@
     flex-wrap: nowrap;
     white-space: nowrap;
   }
+  .editBtnLabel {
+    display: none;
+  }
   .editLayoutTopBtn, .doneTopBtn {
-    display: none !important;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 15px;
   }
   .topBarLogo {
     display: block;

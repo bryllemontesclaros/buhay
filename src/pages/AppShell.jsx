@@ -1831,11 +1831,12 @@ export default function AppShell({ user }) {
                 className={isDashboardEditing ? styles.doneTopBtn : styles.editLayoutTopBtn}
                 onClick={() => setIsDashboardEditing(prev => !prev)}
                 title={isDashboardEditing ? 'Finish editing layout' : 'Customize Dashboard Layout'}
+                aria-label={isDashboardEditing ? 'Finish editing layout' : 'Customize Dashboard Layout'}
               >
                 {isDashboardEditing ? (
-                  <>✓ Done</>
+                  <>✓ <span className={styles.editBtnLabel}>Done</span></>
                 ) : (
-                  <><span aria-hidden="true">⚙️</span> Edit Layout</>
+                  <><span aria-hidden="true">⚙️</span> <span className={styles.editBtnLabel}>Edit Layout</span></>
                 )}
               </button>
             )}
