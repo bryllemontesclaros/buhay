@@ -13,7 +13,7 @@ const ASSET_TYPES = [
   { id: 'other', label: 'Other', icon: '💎' },
 ]
 
-export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
+export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMode = false }) {
   const [showPortfolioModal, setShowPortfolioModal] = useState(false)
   const [showAllHoldingsModal, setShowAllHoldingsModal] = useState(false)
   const [editingHolding, setEditingHolding] = useState(null)
@@ -80,8 +80,9 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     return () => { isMounted = false }
   }, [holdings, s])
 
-  // Helper number formatter
+  // Helper number formatter with privacyMode support
   const fmt = (num) => {
+    if (privacyMode) return `${s} •••••`
     const val = Number(num) || 0
     return `${s} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
@@ -262,7 +263,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
         <div className={styles.summaryRow}>
           <span className={styles.summaryTotal}>{fmt(portfolioSummary.totalVal)}</span>
           <span className={`${styles.summaryProfit} ${portfolioSummary.totalProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
-            {portfolioSummary.totalProfit >= 0 ? '+' : ''}{fmt(portfolioSummary.totalProfit)}
+            {privacyMode ? `${s} •••••` : `${portfolioSummary.totalProfit >= 0 ? '+' : ''}${fmt(portfolioSummary.totalProfit)}`}
           </span>
         </div>
       </div>
@@ -298,7 +299,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                 <div className={styles.holdingValues}>
                   <span className={styles.holdingValue}>{fmt(assetValue)}</span>
                   <span className={styles.holdingShares}>
-                    {qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'}
+                    {privacyMode ? '••' : qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'}
                   </span>
                 </div>
               </div>

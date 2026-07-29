@@ -352,7 +352,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     ),
     portfolioCard: (
       <ErrorBoundary fallback={null}>
-        <PortfolioWidget user={user} data={data} s={s} />
+        <PortfolioWidget user={user} data={data} s={s} privacyMode={privacyMode} />
       </ErrorBoundary>
     ),
     wealthCard: (
