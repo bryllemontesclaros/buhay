@@ -262,38 +262,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     saveLayout(newLayout)
   }
 
-  const [draggedWidgetId, setDraggedWidgetId] = useState(null)
 
-  const handleDragStart = (e, id) => {
-    setDraggedWidgetId(id)
-    if (e.dataTransfer) {
-      e.dataTransfer.setData('text/plain', id)
-      e.dataTransfer.effectAllowed = 'move'
-    }
-  }
-
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    if (e.dataTransfer) {
-      e.dataTransfer.dropEffect = 'move'
-    }
-  }
-
-  const handleDrop = (e, targetId) => {
-    e.preventDefault()
-    if (!draggedWidgetId || draggedWidgetId === targetId) return
-
-    const fromIndex = layout.indexOf(draggedWidgetId)
-    const toIndex = layout.indexOf(targetId)
-    if (fromIndex === -1 || toIndex === -1) return
-
-    const newLayout = [...layout]
-    const [moved] = newLayout.splice(fromIndex, 1)
-    newLayout.splice(toIndex, 0, moved)
-
-    saveLayout(newLayout)
-    setDraggedWidgetId(null)
-  }
 
   const removeWidget = (id) => {
     const newLayout = (layout || []).filter(w => w !== id)
@@ -539,24 +508,38 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
       {/* ── WIDGET BOARD ─────────────────────── */}
       <div className={styles.widgetBoard}>
-        {(layout || []).map((widgetId) => (
+        {(layout || []).map((widgetId, idx) => (
           <div 
             key={widgetId} 
-            className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetEditing : ''} ${draggedWidgetId === widgetId ? styles.widgetDragging : ''}`}
-            draggable={isEditing}
-            onDragStart={e => handleDragStart(e, widgetId)}
-            onDragOver={handleDragOver}
-            onDrop={e => handleDrop(e, widgetId)}
+            className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetEditing : ''}`}
           >
             {isEditing && (
-              <button 
-                type="button"
-                className={styles.removeWidgetBtn} 
-                onClick={() => removeWidget(widgetId)}
-                aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
-              >
-                ✕
-              </button>
+              <div className={styles.widgetEditControls}>
+                <div className={styles.moveBtnGroup}>
+                  <button
+                    type="button"
+                    className={styles.moveBtn}
+                    onClick={() => moveWidget(widgetId, 'up')}
+                    disabled={idx === 0}
+                    aria-label={`Move ${WIDGET_TITLES[widgetId]} up`}
+                  >▲</button>
+                  <button
+                    type="button"
+                    className={styles.moveBtn}
+                    onClick={() => moveWidget(widgetId, 'down')}
+                    disabled={idx === layout.length - 1}
+                    aria-label={`Move ${WIDGET_TITLES[widgetId]} down`}
+                  >▼</button>
+                </div>
+                <button 
+                  type="button"
+                  className={styles.removeWidgetBtn} 
+                  onClick={() => removeWidget(widgetId)}
+                  aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
+                >
+                  ✕
+                </button>
+              </div>
             )}
             {widgets[widgetId]}
           </div>
