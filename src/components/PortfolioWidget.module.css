@@ -240,76 +240,89 @@
   color: #eab308;
 }
 
-/* Modals & Overlays */
+/* ── MODALS & OVERLAYS ────────────────── */
 
 .modalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  z-index: 200000; /* Ensure overlay floats above bottom nav bar (z: 100), FAB (z: 101), and headers */
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 20px;
   animation: fadeIn 0.2s ease;
 }
 
 .modalContent {
   background: var(--surface1);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 24px;
   width: 100%;
-  max-width: 480px;
-  max-height: 90vh;
+  max-width: 500px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent);
   overflow: hidden;
-  animation: slideUp 0.2s ease;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modalContentLarge {
-  max-width: 650px;
+  max-width: 680px;
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border);
+  background: var(--surface1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .modalTitle {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .closeModalBtn {
-  background: transparent;
-  border: none;
-  color: var(--text3);
-  font-size: 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .closeModalBtn:hover {
-  background: var(--surface2);
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface2));
   color: var(--text);
 }
 
 .modalBody {
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  flex: 1;
 }
 
 .inputGroup {
@@ -319,51 +332,70 @@
 }
 
 .inputLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text2);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;
 }
 
 .inputField {
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 14px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
   color: var(--text);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputField::placeholder {
+  color: var(--text3);
+  opacity: 0.7;
 }
 
 .inputField:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .inputRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .modalFooter {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 20px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
   border-top: 1px solid var(--border);
   background: var(--surface1);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .saveAssetBtn {
   background: var(--accent);
   color: #ffffff;
   border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
+  border-radius: 12px;
+  padding: 12px 24px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.saveAssetBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 .saveAssetBtn:disabled {
@@ -375,30 +407,35 @@
   background: color-mix(in srgb, #ef4444 15%, transparent);
   color: #ef4444;
   border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
-  border-radius: 10px;
-  padding: 10px 20px;
+  border-radius: 12px;
+  padding: 12px 20px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   margin-right: auto;
+  transition: background 0.2s ease;
+}
+
+.deleteAssetBtn:hover {
+  background: color-mix(in srgb, #ef4444 25%, transparent);
 }
 
 .allHoldingsList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .holdingItemFull {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
+  padding: 16px 18px;
   background: var(--surface2);
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .holdingItemFull:hover {
@@ -414,7 +451,7 @@
 
 .holdingSymbolFull {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
   display: flex;
@@ -423,12 +460,12 @@
 }
 
 .holdingNameFull {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text2);
 }
 
 .holdingTypeFull {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -443,17 +480,17 @@
 
 .holdingValueFull {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
 }
 
 .holdingProfitFull {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-/* Animations & Responsiveness */
+/* Animations */
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -461,9 +498,11 @@
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(16px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
+
+/* ── MOBILE BREAKPOINT (< 768px) ────────────────── */
 
 @media (max-width: 768px) {
   .summaryTotal {
@@ -471,17 +510,41 @@
   }
 
   .modalOverlay {
-    align-items: flex-end;
     padding: 0;
+    align-items: flex-end;
   }
 
   .modalContent {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    max-height: 85vh;
+    position: fixed;
+    inset: 0;
+    top: max(16px, env(safe-area-inset-top, 16px));
+    width: 100vw;
+    max-width: 100vw;
+    height: calc(100vh - max(16px, env(safe-area-inset-top, 16px)));
+    max-height: calc(100vh - max(16px, env(safe-area-inset-top, 16px)));
+    border-radius: 24px 24px 0 0;
+    animation: slideUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modalHeader {
+    padding: 16px 20px;
+  }
+
+  .modalBody {
+    padding: 20px;
+    padding-bottom: 30px;
+  }
+
+  .modalFooter {
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 14px));
   }
 
   .inputRow {
     grid-template-columns: 1fr;
   }
+}
+
+@keyframes slideUpMobile {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
