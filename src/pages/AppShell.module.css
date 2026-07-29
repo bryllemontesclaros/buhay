@@ -1039,6 +1039,32 @@
   transform: translateY(0) scale(0.97);
 }
 
+.doneTopBtn {
+  background: var(--accent);
+  color: #000;
+  border: 1px solid var(--accent);
+  padding: 6px 18px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  min-height: 38px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.doneTopBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.doneTopBtn:active {
+  transform: translateY(0) scale(0.97);
+}
+
 .themeBtn {
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   border: 1px solid var(--glass-border);

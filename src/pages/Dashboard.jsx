@@ -563,74 +563,70 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
         ))}
       </div>
 
-      {/* ── COLLAPSIBLE WIDGET LIBRARY & EDIT TOOLBAR ───────────── */}
+      {/* ── FLOATING ADD WIDGET PILL ───────────── */}
       {isEditing && (
-        <div className={`${styles.widgetDrawer} ${showLibrary ? styles.widgetDrawerExpanded : styles.widgetDrawerCollapsed}`}>
-          {showLibrary ? (
-            <>
-              <div className={styles.drawerHeaderBar}>
-                <div className={styles.drawerHeaderCopy}>
-                  <h3 className={styles.drawerTitle}>Widget Library</h3>
-                  <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
-                </div>
-                <div className={styles.drawerHeaderActions}>
-                  <button 
-                    type="button" 
-                    className={styles.drawerMinimizeBtn} 
-                    onClick={() => setShowLibrary(false)}
-                    title="Minimize Widget Library"
-                  >
-                    ⌄ Minimize
-                  </button>
-                  <button 
-                    type="button" 
-                    className={styles.drawerDoneBtn} 
-                    onClick={toggleEditMode}
-                  >
-                    ✓ Done
-                  </button>
-                </div>
+        <div className={styles.editFloatingPillWrap}>
+          <button 
+            type="button" 
+            className={styles.floatingAddPill} 
+            onClick={() => setShowLibrary(true)}
+          >
+            <span aria-hidden="true" style={{ fontSize: '15px' }}>➕</span> Add Widget
+          </button>
+        </div>
+      )}
+
+      {/* ── WIDGET LIBRARY MODAL SHEET ───────────── */}
+      {isEditing && showLibrary && (
+        <div className={styles.modalBackdrop} onClick={() => setShowLibrary(false)}>
+          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div>
+                <h3 className={styles.modalTitle}>Widget Library</h3>
+                <p className={styles.modalSubtitle}>Tap to add or remove widgets on your dashboard.</p>
               </div>
-              <div className={styles.drawerList}>
-                {Object.keys(WIDGET_TITLES).map(id => {
-                  const isAdded = (layout || []).includes(id)
-                  return (
-                    <button 
-                      key={id} 
-                      type="button"
-                      className={`${styles.drawerItem} ${isAdded ? styles.drawerItemActive : ''}`} 
-                      onClick={() => toggleWidget(id)}
-                      title={isAdded ? `Remove ${WIDGET_TITLES[id]}` : `Add ${WIDGET_TITLES[id]}`}
-                    >
-                      <span className={styles.drawerItemTitle}>{WIDGET_TITLES[id]}</span>
-                      {isAdded ? (
-                        <span className={styles.drawerItemAdded}>✓ Added</span>
-                      ) : (
-                        <span className={styles.drawerItemAdd}>+ Add</span>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            </>
-          ) : (
-            <div className={styles.collapsedBarInner}>
-              <button 
-                type="button"
-                className={styles.openLibraryBtn}
-                onClick={() => setShowLibrary(true)}
-              >
-                + Add Widgets
-              </button>
               <button 
                 type="button" 
-                className={styles.drawerDoneBtn} 
-                onClick={toggleEditMode}
+                className={styles.modalCloseBtn} 
+                onClick={() => setShowLibrary(false)}
+                aria-label="Close"
               >
-                ✓ Done
+                ✕
               </button>
             </div>
-          )}
+            <div className={styles.modalList}>
+              {Object.keys(WIDGET_TITLES).map(id => {
+                const isAdded = (layout || []).includes(id)
+                return (
+                  <button 
+                    key={id} 
+                    type="button"
+                    className={`${styles.modalItem} ${isAdded ? styles.modalItemActive : ''}`} 
+                    onClick={() => toggleWidget(id)}
+                    title={isAdded ? `Remove ${WIDGET_TITLES[id]}` : `Add ${WIDGET_TITLES[id]}`}
+                  >
+                    <div className={styles.modalItemInfo}>
+                      <span className={styles.modalItemTitle}>{WIDGET_TITLES[id]}</span>
+                    </div>
+                    {isAdded ? (
+                      <span className={styles.modalItemAdded}>✓ Added</span>
+                    ) : (
+                      <span className={styles.modalItemAdd}>+ Add</span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+            <div className={styles.modalFooter}>
+              <button 
+                type="button" 
+                className={styles.modalDoneBtn} 
+                onClick={() => setShowLibrary(false)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
         </div>
       )}
       

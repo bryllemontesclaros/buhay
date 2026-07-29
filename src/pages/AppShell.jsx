@@ -1825,14 +1825,18 @@ export default function AppShell({ user }) {
             </button>
           </div>
           <div className={styles.topBarRight}>
-            {activeSpace === 'dashboard' && !isDashboardEditing && (
+            {activeSpace === 'dashboard' && (
               <button
                 type="button"
-                className={styles.editLayoutTopBtn}
-                onClick={() => setIsDashboardEditing(true)}
-                title="Customize Dashboard Layout"
+                className={isDashboardEditing ? styles.doneTopBtn : styles.editLayoutTopBtn}
+                onClick={() => setIsDashboardEditing(prev => !prev)}
+                title={isDashboardEditing ? 'Finish editing layout' : 'Customize Dashboard Layout'}
               >
-                <span aria-hidden="true">⚙️</span> Edit Layout
+                {isDashboardEditing ? (
+                  <>✓ Done</>
+                ) : (
+                  <><span aria-hidden="true">⚙️</span> Edit Layout</>
+                )}
               </button>
             )}
 
