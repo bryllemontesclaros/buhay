@@ -1125,22 +1125,19 @@ export default function AppShell({ user }) {
     { id: 'main', label: 'Home', iconKey: 'dashboard', section: 'Overview' },
   ]
   const nav = [
-    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Start' },
-    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Do' },
+    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Finance' },
+    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: null },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: null },
   ]
   const lakasNav = [
-    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
-    { id: 'workout', label: 'Workout', iconKey: 'workouts', section: 'Core' },
+    { id: 'workout', label: 'Workout', iconKey: 'workouts', section: 'Fitness' },
     { id: 'body', label: 'Body System', iconKey: 'meals', section: null },
     { id: 'progress', label: 'Progress', iconKey: 'body', section: 'Review' },
   ]
   const talaNav = [
-    { id: 'dashboard-home', label: 'Home', iconKey: 'home', section: 'Buhay' },
-    { id: 'journal', label: 'Journal', iconKey: 'journal', section: 'Core' },
+    { id: 'journal', label: 'Journal', iconKey: 'journal', section: 'Mind' },
     { id: 'track', label: 'Track', iconKey: 'mood', section: null },
     { id: 'focus', label: 'Focus', iconKey: 'goals', section: null },
   ]
