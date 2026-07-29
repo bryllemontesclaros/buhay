@@ -27,6 +27,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
   const [moodRating, setMoodRating] = useState(3)
   const [isEditingLocal, setIsEditingLocal] = useState(false)
   const isEditing = isEditingProp !== undefined ? isEditingProp : isEditingLocal
+  const [showLibrary, setShowLibrary] = useState(false)
 
   const toggleEditMode = () => {
     if (onToggleEdit) {
@@ -562,43 +563,74 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
         ))}
       </div>
 
-      {/* ── WIDGET LIBRARY DRAWER ───────────── */}
+      {/* ── COLLAPSIBLE WIDGET LIBRARY & EDIT TOOLBAR ───────────── */}
       {isEditing && (
-        <div className={styles.widgetDrawer}>
-          <div className={styles.drawerHeaderBar}>
-            <div className={styles.drawerHeaderCopy}>
-              <h3 className={styles.drawerTitle}>Widget Library</h3>
-              <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
+        <div className={`${styles.widgetDrawer} ${showLibrary ? styles.widgetDrawerExpanded : styles.widgetDrawerCollapsed}`}>
+          {showLibrary ? (
+            <>
+              <div className={styles.drawerHeaderBar}>
+                <div className={styles.drawerHeaderCopy}>
+                  <h3 className={styles.drawerTitle}>Widget Library</h3>
+                  <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
+                </div>
+                <div className={styles.drawerHeaderActions}>
+                  <button 
+                    type="button" 
+                    className={styles.drawerMinimizeBtn} 
+                    onClick={() => setShowLibrary(false)}
+                    title="Minimize Widget Library"
+                  >
+                    ⌄ Minimize
+                  </button>
+                  <button 
+                    type="button" 
+                    className={styles.drawerDoneBtn} 
+                    onClick={toggleEditMode}
+                  >
+                    ✓ Done
+                  </button>
+                </div>
+              </div>
+              <div className={styles.drawerList}>
+                {Object.keys(WIDGET_TITLES).map(id => {
+                  const isAdded = (layout || []).includes(id)
+                  return (
+                    <button 
+                      key={id} 
+                      type="button"
+                      className={`${styles.drawerItem} ${isAdded ? styles.drawerItemActive : ''}`} 
+                      onClick={() => toggleWidget(id)}
+                      title={isAdded ? `Remove ${WIDGET_TITLES[id]}` : `Add ${WIDGET_TITLES[id]}`}
+                    >
+                      <span className={styles.drawerItemTitle}>{WIDGET_TITLES[id]}</span>
+                      {isAdded ? (
+                        <span className={styles.drawerItemAdded}>✓ Added</span>
+                      ) : (
+                        <span className={styles.drawerItemAdd}>+ Add</span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </>
+          ) : (
+            <div className={styles.collapsedBarInner}>
+              <button 
+                type="button"
+                className={styles.openLibraryBtn}
+                onClick={() => setShowLibrary(true)}
+              >
+                + Add Widgets
+              </button>
+              <button 
+                type="button" 
+                className={styles.drawerDoneBtn} 
+                onClick={toggleEditMode}
+              >
+                ✓ Done
+              </button>
             </div>
-            <button 
-              type="button" 
-              className={styles.drawerDoneBtn} 
-              onClick={toggleEditMode}
-            >
-              ✓ Done
-            </button>
-          </div>
-          <div className={styles.drawerList}>
-            {Object.keys(WIDGET_TITLES).map(id => {
-              const isAdded = (layout || []).includes(id)
-              return (
-                <button 
-                  key={id} 
-                  type="button"
-                  className={`${styles.drawerItem} ${isAdded ? styles.drawerItemActive : ''}`} 
-                  onClick={() => toggleWidget(id)}
-                  title={isAdded ? `Remove ${WIDGET_TITLES[id]}` : `Add ${WIDGET_TITLES[id]}`}
-                >
-                  <span className={styles.drawerItemTitle}>{WIDGET_TITLES[id]}</span>
-                  {isAdded ? (
-                    <span className={styles.drawerItemAdded}>✓ Added</span>
-                  ) : (
-                    <span className={styles.drawerItemAdd}>+ Add</span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
+          )}
         </div>
       )}
       

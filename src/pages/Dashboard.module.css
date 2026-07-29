@@ -1081,6 +1081,73 @@
   to { transform: translateY(0); }
 }
 
+.widgetDrawerCollapsed {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  bottom: calc(16px + var(--app-mobile-bottom-offset, 0px)) !important;
+  width: calc(100% - 32px);
+  max-width: 380px;
+  padding: 10px 14px;
+  border-radius: 99px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border2));
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  max-height: 64px;
+  background: color-mix(in srgb, var(--surface) 95%, var(--bg));
+  backdrop-filter: blur(24px) saturate(180%);
+}
+
+.collapsedBarInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.openLibraryBtn {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  color: var(--text);
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.openLibraryBtn:hover {
+  transform: scale(1.04);
+  background: color-mix(in srgb, var(--accent) 24%, var(--surface2));
+}
+
+.drawerHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawerMinimizeBtn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.drawerMinimizeBtn:hover {
+  background: var(--surface3);
+  color: var(--text);
+}
+
 .drawerHeaderBar {
   display: flex;
   justify-content: space-between;
