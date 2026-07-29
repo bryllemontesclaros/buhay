@@ -1013,6 +1013,32 @@
   padding-bottom: 8px;
 }
 
+.editLayoutTopBtn {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  color: var(--text);
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+
+.editLayoutTopBtn:hover {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface2));
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  transform: translateY(-1px);
+}
+
+.editLayoutTopBtn:active {
+  transform: translateY(0) scale(0.97);
+}
+
 .themeBtn {
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   border: 1px solid var(--glass-border);

@@ -22,10 +22,20 @@ const WIDGET_TITLES = {
   pulseFeed: 'The Pulse Feed',
 }
 
-export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱' }) {
+export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱', isEditing: isEditingProp, onToggleEdit }) {
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditingLocal, setIsEditingLocal] = useState(false)
+  const isEditing = isEditingProp !== undefined ? isEditingProp : isEditingLocal
+
+  const toggleEditMode = () => {
+    if (onToggleEdit) {
+      onToggleEdit()
+    } else {
+      setIsEditingLocal(!isEditingLocal)
+    }
+  }
+
   const [layout, setLayout] = useState(profile?.dashboardLayout || DEFAULT_LAYOUT)
 
   useEffect(() => {
@@ -236,11 +246,6 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       console.error('Failed to save widget layout', err)
     }
   }
-
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing)
-  }
-
   const moveWidget = (id, direction) => {
     const currentIndex = layout.indexOf(id)
     if (currentIndex === -1) return
@@ -504,14 +509,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       {/* ── HEADER ─────────────────────────── */}
       <header className={styles.header}>
         <div className={styles.greetingGroup}>
-          <div className={styles.titleRow}>
-            <h1 className={styles.title}>{greeting}</h1>
-            {!isEditing && (
-              <button className={styles.editDashboardBtn} onClick={toggleEditMode} title="Customize Dashboard Layout">
-                ✏️ Edit Layout
-              </button>
-            )}
-          </div>
+          <h1 className={styles.title}>{greeting}</h1>
           <p className={styles.subtitle}>Your life control center — all in one view.</p>
           <div className={styles.dailyFocusWrap}>
             <span className={styles.dailyFocusIcon} aria-hidden="true">🎯</span>

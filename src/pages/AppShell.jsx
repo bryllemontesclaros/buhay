@@ -921,6 +921,7 @@ export default function AppShell({ user }) {
   }, [user, data.income, data.expenses, data.accounts])
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
+  const [isDashboardEditing, setIsDashboardEditing] = useState(false)
   const [privacyMode, setPrivacyMode] = useState(() => {
     try {
       return localStorage.getItem('takda_privacy_mode') === 'true'
@@ -1164,7 +1165,7 @@ export default function AppShell({ user }) {
     subscriptions: Subscriptions,
   }
   const PageComponent = activeSpace === 'dashboard'
-    ? Dashboard
+    ? (props) => <Dashboard {...props} isEditing={isDashboardEditing} onToggleEdit={() => setIsDashboardEditing(prev => !prev)} />
     : activeSpace === 'lakas'
       ? Lakas
       : activeSpace === 'tala'
@@ -1824,6 +1825,16 @@ export default function AppShell({ user }) {
             </button>
           </div>
           <div className={styles.topBarRight}>
+            {activeSpace === 'dashboard' && !isDashboardEditing && (
+              <button
+                type="button"
+                className={styles.editLayoutTopBtn}
+                onClick={() => setIsDashboardEditing(true)}
+                title="Customize Dashboard Layout"
+              >
+                <span aria-hidden="true">⚙️</span> Edit Layout
+              </button>
+            )}
 
 
             <button
