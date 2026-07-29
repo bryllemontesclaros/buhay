@@ -555,8 +555,19 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       {/* ── WIDGET LIBRARY DRAWER ───────────── */}
       {isEditing && (
         <div className={styles.widgetDrawer}>
-          <h3 className={styles.drawerTitle}>Widget Library</h3>
-          <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
+          <div className={styles.drawerHeaderBar}>
+            <div className={styles.drawerHeaderCopy}>
+              <h3 className={styles.drawerTitle}>Widget Library</h3>
+              <p className={styles.drawerSubtitle}>Explore and add widgets to your dashboard.</p>
+            </div>
+            <button 
+              type="button" 
+              className={styles.drawerDoneBtn} 
+              onClick={toggleEditMode}
+            >
+              ✓ Done
+            </button>
+          </div>
           <div className={styles.drawerList}>
             {Object.keys(WIDGET_TITLES).map(id => {
               const isAdded = (layout || []).includes(id)

@@ -1072,6 +1072,47 @@
   to { transform: translateY(0); }
 }
 
+.drawerHeaderBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 15%, var(--border2));
+}
+
+.drawerHeaderCopy {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerDoneBtn {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 99px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.drawerDoneBtn:hover {
+  transform: scale(1.05);
+  opacity: 0.95;
+}
+
+.drawerDoneBtn:active {
+  transform: scale(0.97);
+}
+
 .drawerTitle {
   font-size: 16px;
   font-weight: 700;
@@ -1083,7 +1124,7 @@
 .drawerSubtitle {
   font-size: 12px;
   color: var(--text2);
-  margin: 0 0 14px 0;
+  margin: 0;
 }
 
 .drawerEmpty {
