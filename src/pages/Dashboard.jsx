@@ -290,8 +290,15 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
   }
 
   const removeWidget = (id) => {
-    const newLayout = layout.filter(w => w !== id)
+    const newLayout = (layout || []).filter(w => w !== id)
     saveLayout(newLayout)
+  }
+
+  const addWidget = (id) => {
+    if (!(layout || []).includes(id)) {
+      const newLayout = [...(layout || []), id]
+      saveLayout(newLayout)
+    }
   }
 
   const toggleWidget = (id) => {
