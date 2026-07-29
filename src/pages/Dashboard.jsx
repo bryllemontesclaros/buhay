@@ -496,7 +496,14 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       {/* ── HEADER ─────────────────────────── */}
       <header className={styles.header}>
         <div className={styles.greetingGroup}>
-          <h1 className={styles.title}>{greeting}</h1>
+          <div className={styles.titleRow}>
+            <h1 className={styles.title}>{greeting}</h1>
+            {!isEditing && (
+              <button className={styles.editDashboardBtn} onClick={toggleEditMode} title="Customize Dashboard Layout">
+                ✏️ Edit Layout
+              </button>
+            )}
+          </div>
           <p className={styles.subtitle}>Your life control center — all in one view.</p>
           <div className={styles.dailyFocusWrap}>
             <span className={styles.dailyFocusIcon} aria-hidden="true">🎯</span>
@@ -520,11 +527,6 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               <span className={styles.streakLabel}>Buhay Rhythm</span>
             </div>
           </div>
-          {!isEditing && (
-            <button className={styles.editDashboardBtn} onClick={toggleEditMode}>
-              Edit
-            </button>
-          )}
         </div>
       </header>
 
