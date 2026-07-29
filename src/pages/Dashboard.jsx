@@ -21,7 +21,7 @@ const WIDGET_TITLES = {
   pulseFeed: 'The Pulse Feed',
 }
 
-export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱', exchangeRates = null }) {
+export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱', exchangeRates = null, assetPrices = null }) {
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3)
   const [isEditing, setIsEditing] = useState(false)
@@ -53,8 +53,14 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
   // Calculate Portfolio Summary (Holdings, Market Value, Gain/Loss)
   const portfolioSummary = useMemo(() => {
-    return getPortfolioSummary(data.portfolioHoldings || [], exchangeRates)
-  }, [data.portfolioHoldings, exchangeRates])
+    const holdingsWithLivePrices = (data.portfolioHoldings || []).map(h => {
+      if (assetPrices && assetPrices[h.symbol]) {
+        return { ...h, currentPrice: assetPrices[h.symbol], isLivePrice: true }
+      }
+      return h
+    })
+    return getPortfolioSummary(holdingsWithLivePrices, exchangeRates)
+  }, [data.portfolioHoldings, exchangeRates, assetPrices])
 
   // Find today's checkin to initialize daily focus
   const todayCheckin = useMemo(() => {
@@ -558,7 +564,8 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
               <div className={styles.holdingsList}>
                 {data.portfolioHoldings.slice(0, 4).map(asset => {
-                  const assetValue = asset.shares * (exchangeRates[asset.symbol] || asset.price || 0)
+                  const currentPrice = assetPrices?.[asset.symbol] || asset.currentPrice || exchangeRates?.[asset.symbol] || 0
+                  const assetValue = asset.quantity * currentPrice
                   return (
                     <div key={asset._id} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
                       <div className={styles.holdingDetails}>
@@ -567,7 +574,10 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
                       </div>
                       <div className={styles.holdingValues}>
                         <span className={styles.holdingValue}>{fmt(assetValue)}</span>
-                        <span className={styles.holdingShares}>{asset.shares} {asset.assetType === 'crypto' ? 'coins' : 'shares'}</span>
+                        <span className={styles.holdingShares}>
+                          {asset.quantity} {asset.assetType === 'crypto' ? 'coins' : 'shares'}
+                          {assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price"> ⚡</span>}
+                        </span>
                       </div>
                     </div>
                   )
@@ -774,12 +784,16 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               {data.portfolioHoldings && data.portfolioHoldings.length > 0 ? (
                 <div className={styles.allHoldingsList}>
                   {data.portfolioHoldings.map(asset => {
-                    const assetValue = asset.shares * (exchangeRates[asset.symbol] || asset.price || 0)
-                    const assetProfit = assetValue - (asset.shares * asset.avgPrice)
+                    const currentPrice = assetPrices?.[asset.symbol] || asset.currentPrice || exchangeRates?.[asset.symbol] || 0
+                    const assetValue = asset.quantity * currentPrice
+                    const assetProfit = assetValue - (asset.quantity * asset.averageBuyPrice)
                     return (
                       <div key={asset._id} className={styles.holdingItemFull} onClick={() => openAddPortfolioHolding(asset)}>
                         <div className={styles.holdingDetailsFull}>
-                          <span className={styles.holdingSymbolFull}>{asset.symbol}</span>
+                          <span className={styles.holdingSymbolFull}>
+                            {asset.symbol}
+                            {assetPrices?.[asset.symbol] && <span className={styles.livePriceIndicator} title="Live Price">⚡</span>}
+                          </span>
                           <span className={styles.holdingNameFull}>{asset.name}</span>
                           <span className={styles.holdingTypeFull}>{asset.assetType}</span>
                         </div>

@@ -8,6 +8,7 @@ import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '..
 import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
 import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo } from '../lib/bills'
+import { fetchCryptoPrices, fetchStockPrices } from '../lib/api'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Bills from './Bills'
@@ -609,6 +610,7 @@ export default function AppShell({ user }) {
   const [debtPaymentTarget, setDebtPaymentTarget] = useState(null)
   const [chromeMode, setChromeMode] = useState({ compact: false, hidden: false })
   const [exchangeRates, setExchangeRates] = useState(null)
+  const [assetPrices, setAssetPrices] = useState(null)
   const syncingDueTransactionsRef = useRef(false)
   const preferredSpaceAppliedRef = useRef(false)
   const mainRef = useRef(null)
@@ -794,6 +796,34 @@ export default function AppShell({ user }) {
       active = false
     }
   }, [profile?.currency])
+
+  useEffect(() => {
+    let active = true
+    const holdings = data.portfolioHoldings
+    if (!holdings || holdings.length === 0) {
+      if (assetPrices) setAssetPrices(null)
+      return
+    }
+
+    const cryptoSymbols = Array.from(new Set(holdings.filter(h => h.assetType === 'crypto').map(h => h.symbol)))
+    const stockSymbols = Array.from(new Set(holdings.filter(h => h.assetType === 'stock' || h.assetType === 'etf').map(h => h.symbol)))
+
+    async function loadPrices() {
+      const [crypto, stocks] = await Promise.all([
+        fetchCryptoPrices(cryptoSymbols),
+        fetchStockPrices(stockSymbols)
+      ])
+      
+      if (active) {
+        setAssetPrices({ ...crypto, ...stocks })
+      }
+    }
+    loadPrices()
+
+    return () => {
+      active = false
+    }
+  }, [data.portfolioHoldings])
 
   useEffect(() => {
     if (preferredSpaceAppliedRef.current) return
@@ -1658,6 +1688,8 @@ export default function AppShell({ user }) {
     symbol,
     privacyMode,
     exchangeRates,
+    assetPrices,
+    isMobile,
     subTab: page === 'breakdown' ? 'insights' : page,
 
     billPaymentTarget,

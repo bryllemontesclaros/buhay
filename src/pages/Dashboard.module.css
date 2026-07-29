@@ -1451,3 +1451,11 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+.livePriceIndicator {
+  font-size: 11px;
+  color: var(--accent);
+  opacity: 0.8;
+  vertical-align: middle;
+  margin-left: 2px;
+}
