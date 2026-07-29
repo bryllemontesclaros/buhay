@@ -1073,8 +1073,8 @@
 }
 
 .floatingAddPill {
-  background: color-mix(in srgb, var(--surface) 92%, var(--bg));
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border2));
+  background: color-mix(in srgb, var(--surface) 95%, var(--bg));
+  border: 1px solid var(--border2);
   color: var(--text);
   padding: 10px 20px;
   border-radius: 999px;
@@ -1084,7 +1084,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1092,9 +1092,9 @@
 
 .floatingAddPill:hover {
   transform: translateY(-2px) scale(1.03);
-  background: color-mix(in srgb, var(--surface) 98%, var(--accent) 8%);
-  border-color: color-mix(in srgb, var(--accent) 70%, var(--border2));
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  background: var(--surface2);
+  border-color: var(--text3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 }
 
 .floatingAddPill:active {
@@ -1102,9 +1102,9 @@
 }
 
 .floatingDonePill {
-  background: var(--accent);
-  color: #000;
-  border: 1px solid var(--accent);
+  background: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
   padding: 10px 22px;
   border-radius: 999px;
   font-size: 13px;
@@ -1113,14 +1113,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 14px 36px color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .floatingDonePill:hover {
   transform: translateY(-2px) scale(1.03);
-  filter: brightness(1.08);
-  box-shadow: 0 18px 44px color-mix(in srgb, var(--accent) 55%, transparent);
+  filter: opacity(0.9);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 .floatingDonePill:active {
