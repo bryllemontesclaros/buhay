@@ -563,7 +563,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
         ))}
       </div>
 
-      {/* ── FLOATING ADD WIDGET PILL ───────────── */}
+      {/* ── FLOATING EDIT TOOLBAR ───────────── */}
       {isEditing && (
         <div className={styles.editFloatingPillWrap}>
           <button 
@@ -572,6 +572,13 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             onClick={() => setShowLibrary(true)}
           >
             <span aria-hidden="true" style={{ fontSize: '15px' }}>➕</span> Add Widget
+          </button>
+          <button 
+            type="button" 
+            className={styles.floatingDonePill} 
+            onClick={toggleEditMode}
+          >
+            ✓ Done
           </button>
         </div>
       )}
