@@ -520,9 +520,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               <span className={styles.streakLabel}>Buhay Rhythm</span>
             </div>
           </div>
-          <button className={styles.editDashboardBtn} onClick={toggleEditMode}>
-            {isEditing ? 'Done' : 'Edit'}
-          </button>
+          {!isEditing && (
+            <button className={styles.editDashboardBtn} onClick={toggleEditMode}>
+              Edit
+            </button>
+          )}
         </div>
       </header>
 
