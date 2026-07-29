@@ -995,9 +995,9 @@
 }
 
 .removeWidgetBtn {
-  position: relative;
-  top: 0;
-  left: 0;
+  position: absolute;
+  top: -10px;
+  right: -10px;
   width: 28px;
   height: 28px;
   background: #ef4444;
@@ -1011,7 +1011,7 @@
   justify-content: center;
   cursor: pointer;
   z-index: 50;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
@@ -1095,18 +1095,32 @@
 
 .drawerList {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
   width: 100%;
-  max-width: 800px;
-  padding-bottom: 4px;
-  scrollbar-width: none;
+  max-width: 900px;
+  padding: 4px 4px 12px;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
 }
 
 .drawerList::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.drawerList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawerList::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 10px;
+}
+
+.drawerList::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
 .drawerItem {
@@ -1156,6 +1170,41 @@
   background: var(--surface2);
   border-color: var(--border);
   transform: none;
+}
+
+/* ── DESKTOP WIDGET DRAWER SCROLLING FIX ────────────────── */
+
+@media (min-width: 769px) {
+  .widgetDrawer {
+    left: max(260px, 18vw);
+    right: 24px;
+    bottom: 24px;
+    max-width: 860px;
+    margin: 0 auto;
+    border: 1px solid var(--border2);
+    border-radius: 24px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+    max-height: 52vh;
+  }
+
+  .drawerList {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+  }
+
+  .drawerList::-webkit-scrollbar {
+    width: 6px;
+    height: auto;
+  }
+
+  .drawerItem {
+    flex: 0 1 calc(33.333% - 12px);
+    min-width: 190px;
+  }
 }
 
 .drawerItemAdded {

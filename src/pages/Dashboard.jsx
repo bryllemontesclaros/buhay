@@ -528,7 +528,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
       {/* ── WIDGET BOARD ─────────────────────── */}
       <div className={styles.widgetBoard}>
-        {(layout || []).map((widgetId, index) => (
+        {(layout || []).map((widgetId) => (
           <div 
             key={widgetId} 
             className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetEditing : ''} ${draggedWidgetId === widgetId ? styles.widgetDragging : ''}`}
@@ -538,38 +538,14 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             onDrop={e => handleDrop(e, widgetId)}
           >
             {isEditing && (
-              <div className={styles.widgetEditControls}>
-                <div className={styles.moveBtnGroup}>
-                  <button 
-                    type="button"
-                    className={styles.moveBtn} 
-                    onClick={() => moveWidget(widgetId, 'up')}
-                    disabled={index === 0}
-                    title="Move Left / Up"
-                    aria-label={`Move ${WIDGET_TITLES[widgetId]} Up`}
-                  >
-                    ◄
-                  </button>
-                  <button 
-                    type="button"
-                    className={styles.moveBtn} 
-                    onClick={() => moveWidget(widgetId, 'down')}
-                    disabled={index === (layout || []).length - 1}
-                    title="Move Right / Down"
-                    aria-label={`Move ${WIDGET_TITLES[widgetId]} Down`}
-                  >
-                    ►
-                  </button>
-                </div>
-                <button 
-                  type="button"
-                  className={styles.removeWidgetBtn} 
-                  onClick={() => removeWidget(widgetId)}
-                  aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
-                >
-                  ✕
-                </button>
-              </div>
+              <button 
+                type="button"
+                className={styles.removeWidgetBtn} 
+                onClick={() => removeWidget(widgetId)}
+                aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
+              >
+                ✕
+              </button>
             )}
             {widgets[widgetId]}
           </div>
