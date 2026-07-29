@@ -384,7 +384,7 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
-  { id: 'dashboard', label: 'Life Hub', meta: 'Home', iconKey: 'home', cue: 'Cockpit overview' },
+  { id: 'dashboard', label: 'Life Hub', meta: 'Overview', iconKey: 'home', cue: 'Cockpit overview' },
   { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
   { id: 'lakas', label: 'Lakas', meta: 'Fitness', iconKey: 'lakas', cue: 'Training rhythm' },
   { id: 'tala', label: 'Tala', meta: 'Reflection', iconKey: 'tala', cue: 'Calm reflection' },
@@ -1122,7 +1122,7 @@ export default function AppShell({ user }) {
   }, [user])
 
   const dashboardNav = [
-    { id: 'main', label: 'Home', iconKey: 'dashboard', section: 'Overview' },
+    { id: 'main', label: 'Dashboard', iconKey: 'dashboard', section: 'Overview' },
   ]
   const nav = [
     { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Finance' },
