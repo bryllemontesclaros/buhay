@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { fsSavePortfolioHolding, fsDeletePortfolioHolding } from '../lib/firestore'
-import { fetchCryptoPrices, fetchStockPrices } from '../lib/portfolio'
+import { fetchCryptoPrices, fetchStockPrices, POPULAR_ASSETS } from '../lib/portfolio'
 import { notifyApp } from '../lib/appFeedback'
 import styles from './PortfolioWidget.module.css'
 
@@ -20,6 +20,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
   const [isSavingHolding, setIsSavingHolding] = useState(false)
   const [livePrices, setLivePrices] = useState({})
 
+  const [selectedPresetId, setSelectedPresetId] = useState('')
   const [portfolioForm, setPortfolioForm] = useState({
     assetType: 'stock',
     symbol: '',
@@ -28,6 +29,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     averageBuyPrice: '',
     currentPrice: ''
   })
+
+  const quantityInputRef = useRef(null)
 
   // Lock background scrolling when modal is active
   useEffect(() => {
@@ -106,6 +109,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
   const openAddPortfolioHolding = (holding = null) => {
     if (holding) {
       setEditingHolding(holding)
+      setSelectedPresetId('custom')
       setPortfolioForm({
         assetType: holding.assetType || 'stock',
         symbol: holding.symbol || '',
@@ -116,6 +120,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
       })
     } else {
       setEditingHolding(null)
+      setSelectedPresetId('')
       setPortfolioForm({
         assetType: 'stock',
         symbol: '',
@@ -126,6 +131,33 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
       })
     }
     setShowPortfolioModal(true)
+  }
+
+  const handleSelectPresetAsset = (presetId) => {
+    setSelectedPresetId(presetId)
+    if (!presetId || presetId === 'custom') return
+
+    const assetPreset = POPULAR_ASSETS.find(a => a.id === presetId)
+    if (!assetPreset) return
+
+    const livePrice = livePrices[assetPreset.symbol]
+    const priceToUse = livePrice || assetPreset.defaultPrice || 0
+
+    setPortfolioForm(prev => ({
+      ...prev,
+      assetType: assetPreset.assetType,
+      symbol: assetPreset.symbol,
+      name: assetPreset.name,
+      currentPrice: String(priceToUse),
+      averageBuyPrice: String(priceToUse),
+    }))
+
+    // Auto-focus quantity field after selection for a 1-step experience
+    setTimeout(() => {
+      if (quantityInputRef.current) {
+        quantityInputRef.current.focus()
+      }
+    }, 100)
   }
 
   const closePortfolioModal = () => {
@@ -147,7 +179,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     const averageBuyPrice = parseFloat(portfolioForm.averageBuyPrice) || currentPrice || 0
 
     if (!name && !symbol) {
-      notifyApp({ title: 'Asset Identifier Required', message: 'Enter a ticker symbol or name for this asset.', tone: 'warning' })
+      notifyApp({ title: 'Asset Identifier Required', message: 'Select a preset or enter a ticker symbol.', tone: 'warning' })
       return
     }
 
@@ -284,6 +316,31 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
 
             <div className={styles.modalBody}>
               
+              {/* Frictionless Preset Selector Dropdown */}
+              {!editingHolding && (
+                <div className={styles.inputGroup}>
+                  <span className={styles.inputLabel}>⚡ Frictionless Quick Select</span>
+                  <select
+                    className={styles.presetSelectField}
+                    value={selectedPresetId}
+                    onChange={e => handleSelectPresetAsset(e.target.value)}
+                  >
+                    <option value="">Pick an Asset (Auto-fills Ticker & Price)...</option>
+                    <optgroup label="Popular Crypto">
+                      {POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => (
+                        <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Stocks & ETFs">
+                      {POPULAR_ASSETS.filter(a => a.assetType === 'stock').map(a => (
+                        <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
+                      ))}
+                    </optgroup>
+                    <option value="custom">✏️ Custom Asset (Type Manually)</option>
+                  </select>
+                </div>
+              )}
+
               {/* Asset Type Selector Pills */}
               <div className={styles.inputGroup}>
                 <span className={styles.inputLabel}>Asset Class</span>
@@ -332,7 +389,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                 <div className={styles.inputGroup}>
                   <span className={styles.inputLabel}>Shares / Amount</span>
                   <input 
-                    className={styles.inputField} 
+                    ref={quantityInputRef}
+                    className={`${styles.inputField} ${styles.inputFieldHighlight}`} 
                     type="number" 
                     step="any" 
                     placeholder="0.0" 
@@ -361,7 +419,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
                   className={styles.inputField} 
                   type="number" 
                   step="any" 
-                  placeholder="Optional: Live price fallback" 
+                  placeholder="Auto-synced or fallback" 
                   value={portfolioForm.currentPrice} 
                   onChange={e => setPortfolioForm({ ...portfolioForm, currentPrice: e.target.value })} 
                 />

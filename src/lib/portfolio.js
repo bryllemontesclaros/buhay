@@ -1,8 +1,32 @@
 /**
  * Portfolio API Helper Library
  * Provides safe, resilient price fetching for Crypto (CoinGecko) and Stocks (Finnhub),
- * plus data normalization utilities.
+ * plus data normalization utilities and popular asset presets.
  */
+
+export const POPULAR_ASSETS = [
+  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', assetType: 'crypto', defaultPrice: 3850000 },
+  { id: 'eth', name: 'Ethereum', symbol: 'ETH', assetType: 'crypto', defaultPrice: 200000 },
+  { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto', defaultPrice: 10500 },
+  { id: 'usdt', name: 'Tether USD', symbol: 'USDT', assetType: 'crypto', defaultPrice: 58.5 },
+  { id: 'bnb', name: 'BNB', symbol: 'BNB', assetType: 'crypto', defaultPrice: 33000 },
+  { id: 'xrp', name: 'XRP', symbol: 'XRP', assetType: 'crypto', defaultPrice: 35 },
+  { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPrice: 28 },
+  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPrice: 8.5 },
+
+  { id: 'aapl', name: 'Apple Inc.', symbol: 'AAPL', assetType: 'stock', defaultPrice: 13200 },
+  { id: 'nvda', name: 'Nvidia Corp', symbol: 'NVDA', assetType: 'stock', defaultPrice: 7000 },
+  { id: 'tsla', name: 'Tesla Inc.', symbol: 'TSLA', assetType: 'stock', defaultPrice: 14500 },
+  { id: 'voo', name: 'Vanguard S&P 500 ETF', symbol: 'VOO', assetType: 'stock', defaultPrice: 29000 },
+  { id: 'qqq', name: 'Invesco QQQ Trust', symbol: 'QQQ', assetType: 'stock', defaultPrice: 28000 },
+  { id: 'msft', name: 'Microsoft Corp', symbol: 'MSFT', assetType: 'stock', defaultPrice: 24500 },
+  { id: 'amzn', name: 'Amazon.com Inc.', symbol: 'AMZN', assetType: 'stock', defaultPrice: 10500 },
+
+  { id: 'sm', name: 'SM Investments Corp', symbol: 'SM', assetType: 'stock', defaultPrice: 920 },
+  { id: 'bdo', name: 'BDO Unibank Inc', symbol: 'BDO', assetType: 'stock', defaultPrice: 155 },
+  { id: 'ali', name: 'Ayala Land Inc', symbol: 'ALI', assetType: 'stock', defaultPrice: 32 },
+  { id: 'tel', name: 'PLDT Inc', symbol: 'TEL', assetType: 'stock', defaultPrice: 1450 },
+]
 
 const COINGECKO_MAP = {
   'BTC': 'bitcoin',
@@ -72,7 +96,7 @@ export async function fetchCryptoPrices(symbols = []) {
 
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout safeguard
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
 
     const idsQuery = idsToFetch.join(',')
     const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd`, {
