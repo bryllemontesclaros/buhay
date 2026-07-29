@@ -721,7 +721,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             <div className={styles.modalBody}>
               <label className={styles.inputGroup}>
                 <span className={styles.inputLabel}>Asset Type</span>
-                <select className={styles.inputField} value={pFormType} onChange={e => setPFormType(e.target.value)}>
+                <select className={styles.inputField} value={portfolioForm.assetType || 'stock'} onChange={e => setPortfolioForm({ ...portfolioForm, assetType: e.target.value })}>
                   <option value="stock">Stock/ETF</option>
                   <option value="crypto">Cryptocurrency</option>
                   <option value="bond">Bonds/Fixed Income</option>
@@ -731,25 +731,25 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               </label>
               <label className={styles.inputGroup}>
                 <span className={styles.inputLabel}>Symbol or Ticker</span>
-                <input className={styles.inputField} type="text" placeholder="e.g. AAPL, BTC" value={pFormSymbol} onChange={e => setPFormSymbol(e.target.value.toUpperCase())} />
+                <input className={styles.inputField} type="text" placeholder="e.g. AAPL, BTC" value={portfolioForm.symbol || ''} onChange={e => setPortfolioForm({ ...portfolioForm, symbol: e.target.value.toUpperCase() })} />
               </label>
               <label className={styles.inputGroup}>
                 <span className={styles.inputLabel}>Asset Name</span>
-                <input className={styles.inputField} type="text" placeholder="e.g. Apple Inc." value={pFormName} onChange={e => setPFormName(e.target.value)} />
+                <input className={styles.inputField} type="text" placeholder="e.g. Apple Inc." value={portfolioForm.name || ''} onChange={e => setPortfolioForm({ ...portfolioForm, name: e.target.value })} />
               </label>
               <div className={styles.inputRow}>
                 <label className={styles.inputGroup}>
                   <span className={styles.inputLabel}>Shares / Amount</span>
-                  <input className={styles.inputField} type="number" step="any" placeholder="0.0" value={pFormShares} onChange={e => setPFormShares(e.target.value)} />
+                  <input className={styles.inputField} type="number" step="any" placeholder="0.0" value={portfolioForm.quantity || ''} onChange={e => setPortfolioForm({ ...portfolioForm, quantity: e.target.value })} />
                 </label>
                 <label className={styles.inputGroup}>
                   <span className={styles.inputLabel}>Avg Price (Buy)</span>
-                  <input className={styles.inputField} type="number" step="any" placeholder="0.00" value={pFormAvgPrice} onChange={e => setPFormAvgPrice(e.target.value)} />
+                  <input className={styles.inputField} type="number" step="any" placeholder="0.00" value={portfolioForm.averageBuyPrice || ''} onChange={e => setPortfolioForm({ ...portfolioForm, averageBuyPrice: e.target.value })} />
                 </label>
               </div>
               <label className={styles.inputGroup}>
                 <span className={styles.inputLabel}>Current Price (optional)</span>
-                <input className={styles.inputField} type="number" step="any" placeholder="Overrides automatic pricing if set" value={pFormCurrentPrice} onChange={e => setPFormCurrentPrice(e.target.value)} />
+                <input className={styles.inputField} type="number" step="any" placeholder="Overrides automatic pricing if set" value={portfolioForm.currentPrice || ''} onChange={e => setPortfolioForm({ ...portfolioForm, currentPrice: e.target.value })} />
               </label>
             </div>
             <div className={styles.modalFooter}>
@@ -764,7 +764,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               <button 
                 className={styles.saveAssetBtn} 
                 onClick={handleSavePortfolioHolding} 
-                disabled={isSavingHolding || !pFormSymbol || !pFormShares}
+                disabled={isSavingHolding || !portfolioForm.symbol || !portfolioForm.quantity}
               >
                 {isSavingHolding ? 'Saving...' : 'Save Asset'}
               </button>
