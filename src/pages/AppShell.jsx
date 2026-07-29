@@ -384,7 +384,7 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
-  { id: 'dashboard', label: 'Buhay', meta: 'Home', iconKey: 'home', cue: 'Cockpit overview' },
+  { id: 'dashboard', label: 'Life Hub', meta: 'Home', iconKey: 'home', cue: 'Cockpit overview' },
   { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
   { id: 'lakas', label: 'Lakas', meta: 'Fitness', iconKey: 'lakas', cue: 'Training rhythm' },
   { id: 'tala', label: 'Tala', meta: 'Reflection', iconKey: 'tala', cue: 'Calm reflection' },
@@ -1820,7 +1820,6 @@ export default function AppShell({ user }) {
               onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
               aria-expanded={workspaceDropdownOpen}
             >
-              <div className={styles.topBarKicker}>{activeSpaceConfig.label}</div>
               <div className={styles.topBarHeadingRow}>
                 <div className={styles.topBarLogo}>{activeWorkspaceLabel} <span className={styles.topBarChevron}>⌄</span></div>
                 <div className={styles.topBarContextPill}>{activeSpaceConfig.meta}</div>
