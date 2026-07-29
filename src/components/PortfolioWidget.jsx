@@ -65,7 +65,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
 
         const [cryptos, stocks] = await Promise.all([
           fetchCryptoPrices(cryptoSymbols, s),
-          fetchStockPrices(stockSymbols)
+          fetchStockPrices(stockSymbols, s)
         ])
 
         if (isMounted) {
@@ -140,7 +140,9 @@ export default function PortfolioWidget({ user, data = {}, s = '₱' }) {
     const assetPreset = POPULAR_ASSETS.find(a => a.id === presetId)
     if (!assetPreset) return
 
-    let priceToUse = livePrices[assetPreset.symbol] || assetPreset.defaultPrice || 0
+    const isUSD = (s === '$' || s === 'USD')
+    const fallbackDefault = isUSD ? assetPreset.defaultPriceUSD : assetPreset.defaultPricePHP
+    let priceToUse = livePrices[assetPreset.symbol] ?? fallbackDefault ?? 0
 
     // Fetch live market price converted to active currency (PHP/USD)
     if (assetPreset.assetType === 'crypto') {
