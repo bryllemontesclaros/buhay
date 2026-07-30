@@ -1099,9 +1099,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
-  const selectedDayBalance = selected
+  const selectedDayRawBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.transfers, data.income, data.expenses, selected, balanceOverrides))
     : 0
+  const selectedDayBalance = calendarViewMode === 'netWorth'
+    ? (selectedDayRawBalance + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
+    : selectedDayRawBalance
   const selectedDayAutoBalance = selected
     ? getBalanceAtDate(data.accounts, data.transfers, data.income, data.expenses, selected)
     : 0
@@ -1113,9 +1116,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return dateStr(fallbackDay)
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
-  const balanceFocusValue = balanceFocusDate
+  const baseFocusValue = balanceFocusDate
     ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.transfers, data.income, data.expenses, balanceFocusDate, balanceOverrides))
     : 0
+  const balanceFocusValue = calendarViewMode === 'netWorth'
+    ? (baseFocusValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
+    : baseFocusValue
   const balanceRailMeta = selected
     ? 'Calendar close · paid entries only'
     : isCurrentMonthView
