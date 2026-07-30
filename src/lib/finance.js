@@ -393,9 +393,10 @@ export function getMonthForecast(
   month,
   balanceOverrides = {},
 ) {
-  const startingBalance = getMonthStartBalance(accounts, transfers, income, expenses, year, month, balanceOverrides)
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const startingBalance = getMonthStartBalance(safeAccounts, transfers, income, expenses, year, month, balanceOverrides)
 
-  const accountLookup = new Map(accounts.map(a => [a?._id, a]))
+  const accountLookup = new Map(safeAccounts.map(a => [a?._id, a]))
   function isLiquid(accountId) {
     if (!accountId) return true // Unlinked = cashflow
     const account = accountLookup.get(accountId)
