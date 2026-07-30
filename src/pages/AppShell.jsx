@@ -1165,7 +1165,7 @@ export default function AppShell({ user }) {
     subscriptions: Subscriptions,
   }
   const PageComponent = activeSpace === 'dashboard'
-    ? (props) => <Dashboard {...props} isEditing={isDashboardEditing} onToggleEdit={() => setIsDashboardEditing(prev => !prev)} />
+    ? Dashboard
     : activeSpace === 'lakas'
       ? Lakas
       : activeSpace === 'tala'
@@ -1673,6 +1673,8 @@ export default function AppShell({ user }) {
     onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
     onTakdaAction: openTakdaAction,
     onLakasTabChange: setLakasPage,
+    isEditing: isDashboardEditing,
+    onToggleEdit: () => setIsDashboardEditing(prev => !prev),
     onNavigate: handleDashboardNavigate,
   }
 
