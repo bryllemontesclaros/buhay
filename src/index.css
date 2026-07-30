@@ -125,12 +125,12 @@
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  --font-display: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-body: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  --font-brutal: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  --font-editorial: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-body: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
+  --font-brutal: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
+  --font-editorial: "Fraunces", Georgia, serif;
+  --font-ui: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", "SF Pro", sans-serif;
   --font-header: var(--font-display);
 
   --type-overline: 10px;
