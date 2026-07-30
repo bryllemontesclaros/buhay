@@ -54,8 +54,7 @@ function normalizeAmountInput(value) {
 }
 
 function formatRoundedBalance(value, symbol = '') {
-  let numericValue = Number(value)
-  if (!Number.isFinite(numericValue)) numericValue = 0
+  const numericValue = Number(value) || 0
   const rounded = new Intl.NumberFormat('en-PH', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
@@ -65,8 +64,7 @@ function formatRoundedBalance(value, symbol = '') {
 }
 
 function formatCompactCellBalance(value) {
-  let numericValue = Number(value)
-  if (!Number.isFinite(numericValue)) numericValue = 0
+  const numericValue = Number(value) || 0
   const absoluteValue = Math.abs(numericValue)
   const sign = numericValue < 0 ? '−' : ''
 
@@ -85,32 +83,21 @@ function getEmptyForm(type = 'income', defaultAccountId = '') {
   return { ...getDefaultTransactionDraft(type), accountId: defaultAccountId, paymentStatus: 'paid' }
 }
 
-function safeParseDate(dateKey) {
-  if (!dateKey || typeof dateKey !== 'string') return null
-  const parts = dateKey.split('-').map(Number)
-  if (parts.length !== 3 || parts.some(isNaN)) return null
-  const dt = new Date(parts[0], parts[1] - 1, parts[2])
-  return isNaN(dt.getTime()) ? null : dt
-}
-
 function getLegacyMonthStartKeyForDate(dateKey, monthStartBalances = {}) {
-  const parsed = safeParseDate(dateKey)
-  if (!parsed) return ''
-  parsed.setDate(parsed.getDate() + 1)
-  if (parsed.getDate() !== 1) return ''
-  const candidate = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}`
+  if (!dateKey || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return ''
+  const nextDay = new Date(`${dateKey}T00:00:00`)
+  nextDay.setDate(nextDay.getDate() + 1)
+  if (nextDay.getDate() !== 1) return ''
+  const candidate = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}`
   return Object.prototype.hasOwnProperty.call(monthStartBalances, candidate) ? candidate : ''
 }
 
-function buildDayAriaLabel({ ds, day, forecast, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
-  const parsed = safeParseDate(ds)
-  const dateFormatted = parsed ? parsed.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : ''
+function buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
   const parts = [
-    `${day}${dateFormatted ? `, ${dateFormatted}` : ''}`,
+    `${day}, ${new Date(`${ds}T00:00:00`).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}`,
   ]
-  const val = displayValue !== undefined ? displayValue : (forecast?.runningBalance || 0)
   if (privacyMode) parts.push('Balance hidden')
-  else parts.push(`Closing balance ${formatRoundedBalance(val, s)}`)
+  else parts.push(`Closing balance ${formatRoundedBalance(forecast?.runningBalance || 0, s)}`)
   if (hasIncome) parts.push('has income')
   if (hasExpense) parts.push('has expenses')
   if (hasManualBalance) parts.push('has manual balance override')
@@ -156,22 +143,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
 
   const totalSavings = useMemo(() => {
-    const goalsSum = (Array.isArray(data?.goals) ? data.goals : []).reduce((sum, g) => sum + (Number(g?.current || g?.saved || g?.balance) || 0), 0)
-    const savingsSum = (Array.isArray(data?.savings) ? data.savings : []).reduce((sum, s) => sum + (Number(s?.balance || s?.current) || 0), 0)
-    return goalsSum + savingsSum
-  }, [data?.goals, data?.savings])
+    if (!data?.savings || !Array.isArray(data.savings)) return 0
+    return data.savings.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
+  }, [data?.savings])
 
   const totalDebts = useMemo(() => {
-    const debtsArr = Array.isArray(data?.debts) ? data.debts : []
-    const accountsArr = Array.isArray(data?.accounts) ? data.accounts : []
-    const accountIds = new Set(accountsArr.map(a => a._id))
-    const unlinkedDebts = debtsArr.filter(d => !d.accountId || !accountIds.has(d.accountId))
-    const creditCardAccounts = accountsArr.filter(acc => acc.type === 'Credit Card')
-
-    const unlinkedSum = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d.balance || d.amount) || 0), 0)
-    const ccSum = creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc.balance) || 0), 0)
-    return unlinkedSum + ccSum
-  }, [data?.debts, data?.accounts])
+    if (!data?.debts || !Array.isArray(data.debts)) return 0
+    return data.debts.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
+  }, [data?.debts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
@@ -195,8 +174,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const todayStr = today()
   const accountLookup = useMemo(
-    () => Object.fromEntries((data?.accounts || []).map(account => [account._id, account])),
-    [data?.accounts],
+    () => Object.fromEntries((data.accounts || []).map(account => [account._id, account])),
+    [data.accounts],
   )
   const label = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })
   const firstDay = new Date(year, month, 1).getDay()
@@ -214,7 +193,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     () => getBalanceOverrides(dailyBalanceOverrides, monthStartBalances),
     [dailyBalanceOverrides, monthStartBalances],
   )
-  const balanceOverrideLog = Array.isArray(data?.balanceOverrideLog) ? data.balanceOverrideLog : []
+  const balanceOverrideLog = Array.isArray(data.balanceOverrideLog) ? data.balanceOverrideLog : []
   const latestOverrideEvent = useMemo(() => {
     if (!selected) return null
     return balanceOverrideLog
@@ -222,16 +201,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0] || null
   }, [balanceOverrideLog, selected])
 
-  const projected = useMemo(() => getProjectedTransactions(data?.income || [], data?.expenses || [], year, month), [data?.income, data?.expenses, year, month])
+  const projected = useMemo(() => getProjectedTransactions(data.income, data.expenses, year, month), [data.income, data.expenses, year, month])
   const projectedIncome = useMemo(() => projected.filter(t => t.type === 'income'), [projected])
   const projectedExpenses = useMemo(() => projected.filter(t => t.type === 'expense'), [projected])
 
-  const actualIncome = useMemo(() => getMonthTransactions(data?.income || [], year, month), [data?.income, year, month])
-  const actualExpenses = useMemo(() => getMonthTransactions(data?.expenses || [], year, month), [data?.expenses, year, month])
+  const actualIncome = useMemo(() => getMonthTransactions(data.income, year, month), [data.income, year, month])
+  const actualExpenses = useMemo(() => getMonthTransactions(data.expenses, year, month), [data.expenses, year, month])
 
   const allIncome = useMemo(() => [...actualIncome, ...projectedIncome], [actualIncome, projectedIncome])
   const allExpenses = useMemo(() => [...actualExpenses, ...projectedExpenses], [actualExpenses, projectedExpenses])
-  const allTransfers = useMemo(() => getMonthTransactions(data?.transfers || [], year, month), [data?.transfers, year, month])
+  const allTransfers = useMemo(() => getMonthTransactions(data.transfers || [], year, month), [data.transfers, year, month])
 
   const monthSummaryTotals = useMemo(() => {
     const totalInc = (allIncome || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
@@ -240,8 +219,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [allIncome, allExpenses])
 
   const forecastMap = useMemo(
-    () => getMonthForecast(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], projectedIncome, projectedExpenses, year, month, balanceOverrides),
-    [data?.accounts, data?.transfers, data?.income, data?.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
+    () => getMonthForecast(data.accounts, data.transfers, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
+    [data.accounts, data.transfers, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
   )
 
   const unpaidBillsByDateKey = useMemo(() => {
@@ -365,13 +344,15 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const money = value => (privacyMode ? 'Hidden' : fmt(value, s))
   const balanceMoney = value => (privacyMode ? 'Hidden' : formatRoundedBalance(value, s))
   const formatBalanceDate = value => {
-    const parsed = safeParseDate(value)
-    if (!parsed) return value || ''
+    if (!value) return ''
+    const parsed = new Date(`${value}T00:00:00`)
+    if (Number.isNaN(parsed.getTime())) return value
     return parsed.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
   }
   const formatDayPanelEyebrow = value => {
-    const parsed = safeParseDate(value)
-    if (!parsed) return ''
+    if (!value) return ''
+    const parsed = new Date(`${value}T00:00:00`)
+    if (Number.isNaN(parsed.getTime())) return ''
     return parsed.toLocaleDateString('en-PH', { weekday: 'long' })
   }
   const formatCellBalance = value => {
@@ -1118,15 +1099,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
-  const selectedDayRawBalance = selected
-    ? (Number(forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected, balanceOverrides)) || 0)
+  const selectedDayBalance = selected
+    ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.transfers, data.income, data.expenses, selected, balanceOverrides))
     : 0
-  const selectedDayBalance = calendarViewMode === 'netWorth'
-    ? (selectedDayRawBalance + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
-    : selectedDayRawBalance
-
   const selectedDayAutoBalance = selected
-    ? (Number(getBalanceAtDate(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected)) || 0)
+    ? getBalanceAtDate(data.accounts, data.transfers, data.income, data.expenses, selected)
     : 0
   const isCurrentMonthView = year === currentYear && month === currentMonth
   const defaultBalanceDate = useMemo(() => {
@@ -1136,12 +1113,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return dateStr(fallbackDay)
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
-  const baseFocusValue = balanceFocusDate
-    ? (Number(forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], balanceFocusDate, balanceOverrides)) || 0)
+  const balanceFocusValue = balanceFocusDate
+    ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data.accounts, data.transfers, data.income, data.expenses, balanceFocusDate, balanceOverrides))
     : 0
-  const balanceFocusValue = calendarViewMode === 'netWorth'
-    ? (baseFocusValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
-    : baseFocusValue
   const balanceRailMeta = selected
     ? 'Calendar close · paid entries only'
     : isCurrentMonthView
@@ -1193,7 +1167,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     const targetDate = normalizeDate(editTx?.date || selected)
     const selectedAccount = accountLookup[form.accountId]
 
-    if (!data?.accounts?.length) {
+    if (!data.accounts.length) {
       return 'Add an account first if you want calendar entries to update current balances automatically.'
     }
     if (!form.accountId) {
@@ -1221,7 +1195,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       return `💳 ${baseMsg} Mapped to a Credit Card: this will ${ccAction} by ${s}${form.amount || '0.00'}.`
     }
     return baseMsg
-  }, [accountLookup, data?.accounts?.length, editTx, form.accountId, form.paymentStatus, selected, todayStr, modalType, s, form.amount])
+  }, [accountLookup, data.accounts.length, editTx, form.accountId, form.paymentStatus, selected, todayStr, modalType, s, form.amount])
 
   const balanceImpact = useMemo(() => {
     const targetDate = normalizeDate(editTx?.date || selected)
@@ -1489,7 +1463,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       : selectedDayUnpaidCount > 0
                         ? `Day balance excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
                         : 'Day balance includes paid entries only.'}
-                    {latestOverrideEvent?.createdAt && !Number.isNaN(new Date(latestOverrideEvent.createdAt).getTime()) && (
+                    {latestOverrideEvent?.createdAt && (
                       <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                         Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
                       </div>
@@ -1821,14 +1795,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               </div>
             )}
 
-            {(data?.goals || []).length > 0 && (
+            {data.goals.length > 0 && (
               <details className={calStyles.goalDisclosure}>
                 <summary className={calStyles.goalDisclosureSummary}>
                   <span>Savings goals</span>
-                  <span className={calStyles.goalDisclosureCount}>{(data?.goals || []).length}</span>
+                  <span className={calStyles.goalDisclosureCount}>{data.goals.length}</span>
                 </summary>
                 <div className={calStyles.goalDisclosureBody}>
-                  {(data?.goals || []).map(goal => {
+                  {data.goals.map(goal => {
                     const pct = Math.min(100, Math.round(((goal.current || 0) / (goal.target || 1)) * 100))
                     const isEditing = editGoalId === goal._id
 
@@ -2004,10 +1978,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isSelected = selected === ds
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
-              const baseValue = forecast ? (Number(forecast.runningBalance) || 0) : 0
+              const baseValue = forecast ? forecast.runningBalance : 0
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0)) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
-              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
+              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
               const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
               const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
@@ -2342,7 +2316,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 <label>Account</label>
                 <select value={form.accountId} onChange={event => set('accountId', event.target.value)} disabled={formSaving}>
                   <option value="">No account selected</option>
-                  {(data?.accounts || []).map(account => (
+                  {data.accounts.map(account => (
                     <option key={account._id} value={account._id}>
                       {account.name} · {account.type}
                     </option>
