@@ -14,6 +14,7 @@ import {
 } from '../lib/transactionOptions'
 import { formatDisplayDate, RECUR_OPTIONS, today } from '../lib/utils'
 import styles from './QuickAdd.module.css'
+import Input from '../components/ui/Input'
 
 function normalizeAmountInput(value) {
   const cleaned = value.replace(/[^\d.]/g, '')
