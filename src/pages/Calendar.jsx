@@ -211,10 +211,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const allTransfers = useMemo(() => getMonthTransactions(data.transfers || [], year, month), [data.transfers, year, month])
 
   const monthSummaryTotals = useMemo(() => {
-    const totalInc = (actualIncome || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-    const totalExp = (actualExpenses || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const totalInc = (allIncome || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const totalExp = (allExpenses || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
     return { totalInc, totalExp, net: totalInc - totalExp }
-  }, [actualIncome, actualExpenses])
+  }, [allIncome, allExpenses])
 
   const forecastMap = useMemo(
     () => getMonthForecast(data.accounts, data.transfers, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
