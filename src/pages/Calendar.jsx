@@ -83,18 +83,28 @@ function getEmptyForm(type = 'income', defaultAccountId = '') {
   return { ...getDefaultTransactionDraft(type), accountId: defaultAccountId, paymentStatus: 'paid' }
 }
 
+function safeParseDate(dateKey) {
+  if (!dateKey || typeof dateKey !== 'string') return null
+  const parts = dateKey.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return null
+  const dt = new Date(parts[0], parts[1] - 1, parts[2])
+  return isNaN(dt.getTime()) ? null : dt
+}
+
 function getLegacyMonthStartKeyForDate(dateKey, monthStartBalances = {}) {
-  if (!dateKey || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return ''
-  const nextDay = new Date(`${dateKey}T00:00:00`)
-  nextDay.setDate(nextDay.getDate() + 1)
-  if (nextDay.getDate() !== 1) return ''
-  const candidate = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}`
+  const parsed = safeParseDate(dateKey)
+  if (!parsed) return ''
+  parsed.setDate(parsed.getDate() + 1)
+  if (parsed.getDate() !== 1) return ''
+  const candidate = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}`
   return Object.prototype.hasOwnProperty.call(monthStartBalances, candidate) ? candidate : ''
 }
 
 function buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
+  const parsed = safeParseDate(ds)
+  const dateFormatted = parsed ? parsed.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : ''
   const parts = [
-    `${day}, ${new Date(`${ds}T00:00:00`).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}`,
+    `${day}${dateFormatted ? `, ${dateFormatted}` : ''}`,
   ]
   if (privacyMode) parts.push('Balance hidden')
   else parts.push(`Closing balance ${formatRoundedBalance(forecast?.runningBalance || 0, s)}`)
@@ -344,15 +354,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const money = value => (privacyMode ? 'Hidden' : fmt(value, s))
   const balanceMoney = value => (privacyMode ? 'Hidden' : formatRoundedBalance(value, s))
   const formatBalanceDate = value => {
-    if (!value) return ''
-    const parsed = new Date(`${value}T00:00:00`)
-    if (Number.isNaN(parsed.getTime())) return value
+    const parsed = safeParseDate(value)
+    if (!parsed) return value || ''
     return parsed.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
   }
   const formatDayPanelEyebrow = value => {
-    if (!value) return ''
-    const parsed = new Date(`${value}T00:00:00`)
-    if (Number.isNaN(parsed.getTime())) return ''
+    const parsed = safeParseDate(value)
+    if (!parsed) return ''
     return parsed.toLocaleDateString('en-PH', { weekday: 'long' })
   }
   const formatCellBalance = value => {
