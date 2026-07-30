@@ -210,6 +210,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const allExpenses = useMemo(() => [...actualExpenses, ...projectedExpenses], [actualExpenses, projectedExpenses])
   const allTransfers = useMemo(() => getMonthTransactions(data.transfers || [], year, month), [data.transfers, year, month])
 
+  const monthSummaryTotals = useMemo(() => {
+    const totalInc = (actualIncome || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    const totalExp = (actualExpenses || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    return { totalInc, totalExp, net: totalInc - totalExp }
+  }, [actualIncome, actualExpenses])
+
   const forecastMap = useMemo(
     () => getMonthForecast(data.accounts, data.transfers, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides),
     [data.accounts, data.transfers, data.income, data.expenses, projectedIncome, projectedExpenses, year, month, balanceOverrides],
@@ -1861,12 +1867,18 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
           <div style={{ display: 'grid', gap: '10px', marginTop: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Month Incomes</span>
-              <strong style={{ fontSize: '14px', color: '#10b981', fontFamily: 'var(--font-mono)' }}>+{fmt(dailyVolumes.maxInc || 0, s)}</strong>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Total Incomes</span>
+              <strong style={{ fontSize: '14px', color: '#10b981', fontFamily: 'var(--font-mono)' }}>+{money(monthSummaryTotals.totalInc)}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Month Expenses</span>
-              <strong style={{ fontSize: '14px', color: '#ef4444', fontFamily: 'var(--font-mono)' }}>−{fmt(dailyVolumes.maxExp || 0, s)}</strong>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Total Expenses</span>
+              <strong style={{ fontSize: '14px', color: '#ef4444', fontFamily: 'var(--font-mono)' }}>−{money(monthSummaryTotals.totalExp)}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Net Cashflow</span>
+              <strong style={{ fontSize: '14px', color: monthSummaryTotals.net >= 0 ? '#10b981' : '#ef4444', fontFamily: 'var(--font-mono)' }}>
+                {monthSummaryTotals.net >= 0 ? '+' : ''}{money(monthSummaryTotals.net)}
+              </strong>
             </div>
           </div>
 
