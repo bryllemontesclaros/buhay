@@ -2038,6 +2038,132 @@
   }
 }
 
+/* ── PIN LOCK OVERLAY ───────────────────────── */
+.pinOverlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 92%, rgba(0, 0, 0, 0.85));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pinCard {
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--purple) 30%, var(--border2));
+  border-radius: 28px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.pinLockIcon {
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+
+.pinTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.pinSub {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+.pinDotsRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pinDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid var(--border2);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.pinDotFilled {
+  background: var(--purple);
+  border-color: var(--purple);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--purple) 60%, transparent);
+}
+
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.pinDotsShake {
+  animation: pinShake 0.4s ease;
+}
+
+.pinErrorText {
+  color: var(--expense);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.keypadGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.keypadBtn {
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.keypadBtn:hover {
+  background: color-mix(in srgb, var(--purple) 20%, var(--surface2));
+  border-color: var(--purple);
+  color: var(--purple);
+  transform: scale(1.06);
+}
+
+.keypadBtn:active {
+  transform: scale(0.94);
+}
+
+.keypadBtnDel {
+  font-size: 16px;
+  color: var(--text3);
+}
+
 /* Custom Stepped Slider styles */
 .steppedSlider {
   display: flex;

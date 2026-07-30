@@ -33,13 +33,7 @@ const JOURNAL_PROMPTS = [
   },
 ]
 
-export const DEFAULT_TALA_SETTINGS = {
-  reminderTime: '20:30',
-  weeklyReviewDay: 'Sunday',
-  promptStyle: 'Gentle',
-  privateByDefault: true,
-  showMoodInsights: true,
-}
+
 
 const TALA_TAB_COPY = {
   journal: {
@@ -251,6 +245,16 @@ export function getTalaSettings(profile = {}) {
   }
 }
 
+export const DEFAULT_TALA_SETTINGS = {
+  reminderTime: '20:30',
+  weeklyReviewDay: 'Sunday',
+  promptStyle: 'Gentle',
+  privateByDefault: true,
+  showMoodInsights: true,
+  pinEnabled: false,
+  pinCode: '',
+}
+
 export function sanitizeTalaSettings(settings = {}) {
   return {
     reminderTime: settings.reminderTime || DEFAULT_TALA_SETTINGS.reminderTime,
@@ -258,6 +262,8 @@ export function sanitizeTalaSettings(settings = {}) {
     promptStyle: settings.promptStyle || DEFAULT_TALA_SETTINGS.promptStyle,
     privateByDefault: settings.privateByDefault !== false,
     showMoodInsights: settings.showMoodInsights !== false,
+    pinEnabled: Boolean(settings.pinEnabled),
+    pinCode: String(settings.pinCode || '').slice(0, 4),
   }
 }
 
@@ -689,6 +695,39 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
   const [focusView, setFocusView] = useState(() => getTalaFocusViewForTab(activeTab))
   const [pendingQuickAction, setPendingQuickAction] = useState(null)
   const [panicHide, setPanicHide] = useState(false)
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState(false)
+  const [isUnlocked, setIsUnlocked] = useState(() => !talaSettings.pinEnabled || !talaSettings.pinCode)
+  const [pinSetupOpen, setPinSetupOpen] = useState(false)
+  const [newPinDraft, setNewPinDraft] = useState('')
+
+  const handleKeypadPress = (num) => {
+    if (pinInput.length >= 4) return
+    const nextPin = pinInput + num
+    setPinInput(nextPin)
+
+    if (nextPin.length === 4) {
+      if (nextPin === talaSettings.pinCode) {
+        setIsUnlocked(true)
+        setPinError(false)
+        setPinInput('')
+        playTick()
+        notifyApp({ title: 'Tala Unlocked', message: 'Welcome back to your private space.', tone: 'success' })
+      } else {
+        setPinError(true)
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100])
+        setTimeout(() => {
+          setPinInput('')
+          setPinError(false)
+        }, 600)
+      }
+    }
+  }
+
+  const handleKeypadDelete = () => {
+    setPinInput(prev => prev.slice(0, -1))
+    setPinError(false)
+  }
   const settingsKey = JSON.stringify(profile?.talaSettings || {})
   const journalQuickActionRef = useRef(null)
   const journalTitleInputRef = useRef(null)
@@ -1257,6 +1296,31 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
 
   return (
     <div className={`${styles.page} ${tStyles.page}`}>
+      {talaSettings.pinEnabled && talaSettings.pinCode && !isUnlocked && (
+        <div className={tStyles.pinOverlay}>
+          <div className={tStyles.pinCard}>
+            <div className={tStyles.pinLockIcon}>🔒</div>
+            <h2 className={tStyles.pinTitle}>Tala Private Space</h2>
+            <p className={tStyles.pinSub}>Enter your 4-digit PIN to access private reflections</p>
+            <div className={`${tStyles.pinDotsRow} ${pinError ? tStyles.pinDotsShake : ''}`}>
+              {[0, 1, 2, 3].map(idx => (
+                <div key={idx} className={`${tStyles.pinDot} ${idx < pinInput.length ? tStyles.pinDotFilled : ''}`} />
+              ))}
+            </div>
+            {pinError && <p className={tStyles.pinErrorText}>Wrong PIN. Try again.</p>}
+            <div className={tStyles.keypadGrid}>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                <button type="button" key={num} className={tStyles.keypadBtn} onClick={() => handleKeypadPress(String(num))}>
+                  {num}
+                </button>
+              ))}
+              <div />
+              <button type="button" className={tStyles.keypadBtn} onClick={() => handleKeypadPress('0')}>0</button>
+              <button type="button" className={`${tStyles.keypadBtn} ${tStyles.keypadBtnDel}`} onClick={handleKeypadDelete}>⌫</button>
+            </div>
+          </div>
+        </div>
+      )}
       {trackSwitcher}
       {focusSwitcher}
 
