@@ -54,7 +54,8 @@ function normalizeAmountInput(value) {
 }
 
 function formatRoundedBalance(value, symbol = '') {
-  const numericValue = Number(value) || 0
+  let numericValue = Number(value)
+  if (!Number.isFinite(numericValue)) numericValue = 0
   const rounded = new Intl.NumberFormat('en-PH', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
@@ -64,7 +65,8 @@ function formatRoundedBalance(value, symbol = '') {
 }
 
 function formatCompactCellBalance(value) {
-  const numericValue = Number(value) || 0
+  let numericValue = Number(value)
+  if (!Number.isFinite(numericValue)) numericValue = 0
   const absoluteValue = Math.abs(numericValue)
   const sign = numericValue < 0 ? '−' : ''
 
@@ -1487,7 +1489,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       : selectedDayUnpaidCount > 0
                         ? `Day balance excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
                         : 'Day balance includes paid entries only.'}
-                    {latestOverrideEvent?.createdAt && (
+                    {latestOverrideEvent?.createdAt && !Number.isNaN(new Date(latestOverrideEvent.createdAt).getTime()) && (
                       <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                         Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
                       </div>
