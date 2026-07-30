@@ -572,7 +572,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       </section>
     )
   }), [
-    dailyInsight, sparklines, privacyMode, netWorth, lakasScore, todayCheckin,
+    dailyInsight, sparklines, privacyMode, wealthInfo, lakasScore, todayCheckin,
     todaysBalance, monthIncome, monthExpenses, user, data, s, completedHabitsCount,
     todayWorkouts, moodRating, journalText, pulseFeed, onNavigate
   ])
