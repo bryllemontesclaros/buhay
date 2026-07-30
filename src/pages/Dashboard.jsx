@@ -114,8 +114,54 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       .filter(b => !b.isPaid && b.dueDate >= todayStr)
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
 
-    return { netWorth, totalCash, totalCCDebt, nextBill: upcomingBills[0] }
-  }, [data.accounts, data.bills, todayStr])
+    // 30-day cash balance trend sparkline
+    const days = 30
+    const dateMap = {}
+    for (let i = 0; i < days; i++) {
+      const d = new Date()
+      d.setDate(d.getDate() - (days - 1 - i))
+      const dateKey = d.toISOString().slice(0, 10)
+      dateMap[dateKey] = { income: 0, expense: 0 }
+    }
+
+    ;(data.income || []).forEach(tx => {
+      if (tx?.date && dateMap[tx.date]) {
+        dateMap[tx.date].income += Number(tx.amount || 0)
+      }
+    })
+    ;(data.expenses || []).forEach(tx => {
+      if (tx?.date && dateMap[tx.date]) {
+        dateMap[tx.date].expense += Number(tx.amount || 0)
+      }
+    })
+
+    const dateKeys = Object.keys(dateMap).sort()
+    let running = totalCash
+    const reverseBalances = [running]
+    for (let i = dateKeys.length - 1; i > 0; i--) {
+      const k = dateKeys[i]
+      const dayNet = dateMap[k].income - dateMap[k].expense
+      running -= dayNet
+      reverseBalances.unshift(running)
+    }
+
+    const minB = Math.min(...reverseBalances)
+    const maxB = Math.max(...reverseBalances)
+    const range = (maxB - minB) || 1
+
+    const svgPath = reverseBalances.map((val, idx) => {
+      const x = (idx / (days - 1)) * 200
+      const y = 35 - ((val - minB) / range) * 28
+      return `${idx === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`
+    }).join(' ')
+
+    const areaPath = `${svgPath} L 200 40 L 0 40 Z`
+    const startVal = reverseBalances[0] || 1
+    const endVal = reverseBalances[reverseBalances.length - 1] || 1
+    const percentChange = startVal !== 0 ? (((endVal - startVal) / Math.abs(startVal)) * 100).toFixed(1) : 0
+
+    return { netWorth, totalCash, totalCCDebt, nextBill: upcomingBills[0], svgPath, areaPath, percentChange: Number(percentChange) }
+  }, [data.accounts, data.bills, data.income, data.expenses, todayStr])
 
   const todayHabit = useMemo(() => {
     return (data.lakasHabits || []).find(h => h.date === todayStr) || {}
@@ -371,6 +417,32 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
               <span className={styles.subMetricLabel}>Credit Debt</span>
               <span className={`${styles.subMetricVal} ${styles.subMetricValRed}`}>{fmt(wealthInfo.totalCCDebt)}</span>
             </div>
+          </div>
+          <div className={styles.trendBlock}>
+            <div className={styles.trendHeader}>
+              <span className={styles.trendTitle}>30-Day Cash Trend</span>
+              {!privacyMode && (
+                <span className={`${styles.trendBadge} ${wealthInfo.percentChange >= 0 ? styles.trendUp : styles.trendDown}`}>
+                  {wealthInfo.percentChange >= 0 ? `▲ +${wealthInfo.percentChange}%` : `▼ ${wealthInfo.percentChange}%`}
+                </span>
+              )}
+            </div>
+            {!privacyMode ? (
+              <div className={styles.trendChartWrap}>
+                <svg className={styles.trendSvg} viewBox="0 0 200 40" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="cashTrendGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={wealthInfo.areaPath} fill="url(#cashTrendGrad)" />
+                  <path d={wealthInfo.svgPath} fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            ) : (
+              <div className={styles.trendPrivacyPlaceholder}>••••••••••••••••••••</div>
+            )}
           </div>
           <div className={styles.widgetDivider} />
           <div className={styles.extraWidget}>
