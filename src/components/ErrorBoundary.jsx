@@ -18,6 +18,12 @@ export default class ErrorBoundary extends React.Component {
     console.error('ErrorBoundary caught an unexpected error:', error, errorInfo)
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.state.hasError && prevProps.children !== this.props.children) {
+      this.setState({ hasError: false, error: null })
+    }
+  }
+
   handleReload = () => {
     window.location.reload()
   }
@@ -56,9 +62,27 @@ export default class ErrorBoundary extends React.Component {
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '12px' }}>
               Something went wrong
             </h2>
-            <p style={{ color: 'var(--text-muted, #666666)', fontSize: '14px', lineHeight: 1.5, marginBottom: '24px' }}>
+            <p style={{ color: 'var(--text-muted, #666666)', fontSize: '14px', lineHeight: 1.5, marginBottom: '16px' }}>
               An unexpected error occurred while displaying this section. You can try refreshing or resetting the view.
             </p>
+            {this.state.error && (
+              <pre style={{
+                marginTop: 8,
+                marginBottom: 20,
+                padding: 12,
+                background: 'rgba(255,0,0,0.05)',
+                border: '1px solid rgba(255,0,0,0.2)',
+                borderRadius: 8,
+                fontSize: 11,
+                color: '#dc2626',
+                textAlign: 'left',
+                overflowX: 'auto',
+                whiteSpace: 'pre-wrap',
+                maxHeight: '160px'
+              }}>
+                {String(this.state.error?.stack || this.state.error)}
+              </pre>
+            )}
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button
                 onClick={this.handleReset}
