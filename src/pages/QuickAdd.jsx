@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import { fsAddTransaction } from '../lib/firestore'
+import { enqueueOfflineTransaction, processOfflineQueue } from '../lib/offlineQueue'
 import {
   findPresetByLabel,
   getDefaultTransactionDraft,
@@ -81,6 +82,10 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     return selected ? [...limited.slice(0, 5), selected] : limited
   }, [presetKey, quickPresets, showPresetBrowser])
 
+
+  useEffect(() => {
+    processOfflineQueue(accounts)
+  }, [accounts])
 
   useEffect(() => {
     if (!accountId && defaultAccountId) setAccountId(defaultAccountId)
@@ -181,7 +186,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     try {
       const col = type === 'income' ? 'income' : 'expenses'
       const trimmedDesc = desc.trim()
-      fsAddTransaction(user.uid, col, {
+      const payload = {
         desc: trimmedDesc,
         amount: parseFloat(amount),
         date: entryDate,
@@ -193,9 +198,16 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         paymentStatus,
         accountId,
         accountBalanceLinked: Boolean(accountId),
-      }, accounts).catch(err => {
-        console.error('Failed to save transaction:', err)
-      })
+      }
+
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        enqueueOfflineTransaction(user.uid, col, payload)
+      } else {
+        fsAddTransaction(user.uid, col, payload, accounts).catch(err => {
+          console.error('Network failed while saving transaction. Queueing offline:', err)
+          enqueueOfflineTransaction(user.uid, col, payload)
+        })
+      }
 
       setDone(true)
       setTimeout(() => {
