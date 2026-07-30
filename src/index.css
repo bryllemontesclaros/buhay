@@ -81,6 +81,13 @@
   --space-reflection-dim: rgba(192, 132, 252, 0.14);
   --space-reflection-ink: #c084fc;
 
+  --accent-emerald: #10b981;
+  --accent-glow-emerald: rgba(16, 185, 129, 0.24);
+  --accent-flame: #ff4500;
+  --accent-glow-flame: rgba(255, 69, 0, 0.24);
+  --accent-iris: #c084fc;
+  --accent-glow-iris: rgba(192, 132, 252, 0.24);
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
