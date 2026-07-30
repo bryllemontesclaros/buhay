@@ -478,13 +478,13 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
         <div className={styles.bentoBody}>
           <div className={styles.metricBlock}>
-            <span className={styles.metricLabel}>Daily Target</span>
+            <span className={styles.metricLabel}>Habits Target</span>
             <div className={styles.metricValRow}>
-              <span className={styles.metricValHealth}>{completedHabitsCount} / {HABIT_OPTIONS.length}</span>
+              <span className={styles.metricValHealth}>{habitsDoneCount} / {HABIT_OPTIONS.length}</span>
               <span className={styles.metricUnit}>habits complete</span>
             </div>
             <div className={styles.progressBarTrack}>
-              <div className={styles.progressBarFill} style={{ width: `${lakasScore}%` }} />
+              <div className={styles.progressBarFill} style={{ width: `${Math.round((habitsDoneCount / (HABIT_OPTIONS.length || 1)) * 100)}%` }} />
             </div>
           </div>
 
@@ -492,13 +492,13 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
           <div className={styles.habitListMini}>
             {HABIT_OPTIONS.slice(0, 3).map(h => {
-              const isDone = todayWorkouts.some(w => w.category === h.id || w.name === h.label)
+              const isDone = Boolean(todayHabit[h.key])
               return (
                 <button
-                  key={h.id}
+                  key={h.key}
                   type="button"
                   className={`${styles.habitChipMini} ${isDone ? styles.habitDone : ''}`}
-                  onClick={() => handleToggleHabit(h)}
+                  onClick={() => handleToggleHabit(h.key, isDone)}
                 >
                   <span aria-hidden="true">{h.icon}</span>
                   <span className={styles.habitChipLabel}>{h.label}</span>
@@ -572,9 +572,8 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       </section>
     )
   }), [
-    dailyInsight, sparklines, privacyMode, wealthInfo, lakasScore, todayCheckin,
-    todaysBalance, monthIncome, monthExpenses, user, data, s, completedHabitsCount,
-    todayWorkouts, moodRating, journalText, pulseFeed, onNavigate
+    dailyInsight, sparklines, privacyMode, wealthInfo, habitsDoneCount, todayHabit,
+    moodRating, journalText, pulseFeed, user, data, s, onNavigate
   ])
 
   return (
