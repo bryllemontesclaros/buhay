@@ -92,12 +92,12 @@ function getLegacyMonthStartKeyForDate(dateKey, monthStartBalances = {}) {
   return Object.prototype.hasOwnProperty.call(monthStartBalances, candidate) ? candidate : ''
 }
 
-function buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
+function buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
   const parts = [
     `${day}, ${new Date(`${ds}T00:00:00`).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}`,
   ]
   if (privacyMode) parts.push('Balance hidden')
-  else parts.push(`Closing balance ${formatRoundedBalance(forecast?.runningBalance || 0, s)}`)
+  else parts.push(`Closing balance ${formatRoundedBalance(displayValue || 0, s)}`)
   if (hasIncome) parts.push('has income')
   if (hasExpense) parts.push('has expenses')
   if (hasManualBalance) parts.push('has manual balance override')
@@ -1987,7 +1987,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const baseValue = forecast ? forecast.runningBalance : 0
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0)) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
-              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
+              const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
               const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
               const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
