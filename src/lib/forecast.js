@@ -65,16 +65,17 @@ export function buildForecast(allIncome, allExpenses, year, month, startingBalan
 }
 
 export function applyBalanceOverridesToForecast(forecastMap = {}, year, month, balanceOverrides = {}, startingBalance = 0) {
+  const safeMap = forecastMap && typeof forecastMap === 'object' ? forecastMap : {}
   const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`
-  const overrideEntries = Object.entries(balanceOverrides)
+  const overrideEntries = Object.entries(balanceOverrides || {})
     .filter(([date, value]) => date.startsWith(monthPrefix) && Number.isFinite(Number(value)))
     .sort(([left], [right]) => left.localeCompare(right))
 
-  if (!overrideEntries.length) return forecastMap
+  if (!overrideEntries.length) return safeMap
 
-  const sortedDays = Object.keys(forecastMap).sort()
+  const sortedDays = Object.keys(safeMap).sort()
   const nextMap = Object.fromEntries(
-    sortedDays.map(date => [date, { ...forecastMap[date] }]),
+    sortedDays.map(date => [date, { ...(safeMap[date] || {}) }]),
   )
   const todayStr = today()
 
@@ -82,17 +83,21 @@ export function applyBalanceOverridesToForecast(forecastMap = {}, year, month, b
     const currentDay = nextMap[overrideDate]
     if (!currentDay) return
 
-    const previousOpeningBalance = currentDay.runningBalance - currentDay.net
+    const previousOpeningBalance = (currentDay.runningBalance || 0) - (currentDay.net || 0)
     const delta = Number(overrideBalance) - previousOpeningBalance
     if (!Number.isFinite(delta) || delta === 0) return
 
     sortedDays.forEach(date => {
-      if (date >= overrideDate) nextMap[date].runningBalance += delta
+      if (date >= overrideDate && nextMap[date]) {
+        nextMap[date].runningBalance = (nextMap[date].runningBalance || 0) + delta
+      }
     })
   })
 
   sortedDays.forEach(date => {
-    nextMap[date].status = getStatusForDay(date, nextMap[date].runningBalance, startingBalance, todayStr)
+    if (nextMap[date]) {
+      nextMap[date].status = getStatusForDay(date, nextMap[date].runningBalance || 0, startingBalance, todayStr)
+    }
   })
 
   return nextMap
@@ -113,26 +118,30 @@ export function getForecastColor(status) {
 /**
  * Calculate end-of-month projected balance
  */
-export function getEndOfMonthBalance(forecastMap) {
-  const days = Object.keys(forecastMap).sort()
+export function getEndOfMonthBalance(forecastMap = {}) {
+  const safeMap = forecastMap && typeof forecastMap === 'object' ? forecastMap : {}
+  const days = Object.keys(safeMap).sort()
   if (!days.length) return 0
-  return forecastMap[days[days.length - 1]].runningBalance
+  return safeMap[days[days.length - 1]]?.runningBalance || 0
 }
 
 /**
  * Get projected impact of a new transaction
  * Returns: days that would change status
  */
-export function getTransactionImpact(forecastMap, date, amount, type, options = {}) {
+export function getTransactionImpact(forecastMap = {}, date, amount, type, options = {}) {
+  const safeMap = forecastMap && typeof forecastMap === 'object' ? forecastMap : {}
   const impact = type === 'income' ? amount : -amount
   const stopAtDate = options?.stopAtDate || ''
-  const days = Object.keys(forecastMap).sort().filter(d => d >= date && (!stopAtDate || d < stopAtDate))
+  const days = Object.keys(safeMap).sort().filter(d => d >= date && (!stopAtDate || d < stopAtDate))
 
   let willTurnRed = false
   let willTurnAmber = false
 
   days.forEach(d => {
-    const newBalance = forecastMap[d].runningBalance + impact
+    const dayObj = safeMap[d]
+    if (!dayObj) return
+    const newBalance = (dayObj.runningBalance || 0) + impact
     if (newBalance < 0) willTurnRed = true
     else if (newBalance < 1000) willTurnAmber = true
   })
