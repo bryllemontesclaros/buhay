@@ -447,7 +447,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   function openComposer(type = 'income') {
     playTick()
-    focusProxyRef.current?.focus()
+    focusProxyRef.current?.focus({ preventScroll: true })
     const nextDraft = getEmptyForm(type, defaultAccountId)
     closeDayBalanceEditor()
     flushSync(() => {
@@ -554,7 +554,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       || findPresetByLabel(nextType, tx.desc || '')
     const nextSubcat = sanitizeTransactionSubcategory(nextType, nextCat, tx.subcat || nextMatchedPreset?.subcat)
     const nextDesc = tx.desc || ''
-    focusProxyRef.current?.focus()
+    focusProxyRef.current?.focus({ preventScroll: true })
     closeDayBalanceEditor()
     flushSync(() => {
       setEditTx(tx)
@@ -1268,19 +1268,6 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (onSelectedDateChange) onSelectedDateChange(selected || '')
   }, [selected, onSelectedDateChange])
 
-  useEffect(() => {
-    if (!selected || !selectedDayRef.current) return undefined
-    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    const frameId = window.requestAnimationFrame(() => {
-      selectedDayRef.current?.focus({ preventScroll: true })
-    })
-    return () => {
-      window.cancelAnimationFrame(frameId)
-      if (previousFocus?.isConnected && previousFocus !== document.body) {
-        previousFocus.focus({ preventScroll: true })
-      }
-    }
-  }, [selected])
 
   useEffect(() => {
     if (!showModal || !transactionModalRef.current) return undefined
@@ -1921,7 +1908,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   return (
     <div className={styles.page}>
-      <input ref={focusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'absolute', top: -9999, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
+      <input ref={focusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'fixed', top: 0, left: 0, width: 1, height: 1, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <div className={styles.pageHero}>
         <div className={styles.pageHeader}>
           <div className={styles.pageEyebrow}>Calendar</div>
