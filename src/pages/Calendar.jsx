@@ -1272,11 +1272,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (!selected || !selectedDayRef.current) return undefined
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const frameId = window.requestAnimationFrame(() => {
-      selectedDayRef.current?.focus()
+      selectedDayRef.current?.focus({ preventScroll: true })
     })
     return () => {
       window.cancelAnimationFrame(frameId)
-      if (previousFocus?.isConnected) previousFocus.focus()
+      if (previousFocus?.isConnected && previousFocus !== document.body) {
+        previousFocus.focus({ preventScroll: true })
+      }
     }
   }, [selected])
 
@@ -1286,11 +1288,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     const frameId = window.requestAnimationFrame(() => {
       // Always open at the top so it never looks blank until you scroll.
       transactionModalRef.current.scrollTop = 0
-      transactionModalRef.current?.focus()
+      transactionModalRef.current?.focus({ preventScroll: true })
     })
     return () => {
       window.cancelAnimationFrame(frameId)
-      if (previousFocus?.isConnected) previousFocus.focus()
+      if (previousFocus?.isConnected && previousFocus !== document.body) {
+        previousFocus.focus({ preventScroll: true })
+      }
     }
   }, [showModal])
 
@@ -1299,11 +1303,13 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const frameId = window.requestAnimationFrame(() => {
       recurringDateModalRef.current.scrollTop = 0
-      recurringDateModalRef.current?.focus()
+      recurringDateModalRef.current?.focus({ preventScroll: true })
     })
     return () => {
       window.cancelAnimationFrame(frameId)
-      if (previousFocus?.isConnected) previousFocus.focus()
+      if (previousFocus?.isConnected && previousFocus !== document.body) {
+        previousFocus.focus({ preventScroll: true })
+      }
     }
   }, [recurringDateTarget])
 
