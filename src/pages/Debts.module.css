@@ -127,7 +127,7 @@
 
 .strategyBtnActive {
   background: var(--accent);
-  color: #000000;
+  color: var(--bg);
   /* box-shadow flattened */
 }
 
@@ -314,7 +314,7 @@
 
 .primaryButton {
   background: var(--accent);
-  color: #000000;
+  color: var(--bg);
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
@@ -713,7 +713,7 @@
 
 .payBtn {
   background: var(--debt-tone);
-  color: #000000;
+  color: var(--bg);
   border: none;
   border-radius: 12px;
   font-family: var(--font-body);

@@ -1880,31 +1880,31 @@
 
 @media (max-width: 768px) {
   .modalBackdrop {
-    align-items: flex-end !important;
-    padding: 0 !important;
+    align-items: flex-end;
+    padding: 0;
   }
   .modalContainer {
-    border-radius: 28px 28px 0 0 !important;
-    max-height: 82vh !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    border-radius: 28px 28px 0 0;
+    max-height: 82vh;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
   .modalHeader {
-    flex-shrink: 0 !important;
-    padding: 18px 20px 14px !important;
+    flex-shrink: 0;
+    padding: 18px 20px 14px;
   }
   .modalList {
-    flex: 1 !important;
-    max-height: 52vh !important;
-    padding: 12px 18px !important;
-    grid-template-columns: 1fr !important;
+    flex: 1;
+    max-height: 52vh;
+    padding: 12px 18px;
+    grid-template-columns: 1fr;
   }
   .modalFooter {
-    flex-shrink: 0 !important;
-    padding: 12px 20px !important;
+    flex-shrink: 0;
+    padding: 12px 20px;
   }
 }

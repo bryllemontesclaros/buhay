@@ -41,6 +41,13 @@
   --text2: #aaaaaa;
   --text3: #888888;
 
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-dropdown: 500;
+  --z-overlay: 900;
+  --z-modal: 10000;
+  --z-toast: 11000;
+
   --accent: #ffffff;
   --accent-dim: rgba(255, 255, 255, 0.12);
   --accent-glow: rgba(255, 255, 255, 0.16);
@@ -220,7 +227,7 @@
 
   --text: #111111;
   --text2: #666666;
-  --text3: #888888;
+  --text3: #6b6b6b;
 
   --accent: #111111;
   --accent-dim: rgba(17, 17, 17, 0.08);
@@ -503,5 +510,28 @@ button:active,
 a:active {
   transform: scale(0.96) !important;
   transition: transform 0.1s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Prevent iOS WebKit auto-zoom on input focus */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Touch target accessibility for touchscreens */
+@media (pointer: coarse) {
+  button, [role="button"], a.btn {
+    min-height: 44px;
+  }
 }
 

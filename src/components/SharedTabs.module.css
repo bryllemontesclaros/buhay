@@ -8,6 +8,8 @@
   display: flex;
   gap: 24px;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
 }
 
@@ -28,6 +30,7 @@
   align-items: center;
   gap: 8px;
   white-space: nowrap;
+  scroll-snap-align: start;
   transition: color 0.2s ease;
 }
 

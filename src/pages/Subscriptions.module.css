@@ -23,6 +23,10 @@
   border-color: var(--glass-border-hover);
 }
 
+.subCard:active {
+  transform: translateY(0) scale(0.98);
+}
+
 .subCardHeader {
   display: flex;
   justify-content: space-between;

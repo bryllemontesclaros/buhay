@@ -935,9 +935,9 @@
   text-overflow: ellipsis;
   max-width: 100%;
 }
-.accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
-.recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
-.projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; margin-left: 6px; }
+.accountBadge { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.recurBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.projBadge { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; margin-left: 6px; }
 .txRight { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .projectedTxRight {
   width: 100%;
@@ -1075,10 +1075,10 @@
 .editBtn:disabled,
 .statusBtn:disabled,
 .delBtnSm:disabled { opacity: 0.55; cursor: not-allowed; }
-.statusBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.statusBadge { border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .statusPaid { color: var(--income); background: color-mix(in srgb, var(--income) 14%, transparent); }
 .statusUnpaid { color: var(--amber); background: color-mix(in srgb, var(--amber) 16%, transparent); }
-.impactBadge { border-radius: 6px; padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
+.impactBadge { border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--type-overline); font-weight: 600; border: none; }
 .impactLinked { color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, transparent); }
 .impactOn { color: var(--income); background: color-mix(in srgb, var(--income) 12%, transparent); }
 .impactDue { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
