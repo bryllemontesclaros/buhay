@@ -14,7 +14,6 @@ import { auth, sendVerificationEmailSafe } from '../lib/firebase'
 import { getStartSpaceIntent, setStartSpaceIntent } from '../lib/startIntent'
 import styles from './AuthScreen.module.css'
 import BrandLogo from '../components/BrandLogo'
-import Input from '../components/ui/Input'
 
 const ERROR_MSGS = {
   'auth/user-not-found': 'No account found with this email.',
@@ -243,9 +242,9 @@ export default function AuthScreen() {
 
             {tab === 'login' ? (
               <form onSubmit={handleLogin}>
-                <Input label="Email" type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" />
+                <div className={styles.field}><label>Email</label><input type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
                 <div className={styles.field}>
-                  <label className={styles.fieldLabel}>Password</label>
+                  <label>Password</label>
                   <div className={styles.passwordInputWrap}>
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -253,7 +252,6 @@ export default function AuthScreen() {
                       value={form.password}
                       onChange={e => set('password', e.target.value)}
                       autoComplete="current-password"
-                      className={styles.input}
                     />
                     <button
                       type="button"
