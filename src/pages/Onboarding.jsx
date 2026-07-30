@@ -7,6 +7,7 @@ import { clearStartSpaceIntent, getStartSpaceIntent } from '../lib/startIntent'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getTransactionSubcategories } from '../lib/transactionOptions'
 import { CURRENCIES, RECUR_OPTIONS, fmt, normalizeDate } from '../lib/utils'
 import styles from './Onboarding.module.css'
+import Input from '../components/ui/Input'
 
 const STEPS = ['spaces', 'currency', 'accounts', 'bills', 'quickstart', 'review']
 const STEP_DETAILS = {
