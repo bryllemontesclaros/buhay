@@ -119,7 +119,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
   const [selected, setSelected] = useState(() => today())
-  const defaultAccountId = data.accounts[0]?._id || ''
+  const defaultAccountId = data?.accounts?.[0]?._id || ''
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState('income')
   const [editTx, setEditTx] = useState(null)
@@ -143,12 +143,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
 
   const totalSavings = useMemo(() => {
-    return (data.savings || []).reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
-  }, [data.savings])
+    if (!data?.savings || !Array.isArray(data.savings)) return 0
+    return data.savings.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
+  }, [data?.savings])
 
   const totalDebts = useMemo(() => {
-    return (data.debts || []).reduce((acc, curr) => acc + (Number(curr.balance) || 0), 0)
-  }, [data.debts])
+    if (!data?.debts || !Array.isArray(data.debts)) return 0
+    return data.debts.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
+  }, [data?.debts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
@@ -1977,7 +1979,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
               const baseValue = forecast ? forecast.runningBalance : 0
-              const displayValue = calendarViewMode === 'netWorth' ? (baseValue + totalSavings - totalDebts) : baseValue
+              const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0)) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
