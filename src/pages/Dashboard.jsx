@@ -22,6 +22,16 @@ const WIDGET_TITLES = {
   pulseFeed: 'The Pulse Feed',
 }
 
+const WIDGET_ICONS = {
+  insightBanner: '💡',
+  statStrip: '📊',
+  wealthCard: '💰',
+  portfolioCard: '📈',
+  healthCard: '💪',
+  mindCard: '🧠',
+  pulseFeed: '📰',
+}
+
 export default function Dashboard({ user, data, profile, onNavigate, privacyMode = false, s = '₱', isEditing: isEditingProp, onToggleEdit }) {
   const [journalText, setJournalText] = useState('')
   const [moodRating, setMoodRating] = useState(3)
@@ -516,7 +526,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             {isEditing && (
               <div className={styles.widgetEditBar}>
                 <span className={styles.widgetEditLabel}>
-                  <span className={styles.widgetEditGrip}>≡</span>
+                  <span className={styles.widgetEditIcon}>{WIDGET_ICONS[widgetId] || '📦'}</span>
                   {WIDGET_TITLES[widgetId]}
                 </span>
                 <div className={styles.widgetEditActions}>

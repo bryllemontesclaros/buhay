@@ -941,6 +941,9 @@
   animation: jiggle 0.3s infinite;
   transform-origin: center;
   z-index: 10;
+  outline: 2px dashed color-mix(in srgb, var(--accent) 50%, var(--border));
+  outline-offset: -2px;
+  border-radius: 18px;
 }
 
 /* ── Integrated Edit Bar (inside card) ───── */
@@ -948,31 +951,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
-  border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface2));
+  border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 30%, var(--border));
   border-radius: 16px 16px 0 0;
   margin: -1px -1px 0 -1px;
-  gap: 8px;
+  gap: 10px;
 }
 
 .widgetEditLabel {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
 
-.widgetEditGrip {
+.widgetEditIcon {
   font-size: 16px;
-  color: var(--text3);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -980,20 +982,20 @@
 .widgetEditActions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .moveBtn {
   background: var(--surface);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  font-size: 10px;
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-size: 11px;
   font-weight: 800;
   cursor: pointer;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1001,39 +1003,45 @@
 }
 
 .moveBtn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
   border-color: var(--accent);
   color: var(--accent);
-  transform: scale(1.08);
+  transform: scale(1.06);
+}
+
+.moveBtn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 .moveBtn:disabled {
-  opacity: 0.2;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 
 .removeWidgetBtn {
-  width: 28px;
-  height: 28px;
-  background: color-mix(in srgb, #ef4444 12%, transparent);
-  color: #ef4444;
-  border: 1px solid color-mix(in srgb, #ef4444 25%, var(--border));
-  border-radius: 8px;
-  font-size: 12px;
+  width: 32px;
+  height: 32px;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
-  margin-left: 4px;
+  margin-left: 2px;
 }
 
 .removeWidgetBtn:hover {
-  background: #ef4444;
-  color: white;
-  border-color: #ef4444;
-  transform: scale(1.08);
+  background: #dc2626;
+  transform: scale(1.06);
+}
+
+.removeWidgetBtn:active {
+  transform: scale(0.95);
 }
 
 .headerRight {
