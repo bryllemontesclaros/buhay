@@ -514,8 +514,12 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             className={`${styles.widgetWrapper} ${styles['widget_' + widgetId]} ${isEditing ? styles.widgetEditing : ''}`}
           >
             {isEditing && (
-              <div className={styles.widgetEditControls}>
-                <div className={styles.moveBtnGroup}>
+              <div className={styles.widgetEditBar}>
+                <span className={styles.widgetEditLabel}>
+                  <span className={styles.widgetEditGrip}>≡</span>
+                  {WIDGET_TITLES[widgetId]}
+                </span>
+                <div className={styles.widgetEditActions}>
                   <button
                     type="button"
                     className={styles.moveBtn}
@@ -530,15 +534,15 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
                     disabled={idx === layout.length - 1}
                     aria-label={`Move ${WIDGET_TITLES[widgetId]} down`}
                   >▼</button>
+                  <button 
+                    type="button"
+                    className={styles.removeWidgetBtn} 
+                    onClick={() => removeWidget(widgetId)}
+                    aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button 
-                  type="button"
-                  className={styles.removeWidgetBtn} 
-                  onClick={() => removeWidget(widgetId)}
-                  aria-label={`Remove ${WIDGET_TITLES[widgetId]}`}
-                >
-                  ✕
-                </button>
               </div>
             )}
             {widgets[widgetId]}

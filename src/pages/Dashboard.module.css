@@ -943,39 +943,57 @@
   z-index: 10;
 }
 
-.widgetEditControls {
-  position: absolute;
-  top: -12px;
-  left: 6px;
-  right: 6px;
-  z-index: 50;
+/* ── Integrated Edit Bar (inside card) ───── */
+.widgetEditBar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  pointer-events: auto;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  border-radius: 16px 16px 0 0;
+  margin: -1px -1px 0 -1px;
+  gap: 8px;
 }
 
-.moveBtnGroup {
+.widgetEditLabel {
   display: flex;
   align-items: center;
-  gap: 2px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 99px;
-  padding: 3px 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.widgetEditGrip {
+  font-size: 16px;
+  color: var(--text3);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.widgetEditActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .moveBtn {
-  background: transparent;
-  border: none;
-  color: var(--accent);
-  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 10px;
   font-weight: 800;
   cursor: pointer;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -983,35 +1001,39 @@
 }
 
 .moveBtn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  transform: scale(1.15);
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.08);
 }
 
 .moveBtn:disabled {
-  opacity: 0.25;
+  opacity: 0.2;
   cursor: not-allowed;
 }
 
 .removeWidgetBtn {
   width: 28px;
   height: 28px;
-  background: #ef4444;
-  color: white;
-  border: 2px solid var(--surface);
-  border-radius: 50%;
-  font-size: 13px;
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: #ef4444;
+  border: 1px solid color-mix(in srgb, #ef4444 25%, var(--border));
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: all 0.15s ease;
+  margin-left: 4px;
 }
 
 .removeWidgetBtn:hover {
-  transform: scale(1.15);
-  background: #dc2626;
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  transform: scale(1.08);
 }
 
 .headerRight {
