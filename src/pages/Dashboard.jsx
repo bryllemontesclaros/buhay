@@ -342,7 +342,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
 
   // --- WIDGET RENDERERS ---
-  const widgets = {
+  const widgets = useMemo(() => ({
     insightBanner: (
       <div className={`${styles.insightBanner} ${styles['insight_' + dailyInsight.type]}`}>
         <span className={styles.insightIcon}>{dailyInsight.icon}</span>
@@ -460,6 +460,7 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             )}
           </div>
         </div>
+
         <button type="button" className={`${styles.spaceChip} ${styles.spaceChipWealth}`} onClick={() => onNavigate('takda', 'calendar')}>
           Open Takda <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
         </button>
@@ -469,29 +470,46 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
       <section className={`${styles.card} ${styles.healthCard}`} aria-label="Health overview">
         <div className={styles.cardHeader}>
           <div className={styles.cardTitleBlock}>
-            <span className={styles.cardEmoji} aria-hidden="true">🏃‍♂️</span>
+            <span className={styles.cardEmoji} aria-hidden="true">💪</span>
             <h2 className={styles.cardTitle}>Health</h2>
           </div>
           <span className={styles.cardTag}>Lakas</span>
         </div>
+
         <div className={styles.bentoBody}>
           <div className={styles.metricBlock}>
-            <span className={styles.metricLabel}>Habits Completed</span>
-            <span className={`${styles.metricVal} ${styles.metricValHealth}`}>{habitsDoneCount} / {HABIT_OPTIONS.length}</span>
+            <span className={styles.metricLabel}>Daily Target</span>
+            <div className={styles.metricValRow}>
+              <span className={styles.metricValHealth}>{completedHabitsCount} / {HABIT_OPTIONS.length}</span>
+              <span className={styles.metricUnit}>habits complete</span>
+            </div>
+            <div className={styles.progressBarTrack}>
+              <div className={styles.progressBarFill} style={{ width: `${lakasScore}%` }} />
+            </div>
           </div>
-          <div className={styles.habitsGrid}>
-            {HABIT_OPTIONS.map(opt => {
-              const isDone = Boolean(todayHabit[opt.key])
+
+          <div className={styles.widgetDivider} />
+
+          <div className={styles.habitListMini}>
+            {HABIT_OPTIONS.slice(0, 3).map(h => {
+              const isDone = todayWorkouts.some(w => w.category === h.id || w.name === h.label)
               return (
-                <button key={opt.key} type="button" className={`${styles.habitPill} ${isDone ? styles.habitPillDone : ''}`} onClick={() => handleToggleHabit(opt.key, isDone)}>
-                  <span className={styles.habitDot} aria-hidden="true">{isDone ? '✓' : '○'}</span>
-                  <span className={styles.habitLabel}>{opt.label}</span>
+                <button
+                  key={h.id}
+                  type="button"
+                  className={`${styles.habitChipMini} ${isDone ? styles.habitDone : ''}`}
+                  onClick={() => handleToggleHabit(h)}
+                >
+                  <span aria-hidden="true">{h.icon}</span>
+                  <span className={styles.habitChipLabel}>{h.label}</span>
+                  {isDone && <span className={styles.habitCheck} aria-hidden="true">✓</span>}
                 </button>
               )
             })}
           </div>
         </div>
-        <button type="button" className={`${styles.spaceChip} ${styles.spaceChipHealth}`} onClick={() => onNavigate('lakas', 'workout')}>
+
+        <button type="button" className={`${styles.spaceChip} ${styles.spaceChipHealth}`} onClick={() => onNavigate('lakas', 'habits')}>
           Open Lakas <span className={styles.spaceChipArrow} aria-hidden="true">→</span>
         </button>
       </section>
@@ -553,7 +571,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
         </div>
       </section>
     )
-  }
+  }), [
+    dailyInsight, sparklines, privacyMode, netWorth, lakasScore, todayCheckin,
+    todaysBalance, monthIncome, monthExpenses, user, data, s, completedHabitsCount,
+    todayWorkouts, moodRating, journalText, pulseFeed, onNavigate
+  ])
 
   return (
     <div className={`${styles.container} ${isEditing ? styles.isEditingContainer : ''}`}>
