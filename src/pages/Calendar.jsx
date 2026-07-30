@@ -100,14 +100,15 @@ function getLegacyMonthStartKeyForDate(dateKey, monthStartBalances = {}) {
   return Object.prototype.hasOwnProperty.call(monthStartBalances, candidate) ? candidate : ''
 }
 
-function buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
+function buildDayAriaLabel({ ds, day, forecast, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s }) {
   const parsed = safeParseDate(ds)
   const dateFormatted = parsed ? parsed.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : ''
   const parts = [
     `${day}${dateFormatted ? `, ${dateFormatted}` : ''}`,
   ]
+  const val = displayValue !== undefined ? displayValue : (forecast?.runningBalance || 0)
   if (privacyMode) parts.push('Balance hidden')
-  else parts.push(`Closing balance ${formatRoundedBalance(forecast?.runningBalance || 0, s)}`)
+  else parts.push(`Closing balance ${formatRoundedBalance(val, s)}`)
   if (hasIncome) parts.push('has income')
   if (hasExpense) parts.push('has expenses')
   if (hasManualBalance) parts.push('has manual balance override')
@@ -153,14 +154,22 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
 
   const totalSavings = useMemo(() => {
-    if (!data?.savings || !Array.isArray(data.savings)) return 0
-    return data.savings.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
-  }, [data?.savings])
+    const goalsSum = (Array.isArray(data?.goals) ? data.goals : []).reduce((sum, g) => sum + (Number(g?.current || g?.saved || g?.balance) || 0), 0)
+    const savingsSum = (Array.isArray(data?.savings) ? data.savings : []).reduce((sum, s) => sum + (Number(s?.balance || s?.current) || 0), 0)
+    return goalsSum + savingsSum
+  }, [data?.goals, data?.savings])
 
   const totalDebts = useMemo(() => {
-    if (!data?.debts || !Array.isArray(data.debts)) return 0
-    return data.debts.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
-  }, [data?.debts])
+    const debtsArr = Array.isArray(data?.debts) ? data.debts : []
+    const accountsArr = Array.isArray(data?.accounts) ? data.accounts : []
+    const accountIds = new Set(accountsArr.map(a => a._id))
+    const unlinkedDebts = debtsArr.filter(d => !d.accountId || !accountIds.has(d.accountId))
+    const creditCardAccounts = accountsArr.filter(acc => acc.type === 'Credit Card')
+
+    const unlinkedSum = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d.balance || d.amount) || 0), 0)
+    const ccSum = creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc.balance) || 0), 0)
+    return unlinkedSum + ccSum
+  }, [data?.debts, data?.accounts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
@@ -1996,7 +2005,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const baseValue = forecast ? forecast.runningBalance : 0
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0)) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
-              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
+              const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
               const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
               const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
