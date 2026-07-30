@@ -1119,14 +1119,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
   const selectedDayRawBalance = selected
-    ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected, balanceOverrides))
+    ? (Number(forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected, balanceOverrides)) || 0)
     : 0
   const selectedDayBalance = calendarViewMode === 'netWorth'
     ? (selectedDayRawBalance + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
     : selectedDayRawBalance
 
   const selectedDayAutoBalance = selected
-    ? getBalanceAtDate(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected)
+    ? (Number(getBalanceAtDate(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], selected)) || 0)
     : 0
   const isCurrentMonthView = year === currentYear && month === currentMonth
   const defaultBalanceDate = useMemo(() => {
@@ -1137,7 +1137,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
   const baseFocusValue = balanceFocusDate
-    ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], balanceFocusDate, balanceOverrides))
+    ? (Number(forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(data?.accounts || [], data?.transfers || [], data?.income || [], data?.expenses || [], balanceFocusDate, balanceOverrides)) || 0)
     : 0
   const balanceFocusValue = calendarViewMode === 'netWorth'
     ? (baseFocusValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
@@ -2004,7 +2004,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isSelected = selected === ds
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
-              const baseValue = forecast ? forecast.runningBalance : 0
+              const baseValue = forecast ? (Number(forecast.runningBalance) || 0) : 0
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0)) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, forecast, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
