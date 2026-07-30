@@ -1398,6 +1398,19 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
     setGymSessionMode(current => ({ ...current, restUntil: null, restDuration: 0 }))
   }
 
+  function adjustGymRest(seconds) {
+    setGymSessionMode(current => {
+      if (!current.restUntil) return current
+      const newRestUntil = Math.max(Date.now() + 1000, current.restUntil + (seconds * 1000))
+      const newRestDuration = Math.max(1, (current.restDuration || 0) + seconds)
+      return {
+        ...current,
+        restUntil: newRestUntil,
+        restDuration: newRestDuration,
+      }
+    })
+  }
+
   function markGymWarmupDone() {
     setGymSessionMode(current => ({ ...current, warmupDone: true }))
   }
@@ -2606,7 +2619,11 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
                     <strong>{formatDurationClock(activeGymRestRemaining)}</strong>
                   </div>
                 </div>
-                <Button type="button" variant="ghost" onClick={skipGymRest}>Skip rest</Button>
+                <div className={lStyles.gymModeRestControls}>
+                  <button type="button" className={lStyles.restAdjustBtn} onClick={() => adjustGymRest(-10)} title="Subtract 10 seconds">-10s</button>
+                  <button type="button" className={lStyles.restAdjustBtn} onClick={() => adjustGymRest(30)} title="Add 30 seconds">+30s</button>
+                  <Button type="button" variant="ghost" onClick={skipGymRest}>Skip rest</Button>
+                </div>
               </div>
             )}
             <div className={lStyles.gymModeSetTracker} aria-label={`${activeGymExercise.name} set tracker`}>

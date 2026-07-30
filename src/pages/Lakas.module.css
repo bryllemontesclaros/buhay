@@ -2288,6 +2288,37 @@
   line-height: 1;
 }
 
+.gymModeRestControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.restAdjustBtn {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 36px;
+}
+
+.restAdjustBtn:hover {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.restAdjustBtn:active {
+  transform: scale(0.95);
+}
+
 .gymModeRestMeter {
   overflow: hidden;
   height: 10px;
