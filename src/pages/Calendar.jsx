@@ -1855,7 +1855,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
               Monthly Summary
             </div>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)' }}>{label}</h3>
+            <h3 id="calendar-day-panel-title" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)' }}>{label}</h3>
             <p style={{ fontSize: '12px', color: 'var(--text3)', marginTop: '4px' }}>Overview of recorded cashflow for this month.</p>
           </div>
 
