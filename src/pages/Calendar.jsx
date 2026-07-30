@@ -118,7 +118,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const currentDay = now.getDate()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(() => today())
   const defaultAccountId = data.accounts[0]?._id || ''
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState('income')
@@ -349,7 +349,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
   const formatCellBalance = value => {
     if (privacyMode) return ''
-    return formatRoundedBalance(value, '')
+    return formatCompactCellBalance(value)
   }
 
   function bumpMonth(direction) {
@@ -1845,20 +1845,43 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          minHeight: '320px',
-          color: 'var(--text3)',
-          textAlign: 'center',
-          padding: '24px',
-          gap: '12px'
+          minHeight: '340px',
+          padding: '24px 20px',
+          gap: '16px'
         }}>
-          <div style={{ fontSize: '32px' }}>📅</div>
-          <div style={{ fontWeight: '600', color: 'var(--text2)', fontSize: '15px' }}>No Date Selected</div>
-          <div style={{ fontSize: '12px', maxWidth: '240px', lineHeight: '1.5' }}>
-            Select a day on the calendar to view, add, or edit transactions and balances.
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+              Monthly Summary
+            </div>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)' }}>{label}</h3>
+            <p style={{ fontSize: '12px', color: 'var(--text3)', marginTop: '4px' }}>Overview of recorded cashflow for this month.</p>
           </div>
+
+          <div style={{ display: 'grid', gap: '10px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Month Incomes</span>
+              <strong style={{ fontSize: '14px', color: '#10b981', fontFamily: 'var(--font-mono)' }}>+{fmt(dailyVolumes.maxInc || 0, s)}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Month Expenses</span>
+              <strong style={{ fontSize: '14px', color: '#ef4444', fontFamily: 'var(--font-mono)' }}>−{fmt(dailyVolumes.maxExp || 0, s)}</strong>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="primary"
+            fullWidth
+            onClick={() => {
+              playTick()
+              setSelected(todayStr)
+            }}
+            style={{ marginTop: '12px' }}
+          >
+            📅 Select Today ({formatDisplayDate(todayStr)})
+          </Button>
         </div>
       )}
     </section>
