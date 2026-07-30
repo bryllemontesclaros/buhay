@@ -33,7 +33,7 @@ import {
   sanitizeTransactionCategory,
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
-import { fmt, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
+import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
