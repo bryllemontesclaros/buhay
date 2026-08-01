@@ -125,6 +125,35 @@ export function getLiquidBalance(accounts = []) {
     .reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
 }
 
+export function getTakdaTotalDebts(accounts = [], debts = []) {
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
+  const accountIds = new Set(safeAccounts.map(a => a?._id).filter(Boolean))
+  const creditCardAccounts = safeAccounts.filter(acc => acc?.type === 'Credit Card')
+
+  const unlinkedDebts = safeDebts.filter(d => !d?.accountId || !accountIds.has(d.accountId))
+  const unlinkedDebtSum = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
+  const creditCardDebtSum = creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc?.balance) || 0), 0)
+
+  return unlinkedDebtSum + creditCardDebtSum
+}
+
+export function getTakdaTotalSavings(savings = []) {
+  const safeSavings = Array.isArray(savings) ? savings.filter(Boolean) : []
+  return safeSavings.reduce((sum, s) => sum + (Number(s?.balance) || 0), 0)
+}
+
+export function getTakdaTotalAssets(accounts = []) {
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  return safeAccounts
+    .filter(acc => acc?.type !== 'Credit Card')
+    .reduce((sum, acc) => sum + Math.max(0, Number(acc?.balance) || 0), 0)
+}
+
+export function getTakdaNetWorth(accounts = [], debts = [], savings = []) {
+  return getTakdaTotalAssets(accounts) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts)
+}
+
 export function getCurrentBalance(accounts = [], debts = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []

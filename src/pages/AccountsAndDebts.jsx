@@ -4,6 +4,7 @@ import Debts from './Debts'
 import styles from './Page.module.css'
 import tStyles from '../components/SharedTabs.module.css'
 import { fmt } from '../lib/utils'
+import { getTakdaTotalAssets, getTakdaTotalDebts, getTakdaNetWorth } from '../lib/finance'
 
 export default function AccountsAndDebts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, subTab = 'accounts' }) {
   const [activeTab, setActiveTab] = useState(subTab)
@@ -19,15 +20,8 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
   const debts = Array.isArray(data?.debts) ? data.debts : []
 
-  const assetAccounts = accounts.filter(acc => acc.type !== 'Credit Card')
-  const creditCardAccounts = accounts.filter(acc => acc.type === 'Credit Card')
-
-  const accountIds = new Set(accounts.map(a => a._id))
-  const unlinkedDebts = debts.filter(d => !d.accountId || !accountIds.has(d.accountId))
-
-  const totalAssets = assetAccounts.reduce((sum, acc) => sum + Math.max(0, Number(acc.balance) || 0), 0)
-  const totalDebts = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d.balance) || 0), 0) +
-                     creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc.balance) || 0), 0)
+  const totalAssets = getTakdaTotalAssets(accounts)
+  const totalDebts = getTakdaTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
 
   return (

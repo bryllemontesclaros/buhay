@@ -6,6 +6,8 @@ import {
   getMonthForecast,
   getMonthTransactions,
   getTakdaTransactionLifecycle,
+  getTakdaTotalDebts,
+  getTakdaTotalSavings,
   hasDailyBalanceOverride,
   isTransactionPaid,
   TAKDA_BALANCE_IMPACT,
@@ -142,23 +144,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false)
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
 
-  const totalSavings = useMemo(() => {
-    if (!data?.savings || !Array.isArray(data.savings)) return 0
-    return data.savings.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
-  }, [data?.savings])
-
-  const totalDebts = useMemo(() => {
-    const accounts = Array.isArray(data?.accounts) ? data.accounts : []
-    const debts = Array.isArray(data?.debts) ? data.debts : []
-    const accountIds = new Set(accounts.map(a => a?._id).filter(Boolean))
-    const creditCardAccounts = accounts.filter(acc => acc?.type === 'Credit Card')
-
-    const unlinkedDebts = debts.filter(d => !d?.accountId || !accountIds.has(d.accountId))
-    const unlinkedDebtSum = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
-    const creditCardDebtSum = creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc?.balance) || 0), 0)
-
-    return unlinkedDebtSum + creditCardDebtSum
-  }, [data?.debts, data?.accounts])
+  const totalSavings = useMemo(() => getTakdaTotalSavings(data?.savings), [data?.savings])
+  const totalDebts = useMemo(() => getTakdaTotalDebts(data?.accounts, data?.debts), [data?.accounts, data?.debts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
