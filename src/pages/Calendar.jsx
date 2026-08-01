@@ -65,6 +65,14 @@ function formatRoundedBalance(value, symbol = '') {
   return `${numericValue < 0 ? '−' : ''}${symbol}${rounded}`
 }
 
+function formatFullCellBalance(value, symbol = '₱') {
+  const numericValue = Number(value) || 0
+  const absoluteValue = Math.abs(numericValue)
+  const sign = numericValue < 0 ? '−' : ''
+  const formatted = Math.round(absoluteValue).toLocaleString('en-US')
+  return `${sign}${symbol}${formatted}`
+}
+
 function formatCompactCellBalance(value) {
   const numericValue = Number(value) || 0
   const absoluteValue = Math.abs(numericValue)
@@ -363,7 +371,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
   const formatCellBalance = value => {
     if (privacyMode) return ''
-    return formatCompactCellBalance(value)
+    return formatFullCellBalance(value, s)
   }
 
   function bumpMonth(direction) {
