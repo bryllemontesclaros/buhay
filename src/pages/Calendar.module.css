@@ -1944,14 +1944,14 @@
   }
 
   .grid {
-    gap: 4px;
+    gap: 3px;
   }
 
   .cell {
-    min-height: 58px;
-    padding: 6px 5px;
+    min-height: 52px;
+    padding: 5px 2px;
     border-width: 2px;
-    border-radius: 15px;
+    border-radius: 14px;
     /* box-shadow flattened */
   }
 
@@ -1962,7 +1962,7 @@
 
   .cellBalance {
     display: block;
-    font-size: 9px;
+    font-size: 7.8px;
     font-weight: 700;
     line-height: 1.1;
     white-space: nowrap;
@@ -1970,7 +1970,9 @@
     text-overflow: clip;
     word-break: normal;
     overflow-wrap: normal;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.06em;
+    text-align: center;
+    width: 100%;
   }
 
   .balanceRail {
@@ -1985,13 +1987,13 @@
   }
 
   .grid {
-    gap: 3px;
+    gap: 2px;
   }
 
   .cell {
-    min-height: 54px;
-    padding: 5px 4px;
-    border-radius: 13px;
+    min-height: 50px;
+    padding: 4px 1px;
+    border-radius: 12px;
   }
 
   .dateNum {
@@ -1999,8 +2001,8 @@
   }
 
   .cellBalance {
-    font-size: 8.2px;
-    letter-spacing: -0.05em;
+    font-size: 7.2px;
+    letter-spacing: -0.07em;
   }
 }
 
