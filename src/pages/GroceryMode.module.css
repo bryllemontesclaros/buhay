@@ -49,13 +49,18 @@
 .close {
   width: 34px;
   height: 34px;
+  aspect-ratio: 1;
   border-radius: 50%;
   border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--text2);
   cursor: pointer;
   font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .summaryCard,
