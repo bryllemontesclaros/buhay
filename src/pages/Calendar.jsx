@@ -1124,10 +1124,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     ? (baseFocusValue + (Number(totalSavings) || 0) - (Number(totalDebts) || 0))
     : baseFocusValue
   const balanceRailMeta = selected
-    ? 'Calendar close · paid entries only'
+    ? 'Calendar close · includes forecast'
     : isCurrentMonthView
-      ? 'Today close · paid entries only'
-      : 'Forecast close · paid entries only'
+      ? 'Today close · includes forecast'
+      : 'Forecast close · includes forecast'
   const balanceRailLabel = formatBalanceDate(balanceFocusDate)
   const balanceRailCompactLabel = balanceRailMeta
 
