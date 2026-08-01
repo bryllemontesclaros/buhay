@@ -274,10 +274,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           currentBalance = Math.abs(Number(linkedAccount.balance) || 0)
         }
       }
-      
-      // Do not show debt alerts on the calendar if the balance is fully paid off
-      if (currentBalance <= 0) return
-      
+
       const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
       const effectiveDay = Math.min(day, lastDayOfMonth)
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(effectiveDay).padStart(2, '0')}`
