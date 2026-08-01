@@ -138,6 +138,50 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
     }
   }
 
+  const [editingTx, setEditingTx] = useState(null)
+  const [editForm, setEditForm] = useState({ desc: '', amount: '', recur: 'monthly', accountId: '' })
+  const [savingEdit, setSavingEdit] = useState(false)
+
+  function handleEditRecurrence(tx) {
+    playTick()
+    setEditingTx(tx)
+    setEditForm({
+      desc: tx.desc || tx.cat || '',
+      amount: String(tx.amount || ''),
+      recur: tx.recur || 'monthly',
+      accountId: tx.accountId || '',
+    })
+  }
+
+  async function handleSaveEdit(e) {
+    if (e) e.preventDefault()
+    if (!editingTx) return
+    const numericAmount = parseFloat(editForm.amount)
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      notifyApp({ title: 'Check amount', message: 'Amount must be greater than zero.', tone: 'warning' })
+      return
+    }
+
+    setSavingEdit(true)
+    try {
+      const col = editingTx.type === 'income' ? 'income' : 'expenses'
+      const updates = {
+        desc: editForm.desc.trim() || editingTx.cat,
+        amount: numericAmount,
+        recur: editForm.recur,
+        accountId: editForm.accountId || '',
+      }
+      await fsUpdateTransaction(user.uid, col, editingTx, updates, data?.accounts || [])
+      notifyApp({ title: 'Recurring updated', message: `${updates.desc} has been updated.`, tone: 'success' })
+      setEditingTx(null)
+    } catch (err) {
+      console.error(err)
+      notifyApp({ title: 'Error', message: 'Could not update recurring transaction.', tone: 'error' })
+    } finally {
+      setSavingEdit(false)
+    }
+  }
+
   const renderRowItem = (tx) => {
     const freqLabel = RECUR_OPTIONS.find(o => o.value === tx.recur)?.label || tx.recur
     const isIncome = tx.type === 'income'
@@ -170,9 +214,14 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             <span role="img" aria-label="calendar">📅</span> 
             Last: {formatDisplayDate(occurrenceDate)}
           </div>
-          <button type="button" className={sStyles.stopBtn} onClick={() => handleStopRecurrence(tx)}>
-            Stop
-          </button>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button type="button" className={sStyles.editBtn} onClick={() => handleEditRecurrence(tx)}>
+              Edit
+            </button>
+            <button type="button" className={sStyles.stopBtn} onClick={() => handleStopRecurrence(tx)}>
+              Stop
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -200,16 +249,16 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
           <div className={sStyles.summaryLabel}>
             Monthly Income
           </div>
-          <div className={`${sStyles.summaryValue} ${sStyles.summaryValuePositive}`}>
+          <div className={sStyles.summaryValue + ' ' + sStyles.summaryValuePositive}>
             {fmt(totals.income, s)}
           </div>
         </div>
         <div className={sStyles.summaryCard}>
           <div className={sStyles.summaryLabel}>
-            Net Recurring
+            Net Cash Flow
           </div>
           <div className={`${sStyles.summaryValue} ${totals.net >= 0 ? sStyles.summaryValuePositive : ''}`}>
-            {totals.net >= 0 ? '+' : '-'}{fmt(Math.abs(totals.net), s)}
+            {totals.net >= 0 ? '+' : ''}{fmt(totals.net, s)}
           </div>
         </div>
       </div>
@@ -224,7 +273,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             onClick={() => handleTabChange('bills')}
           >
             Bills
-            <span className={sStyles.tabCount}>{(data?.bills?.length || 0) + calendarBills.length}</span>
+            <span className={sStyles.tabCount}>{(data?.bills || []).length}</span>
           </button>
           <button
             type="button"
@@ -251,7 +300,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
 
       {activeTab === 'bills' && (
         <div className={sStyles.billsWrapper}>
-          <Bills user={user} data={data} symbol={symbol} billPaymentTarget={billPaymentTarget} embedded={true} />
+          <Bills user={user} data={data} symbol={s} billPaymentTarget={billPaymentTarget} embedded={true} />
           
           {calendarBills.length > 0 && (
             <div>
@@ -272,7 +321,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
         <div>
           <div className={sStyles.groupHeader}>
             <h3 className={sStyles.groupTitle}>Subscriptions & Services</h3>
-            <span className={sStyles.groupDesc}>Auto-charged recurring expenses</span>
+            <span className={sStyles.groupDesc}>Recurring memberships and software</span>
           </div>
           
           <div className={sStyles.listLayout}>
@@ -306,6 +355,135 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
                 <p>Add your salary to the calendar as a recurring income to see it here.</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Recurring Transaction Modal */}
+      {editingTx && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+          onClick={() => setEditingTx(null)}
+        >
+          <div
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '20px',
+              width: '100%',
+              maxWidth: '440px',
+              padding: '24px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Edit Recurring {editingTx.type === 'income' ? 'Income' : 'Subscription'}</h3>
+              <button
+                type="button"
+                onClick={() => setEditingTx(null)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text2)', fontSize: '20px', cursor: 'pointer' }}
+              >✕</button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className={styles.formGroup}>
+                <label>Name / Description</label>
+                <input
+                  type="text"
+                  value={editForm.desc}
+                  onChange={e => setEditForm(f => ({ ...f, desc: e.target.value }))}
+                  placeholder="e.g. Netflix or Salary"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Amount ({s})</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={editForm.amount}
+                  onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))}
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Frequency</label>
+                <select
+                  value={editForm.recur}
+                  onChange={e => setEditForm(f => ({ ...f, recur: e.target.value }))}
+                >
+                  {RECUR_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Account</label>
+                <select
+                  value={editForm.accountId}
+                  onChange={e => setEditForm(f => ({ ...f, accountId: e.target.value }))}
+                >
+                  <option value="">Unlinked (Cashflow)</option>
+                  {(data?.accounts || []).map(acc => (
+                    <option key={acc._id} value={acc._id}>
+                      {acc.name} ({acc.type})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingTx(null)}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border)',
+                    background: 'transparent',
+                    color: 'var(--text)',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: 'var(--accent)',
+                    color: '#fff',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    opacity: savingEdit ? 0.7 : 1,
+                  }}
+                >
+                  {savingEdit ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
