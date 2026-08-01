@@ -1070,8 +1070,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   function handleEditRecurrence(tx) {
     if (!tx?._projected || !tx?._sourceId) return
-    const list = tx.type === 'income' ? allIncome : allExpenses
-    const source = list.find(item => item._id === tx._sourceId)
+    const masterList = tx.type === 'income' ? incomeList : expenseList
+    const source = masterList.find(item => item && item._id === tx._sourceId)
     if (!source) {
       notifyApp({
         title: 'Original not found',
