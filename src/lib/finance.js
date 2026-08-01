@@ -125,7 +125,58 @@ export function getLiquidBalance(accounts = []) {
     .reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
 }
 
-export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null) {
+export function getProjectedCcCharges(accounts = [], income = [], expenses = [], targetDate = null) {
+  if (!targetDate) return 0
+  const anchorKey = today()
+  const targetKey = normalizeDate(targetDate)
+  if (!anchorKey || !targetKey || targetKey <= anchorKey) return 0
+
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const creditCardAccountIds = new Set(
+    safeAccounts.filter(a => a && a.type === 'Credit Card').map(a => a._id).filter(Boolean)
+  )
+
+  if (creditCardAccountIds.size === 0) return 0
+
+  const safeIncome = Array.isArray(income) ? income.filter(Boolean) : []
+  const safeExpenses = Array.isArray(expenses) ? expenses.filter(Boolean) : []
+
+  const projectedLedger = getProjectedLedgerBetweenDates(safeIncome, safeExpenses, anchorKey, targetKey)
+  const seenKeys = new Set()
+  let netCcCharges = 0
+
+  projectedLedger.forEach(entry => {
+    if (entry && entry.accountId && creditCardAccountIds.has(entry.accountId)) {
+      const key = entry._id || `${entry.type}:${entry.date}:${entry.amount}`
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key)
+        const amt = Number(entry.amount) || 0
+        if (entry.type === 'expense' || entry.signedAmount < 0) {
+          netCcCharges += Math.abs(amt)
+        } else if (entry.type === 'income' || entry.signedAmount > 0) {
+          netCcCharges -= Math.abs(amt)
+        }
+      }
+    }
+  })
+
+  safeExpenses.forEach(tx => {
+    if (tx && tx.accountId && creditCardAccountIds.has(tx.accountId)) {
+      const d = normalizeDate(tx.date)
+      if (d && d > anchorKey && d <= targetKey) {
+        const key = tx._id || `exp:${d}:${tx.amount}`
+        if (!seenKeys.has(key)) {
+          seenKeys.add(key)
+          netCcCharges += Math.abs(Number(tx.amount) || 0)
+        }
+      }
+    }
+  })
+
+  return Math.max(0, netCcCharges)
+}
+
+export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null, income = [], expenses = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
   const targetKey = targetDate ? normalizeDate(targetDate) : null
@@ -161,7 +212,10 @@ export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null)
     })
     .reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
 
-  return standaloneDebtSum + creditCardAccountSum + unlinkedCcDebts
+  // 4) Projected Credit Card Charges for future dates
+  const futureCcCharges = getProjectedCcCharges(accounts, income, expenses, targetDate)
+
+  return standaloneDebtSum + creditCardAccountSum + unlinkedCcDebts + futureCcCharges
 }
 
 export function getTakdaTotalSavings(savings = []) {

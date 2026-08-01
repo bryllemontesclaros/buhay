@@ -1108,7 +1108,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayRawBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, balanceOverrides))
     : 0
-  const selectedDayTotalDebts = getTakdaTotalDebts(accountList, data?.debts, selected)
+  const selectedDayTotalDebts = getTakdaTotalDebts(accountList, data?.debts, selected, incomeList, expenseList)
   const selectedDayBalance = calendarViewMode === 'netWorth'
     ? (selectedDayRawBalance + (Number(totalSavings) || 0) - selectedDayTotalDebts)
     : selectedDayRawBalance
@@ -1126,7 +1126,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const baseFocusValue = balanceFocusDate
     ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, balanceFocusDate, balanceOverrides))
     : 0
-  const focusTotalDebts = getTakdaTotalDebts(accountList, data?.debts, balanceFocusDate)
+  const focusTotalDebts = getTakdaTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
   const balanceFocusValue = calendarViewMode === 'netWorth'
     ? (baseFocusValue + (Number(totalSavings) || 0) - focusTotalDebts)
     : baseFocusValue
@@ -1986,7 +1986,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
               const baseValue = forecast ? forecast.runningBalance : 0
-              const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds)
+              const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - cellTotalDebts) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
