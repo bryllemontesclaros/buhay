@@ -304,7 +304,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         </div>
       ) : (
         <div className={styles.emptyPortfolio}>
+          <div style={{ fontSize: '24px', marginBottom: '4px' }}>📈</div>
           <p className={styles.emptyText}>No assets added yet.</p>
+          <small style={{ color: 'var(--text3)', fontSize: '11px', display: 'block', marginTop: '2px' }}>
+            Add stocks, crypto, or bonds to track net worth live.
+          </small>
         </div>
       )}
 

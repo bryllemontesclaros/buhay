@@ -33,6 +33,7 @@
   --backdrop-blur-sm: blur(12px) saturate(160%);
   --backdrop-blur-md: blur(24px) saturate(180%);
   --backdrop-blur-lg: blur(40px) saturate(200%);
+  --glass-fallback: color-mix(in srgb, var(--surface2) 92%, var(--bg) 8%);
   --shadow-resting: 0 1px 2px -1px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.18);
   --shadow-hover: 0 2px 4px -1px rgba(0, 0, 0, 0.14), 0 8px 24px -4px rgba(0, 0, 0, 0.22), 0 20px 48px -8px rgba(0, 0, 0, 0.28);
   --shadow-modal: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.20), 0 16px 32px -4px rgba(0, 0, 0, 0.30), 0 40px 96px -12px rgba(0, 0, 0, 0.45);
@@ -532,6 +533,13 @@ a:active {
 @media (pointer: coarse) {
   button, [role="button"], a.btn {
     min-height: 44px;
+  }
+}
+
+/* Fallback for legacy browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  [class*="modalOverlay"], [class*="drawerOverlay"], [class*="overlay"] {
+    background: color-mix(in srgb, var(--surface2) 95%, #000000 5%) !important;
   }
 }
 
