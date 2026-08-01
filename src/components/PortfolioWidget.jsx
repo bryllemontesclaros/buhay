@@ -48,20 +48,16 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
   }, [data?.portfolioHoldings])
 
-  // Fetch live prices quietly in background
+  // Fetch live prices quietly in background for both existing holdings and popular presets
   useEffect(() => {
-    if (holdings.length === 0) return
-
     let isMounted = true
     async function loadPrices() {
       try {
-        const cryptoSymbols = holdings
-          .filter(h => h?.assetType === 'crypto' && h?.symbol)
-          .map(h => h.symbol)
-        
-        const stockSymbols = holdings
-          .filter(h => h?.assetType === 'stock' && h?.symbol)
-          .map(h => h.symbol)
+        const popularCryptoSymbols = POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => a.symbol)
+        const holdingCryptoSymbols = holdings.filter(h => h?.assetType === 'crypto' && h?.symbol).map(h => h.symbol)
+        const cryptoSymbols = Array.from(new Set([...popularCryptoSymbols, ...holdingCryptoSymbols]))
+
+        const stockSymbols = holdings.filter(h => h?.assetType === 'stock' && h?.symbol).map(h => h.symbol)
 
         const [cryptos, stocks] = await Promise.all([
           fetchCryptoPrices(cryptoSymbols, s),
@@ -142,14 +138,13 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     if (!assetPreset) return
 
     const isUSD = (s === '$' || s === 'USD')
-    const fallbackDefault = isUSD ? assetPreset.defaultPriceUSD : assetPreset.defaultPricePHP
-    let priceToUse = livePrices[assetPreset.symbol] ?? fallbackDefault ?? 0
+    let priceToUse = livePrices[assetPreset.symbol] || (isUSD ? assetPreset.defaultPriceUSD : assetPreset.defaultPricePHP) || 0
 
-    // Fetch live market price converted to active currency (PHP/USD)
+    // Fetch fresh live market price converted to active currency (PHP/USD)
     if (assetPreset.assetType === 'crypto') {
       try {
         const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
-        if (liveMap[assetPreset.symbol]) {
+        if (liveMap[assetPreset.symbol] && liveMap[assetPreset.symbol] > 0) {
           priceToUse = liveMap[assetPreset.symbol]
           setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
         }
@@ -163,8 +158,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       assetType: assetPreset.assetType,
       symbol: assetPreset.symbol,
       name: assetPreset.name,
-      currentPrice: String(priceToUse),
-      averageBuyPrice: String(priceToUse),
+      currentPrice: String(Number(priceToUse).toFixed(2)),
+      averageBuyPrice: String(Number(priceToUse).toFixed(2)),
     }))
 
     // Auto-focus quantity field after selection for a 1-step experience
