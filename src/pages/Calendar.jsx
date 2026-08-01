@@ -274,6 +274,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const effectiveDay = Math.min(day, lastDayOfMonth)
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(effectiveDay).padStart(2, '0')}`
       
+      if (debt.startDate) {
+        const startKey = normalizeDate(debt.startDate)
+        if (startKey && dateKey < startKey) return
+      }
+
       if (!map[dateKey]) map[dateKey] = []
       map[dateKey].push({ ...debt, balance: currentBalance }) // Inject real-time balance
     })

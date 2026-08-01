@@ -15,6 +15,7 @@ export function calculatePayoffSchedule(debts = [], extraBudget = 0, strategy = 
       originalAmount: Number(d.originalAmount) || Number(d.balance) || 0,
       interestRate: Number(d.interestRate) || 0,
       minPayment: Number(d.minPayment) || 0,
+      startDate: d.startDate || '',
       color: d.color || '#ff5370',
     }))
 
