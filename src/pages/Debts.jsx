@@ -483,12 +483,19 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
       .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
 
     const map = new Map()
-    const seen = new Set()
+    const seenTxKeys = new Set()
+    const seenSourceKeys = new Set()
 
     allTx.forEach(t => {
-      const key = t._id || `${t.date}_${t.amount}_${t.desc}`
-      if (seen.has(key)) return
-      seen.add(key)
+      const txKey = t._id || `${t.date}_${t.amount}_${t.desc}`
+      if (seenTxKeys.has(txKey)) return
+      seenTxKeys.add(txKey)
+
+      const sourceKey = t._sourceId || t.recurrenceSourceId || (t.recur ? `${t.accountId}_${t.desc || t.cat}_${t.amount}` : null)
+      if (sourceKey) {
+        if (seenSourceKeys.has(sourceKey)) return
+        seenSourceKeys.add(sourceKey)
+      }
 
       if (!map.has(t.accountId)) map.set(t.accountId, [])
       map.get(t.accountId).push(t)
