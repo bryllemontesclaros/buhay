@@ -776,17 +776,12 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                 </span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {upcomingList.slice(0, 3).map(tx => (
+                {upcomingList.map(tx => (
                   <div key={tx._id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text2)' }}>
                     <span>{tx.desc || tx.cat} ({formatDisplayDate(tx.date)})</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{money(tx.amount)}</span>
                   </div>
                 ))}
-                {upcomingList.length > 3 && (
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text3)', fontStyle: 'italic', marginTop: 2 }}>
-                    +{upcomingList.length - 3} more upcoming charges
-                  </div>
-                )}
               </div>
             </div>
           )
