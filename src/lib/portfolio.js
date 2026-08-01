@@ -73,59 +73,107 @@ export function normalizePortfolioHolding(holding = {}) {
 }
 
 /**
- * Fetch Crypto Prices from CoinGecko in target currency (PHP vs USD)
- * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH'])
+ * Fetch Crypto Prices using multi-provider fallback (Coinbase -> Binance -> CoinGecko)
+ * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH', 'SOL'])
  * @param {string} currencySymbol Current currency symbol ('₱' or '$')
  * @returns {Promise<Object>} Object mapping symbol to price in target currency
  */
 export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   if (!Array.isArray(symbols) || symbols.length === 0) return {}
 
-  const idsToFetch = []
-  const symbolToId = {}
+  const isUSD = (currencySymbol === '$' || currencySymbol === 'USD')
+  const currencyCode = isUSD ? 'USD' : 'PHP'
+  const result = {}
+  const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  symbols.forEach(sym => {
-    if (!sym) return
-    const s = String(sym).trim().toUpperCase()
-    if (COINGECKO_MAP[s]) {
-      idsToFetch.push(COINGECKO_MAP[s])
-      symbolToId[COINGECKO_MAP[s]] = s
+  // 1. Primary: Coinbase Public API (Instant live spot price in PHP or USD, no API key needed, zero CORS issues)
+  const coinbaseRequests = uniqueSymbols.map(async (sym) => {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3500)
+      const res = await fetch(`https://api.coinbase.com/v2/prices/${sym}-${currencyCode}/spot`, {
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+      if (res.ok) {
+        const json = await res.json()
+        const amt = parseFloat(json?.data?.amount)
+        if (Number.isFinite(amt) && amt > 0) {
+          result[sym] = amt
+        }
+      }
+    } catch {
+      // Ignore single symbol Coinbase error safely
     }
   })
 
-  if (idsToFetch.length === 0) return {}
+  await Promise.allSettled(coinbaseRequests)
 
-  const isUSD = (currencySymbol === '$' || currencySymbol === 'USD')
-  const targetVs = isUSD ? 'usd' : 'php'
-
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
-
-    const idsQuery = idsToFetch.join(',')
-    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd,php`, {
-      signal: controller.signal
-    })
-    clearTimeout(timeoutId)
-
-    if (!res.ok) throw new Error(`CoinGecko status ${res.status}`)
-
-    const data = await res.json()
-    const result = {}
-
-    for (const [id, value] of Object.entries(data || {})) {
-      if (value && symbolToId[id]) {
-        const fetchedPrice = isUSD ? (value.usd ?? value.php / 61.4) : (value.php ?? value.usd * 61.4)
-        if (typeof fetchedPrice === 'number' && fetchedPrice > 0) {
-          result[symbolToId[id]] = fetchedPrice
+  // 2. Secondary: Binance Public API for any remaining unfetched symbols
+  const missingSymbols = uniqueSymbols.filter(sym => !result[sym])
+  if (missingSymbols.length > 0) {
+    const binanceRequests = missingSymbols.map(async (sym) => {
+      try {
+        const pair = `${sym}USDT`
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3500)
+        const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${pair}`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        if (res.ok) {
+          const json = await res.json()
+          const usdPrice = parseFloat(json?.price)
+          if (Number.isFinite(usdPrice) && usdPrice > 0) {
+            result[sym] = isUSD ? usdPrice : (usdPrice * 58.5)
+          }
         }
+      } catch {
+        // Ignore single symbol Binance error safely
+      }
+    })
+    await Promise.allSettled(binanceRequests)
+  }
+
+  // 3. Fallback: CoinGecko API for any remaining unfetched symbols
+  const stillMissing = uniqueSymbols.filter(sym => !result[sym])
+  if (stillMissing.length > 0) {
+    const idsToFetch = []
+    const symbolToId = {}
+    stillMissing.forEach(sym => {
+      if (COINGECKO_MAP[sym]) {
+        idsToFetch.push(COINGECKO_MAP[sym])
+        symbolToId[COINGECKO_MAP[sym]] = sym
+      }
+    })
+
+    if (idsToFetch.length > 0) {
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3500)
+        const idsQuery = idsToFetch.join(',')
+        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd,php`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        if (res.ok) {
+          const data = await res.json()
+          for (const [id, value] of Object.entries(data || {})) {
+            if (value && symbolToId[id]) {
+              const fetchedPrice = isUSD ? (value.usd ?? value.php / 58.5) : (value.php ?? value.usd * 58.5)
+              if (Number.isFinite(fetchedPrice) && fetchedPrice > 0) {
+                result[symbolToId[id]] = fetchedPrice
+              }
+            }
+          }
+        }
+      } catch {
+        // Ignore CoinGecko error safely
       }
     }
-    return result
-  } catch (error) {
-    console.warn('Portfolio API: Crypto price fetch failed, using fallbacks:', error.message || error)
-    return {}
   }
+
+  return result
 }
 
 /**
