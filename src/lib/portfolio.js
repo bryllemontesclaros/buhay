@@ -72,8 +72,36 @@ export function normalizePortfolioHolding(holding = {}) {
   }
 }
 
+// Fetch live USD to PHP exchange rate dynamically
+let cachedPhpRate = 61.4
+let lastPhpFetch = 0
+
+async function getLivePhpRate() {
+  const now = Date.now()
+  if (now - lastPhpFetch < 300000 && cachedPhpRate > 0) { // cache for 5 minutes
+    return cachedPhpRate
+  }
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 3000)
+    const res = await fetch('https://open.er-api.com/v6/latest/USD', { signal: controller.signal })
+    clearTimeout(timeoutId)
+    if (res.ok) {
+      const data = await res.json()
+      const rate = parseFloat(data?.rates?.PHP)
+      if (Number.isFinite(rate) && rate > 0) {
+        cachedPhpRate = rate
+        lastPhpFetch = now
+      }
+    }
+  } catch {
+    // Fallback to cached rate safely
+  }
+  return cachedPhpRate
+}
+
 /**
- * Fetch Crypto Prices using multi-provider fallback (Coinbase -> Binance -> CoinGecko)
+ * Fetch Crypto Prices using multi-provider fallback (Binance -> Bybit -> CoinGecko)
  * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH', 'SOL'])
  * @param {string} currencySymbol Current currency symbol ('₱' or '$')
  * @returns {Promise<Object>} Object mapping symbol to price in target currency
@@ -82,57 +110,59 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   if (!Array.isArray(symbols) || symbols.length === 0) return {}
 
   const isUSD = (currencySymbol === '$' || currencySymbol === 'USD')
-  const currencyCode = isUSD ? 'USD' : 'PHP'
+  const phpRate = isUSD ? 1 : await getLivePhpRate()
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // 1. Primary: Coinbase Public API (Instant live spot price in PHP or USD, no API key needed, zero CORS issues)
-  const coinbaseRequests = uniqueSymbols.map(async (sym) => {
+  // 1. Primary: Binance Public Ticker API (100% unblocked worldwide & in PH, 0 API key required)
+  const binanceRequests = uniqueSymbols.map(async (sym) => {
     try {
+      const pair = `${sym}USDT`
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 3500)
-      const res = await fetch(`https://api.coinbase.com/v2/prices/${sym}-${currencyCode}/spot`, {
+      const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${pair}`, {
         signal: controller.signal
       })
       clearTimeout(timeoutId)
       if (res.ok) {
         const json = await res.json()
-        const amt = parseFloat(json?.data?.amount)
-        if (Number.isFinite(amt) && amt > 0) {
-          result[sym] = amt
+        const usdPrice = parseFloat(json?.price)
+        if (Number.isFinite(usdPrice) && usdPrice > 0) {
+          result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
         }
       }
     } catch {
-      // Ignore single symbol Coinbase error safely
+      // Ignore single Binance error safely
     }
   })
 
-  await Promise.allSettled(coinbaseRequests)
+  await Promise.allSettled(binanceRequests)
 
-  // 2. Secondary: Binance Public API for any remaining unfetched symbols
+  // 2. Secondary: Bybit Public Spot Ticker API for any remaining unfetched symbols
   const missingSymbols = uniqueSymbols.filter(sym => !result[sym])
   if (missingSymbols.length > 0) {
-    const binanceRequests = missingSymbols.map(async (sym) => {
+    const bybitRequests = missingSymbols.map(async (sym) => {
       try {
         const pair = `${sym}USDT`
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
-        const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${pair}`, {
+        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}`, {
           signal: controller.signal
         })
         clearTimeout(timeoutId)
         if (res.ok) {
           const json = await res.json()
-          const usdPrice = parseFloat(json?.price)
+          const item = json?.result?.list?.[0]
+          const usdPrice = parseFloat(item?.lastPrice || item?.ask1Price)
           if (Number.isFinite(usdPrice) && usdPrice > 0) {
-            result[sym] = isUSD ? usdPrice : (usdPrice * 58.5)
+            result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
           }
         }
       } catch {
-        // Ignore single symbol Binance error safely
+        // Ignore single Bybit error safely
       }
     })
-    await Promise.allSettled(binanceRequests)
+    await Promise.allSettled(bybitRequests)
   }
 
   // 3. Fallback: CoinGecko API for any remaining unfetched symbols
@@ -160,7 +190,7 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
           const data = await res.json()
           for (const [id, value] of Object.entries(data || {})) {
             if (value && symbolToId[id]) {
-              const fetchedPrice = isUSD ? (value.usd ?? value.php / 58.5) : (value.php ?? value.usd * 58.5)
+              const fetchedPrice = isUSD ? (value.usd ?? value.php / phpRate) : (value.php ?? value.usd * phpRate)
               if (Number.isFinite(fetchedPrice) && fetchedPrice > 0) {
                 result[symbolToId[id]] = fetchedPrice
               }
