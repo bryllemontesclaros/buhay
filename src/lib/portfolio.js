@@ -114,29 +114,84 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // 1. Primary: Binance Public Ticker API (100% unblocked worldwide & in PH, 0 API key required)
-  const binanceRequests = uniqueSymbols.map(async (sym) => {
-    try {
-      const pair = `${sym}USDT`
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3500)
-      const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${pair}`, {
-        signal: controller.signal
-      })
-      clearTimeout(timeoutId)
-      if (res.ok) {
-        const json = await res.json()
-        const usdPrice = parseFloat(json?.price)
-        if (Number.isFinite(usdPrice) && usdPrice > 0) {
-          result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
+  // Kraken uses its own pair naming: BTC=XBT, most others are SYMBOL+USD
+  const krakenPairMap = {
+    'BTC': 'XXBTZUSD',
+    'ETH': 'XETHZUSD',
+    'SOL': 'SOLUSD',
+    'XRP': 'XXRPZUSD',
+    'ADA': 'ADAUSD',
+    'DOT': 'DOTUSD',
+    'LINK': 'LINKUSD',
+    'AVAX': 'AVAXUSD',
+    'MATIC': 'MATICUSD',
+    'DOGE': 'XDGUSD',
+    'LTC': 'XLTCZUSD',
+    'BCH': 'BCHUSD',
+    'ATOM': 'ATOMUSD',
+    'XLM': 'XXLMZUSD',
+    'XMR': 'XXMRZUSD',
+    'USDT': 'USDTZUSD',
+    'USDC': 'USDCUSD',
+    'BNB': 'BNBUSD',
+    'SHIB': 'SHIBUSD',
+  }
+
+  // 1. Primary: Kraken Public Ticker API (unblocked in PH, no API key, CORS-friendly)
+  try {
+    // Build Kraken pairs string for batch request
+    const krakenPairs = []
+    const krakenPairToSymbol = {}
+    uniqueSymbols.forEach(sym => {
+      const pair = krakenPairMap[sym] || `${sym}USD`
+      krakenPairs.push(pair)
+      krakenPairToSymbol[pair] = sym
+    })
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPairs.join(',')}`, {
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+
+    if (res.ok) {
+      const json = await res.json()
+      if (json?.result) {
+        // Kraken returns keys that may differ from input pair names (e.g., XXBTZUSD)
+        // Map by iterating all returned pairs
+        for (const [returnedPair, tickerData] of Object.entries(json.result)) {
+          // tickerData.c[0] = last trade close price
+          const usdPrice = parseFloat(tickerData?.c?.[0])
+          if (!Number.isFinite(usdPrice) || usdPrice <= 0) continue
+
+          // Find which symbol this pair belongs to
+          let matchedSymbol = null
+          for (const [inputPair, sym] of Object.entries(krakenPairToSymbol)) {
+            if (returnedPair === inputPair || returnedPair.replace(/[XZ]/g, '').includes(sym) || inputPair === returnedPair) {
+              matchedSymbol = sym
+              break
+            }
+          }
+          // Fallback: try direct match by stripping common suffixes
+          if (!matchedSymbol) {
+            const stripped = returnedPair.replace(/USD$|ZUSD$/, '').replace(/^X+/, '')
+            for (const sym of uniqueSymbols) {
+              if (stripped === sym || stripped === sym.replace('BTC', 'XBT') || (sym === 'DOGE' && stripped === 'DG')) {
+                matchedSymbol = sym
+                break
+              }
+            }
+          }
+          if (matchedSymbol && !result[matchedSymbol]) {
+            result[matchedSymbol] = isUSD ? usdPrice : (usdPrice * phpRate)
+          }
         }
       }
-    } catch {
-      // Ignore single Binance error safely
     }
-  })
-
-  await Promise.allSettled(binanceRequests)
+  } catch {
+    // Kraken failed, continue to fallbacks
+  }
 
   // 2. Secondary: Bybit Public Spot Ticker API for any remaining unfetched symbols
   const missingSymbols = uniqueSymbols.filter(sym => !result[sym])
