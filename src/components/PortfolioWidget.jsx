@@ -48,7 +48,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
   }, [data?.portfolioHoldings])
 
-  // Fetch live prices quietly in background for both existing holdings and popular presets
+  // Fetch live prices quietly in background + auto-refresh every 60s
   useEffect(() => {
     let isMounted = true
     async function loadPrices() {
@@ -73,7 +73,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }
 
     loadPrices()
-    return () => { isMounted = false }
+    const interval = setInterval(loadPrices, 60000) // auto-refresh every 60 seconds
+    return () => { isMounted = false; clearInterval(interval) }
   }, [holdings, s])
 
   // Helper number formatter with privacyMode support
