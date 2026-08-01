@@ -470,13 +470,15 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth()
     
-    const projCurrent = getProjectedTransactions(safeIncome, safeExpenses, currentYear, currentMonth)
-    
-    const nextDate = new Date(currentYear, currentMonth + 1, 1)
-    const projNext = getProjectedTransactions(safeIncome, safeExpenses, nextDate.getFullYear(), nextDate.getMonth())
+    let allProjected = []
+    for (let i = 0; i < 12; i++) {
+      const projDate = new Date(currentYear, currentMonth + i, 1)
+      const proj = getProjectedTransactions(safeIncome, safeExpenses, projDate.getFullYear(), projDate.getMonth())
+      allProjected = allProjected.concat(proj)
+    }
 
-    const allTx = [...safeExpenses, ...projCurrent, ...projNext]
-      .filter(t => t && t.accountId && t.date >= todayStr)
+    const allTx = [...safeExpenses, ...allProjected]
+      .filter(t => t && t.accountId && (t.date || '') >= todayStr)
       .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
 
     const map = new Map()
@@ -494,6 +496,26 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     return map
   }, [data?.expenses, data?.income])
 
+  const getUpcomingTxForDebt = useMemo(() => {
+    return (debt) => {
+      if (!debt) return []
+      const ids = [debt.accountId, debt._id, debt._id?.replace('synth_', '')].filter(Boolean)
+      const combined = []
+      const seen = new Set()
+      ids.forEach(id => {
+        const list = upcomingCcTxMap.get(id) || []
+        list.forEach(tx => {
+          const key = tx._id || `${tx.date}_${tx.amount}_${tx.desc}`
+          if (!seen.has(key)) {
+            seen.add(key)
+            combined.push(tx)
+          }
+        })
+      })
+      return combined.sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+    }
+  }, [upcomingCcTxMap])
+
   const [stackFilter, setStackFilter] = useState('all')
 
   const filteredMappedDebts = useMemo(() => {
@@ -504,12 +526,12 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     if (stackFilter === 'upcoming') {
       return mappedDebts.filter(d => {
         const isFutureDebt = d.startDate && d.startDate > todayStr
-        const hasUpcomingCcTx = d.accountId && (upcomingCcTxMap.get(d.accountId) || []).length > 0
+        const hasUpcomingCcTx = getUpcomingTxForDebt(d).length > 0
         return isFutureDebt || hasUpcomingCcTx
       })
     }
     return mappedDebts
-  }, [mappedDebts, stackFilter, upcomingCcTxMap])
+  }, [mappedDebts, stackFilter, getUpcomingTxForDebt])
 
   const creditCards = useMemo(() => filteredMappedDebts.filter(d => d.type === 'Credit Card'), [filteredMappedDebts])
   const loansAndOthers = useMemo(() => filteredMappedDebts.filter(d => d.type !== 'Credit Card'), [filteredMappedDebts])
@@ -737,8 +759,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           )}
         </div>
 
-        {debt.type === 'Credit Card' && debt.accountId && (() => {
-          const upcomingList = upcomingCcTxMap.get(debt.accountId) || []
+        {(() => {
+          const upcomingList = getUpcomingTxForDebt(debt)
           if (upcomingList.length === 0) return null
           const upcomingSum = upcomingList.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
 
@@ -1168,7 +1190,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                 cursor: 'pointer',
                 boxShadow: stackFilter === 'upcoming' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
               }}
-            >Upcoming ({mappedDebts.filter(d => d.startDate && d.startDate > today()).length})</button>
+            >Upcoming ({mappedDebts.filter(d => (d.startDate && d.startDate > today()) || getUpcomingTxForDebt(d).length > 0).length})</button>
           </div>
           <button type="button" className={dStyles.primaryButton} onClick={openAdd}>Add debt</button>
         </div>
