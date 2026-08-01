@@ -125,13 +125,21 @@ export function getLiquidBalance(accounts = []) {
     .reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
 }
 
-export function getTakdaTotalDebts(accounts = [], debts = []) {
+export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
+  const targetKey = targetDate ? normalizeDate(targetDate) : null
 
   // 1) All standalone debts (personal loans, mortgages, car loans, etc.)
   const standaloneDebtSum = safeDebts
-    .filter(d => d && d.type !== 'Credit Card')
+    .filter(d => {
+      if (!d || d.type === 'Credit Card') return false
+      if (targetKey && d.startDate) {
+        const startKey = normalizeDate(d.startDate)
+        if (startKey && startKey > targetKey) return false
+      }
+      return true
+    })
     .reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
 
   // 2) Credit card accounts
@@ -142,7 +150,15 @@ export function getTakdaTotalDebts(accounts = [], debts = []) {
   // 3) Unlinked credit card entries
   const accountIds = new Set(safeAccounts.map(a => a?._id).filter(Boolean))
   const unlinkedCcDebts = safeDebts
-    .filter(d => d && d.type === 'Credit Card' && (!d.accountId || !accountIds.has(d.accountId)))
+    .filter(d => {
+      if (!d || d.type !== 'Credit Card') return false
+      if (d.accountId && accountIds.has(d.accountId)) return false
+      if (targetKey && d.startDate) {
+        const startKey = normalizeDate(d.startDate)
+        if (startKey && startKey > targetKey) return false
+      }
+      return true
+    })
     .reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
 
   return standaloneDebtSum + creditCardAccountSum + unlinkedCcDebts
@@ -160,8 +176,8 @@ export function getTakdaTotalAssets(accounts = []) {
     .reduce((sum, acc) => sum + Math.max(0, Number(acc?.balance) || 0), 0)
 }
 
-export function getTakdaNetWorth(accounts = [], debts = [], savings = []) {
-  return getTakdaTotalAssets(accounts) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts)
+export function getTakdaNetWorth(accounts = [], debts = [], savings = [], targetDate = null) {
+  return getTakdaTotalAssets(accounts) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts, targetDate)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {

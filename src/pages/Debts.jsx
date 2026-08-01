@@ -43,6 +43,7 @@ const EMPTY_FORM = {
   minPayment: '',
   dueDate: '',
   statementDate: '',
+  startDate: '',
   color: 'var(--red)',
   contactName: '',
   notes: '',
@@ -205,6 +206,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
       minPayment: debt.minPayment || '',
       dueDate: debt.dueDate || '',
       statementDate: debt.statementDate || '',
+      startDate: debt.startDate || '',
       color: debt.color || 'var(--red)',
       contactName: debt.contactName || '',
       notes: debt.notes || '',
@@ -366,6 +368,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           minPayment: minVal,
           dueDate: form.dueDate,
           statementDate: form.statementDate,
+          startDate: form.startDate || today(),
           color: form.color,
           contactName: form.contactName || '',
           notes: form.notes || '',
@@ -1197,6 +1200,20 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                   onChange={event => set('statementDate', event.target.value)}
                 />
               </div>
+            </div>
+
+            <div className={dStyles.field} style={{ marginTop: '12px' }}>
+              <label className={dStyles.fieldLabel} htmlFor="debt-start-date">Debt Start Date (Effective Date)</label>
+              <input
+                id="debt-start-date"
+                className={dStyles.fieldInput}
+                type="date"
+                value={form.startDate || today()}
+                onChange={event => set('startDate', event.target.value)}
+              />
+              <small style={{ color: 'var(--text3)', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>
+                Select a future date if this is an upcoming / planned debt.
+              </small>
             </div>
           </div>
 
