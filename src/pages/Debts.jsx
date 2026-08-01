@@ -470,15 +470,16 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth()
     
-    let allProjected = []
-    for (let i = 0; i < 12; i++) {
-      const projDate = new Date(currentYear, currentMonth + i, 1)
-      const proj = getProjectedTransactions(safeIncome, safeExpenses, projDate.getFullYear(), projDate.getMonth())
-      allProjected = allProjected.concat(proj)
-    }
+    const projCurrent = getProjectedTransactions(safeIncome, safeExpenses, currentYear, currentMonth)
+    
+    const nextDate = new Date(currentYear, currentMonth + 1, 1)
+    const projNext = getProjectedTransactions(safeIncome, safeExpenses, nextDate.getFullYear(), nextDate.getMonth())
 
-    const allTx = [...safeExpenses, ...allProjected]
-      .filter(t => t && t.accountId && (t.date || '') >= todayStr)
+    const endOfNextMonth = new Date(currentYear, currentMonth + 2, 0)
+    const endKey = `${endOfNextMonth.getFullYear()}-${String(endOfNextMonth.getMonth() + 1).padStart(2, '0')}-${String(endOfNextMonth.getDate()).padStart(2, '0')}`
+
+    const allTx = [...safeExpenses, ...projCurrent, ...projNext]
+      .filter(t => t && t.accountId && (t.date || '') >= todayStr && (t.date || '') <= endKey)
       .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
 
     const map = new Map()
