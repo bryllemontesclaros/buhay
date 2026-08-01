@@ -781,20 +781,30 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           const upcomingSum = upcomingList.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
 
           return (
-            <div style={{ marginTop: 12, padding: 12, borderRadius: 12, background: 'color-mix(in srgb, var(--amber) 8%, var(--surface2))', border: '1px solid color-mix(in srgb, var(--amber) 25%, var(--border2))' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <div style={{
+              marginTop: 12,
+              padding: '12px 14px',
+              borderRadius: 14,
+              background: 'var(--surface)',
+              border: '1px solid color-mix(in srgb, var(--amber) 35%, var(--border2))',
+              borderLeft: '4px solid var(--amber)',
+              position: 'relative',
+              zIndex: 1,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   ⚡ Upcoming Credit Card Charges ({upcomingList.length})
                 </span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>
                   +{money(upcomingSum)}
                 </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {upcomingList.map(tx => (
-                  <div key={tx._id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text2)' }}>
-                    <span>{tx.desc || tx.cat} ({formatDisplayDate(tx.date)})</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{money(tx.amount)}</span>
+                  <div key={tx._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text2)', textDecoration: 'none' }}>
+                    <span style={{ textDecoration: 'none' }}>{tx.desc || tx.cat} ({formatDisplayDate(tx.date)})</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text)', textDecoration: 'none' }}>{money(tx.amount)}</span>
                   </div>
                 ))}
               </div>
