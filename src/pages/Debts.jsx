@@ -783,6 +783,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           return (
             <div style={{
               marginTop: 12,
+              marginBottom: 12,
               padding: '12px 14px',
               borderRadius: 14,
               background: 'var(--surface)',

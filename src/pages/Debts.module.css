@@ -737,7 +737,7 @@
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
-  margin-top: auto;
+  margin-top: 12px;
 }
 
 .emptyCard {
