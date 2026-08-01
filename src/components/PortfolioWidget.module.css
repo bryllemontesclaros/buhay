@@ -334,10 +334,16 @@
   cursor: pointer;
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  aspect-ratio: 1;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  box-sizing: border-box;
   transition: all 0.15s ease;
 }
 
