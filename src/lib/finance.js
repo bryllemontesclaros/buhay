@@ -223,15 +223,24 @@ export function getTakdaTotalSavings(savings = []) {
   return safeSavings.reduce((sum, s) => sum + (Number(s?.balance) || 0), 0)
 }
 
-export function getTakdaTotalAssets(accounts = []) {
+export function getTakdaTotalAssets(accounts = [], holdings = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
-  return safeAccounts
+  const accountsSum = safeAccounts
     .filter(acc => acc?.type !== 'Credit Card')
     .reduce((sum, acc) => sum + Math.max(0, Number(acc?.balance) || 0), 0)
+
+  const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
+  const holdingsSum = safeHoldings.reduce((sum, h) => {
+    const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
+    const price = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
+    return sum + (qty * price)
+  }, 0)
+
+  return accountsSum + holdingsSum
 }
 
-export function getTakdaNetWorth(accounts = [], debts = [], savings = [], targetDate = null) {
-  return getTakdaTotalAssets(accounts) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts, targetDate)
+export function getTakdaNetWorth(accounts = [], debts = [], savings = [], holdings = [], targetDate = null) {
+  return getTakdaTotalAssets(accounts, holdings) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts, targetDate)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {

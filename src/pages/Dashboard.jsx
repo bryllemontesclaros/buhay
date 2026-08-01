@@ -103,12 +103,19 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
 
   const wealthInfo = useMemo(() => {
     const accounts = Array.isArray(data.accounts) ? data.accounts.filter(Boolean) : []
+    const holdings = Array.isArray(data.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
     const cashAccounts = accounts.filter(a => a && a.type !== 'Credit Card')
     const creditCardAccounts = accounts.filter(a => a && a.type === 'Credit Card')
 
     const totalCash = cashAccounts.reduce((sum, a) => sum + Math.max(0, a?.balance || 0), 0)
     const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a?.balance || 0), 0)
-    const netWorth = totalCash - totalCCDebt
+    const totalPortfolio = holdings.reduce((sum, h) => {
+      const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
+      const price = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
+      return sum + (qty * price)
+    }, 0)
+
+    const netWorth = totalCash + totalPortfolio - totalCCDebt
 
     const upcomingBills = (data.bills || [])
       .filter(b => !b.isPaid && b.dueDate >= todayStr)
@@ -160,8 +167,8 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     const endVal = reverseBalances[reverseBalances.length - 1] || 1
     const percentChange = startVal !== 0 ? (((endVal - startVal) / Math.abs(startVal)) * 100).toFixed(1) : 0
 
-    return { netWorth, totalCash, totalCCDebt, nextBill: upcomingBills[0], svgPath, areaPath, percentChange: Number(percentChange) }
-  }, [data.accounts, data.bills, data.income, data.expenses, todayStr])
+    return { netWorth, totalCash, totalPortfolio, totalCCDebt, nextBill: upcomingBills[0], svgPath, areaPath, percentChange: Number(percentChange) }
+  }, [data.accounts, data.portfolioHoldings, data.bills, data.income, data.expenses, todayStr])
 
   const todayHabit = useMemo(() => {
     return (data.lakasHabits || []).find(h => h.date === todayStr) || {}
@@ -412,6 +419,10 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
             <div className={styles.subMetric}>
               <span className={styles.subMetricLabel}>Cash Assets</span>
               <span className={styles.subMetricVal}>{fmt(wealthInfo.totalCash)}</span>
+            </div>
+            <div className={styles.subMetric}>
+              <span className={styles.subMetricLabel}>Investments</span>
+              <span className={`${styles.subMetricVal} ${styles.subMetricValPositive}`}>{fmt(wealthInfo.totalPortfolio)}</span>
             </div>
             <div className={styles.subMetric}>
               <span className={styles.subMetricLabel}>Credit Debt</span>
