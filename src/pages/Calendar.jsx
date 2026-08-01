@@ -148,9 +148,17 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [data?.savings])
 
   const totalDebts = useMemo(() => {
-    if (!data?.debts || !Array.isArray(data.debts)) return 0
-    return data.debts.reduce((acc, curr) => acc + (Number(curr?.balance) || 0), 0)
-  }, [data?.debts])
+    const accounts = Array.isArray(data?.accounts) ? data.accounts : []
+    const debts = Array.isArray(data?.debts) ? data.debts : []
+    const accountIds = new Set(accounts.map(a => a?._id).filter(Boolean))
+    const creditCardAccounts = accounts.filter(acc => acc?.type === 'Credit Card')
+
+    const unlinkedDebts = debts.filter(d => !d?.accountId || !accountIds.has(d.accountId))
+    const unlinkedDebtSum = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
+    const creditCardDebtSum = creditCardAccounts.reduce((sum, acc) => sum + Math.abs(Number(acc?.balance) || 0), 0)
+
+    return unlinkedDebtSum + creditCardDebtSum
+  }, [data?.debts, data?.accounts])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
