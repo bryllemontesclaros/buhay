@@ -133,14 +133,21 @@
   background: color-mix(in srgb, var(--accent) 22%, var(--surface2));
 }
 .dismissBtn {
-  background: none;
-  border: none;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border: 1px solid var(--border2);
   color: var(--text3);
   cursor: pointer;
-  font-size: var(--type-support);
-  padding: 4px 6px;
+  font-size: 12px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  border-radius: 10px;
+  transition: color 0.15s ease, background 0.15s ease;
 }
-.dismissBtn:hover { color: var(--red); }
+.dismissBtn:hover { color: var(--red); background: var(--red-dim); }
 

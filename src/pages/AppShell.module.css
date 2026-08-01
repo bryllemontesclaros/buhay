@@ -1559,12 +1559,18 @@
 .quickAddClose {
   width: 34px;
   height: 34px;
+  padding: 0;
+  aspect-ratio: 1;
   border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   color: var(--text2);
   cursor: pointer;
   font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   transition:
     transform var(--motion-duration-fast) var(--motion-ease-standard),
     background var(--motion-duration-fast) ease,

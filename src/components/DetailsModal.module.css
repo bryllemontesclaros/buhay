@@ -69,20 +69,29 @@
 }
 
 .close {
-  min-width: 44px;
-  min-height: 40px;
-  padding: 8px 12px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
   border: 1px solid color-mix(in srgb, var(--glass-border) 70%, var(--border));
   background: color-mix(in srgb, var(--glass-1) 70%, var(--surface) 30%);
   color: var(--text);
   font-family: var(--font-body);
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .close:hover {
   background: color-mix(in srgb, var(--glass-1) 60%, var(--surface) 40%);
+  transform: scale(1.08);
 }
 
 .body {
