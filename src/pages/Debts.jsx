@@ -3,7 +3,8 @@ import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTrans
 import { calculatePayoffSchedule } from '../lib/debts'
 import { isTransactionPaid } from '../lib/finance'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { displayValue, fmt, maskMoney, playTick, today, getMonthKey } from '../lib/utils'
+import { getProjectedTransactions } from '../lib/recurrence'
+import { displayValue, fmt, maskMoney, playTick, today, getMonthKey, formatDisplayDate } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import dStyles from './Debts.module.css'
@@ -460,6 +461,39 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     return [...baseDebts, ...synthesizedDebts]
   }, [safeDebts, safeAccounts])
 
+  const upcomingCcTxMap = useMemo(() => {
+    const todayStr = today()
+    const safeExpenses = Array.isArray(data?.expenses) ? data.expenses : []
+    const safeIncome = Array.isArray(data?.income) ? data.income : []
+    
+    const now = new Date()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth()
+    
+    const projCurrent = getProjectedTransactions(safeIncome, safeExpenses, currentYear, currentMonth)
+    
+    const nextDate = new Date(currentYear, currentMonth + 1, 1)
+    const projNext = getProjectedTransactions(safeIncome, safeExpenses, nextDate.getFullYear(), nextDate.getMonth())
+
+    const allTx = [...safeExpenses, ...projCurrent, ...projNext]
+      .filter(t => t && t.accountId && t.date >= todayStr)
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+
+    const map = new Map()
+    const seen = new Set()
+
+    allTx.forEach(t => {
+      const key = t._id || `${t.date}_${t.amount}_${t.desc}`
+      if (seen.has(key)) return
+      seen.add(key)
+
+      if (!map.has(t.accountId)) map.set(t.accountId, [])
+      map.get(t.accountId).push(t)
+    })
+
+    return map
+  }, [data?.expenses, data?.income])
+
   const [stackFilter, setStackFilter] = useState('all')
 
   const filteredMappedDebts = useMemo(() => {
@@ -468,10 +502,14 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
       return mappedDebts.filter(d => !d.startDate || d.startDate <= todayStr)
     }
     if (stackFilter === 'upcoming') {
-      return mappedDebts.filter(d => d.startDate && d.startDate > todayStr)
+      return mappedDebts.filter(d => {
+        const isFutureDebt = d.startDate && d.startDate > todayStr
+        const hasUpcomingCcTx = d.accountId && (upcomingCcTxMap.get(d.accountId) || []).length > 0
+        return isFutureDebt || hasUpcomingCcTx
+      })
     }
     return mappedDebts
-  }, [mappedDebts, stackFilter])
+  }, [mappedDebts, stackFilter, upcomingCcTxMap])
 
   const creditCards = useMemo(() => filteredMappedDebts.filter(d => d.type === 'Credit Card'), [filteredMappedDebts])
   const loansAndOthers = useMemo(() => filteredMappedDebts.filter(d => d.type !== 'Credit Card'), [filteredMappedDebts])
@@ -698,6 +736,38 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
             </>
           )}
         </div>
+
+        {debt.type === 'Credit Card' && debt.accountId && (() => {
+          const upcomingList = upcomingCcTxMap.get(debt.accountId) || []
+          if (upcomingList.length === 0) return null
+          const upcomingSum = upcomingList.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
+
+          return (
+            <div style={{ marginTop: 12, padding: 12, borderRadius: 12, background: 'color-mix(in srgb, var(--amber) 8%, var(--surface2))', border: '1px solid color-mix(in srgb, var(--amber) 25%, var(--border2))' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  ⚡ Upcoming Credit Card Charges ({upcomingList.length})
+                </span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>
+                  +{money(upcomingSum)}
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {upcomingList.slice(0, 3).map(tx => (
+                  <div key={tx._id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text2)' }}>
+                    <span>{tx.desc || tx.cat} ({formatDisplayDate(tx.date)})</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{money(tx.amount)}</span>
+                  </div>
+                ))}
+                {upcomingList.length > 3 && (
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text3)', fontStyle: 'italic', marginTop: 2 }}>
+                    +{upcomingList.length - 3} more upcoming charges
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Progress bar / Utilization Bar */}
         {!isCleared && (
