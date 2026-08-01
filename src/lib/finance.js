@@ -288,6 +288,16 @@ function getMonthCursor(date) {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
+function toProjectedLedgerEntry(tx, sign) {
+  const date = normalizeDate(tx?.date)
+  if (!date) return null
+  return {
+    ...tx,
+    date,
+    signedAmount: sign * Math.abs(Number(tx?.amount) || 0),
+  }
+}
+
 function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, targetDate) {
   const anchor = normalizeDate(anchorDate)
   const target = normalizeDate(targetDate)
@@ -299,6 +309,35 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
   const entries = []
   const seen = new Set()
 
+  const safeIncome = Array.isArray(income) ? income.filter(Boolean) : []
+  const safeExpenses = Array.isArray(expenses) ? expenses.filter(Boolean) : []
+
+  // 1) Include all single/scheduled future transactions in income and expenses between anchor and target
+  safeIncome.forEach(tx => {
+    const d = normalizeDate(tx?.date)
+    if (d && d > anchor && d <= target) {
+      const key = tx._id || `inc:${d}:${tx.amount}:${tx.title || tx.desc || ''}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        const entry = toProjectedLedgerEntry(tx, 1)
+        if (entry) entries.push(entry)
+      }
+    }
+  })
+
+  safeExpenses.forEach(tx => {
+    const d = normalizeDate(tx?.date)
+    if (d && d > anchor && d <= target) {
+      const key = tx._id || `exp:${d}:${tx.amount}:${tx.title || tx.desc || ''}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        const entry = toProjectedLedgerEntry(tx, -1)
+        if (entry) entries.push(entry)
+      }
+    }
+  })
+
+  // 2) Include projected recurring transactions
   while (cursor <= end) {
     const year = cursor.getFullYear()
     const month = cursor.getMonth()
@@ -312,7 +351,8 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
       if (seen.has(key)) return
       seen.add(key)
 
-      entries.push(toLedgerEntry(tx, tx.type === 'income' ? 1 : -1))
+      const entry = toProjectedLedgerEntry(tx, tx.type === 'income' ? 1 : -1)
+      if (entry) entries.push(entry)
     })
 
     cursor.setMonth(cursor.getMonth() + 1)
