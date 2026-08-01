@@ -433,15 +433,38 @@ export function getMonthForecast(
     return ['Cash', 'Bank', 'E-wallet'].includes(account.type)
   }
 
+  const todayKey = today()
+
+  const monthIncome = getMonthTransactions(income, year, month)
+  const monthExpenses = getMonthTransactions(expenses, year, month)
+  const monthTransfers = getMonthTransactions(transfers, year, month)
+
+  // Past dates (< todayKey): Paid entries only for historical accuracy
+  // Today & Future dates (>= todayKey): Include all scheduled/unpaid bills & transactions for real runway forecast
+  const activeIncome = monthIncome.filter(tx => {
+    const d = normalizeDate(tx.date)
+    return d >= todayKey || isTransactionPaid(tx)
+  })
+
+  const activeExpenses = monthExpenses.filter(tx => {
+    const d = normalizeDate(tx.date)
+    return d >= todayKey || isTransactionPaid(tx)
+  })
+
+  const activeTransfers = monthTransfers.filter(tx => {
+    const d = normalizeDate(tx.date)
+    return d >= todayKey || isTransactionPaid(tx)
+  })
+
   const allIncomeRaw = [
-    ...getPaidTransactions(getMonthTransactions(income, year, month)),
+    ...activeIncome,
     ...getMonthTransactions(projectedIncome, year, month),
   ]
   const allExpensesRaw = [
-    ...getPaidTransactions(getMonthTransactions(expenses, year, month)),
+    ...activeExpenses,
     ...getMonthTransactions(projectedExpenses, year, month),
   ]
-  const allTransfersRaw = getPaidTransactions(getMonthTransactions(transfers, year, month))
+  const allTransfersRaw = activeTransfers
 
   // Map effective Liquid Income (True Cash Additions)
   const effectiveLiquidIncome = [
