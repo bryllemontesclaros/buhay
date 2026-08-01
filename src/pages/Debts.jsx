@@ -484,18 +484,19 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
     const map = new Map()
     const seenTxKeys = new Set()
-    const seenSourceKeys = new Set()
+    const seenSeriesKeys = new Set()
 
     allTx.forEach(t => {
       const txKey = t._id || `${t.date}_${t.amount}_${t.desc}`
       if (seenTxKeys.has(txKey)) return
       seenTxKeys.add(txKey)
 
-      const sourceKey = t._sourceId || t.recurrenceSourceId || (t.recur ? `${t.accountId}_${t.desc || t.cat}_${t.amount}` : null)
-      if (sourceKey) {
-        if (seenSourceKeys.has(sourceKey)) return
-        seenSourceKeys.add(sourceKey)
-      }
+      const descName = String(t.desc || t.cat || '').toLowerCase().trim()
+      const amtStr = Math.abs(Number(t.amount) || 0).toFixed(2)
+      const seriesKey = `${t.accountId}_${descName}_${amtStr}`
+
+      if (seenSeriesKeys.has(seriesKey)) return
+      seenSeriesKeys.add(seriesKey)
 
       if (!map.has(t.accountId)) map.set(t.accountId, [])
       map.get(t.accountId).push(t)
@@ -507,15 +508,22 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const getUpcomingTxForDebt = useMemo(() => {
     return (debt) => {
       if (!debt) return []
-      const ids = [debt.accountId, debt._id, debt._id?.replace('synth_', '')].filter(Boolean)
+      const ids = Array.from(new Set([debt.accountId, debt._id, debt._id?.replace('synth_', '')].filter(Boolean)))
       const combined = []
-      const seen = new Set()
+      const seenTx = new Set()
+      const seenSeries = new Set()
+
       ids.forEach(id => {
         const list = upcomingCcTxMap.get(id) || []
         list.forEach(tx => {
-          const key = tx._id || `${tx.date}_${tx.amount}_${tx.desc}`
-          if (!seen.has(key)) {
-            seen.add(key)
+          const txKey = tx._id || `${tx.date}_${tx.amount}_${tx.desc}`
+          const descName = String(tx.desc || tx.cat || '').toLowerCase().trim()
+          const amtStr = Math.abs(Number(tx.amount) || 0).toFixed(2)
+          const seriesKey = `${id}_${descName}_${amtStr}`
+
+          if (!seenTx.has(txKey) && !seenSeries.has(seriesKey)) {
+            seenTx.add(txKey)
+            seenSeries.add(seriesKey)
             combined.push(tx)
           }
         })
