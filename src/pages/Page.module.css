@@ -49,6 +49,14 @@
   }
 }
 
+@media (max-width: 600px) {
+  .pageHero,
+  .pageHeader,
+  .header {
+    display: none !important;
+  }
+}
+
 .pageHeader {
   display: flex;
   flex-direction: column;
