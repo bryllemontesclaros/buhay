@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate, displayValue, maskMoney } from '../lib/utils'
@@ -362,18 +363,19 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
       )}
 
       {/* Edit Recurring Transaction Modal */}
-      {editingTx && (
+      {editingTx && createPortal(
         <div
           style={{
             position: 'fixed',
             inset: 0,
             background: 'rgba(0,0,0,0.6)',
             backdropFilter: 'blur(4px)',
-            zIndex: 1000,
+            zIndex: 100000,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px',
+            overflowY: 'auto',
           }}
           onClick={() => setEditingTx(null)}
         >
@@ -385,6 +387,8 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
               width: '100%',
               maxWidth: '440px',
               padding: '24px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
               boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
             }}
             onClick={e => e.stopPropagation()}
@@ -487,7 +491,8 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

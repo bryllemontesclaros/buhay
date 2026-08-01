@@ -371,6 +371,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }
   const formatCellBalance = value => {
     if (privacyMode) return ''
+    if (typeof window !== 'undefined' && window.innerWidth <= 600) {
+      return formatCompactCellBalance(value)
+    }
     return formatFullCellBalance(value, s)
   }
 
