@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate } from '../lib/utils'
+import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate, displayValue, maskMoney } from '../lib/utils'
 import styles from './Page.module.css'
 import sStyles from './Recurring.module.css'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import Bills from './Bills'
+import Subscriptions from './Subscriptions'
 
 function getMonthlyEquivalent(amount, freq = 'monthly') {
   const numericAmount = Number(amount) || 0
@@ -27,8 +28,9 @@ function getMonthlyEquivalent(amount, freq = 'monthly') {
   }
 }
 
-export default function Recurring({ user, data, symbol, billPaymentTarget }) {
+export default function Recurring({ user, data, symbol, privacyMode = false, billPaymentTarget }) {
   const s = symbol || '₱'
+  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   
   // Default to bills tab if arriving via a bill payment deep-link, otherwise check localStorage or default to bills
   const initialTab = billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills')
@@ -205,7 +207,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             </div>
           </div>
           <div className={`${sStyles.rowAmount} ${isIncome ? sStyles.amountIncome : sStyles.amountExpense}`}>
-            {isIncome ? '+' : '-'}{fmt(tx.amount, s)}
+            {isIncome ? '+' : '-'}{money(tx.amount)}
           </div>
         </div>
         
@@ -242,7 +244,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             Monthly Obligations
           </div>
           <div className={sStyles.summaryValue}>
-            {fmt(totals.obligations, s)}
+            {money(totals.obligations)}
           </div>
         </div>
         <div className={sStyles.summaryCard}>
@@ -250,7 +252,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             Monthly Income
           </div>
           <div className={sStyles.summaryValue + ' ' + sStyles.summaryValuePositive}>
-            {fmt(totals.income, s)}
+            {money(totals.income)}
           </div>
         </div>
         <div className={sStyles.summaryCard}>
@@ -258,7 +260,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
             Net Cash Flow
           </div>
           <div className={`${sStyles.summaryValue} ${totals.net >= 0 ? sStyles.summaryValuePositive : ''}`}>
-            {totals.net >= 0 ? '+' : ''}{fmt(totals.net, s)}
+            {totals.net >= 0 ? '+' : ''}{money(totals.net)}
           </div>
         </div>
       </div>
@@ -300,7 +302,7 @@ export default function Recurring({ user, data, symbol, billPaymentTarget }) {
 
       {activeTab === 'bills' && (
         <div className={sStyles.billsWrapper}>
-          <Bills user={user} data={data} symbol={s} billPaymentTarget={billPaymentTarget} embedded={true} />
+          <Bills user={user} data={data} symbol={s} privacyMode={privacyMode} billPaymentTarget={billPaymentTarget} embedded={true} />
           
           {calendarBills.length > 0 && (
             <div>

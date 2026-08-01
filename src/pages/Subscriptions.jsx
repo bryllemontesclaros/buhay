@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
 import { fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate } from '../lib/utils'
+import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate, displayValue, maskMoney } from '../lib/utils'
 import styles from './Page.module.css'
 import sStyles from './Subscriptions.module.css'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 
-export default function Subscriptions({ user, data, symbol }) {
+export default function Subscriptions({ user, data, symbol, privacyMode = false }) {
   const s = symbol || '₱'
+  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
 
   const activeSubscriptions = useMemo(() => {
     const allTx = [...(data?.income || []), ...(data?.expenses || [])]
@@ -87,9 +88,9 @@ export default function Subscriptions({ user, data, symbol }) {
         
         <div className={sStyles.subCardBody}>
           <div className={sStyles.subCardDetail}>
-            <span className={sStyles.detailLabel}>Amount</span>
+            <span className={bStyles?.detailLabel || sStyles.detailLabel}>Amount</span>
             <strong className={isIncome ? sStyles.amountIncome : sStyles.amountExpense}>
-              {isIncome ? '+' : '-'}{fmt(tx.amount, s)}
+              {isIncome ? '+' : '-'}{money(tx.amount)}
             </strong>
           </div>
           <div className={sStyles.subCardDetail}>

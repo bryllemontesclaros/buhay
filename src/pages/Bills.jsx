@@ -5,7 +5,7 @@ import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate } from '../
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo, getVirtualBills } from '../lib/bills'
 import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
-import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
+import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick, displayValue, maskMoney } from '../lib/utils'
 import { Button } from '../components/ui/Button'
 import styles from './Page.module.css'
 import bStyles from './Bills.module.css'
@@ -78,8 +78,9 @@ function getMonthlyEquivalent(amount, freq = 'monthly') {
 
 let globalHandledTargetAt = 0
 
-export default function Bills({ user, data, symbol, billPaymentTarget = null, embedded = false }) {
+export default function Bills({ user, data, symbol, privacyMode = false, billPaymentTarget = null, embedded = false }) {
   const s = symbol || '₱'
+  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   const [form, setForm] = useState(createBillForm())
   const [paymentBill, setPaymentBill] = useState(null)
   const [paymentForm, setPaymentForm] = useState({ amount: '', date: today(), accountId: '' })
@@ -360,7 +361,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
         <div className={bStyles.billCardFooter}>
           <div className={bStyles.billCardPrice}>
             <span className={bStyles.detailLabel}>Amount</span>
-            <strong className={bStyles.billCardAmount}>{fmt(row.amount, s)}</strong>
+            <strong className={bStyles.billCardAmount}>{money(row.amount)}</strong>
           </div>
           <div className={bStyles.billCardActions}>
             {isPaid ? (
@@ -406,7 +407,7 @@ export default function Bills({ user, data, symbol, billPaymentTarget = null, em
         <div className={styles.trustGrid}>
           <div className={styles.trustCard}>
             <span>Monthly commitment</span>
-            <strong>{fmt(billTrustStats.monthlyCommitment, s)}</strong>
+            <strong>{money(billTrustStats.monthlyCommitment)}</strong>
             <small>Monthly equivalent across all active recurring bills.</small>
           </div>
           <div className={styles.trustCard}>
