@@ -460,8 +460,21 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     return [...baseDebts, ...synthesizedDebts]
   }, [safeDebts, safeAccounts])
 
-  const creditCards = useMemo(() => mappedDebts.filter(d => d.type === 'Credit Card'), [mappedDebts])
-  const loansAndOthers = useMemo(() => mappedDebts.filter(d => d.type !== 'Credit Card'), [mappedDebts])
+  const [stackFilter, setStackFilter] = useState('all')
+
+  const filteredMappedDebts = useMemo(() => {
+    const todayStr = today()
+    if (stackFilter === 'active') {
+      return mappedDebts.filter(d => !d.startDate || d.startDate <= todayStr)
+    }
+    if (stackFilter === 'upcoming') {
+      return mappedDebts.filter(d => d.startDate && d.startDate > todayStr)
+    }
+    return mappedDebts
+  }, [mappedDebts, stackFilter])
+
+  const creditCards = useMemo(() => filteredMappedDebts.filter(d => d.type === 'Credit Card'), [filteredMappedDebts])
+  const loansAndOthers = useMemo(() => filteredMappedDebts.filter(d => d.type !== 'Credit Card'), [filteredMappedDebts])
 
   async function handlePayment(debt) {
     const prevBalance = debt.balance || 0
@@ -611,6 +624,11 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                 {debt.accountId && (
                   <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--accent) 30%, var(--border2))', background: 'color-mix(in srgb, var(--accent) 8%, var(--surface2))' }}>
                     🔗 Linked
+                  </span>
+                )}
+                {debt.startDate && debt.startDate > today() && (
+                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--amber)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--amber) 30%, var(--border2))', background: 'color-mix(in srgb, var(--amber) 8%, var(--surface2))' }}>
+                    📅 Starts {debt.startDate}
                   </span>
                 )}
               </div>
@@ -1034,7 +1052,56 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
             Keep track of individual accounts, interest rates, and log payments directly below.
           </div>
         </div>
-        <button type="button" className={dStyles.primaryButton} onClick={openAdd}>Add debt</button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'inline-flex', background: 'var(--surface2)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border2)' }}>
+            <button
+              type="button"
+              onClick={() => setStackFilter('all')}
+              style={{
+                border: 'none',
+                background: stackFilter === 'all' ? 'var(--surface)' : 'transparent',
+                color: stackFilter === 'all' ? 'var(--text)' : 'var(--text3)',
+                padding: '6px 12px',
+                borderRadius: '7px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                boxShadow: stackFilter === 'all' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >All ({mappedDebts.length})</button>
+            <button
+              type="button"
+              onClick={() => setStackFilter('active')}
+              style={{
+                border: 'none',
+                background: stackFilter === 'active' ? 'var(--surface)' : 'transparent',
+                color: stackFilter === 'active' ? 'var(--text)' : 'var(--text3)',
+                padding: '6px 12px',
+                borderRadius: '7px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                boxShadow: stackFilter === 'active' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >Active ({mappedDebts.filter(d => !d.startDate || d.startDate <= today()).length})</button>
+            <button
+              type="button"
+              onClick={() => setStackFilter('upcoming')}
+              style={{
+                border: 'none',
+                background: stackFilter === 'upcoming' ? 'var(--surface)' : 'transparent',
+                color: stackFilter === 'upcoming' ? 'var(--text)' : 'var(--text3)',
+                padding: '6px 12px',
+                borderRadius: '7px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                boxShadow: stackFilter === 'upcoming' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >Upcoming ({mappedDebts.filter(d => d.startDate && d.startDate > today()).length})</button>
+          </div>
+          <button type="button" className={dStyles.primaryButton} onClick={openAdd}>Add debt</button>
+        </div>
       </div>
 
       {/* Debt Add/Edit Modal */}
