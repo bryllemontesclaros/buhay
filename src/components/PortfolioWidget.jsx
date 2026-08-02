@@ -86,7 +86,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }
 
     loadPrices()
-    const interval = setInterval(loadPrices, 60000) // auto-refresh every 60 seconds
+    const interval = setInterval(loadPrices, 15000) // high-frequency live market auto-refresh every 15 seconds
     return () => { isMounted = false; clearInterval(interval) }
   }, [holdings, s])
 
@@ -313,7 +313,12 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       </div>
 
       <div className={styles.summarySection}>
-        <span className={styles.summaryLabel}>Total Portfolio Value</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+          <span className={styles.summaryLabel}>Total Portfolio Value</span>
+          <span style={{ fontSize: '11px', color: 'var(--positive)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '3px' }}>
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--positive)' }}></span> ⚡ Live Market
+          </span>
+        </div>
         <div className={styles.summaryRow}>
           <span className={styles.summaryTotal}>{fmt(portfolioSummary.totalVal)}</span>
           <span className={`${styles.summaryProfit} ${portfolioSummary.totalProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
@@ -338,23 +343,34 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
             const hasLivePrice = Boolean(livePrices[symbol])
             const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-            const currentPrice = livePrices[symbol] ?? fallbackPrice
+            const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
+            const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
             const assetValue = qty * currentPrice
+            const profitLoss = qty * (currentPrice - avgBuyPrice)
+            const profitLossPct = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
 
             return (
               <div key={asset?._id || i} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
                 <div className={styles.holdingDetails}>
                   <span className={styles.holdingSymbol}>
                     {symbol || 'ASSET'}
-                    {hasLivePrice && <span className={styles.livePriceIndicator} title="Live price synced">⚡</span>}
+                    {hasLivePrice && <span className={styles.livePriceIndicator} title="Live market price active">⚡ Live</span>}
                   </span>
-                  <span className={styles.holdingName}>{asset?.name || 'Unnamed Asset'}</span>
+                  <span className={styles.holdingName}>
+                    {privacyMode ? '••' : qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'} • {fmt(currentPrice)}/ea
+                  </span>
                 </div>
                 <div className={styles.holdingValues}>
                   <span className={styles.holdingValue}>{fmt(assetValue)}</span>
-                  <span className={styles.holdingShares}>
-                    {privacyMode ? '••' : qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'}
-                  </span>
+                  {avgBuyPrice > 0 && !privacyMode && Math.abs(profitLoss) > 0.01 ? (
+                    <span className={`${styles.holdingShares} ${profitLoss >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+                      {profitLoss >= 0 ? '+' : ''}{fmt(profitLoss)} ({profitLossPct >= 0 ? '+' : ''}{profitLossPct.toFixed(1)}%)
+                    </span>
+                  ) : (
+                    <span className={styles.holdingShares}>
+                      {asset?.name || 'Asset'}
+                    </span>
+                  )}
                 </div>
               </div>
             )
