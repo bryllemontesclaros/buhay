@@ -95,40 +95,54 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // 1. Primary: Coinbase Public Exchange Rates API (fast, 600+ coins, 1 HTTP call, zero CORS/pair-error issues)
+  // 1. Primary: Binance Public Ticker API (CORS enabled *, 3,000+ crypto pairs, 1 fast HTTP request)
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 4000)
-    const res = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=USD', {
+    const res = await fetch('https://api.binance.com/api/v3/ticker/price', {
       signal: controller.signal
     })
     clearTimeout(timeoutId)
 
     if (res.ok) {
-      const json = await res.json()
-      const rates = json?.data?.rates || {}
-      
-      uniqueSymbols.forEach(sym => {
-        const rateVal = parseFloat(rates[sym])
-        if (Number.isFinite(rateVal) && rateVal > 0) {
-          const usdPrice = 1 / rateVal
+      const list = await res.json()
+      if (Array.isArray(list)) {
+        const binanceMap = {}
+        list.forEach(item => {
+          if (item?.symbol && item?.price) {
+            binanceMap[item.symbol] = parseFloat(item.price)
+          }
+        })
+
+        uniqueSymbols.forEach(sym => {
+          const usdtPair = `${sym}USDT`
+          const busdPair = `${sym}BUSD`
+          const usdcPair = `${sym}USDC`
+          const btcPair = `${sym}BTC`
+          
+          let usdPrice = binanceMap[usdtPair] || binanceMap[busdPair] || binanceMap[usdcPair] || 0
+          if (!usdPrice && binanceMap[btcPair] && binanceMap['BTCUSDT']) {
+            usdPrice = binanceMap[btcPair] * binanceMap['BTCUSDT']
+          }
+          if (sym === 'USDT' || sym === 'USDC') usdPrice = 1.0
+
           if (Number.isFinite(usdPrice) && usdPrice > 0) {
             result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
           }
-        }
-      })
+        })
+      }
     }
   } catch (err) {
-    console.warn('Coinbase rates fetch failed, proceeding to fallback:', err)
+    console.warn('Binance API fetch failed, proceeding to fallbacks:', err)
   }
 
-  // 2. Secondary: Fetch missing symbols individually via Kraken / Bybit
+  // 2. Secondary: Kraken & Bybit single-symbol fallback for any unlisted or custom tokens
   const missingSymbols = uniqueSymbols.filter(sym => !result[sym] || result[sym] <= 0)
   if (missingSymbols.length > 0) {
     const fallbackRequests = missingSymbols.map(async (sym) => {
-      // Try Kraken single pair
+      // Try Kraken single pair (CORS allowed)
       try {
-        const krakenPair = KRAKEN_PAIR_MAP[sym] || `${sym}USD`
+        const krakenPair = `${sym}USD`
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3000)
         const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPair}`, {

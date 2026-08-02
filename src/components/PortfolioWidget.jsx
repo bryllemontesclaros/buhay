@@ -223,6 +223,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     const symbol = (portfolioForm.symbol || '').trim().toUpperCase()
     const quantity = parseFloat(portfolioForm.quantity)
     const parsedBuy = parseFloat(portfolioForm.averageBuyPrice)
+    const livePrice = parseFloat(livePrices[symbol]) || 0
 
     if (!name && !symbol) {
       notifyApp({ title: 'Asset Identifier Required', message: 'Select a preset or enter a ticker symbol.', tone: 'warning' })
@@ -234,6 +235,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       return
     }
 
+    const finalAverageBuyPrice = Number.isFinite(parsedBuy) && parsedBuy > 0
+      ? parsedBuy
+      : (livePrice > 0 ? livePrice : 0)
+
     setIsSavingHolding(true)
     try {
       await fsSavePortfolioHolding(user.uid, {
@@ -242,7 +247,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         symbol: symbol || name,
         assetType: 'crypto',
         quantity,
-        averageBuyPrice: Number.isFinite(parsedBuy) && parsedBuy > 0 ? parsedBuy : 0
+        averageBuyPrice: finalAverageBuyPrice
       })
 
       notifyApp({
@@ -499,7 +504,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   className={styles.inputField} 
                   type="number" 
                   step="any" 
-                  placeholder="e.g. Price you bought at" 
+                  placeholder={livePrices[(portfolioForm.symbol || '').toUpperCase()] ? `Default: ${fmt(livePrices[(portfolioForm.symbol || '').toUpperCase()])}` : 'Optional (Defaults to live market rate)'} 
                   value={portfolioForm.averageBuyPrice} 
                   onChange={e => setPortfolioForm(prev => ({ ...prev, averageBuyPrice: e.target.value }))} 
                 />
