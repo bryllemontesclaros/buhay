@@ -99,10 +99,15 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
   const presetGroups = useMemo(() => getBillPresetGroups(), [])
   const subcategories = useMemo(() => getTransactionSubcategories('expense', 'Bills'), [])
   const selectedPreset = useMemo(() => getBillPresetByKey(form.presetKey), [form.presetKey])
-  const billsWithStatus = useMemo(() => (data?.bills || []).map(bill => ({
+  const allBillsList = useMemo(() => [
+    ...(data?.bills || []),
+    ...getVirtualBills(data)
+  ], [data?.bills, data?.debts, data?.accounts])
+
+  const billsWithStatus = useMemo(() => allBillsList.map(bill => ({
     ...bill,
     period: getBillPeriodInfo(bill),
-  })), [data?.bills])
+  })), [allBillsList])
   const sortedBillsWithStatus = useMemo(() => {
     return [...billsWithStatus].sort((left, right) => {
       const leftRank = getBillStatusRank(left.period?.status)
@@ -371,7 +376,9 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                 {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
               </button>
             )}
-            <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
+            {!row.isVirtual && (
+              <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
+            )}
           </div>
         </div>
       </div>
