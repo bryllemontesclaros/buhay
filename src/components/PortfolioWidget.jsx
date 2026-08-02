@@ -18,6 +18,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
   const [showAllHoldingsModal, setShowAllHoldingsModal] = useState(false)
   const [editingHolding, setEditingHolding] = useState(null)
   const [isSavingHolding, setIsSavingHolding] = useState(false)
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [livePrices, setLivePrices] = useState({})
 
   const [selectedPresetId, setSelectedPresetId] = useState('')
@@ -331,48 +332,30 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
             <div className={styles.modalBody}>
               
-              {/* Frictionless Preset Selector Dropdown */}
+              {/* Step 1: Asset Picker / Universal Ticker Search */}
               {!editingHolding && (
                 <div className={styles.inputGroup}>
-                  <span className={styles.inputLabel}>⚡ Frictionless Quick Select</span>
+                  <span className={styles.inputLabel}>1. Select or Search Asset</span>
                   <select
                     className={styles.presetSelectField}
                     value={selectedPresetId}
                     onChange={e => handleSelectPresetAsset(e.target.value)}
                   >
-                    <option value="">Pick an Asset (Auto-fills Ticker & Live Price)...</option>
+                    <option value="">Search or pick an asset (Crypto, Stocks, ETFs)...</option>
                     <optgroup label="Popular Crypto">
                       {POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => (
                         <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
                       ))}
                     </optgroup>
-                    <optgroup label="Stocks & ETFs">
+                    <optgroup label="Popular Stocks & ETFs">
                       {POPULAR_ASSETS.filter(a => a.assetType === 'stock').map(a => (
                         <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
                       ))}
                     </optgroup>
-                    <option value="custom">✏️ Custom Asset (Type Manually)</option>
+                    <option value="custom">✏️ Type Custom Ticker Symbol Manually...</option>
                   </select>
                 </div>
               )}
-
-              {/* Asset Type Selector Pills */}
-              <div className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Asset Class</span>
-                <div className={styles.pillGrid}>
-                  {ASSET_TYPES.map(type => (
-                    <button
-                      key={type.id}
-                      type="button"
-                      className={`${styles.pillBtn} ${portfolioForm.assetType === type.id ? styles.pillBtnActive : ''}`}
-                      onClick={() => setPortfolioForm({ ...portfolioForm, assetType: type.id })}
-                    >
-                      <span className={styles.pillIcon}>{type.icon}</span>
-                      <span>{type.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* Ticker & Name */}
               <div className={styles.inputRow}>
@@ -381,9 +364,12 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   <input 
                     className={styles.inputField} 
                     type="text" 
-                    placeholder="e.g. AAPL, BTC" 
+                    placeholder="e.g. SOL, AAPL, PEPE" 
                     value={portfolioForm.symbol} 
-                    onChange={e => setPortfolioForm({ ...portfolioForm, symbol: e.target.value.toUpperCase() })} 
+                    onChange={e => {
+                      const sym = e.target.value.toUpperCase()
+                      setPortfolioForm(prev => ({ ...prev, symbol: sym }))
+                    }} 
                   />
                 </div>
 
@@ -392,52 +378,125 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   <input 
                     className={styles.inputField} 
                     type="text" 
-                    placeholder="e.g. Apple Inc." 
+                    placeholder="e.g. Solana" 
                     value={portfolioForm.name} 
-                    onChange={e => setPortfolioForm({ ...portfolioForm, name: e.target.value })} 
+                    onChange={e => setPortfolioForm(prev => ({ ...prev, name: e.target.value }))} 
                   />
                 </div>
               </div>
 
-              {/* Quantity & Buy Price */}
-              <div className={styles.inputRow}>
-                <div className={styles.inputGroup}>
-                  <span className={styles.inputLabel}>Shares / Amount</span>
-                  <input 
-                    ref={quantityInputRef}
-                    className={`${styles.inputField} ${styles.inputFieldHighlight}`} 
-                    type="number" 
-                    step="any" 
-                    placeholder="0.0" 
-                    value={portfolioForm.quantity} 
-                    onChange={e => setPortfolioForm({ ...portfolioForm, quantity: e.target.value })} 
-                  />
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <span className={styles.inputLabel}>Avg Buy Price ({s})</span>
-                  <input 
-                    className={styles.inputField} 
-                    type="number" 
-                    step="any" 
-                    placeholder="0.00" 
-                    value={portfolioForm.averageBuyPrice} 
-                    onChange={e => setPortfolioForm({ ...portfolioForm, averageBuyPrice: e.target.value })} 
-                  />
-                </div>
-              </div>
-
-              {/* Fallback Current Price */}
+              {/* Step 2: Quantity Owned */}
               <div className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Current Market Price ({s})</span>
+                <span className={styles.inputLabel}>2. Quantity / Shares Owned</span>
                 <input 
-                  className={styles.inputField} 
+                  ref={quantityInputRef}
+                  className={`${styles.inputField} ${styles.inputFieldHighlight}`} 
                   type="number" 
                   step="any" 
-                  placeholder="Auto-synced or fallback" 
-                  value={portfolioForm.currentPrice} 
-                  onChange={e => setPortfolioForm({ ...portfolioForm, currentPrice: e.target.value })} 
+                  placeholder="e.g. 2.5" 
+                  value={portfolioForm.quantity} 
+                  onChange={e => setPortfolioForm(prev => ({ ...prev, quantity: e.target.value }))} 
                 />
+              </div>
+
+              {/* Real-time Live Calculation Badge */}
+              {(() => {
+                const qty = parseFloat(portfolioForm.quantity) || 0
+                const sym = (portfolioForm.symbol || '').toUpperCase()
+                const price = parseFloat(livePrices[sym]) || parseFloat(portfolioForm.currentPrice) || parseFloat(portfolioForm.averageBuyPrice) || 0
+                const estValue = qty * price
+
+                if (qty > 0 && price > 0) {
+                  return (
+                    <div style={{
+                      background: 'color-mix(in srgb, var(--income) 12%, var(--surface2))',
+                      border: '1px solid color-mix(in srgb, var(--income) 30%, transparent)',
+                      borderRadius: '12px',
+                      padding: '12px 14px',
+                      marginTop: '4px',
+                      marginBottom: '8px'
+                    }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
+                        ⚡ Real-Time Holdings Calculation
+                      </div>
+                      <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--income)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+                        {fmt(estValue)}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--text2)', marginTop: '2px' }}>
+                        {qty} {sym || 'units'} × {fmt(price)} live market price
+                      </div>
+                    </div>
+                  )
+                }
+                return null
+              })()}
+
+              {/* Optional Advanced Settings Toggle */}
+              <div style={{ marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text3)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    padding: '4px 0',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>{showAdvanced ? '▼ Hide Advanced Details' : '▶ Show Advanced Details (Cost Basis & Class)'}</span>
+                </button>
+
+                {showAdvanced && (
+                  <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Asset Type Pills */}
+                    <div className={styles.inputGroup}>
+                      <span className={styles.inputLabel}>Asset Class</span>
+                      <div className={styles.pillGrid}>
+                        {ASSET_TYPES.map(type => (
+                          <button
+                            key={type.id}
+                            type="button"
+                            className={`${styles.pillBtn} ${portfolioForm.assetType === type.id ? styles.pillBtnActive : ''}`}
+                            onClick={() => setPortfolioForm(prev => ({ ...prev, assetType: type.id }))}
+                          >
+                            <span className={styles.pillIcon}>{type.icon}</span>
+                            <span>{type.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={styles.inputRow}>
+                      <div className={styles.inputGroup}>
+                        <span className={styles.inputLabel}>Custom Avg Buy Price ({s})</span>
+                        <input 
+                          className={styles.inputField} 
+                          type="number" 
+                          step="any" 
+                          placeholder="Default: Live Price" 
+                          value={portfolioForm.averageBuyPrice} 
+                          onChange={e => setPortfolioForm(prev => ({ ...prev, averageBuyPrice: e.target.value }))} 
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <span className={styles.inputLabel}>Fallback Market Price ({s})</span>
+                        <input 
+                          className={styles.inputField} 
+                          type="number" 
+                          step="any" 
+                          placeholder="Auto-synced via API" 
+                          value={portfolioForm.currentPrice} 
+                          onChange={e => setPortfolioForm(prev => ({ ...prev, currentPrice: e.target.value }))} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>
