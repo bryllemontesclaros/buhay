@@ -1,9 +1,34 @@
 import { today } from './utils'
 import { getProjectedTransactions } from './recurrence'
-import { fsAddTransaction } from './firestore'
+import { fsAddTransaction, fsMarkBillPaid } from './firestore'
+import { getBillPeriodInfo } from './bills'
 
-export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses = [], accounts = []) {
+export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses = [], accounts = [], bills = []) {
   if (!uid) return 0
+  let addedCount = 0
+
+  // Auto-deduct bills that have autoDeduct === true and are due today or overdue
+  if (Array.isArray(bills) && bills.length > 0) {
+    const todayStr = today()
+    for (const bill of bills) {
+      if (!bill || !bill.autoDeduct || !bill._id) continue
+      const period = getBillPeriodInfo(bill, todayStr)
+      if (period.paid) continue
+      if (todayStr >= period.dueDate) {
+        try {
+          await fsMarkBillPaid(uid, bill, {
+            amount: bill.amount,
+            date: period.dueDate > todayStr ? todayStr : period.dueDate,
+            accountId: bill.accountId || '',
+            source: 'auto-deduct-engine',
+          }, accounts)
+          addedCount++
+        } catch (err) {
+          console.error('Failed to auto-deduct bill', bill.name, err)
+        }
+      }
+    }
+  }
   
   const currentDate = new Date()
   const currentYear = currentDate.getFullYear()
@@ -33,9 +58,7 @@ export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses =
     return true
   })
   
-  if (dueProjected.length === 0) return 0
-  
-  let addedCount = 0
+  if (dueProjected.length === 0) return addedCount
   
   for (const pTx of dueProjected) {
     const col = pTx.type === 'income' ? 'income' : 'expenses'

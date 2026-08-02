@@ -23,6 +23,7 @@ function createBillForm() {
     presetKey: '',
     freq: 'monthly',
     accountId: '',
+    autoDeduct: false,
   }
 }
 
@@ -226,6 +227,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
       paidPeriods: {},
       type: 'bill',
       accountId: form.accountId || '',
+      autoDeduct: Boolean(form.autoDeduct),
     }
 
     if (freq === 'yearly') {
@@ -342,7 +344,14 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
         <div className={bStyles.billCardHeader}>
           <div>
             <h4 className={bStyles.billCardTitle}>{row.name}</h4>
-            <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2 }}>
+              <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
+              {row.autoDeduct && (
+                <span style={{ background: 'var(--amber-glow)', color: 'var(--amber)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
+                  ⚡ Auto-Deduct
+                </span>
+              )}
+            </div>
           </div>
           <span style={{ ...statusStyle, borderRadius: 20, padding: '4px 10px', fontSize: 10, fontWeight: 700 }}>
             {statusPeriod.label}
@@ -608,6 +617,20 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                     </option>
                   ))}
                 </select>
+              </div>
+              <div className={styles.formGroup} style={{ marginTop: 12 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text1)' }}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(form.autoDeduct)}
+                    onChange={e => set('autoDeduct', e.target.checked)}
+                    style={{ width: 16, height: 16, accentColor: 'var(--amber)', cursor: 'pointer' }}
+                  />
+                  ⚡ Auto-deduct on due date
+                </label>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text3)', marginTop: 2, display: 'block', paddingLeft: 24 }}>
+                  Automatically logs payment and deducts from account on due date.
+                </span>
               </div>
             </div>
             <div className={bStyles.drawerFooter}>

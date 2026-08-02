@@ -908,7 +908,7 @@ export default function AppShell({ user }) {
     // though listenCol generally fires with the cached snapshot quickly.
     autoRecurRunRef.current = true
     
-    runAutoRecurrenceEngine(user.uid, data.income, data.expenses, data.accounts)
+    runAutoRecurrenceEngine(user.uid, data.income, data.expenses, data.accounts, data.bills)
       .then(addedCount => {
         if (addedCount > 0) {
           playTick()
@@ -918,7 +918,7 @@ export default function AppShell({ user }) {
       .catch(err => {
         console.error('Buhay AutoRecurEngine Error:', err)
       })
-  }, [user, data.income, data.expenses, data.accounts])
+  }, [user, data.income, data.expenses, data.accounts, data.bills])
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
   const [isDashboardEditing, setIsDashboardEditing] = useState(false)
