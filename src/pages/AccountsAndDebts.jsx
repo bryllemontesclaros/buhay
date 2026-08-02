@@ -19,9 +19,8 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
   const debts = Array.isArray(data?.debts) ? data.debts : []
-  const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
 
-  const totalAssets = getTakdaTotalAssets(accounts, holdings, s)
+  const totalAssets = getTakdaTotalAssets(accounts)
   const totalDebts = getTakdaTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
 

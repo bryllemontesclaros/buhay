@@ -1,7 +1,6 @@
 import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance } from './forecast'
 import { getProjectedTransactions } from './recurrence'
 import { getMonthKey, normalizeDate, toMonthKey, today } from './utils'
-import { getBaselinePrice } from './portfolio'
 
 export function isTransactionPaid(tx = {}) {
   return String(tx?.paymentStatus || 'paid').toLowerCase() !== 'unpaid'
@@ -224,7 +223,7 @@ export function getTakdaTotalSavings(savings = []) {
   return safeSavings.reduce((sum, s) => sum + (Number(s?.balance) || 0), 0)
 }
 
-export function getTakdaTotalAssets(accounts = [], holdings = [], s = '₱') {
+export function getTakdaTotalAssets(accounts = [], holdings = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const accountsSum = safeAccounts
     .filter(acc => acc?.type !== 'Credit Card')
@@ -233,11 +232,7 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], s = '₱') {
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   const holdingsSum = safeHoldings.reduce((sum, h) => {
     const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
-    const symbol = h?.symbol ? String(h.symbol).toUpperCase() : ''
-    const currentPrice = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
-    const avgBuyPrice = parseFloat(h?.averageBuyPrice ?? h?.avgPrice ?? 0) || 0
-    const basePrice = getBaselinePrice(symbol, s)
-    const price = currentPrice > 0 ? currentPrice : (avgBuyPrice > 0 ? avgBuyPrice : basePrice)
+    const price = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
     return sum + (qty * price)
   }, 0)
 
