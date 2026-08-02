@@ -23,8 +23,15 @@ export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses =
   const allProjected = [...projectedLastMonth, ...projectedThisMonth]
   
   const nowStr = today()
-  // Only auto-log transactions whose projected date is today or in the past
-  const dueProjected = allProjected.filter(tx => tx.date <= nowStr)
+  // Only auto-log transactions whose projected date is today or in the past, deduplicating by source and occurrence key
+  const seenKeys = new Set()
+  const dueProjected = allProjected.filter(tx => {
+    if (!tx || tx.date > nowStr) return false
+    const key = `${tx._sourceId || tx.recurrenceSourceId}_${tx._occurrenceKey || tx.date}`
+    if (seenKeys.has(key)) return false
+    seenKeys.add(key)
+    return true
+  })
   
   if (dueProjected.length === 0) return 0
   

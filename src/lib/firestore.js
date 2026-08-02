@@ -236,6 +236,9 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
   if (!date) throw new Error('Payment date is required.')
 
   const period = getBillPeriodInfo(bill, payment.periodReferenceDate || today())
+  if (bill.paidPeriods && bill.paidPeriods[period.key]) {
+    throw new Error('This bill is already marked paid for this period.')
+  }
   const accountId = payment.accountId || bill.accountId || ''
   const txRef = await fsAddTransaction(uid, 'expenses', {
     desc: `${bill.name || 'Bill'} payment`,
