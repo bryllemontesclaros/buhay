@@ -5,6 +5,7 @@
  */
 
 export const BASE_CRYPTO_USD_PRICES = {
+  'HYPE': 52.20,
   'SOL': 73.50,
   'BTC': 63450.00,
   'ETH': 1875.00,
@@ -30,6 +31,7 @@ export const BASE_CRYPTO_USD_PRICES = {
 }
 
 export const POPULAR_ASSETS = [
+  { id: 'hype', name: 'Hyperliquid', symbol: 'HYPE', assetType: 'crypto' },
   { id: 'btc', name: 'Bitcoin', symbol: 'BTC', assetType: 'crypto' },
   { id: 'eth', name: 'Ethereum', symbol: 'ETH', assetType: 'crypto' },
   { id: 'sol', name: 'Solana', symbol: 'SOL', assetType: 'crypto' },
