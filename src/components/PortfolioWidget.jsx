@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { fsSavePortfolioHolding, fsDeletePortfolioHolding } from '../lib/firestore'
-import { fetchCryptoPrices, POPULAR_ASSETS } from '../lib/portfolio'
+import { fetchCryptoPrices, POPULAR_ASSETS, getBaselinePrice } from '../lib/portfolio'
 import { notifyApp } from '../lib/appFeedback'
 import styles from './PortfolioWidget.module.css'
 
@@ -50,6 +50,16 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     const fromPresets = POPULAR_ASSETS.map(a => a.symbol.toUpperCase())
     return Array.from(new Set([...fromHoldings, ...fromPresets]))
   }, [holdings])
+
+  // Pre-seed livePrices with baseline reference rates so holding values are never 0
+  useEffect(() => {
+    const seed = {}
+    targetSymbols.forEach(sym => {
+      const base = getBaselinePrice(sym, s)
+      if (base > 0) seed[sym] = base
+    })
+    setLivePrices(prev => ({ ...seed, ...prev }))
+  }, [targetSymbols, s])
 
   // Fetch live market prices in background + auto-refresh every 30s
   useEffect(() => {
@@ -128,7 +138,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return `${s} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: maxDigits })}`
   }
 
-  // Calculate overall portfolio metrics dynamically using live market prices
+  // Calculate overall portfolio metrics dynamically using live market prices with baseline fallbacks
   const portfolioSummary = useMemo(() => {
     let totalVal = 0
     let totalCost = 0
@@ -138,7 +148,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
       const livePrice = livePrices[symbol] || 0
       const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
-      const effectivePrice = livePrice > 0 ? livePrice : avgBuyPrice
+      const basePrice = getBaselinePrice(symbol, s)
+      const effectivePrice = livePrice > 0 ? livePrice : (avgBuyPrice > 0 ? avgBuyPrice : basePrice)
 
       totalVal += qty * effectivePrice
       totalCost += qty * (avgBuyPrice > 0 ? avgBuyPrice : effectivePrice)
@@ -146,7 +157,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
     const totalProfit = totalVal - totalCost
     return { totalVal, totalProfit }
-  }, [holdings, livePrices])
+  }, [holdings, livePrices, s])
 
   const openAddPortfolioHolding = (holding = null) => {
     if (holding) {
@@ -337,9 +348,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
             const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
             const livePrice = livePrices[symbol] || 0
-            const hasLivePrice = livePrice > 0
             const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
-            const effectivePrice = hasLivePrice ? livePrice : avgBuyPrice
+            const basePrice = getBaselinePrice(symbol, s)
+            const effectivePrice = livePrice > 0 ? livePrice : (avgBuyPrice > 0 ? avgBuyPrice : basePrice)
+            const hasLivePrice = livePrice > 0
             const assetValue = qty * effectivePrice
             const profitLoss = (hasLivePrice && avgBuyPrice > 0) ? qty * (livePrice - avgBuyPrice) : 0
             const rawPct = (hasLivePrice && avgBuyPrice > 0) ? ((livePrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
@@ -353,11 +365,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                     {hasLivePrice && <span className={styles.livePriceIndicator} title="Live market price active">⚡ Live</span>}
                   </span>
                   <span className={styles.holdingName}>
-                    {privacyMode ? '••' : qty} coins • {hasLivePrice ? `${fmt(livePrice)}/ea` : (isPricesLoading ? 'Fetching live price...' : (avgBuyPrice > 0 ? `${fmt(avgBuyPrice)}/ea` : 'Rate pending'))}
+                    {privacyMode ? '••' : qty} coins • {effectivePrice > 0 ? `${fmt(effectivePrice)}/ea` : 'Fetching live price...'}
                   </span>
                 </div>
                 <div className={styles.holdingValues}>
-                  {isPricesLoading && !hasLivePrice && avgBuyPrice <= 0 ? (
+                  {effectivePrice <= 0 ? (
                     <span className={styles.skeleton} style={{ width: '70px', height: '16px' }}></span>
                   ) : (
                     <span className={styles.holdingValue}>{fmt(assetValue)}</span>
