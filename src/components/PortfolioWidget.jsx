@@ -51,6 +51,14 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return Array.from(new Set([...fromHoldings, ...fromPresets]))
   }, [holdings])
 
+  const isMountedRef = useRef(true)
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
   // Pre-seed livePrices with baseline reference rates so holding values are never 0
   useEffect(() => {
     const seed = {}
@@ -61,39 +69,32 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     setLivePrices(prev => ({ ...seed, ...prev }))
   }, [targetSymbols, s])
 
+  const loadPrices = async () => {
+    try {
+      const prices = await fetchCryptoPrices(targetSymbols, s)
+      if (isMountedRef.current) {
+        setLivePrices(prev => ({ ...prev, ...prices }))
+        setLastUpdatedStr(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+        setIsPricesLoading(false)
+      }
+    } catch (err) {
+      console.warn('PortfolioWidget: live price fetch error:', err)
+      if (isMountedRef.current) setIsPricesLoading(false)
+    }
+  }
+
   // Fetch live market prices in background + auto-refresh every 30s
   useEffect(() => {
-    let isMounted = true
-
-    async function loadPrices() {
-      try {
-        const prices = await fetchCryptoPrices(targetSymbols, s)
-        if (isMounted) {
-          setLivePrices(prev => ({ ...prev, ...prices }))
-          setLastUpdatedStr(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
-          setIsPricesLoading(false)
-        }
-      } catch (err) {
-        console.warn('PortfolioWidget: live price fetch error:', err)
-        if (isMounted) setIsPricesLoading(false)
-      }
-    }
-
-    loadPricesRef.current = loadPrices
     loadPrices()
-
     const interval = setInterval(loadPrices, 30000)
-    return () => {
-      isMounted = false
-      clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [targetSymbols, s])
 
   const handleManualRefresh = async () => {
-    if (isRefreshingPrices || !loadPricesRef.current) return
+    if (isRefreshingPrices) return
     setIsRefreshingPrices(true)
     try {
-      await loadPricesRef.current()
+      await loadPrices()
       notifyApp({
         title: 'Prices Refreshed',
         message: 'Synced fresh market rates from exchange orderbooks.',
