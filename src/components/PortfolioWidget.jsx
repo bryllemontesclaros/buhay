@@ -78,11 +78,12 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return () => { isMounted = false; clearInterval(interval) }
   }, [holdings, s])
 
-  // Helper number formatter with privacyMode support
+  // Helper number formatter with privacyMode support and small crypto decimal precision
   const fmt = (num) => {
     if (privacyMode) return `${s} •••••`
     const val = Number(num) || 0
-    return `${s} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    const maxDigits = (val > 0 && val < 1) ? 6 : 2
+    return `${s} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: maxDigits })}`
   }
 
   // Calculate overall portfolio metrics
@@ -94,8 +95,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
       const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
       const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-      const currentPrice = livePrices[symbol] ?? fallbackPrice
-      const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
+      const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
+      const avgBuyPrice = (parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice || 0)
 
       totalVal += qty * currentPrice
       totalCost += qty * avgBuyPrice
@@ -187,8 +188,17 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     const name = (portfolioForm.name || '').trim()
     const symbol = (portfolioForm.symbol || '').trim().toUpperCase()
     const quantity = parseFloat(portfolioForm.quantity)
-    const currentPrice = parseFloat(portfolioForm.currentPrice)
-    const averageBuyPrice = parseFloat(portfolioForm.averageBuyPrice) || currentPrice || 0
+    const livePrice = parseFloat(livePrices[symbol]) || 0
+    const parsedCurrent = parseFloat(portfolioForm.currentPrice)
+    const parsedBuy = parseFloat(portfolioForm.averageBuyPrice)
+
+    const finalCurrentPrice = (Number.isFinite(parsedCurrent) && parsedCurrent > 0)
+      ? parsedCurrent
+      : (livePrice > 0 ? livePrice : 0)
+
+    const finalAverageBuyPrice = (Number.isFinite(parsedBuy) && parsedBuy > 0)
+      ? parsedBuy
+      : (finalCurrentPrice > 0 ? finalCurrentPrice : livePrice)
 
     if (!name && !symbol) {
       notifyApp({ title: 'Asset Identifier Required', message: 'Select a preset or enter a ticker symbol.', tone: 'warning' })
@@ -208,8 +218,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         symbol: symbol || name,
         assetType: portfolioForm.assetType || 'stock',
         quantity,
-        averageBuyPrice,
-        currentPrice: Number.isFinite(currentPrice) && currentPrice >= 0 ? currentPrice : averageBuyPrice
+        averageBuyPrice: finalAverageBuyPrice,
+        currentPrice: finalCurrentPrice
       })
 
       notifyApp({
