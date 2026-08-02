@@ -531,10 +531,23 @@ a:active {
 
 /* Touch target accessibility for touchscreens */
 @media (pointer: coarse) {
-  button:not([class*="Close"]):not([class*="close"]):not([class*="Dismiss"]):not([class*="dismiss"]):not([class*="Icon"]):not([class*="icon"]):not([class*="Btn"]), 
-  [role="button"]:not([class*="Close"]):not([class*="close"]), 
-  a.btn {
+  button, [role="button"], a.btn {
     min-height: 44px;
+  }
+
+  /* CRITICAL GLOBAL RULE: Prevent touchscreen min-height from distorting circular/close/icon buttons into ovals */
+  button[class*="close"], button[class*="Close"],
+  button[class*="dismiss"], button[class*="Dismiss"],
+  button[class*="icon"], button[class*="Icon"],
+  button[class*="avatar"], button[class*="Avatar"],
+  button[class*="btnIcon"], button[class*="iconBtn"],
+  button[class*="dayPanel"], button[class*="drawer"],
+  button[class*="editor"], button[class*="modal"],
+  button[class*="feedback"], button[class*="quickAdd"],
+  button[class*="gymMode"], button[class*="runTracker"],
+  button[class*="toast"] {
+    min-height: unset;
+    aspect-ratio: 1 / 1;
   }
 }
 
