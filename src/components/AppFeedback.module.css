@@ -50,6 +50,12 @@
 .toastClose {
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px !important;
+  max-width: 32px;
+  max-height: 32px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
   border-radius: 50%;
   border: 1px solid color-mix(in srgb, var(--glass-border) 58%, var(--border));
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
@@ -59,6 +65,7 @@
   justify-content: center;
   flex-shrink: 0;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .toastClose:hover {

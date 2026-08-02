@@ -531,7 +531,9 @@ a:active {
 
 /* Touch target accessibility for touchscreens */
 @media (pointer: coarse) {
-  button, [role="button"], a.btn {
+  button:not([class*="Close"]):not([class*="close"]):not([class*="Dismiss"]):not([class*="dismiss"]):not([class*="Icon"]):not([class*="icon"]):not([class*="Btn"]), 
+  [role="button"]:not([class*="Close"]):not([class*="close"]), 
+  a.btn {
     min-height: 44px;
   }
 }
