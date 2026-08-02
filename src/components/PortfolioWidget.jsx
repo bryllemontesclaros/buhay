@@ -381,6 +381,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
             const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
             const assetValue = qty * currentPrice
+            const profitLoss = qty * (currentPrice - avgBuyPrice)
             const rawPct = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
             const profitLossPct = (Number.isFinite(rawPct) && !isNaN(rawPct)) ? rawPct : 0
 
