@@ -150,6 +150,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         if (liveMap[assetPreset.symbol] && liveMap[assetPreset.symbol] > 0) {
           priceToUse = liveMap[assetPreset.symbol]
           setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
+          setPortfolioForm(prev => ({
+            ...prev,
+            currentPrice: String(priceToUse),
+            averageBuyPrice: String(priceToUse),
+          }))
         }
       } catch (err) {
         console.warn('Preset live price fetch failed:', err)
@@ -161,8 +166,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       assetType: assetPreset.assetType,
       symbol: assetPreset.symbol,
       name: assetPreset.name,
-      currentPrice: String(Number(priceToUse).toFixed(2)),
-      averageBuyPrice: String(Number(priceToUse).toFixed(2)),
+      currentPrice: String(priceToUse),
+      averageBuyPrice: String(priceToUse),
     }))
 
     // Auto-focus quantity field after selection for a 1-step experience
