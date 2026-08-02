@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { deleteField } from 'firebase/firestore'
 import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
@@ -144,9 +144,14 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
     setForm(current => ({ ...current, [key]: value }))
   }
 
+  const billNameInputRef = useRef(null)
+
   function applyPreset(preset) {
     if (!preset || preset.isCustom) {
-      setForm(current => ({ ...current, presetKey: '', cat: 'Bills' }))
+      setForm(current => ({ ...current, name: '', presetKey: 'other', cat: 'Bills' }))
+      setTimeout(() => {
+        if (billNameInputRef.current) billNameInputRef.current.focus()
+      }, 50)
       return
     }
     setForm(current => ({
@@ -482,7 +487,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
         </div>
       </div>
 
-      {showDrawer && (
+      {showDrawer && createPortal(
         <div className={bStyles.drawerOverlay} onClick={() => setShowDrawer(false)}>
           <div className={bStyles.drawerModal} onClick={e => e.stopPropagation()}>
             <div className={bStyles.drawerHeader}>
@@ -493,22 +498,25 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
               <div className={styles.formGroup}>
                 <label>What bill is this for?</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
-                  {quickPresets.map(item => (
-                    <button
-                      key={item.key}
-                      type="button"
-                      className={styles.chip}
-                      onClick={() => item.isCustom ? applyPreset(null) : applyPreset(item)}
-                      style={form.presetKey === item.key ? { borderColor: 'var(--amber)', background: 'var(--amber-glow)', color: 'var(--amber)' } : {}}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                  {quickPresets.map(item => {
+                    const isSelected = form.presetKey === item.key || (item.isCustom && form.presetKey === 'other')
+                    return (
+                      <button
+                        key={item.key}
+                        type="button"
+                        className={styles.chip}
+                        onClick={() => item.isCustom ? applyPreset(null) : applyPreset(item)}
+                        style={isSelected ? { borderColor: 'var(--amber)', background: 'var(--amber-glow)', color: 'var(--amber)' } : {}}
+                      >
+                        {item.label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
               <div className={styles.formGroup}>
                 <label>Bill name</label>
-                <input placeholder="e.g. Meralco" value={form.name} onChange={e => handleNameChange(e.target.value)} />
+                <input ref={billNameInputRef} placeholder="e.g. Meralco" value={form.name} onChange={e => handleNameChange(e.target.value)} />
               </div>
               <div className={styles.formGroup}>
                 <label>Amount ({s})</label>
@@ -602,12 +610,13 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                 </select>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+            <div className={bStyles.drawerFooter}>
               <button className={styles.btnGhost} onClick={() => setShowDrawer(false)} style={{ flex: 1 }}>Cancel</button>
               <button className={styles.btnAdd} onClick={handleAdd} style={{ flex: 2, margin: 0 }}>Add Bill</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       
       {paymentBill && createPortal(
