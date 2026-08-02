@@ -20,6 +20,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
   const [isSavingHolding, setIsSavingHolding] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [livePrices, setLivePrices] = useState({})
+  const [lastUpdatedStr, setLastUpdatedStr] = useState('')
 
   const [selectedPresetId, setSelectedPresetId] = useState('')
   const [portfolioForm, setPortfolioForm] = useState({
@@ -49,7 +50,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
   }, [data?.portfolioHoldings])
 
-  // Fetch live prices quietly in background + auto-refresh every 60s
+  // Fetch live prices quietly in background + auto-refresh every 15s
   useEffect(() => {
     let isMounted = true
     async function loadPrices() {
@@ -79,6 +80,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
         if (isMounted) {
           setLivePrices(prev => ({ ...prev, ...cryptos, ...stocks }))
+          setLastUpdatedStr(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
         }
       } catch (err) {
         console.warn('PortfolioWidget: price load failed gracefully:', err)
@@ -347,7 +349,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
           <span className={styles.summaryLabel}>Total Portfolio Value</span>
           <span style={{ fontSize: '11px', color: 'var(--positive)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '3px' }}>
-            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--positive)' }}></span> ⚡ Live Market
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--positive)' }}></span> ⚡ Live Market {lastUpdatedStr ? `• ${lastUpdatedStr}` : ''}
           </span>
         </div>
         <div className={styles.summaryRow}>

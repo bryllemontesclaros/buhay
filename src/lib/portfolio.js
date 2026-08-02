@@ -180,8 +180,9 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
-    const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPairs.join(',')}`, {
-      signal: controller.signal
+    const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPairs.join(',')}&_t=${Date.now()}`, {
+      signal: controller.signal,
+      cache: 'no-store'
     })
     clearTimeout(timeoutId)
 
@@ -231,8 +232,9 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
         const pair = `${sym}USDT`
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
-        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}`, {
-          signal: controller.signal
+        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}&_t=${Date.now()}`, {
+          signal: controller.signal,
+          cache: 'no-store'
         })
         clearTimeout(timeoutId)
         if (res.ok) {
@@ -267,8 +269,9 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
         const idsQuery = idsToFetch.join(',')
-        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd,php`, {
-          signal: controller.signal
+        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${idsQuery}&vs_currencies=usd,php&_t=${Date.now()}`, {
+          signal: controller.signal,
+          cache: 'no-store'
         })
         clearTimeout(timeoutId)
         if (res.ok) {
