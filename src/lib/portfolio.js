@@ -95,11 +95,11 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // 1. Primary: Binance Public Ticker API (CORS enabled *, 3,000+ crypto pairs, 1 fast HTTP request)
+  // 1. Primary: Mexc Public Ticker API (Unblocked globally/PH, CORS enabled *, 2,000+ crypto pairs, 1 fast HTTP request)
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 4000)
-    const res = await fetch('https://api.binance.com/api/v3/ticker/price', {
+    const res = await fetch('https://api.mexc.com/api/v3/ticker/price', {
       signal: controller.signal
     })
     clearTimeout(timeoutId)
@@ -107,23 +107,17 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
     if (res.ok) {
       const list = await res.json()
       if (Array.isArray(list)) {
-        const binanceMap = {}
+        const mexcMap = {}
         list.forEach(item => {
           if (item?.symbol && item?.price) {
-            binanceMap[item.symbol] = parseFloat(item.price)
+            mexcMap[item.symbol] = parseFloat(item.price)
           }
         })
 
         uniqueSymbols.forEach(sym => {
           const usdtPair = `${sym}USDT`
-          const busdPair = `${sym}BUSD`
           const usdcPair = `${sym}USDC`
-          const btcPair = `${sym}BTC`
-          
-          let usdPrice = binanceMap[usdtPair] || binanceMap[busdPair] || binanceMap[usdcPair] || 0
-          if (!usdPrice && binanceMap[btcPair] && binanceMap['BTCUSDT']) {
-            usdPrice = binanceMap[btcPair] * binanceMap['BTCUSDT']
-          }
+          let usdPrice = mexcMap[usdtPair] || mexcMap[usdcPair] || 0
           if (sym === 'USDT' || sym === 'USDC') usdPrice = 1.0
 
           if (Number.isFinite(usdPrice) && usdPrice > 0) {
@@ -133,13 +127,35 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
       }
     }
   } catch (err) {
-    console.warn('Binance API fetch failed, proceeding to fallbacks:', err)
+    console.warn('Mexc API fetch failed, proceeding to fallbacks:', err)
   }
 
-  // 2. Secondary: Kraken & Bybit single-symbol fallback for any unlisted or custom tokens
+  // 2. Secondary: Gate.io & Kraken single-symbol fallback for any unlisted or custom tokens
   const missingSymbols = uniqueSymbols.filter(sym => !result[sym] || result[sym] <= 0)
   if (missingSymbols.length > 0) {
     const fallbackRequests = missingSymbols.map(async (sym) => {
+      // Try Gate.io (Unblocked, CORS allowed)
+      try {
+        const pair = `${sym}_USDT`
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+        const res = await fetch(`https://api.gateio.ws/api/v4/spot/tickers?currency_pair=${pair}`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        if (res.ok) {
+          const list = await res.json()
+          const item = Array.isArray(list) ? list[0] : null
+          const usdPrice = parseFloat(item?.last)
+          if (Number.isFinite(usdPrice) && usdPrice > 0) {
+            result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
+            return
+          }
+        }
+      } catch {
+        // Continue to Kraken
+      }
+
       // Try Kraken single pair (CORS allowed)
       try {
         const krakenPair = `${sym}USD`
@@ -156,29 +172,7 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
             const usdPrice = parseFloat(firstData?.c?.[0])
             if (Number.isFinite(usdPrice) && usdPrice > 0) {
               result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
-              return
             }
-          }
-        }
-      } catch {
-        // Continue to Bybit
-      }
-
-      // Try Bybit single pair
-      try {
-        const pair = `${sym}USDT`
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3000)
-        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}`, {
-          signal: controller.signal
-        })
-        clearTimeout(timeoutId)
-        if (res.ok) {
-          const json = await res.json()
-          const item = json?.result?.list?.[0]
-          const usdPrice = parseFloat(item?.lastPrice || item?.ask1Price)
-          if (Number.isFinite(usdPrice) && usdPrice > 0) {
-            result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
           }
         }
       } catch {
