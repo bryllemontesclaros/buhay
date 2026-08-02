@@ -78,6 +78,35 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return () => { isMounted = false; clearInterval(interval) }
   }, [holdings, s])
 
+  // Live price fetcher for manually typed ticker symbols in the modal
+  useEffect(() => {
+    if (!showPortfolioModal || !portfolioForm.symbol) return
+    const sym = portfolioForm.symbol.trim().toUpperCase()
+    if (!sym || (livePrices[sym] && livePrices[sym] > 0)) return
+
+    const timer = setTimeout(async () => {
+      try {
+        const isCrypto = portfolioForm.assetType === 'crypto'
+        const liveMap = isCrypto
+          ? await fetchCryptoPrices([sym], s)
+          : await fetchStockPrices([sym], s)
+
+        if (liveMap[sym] && liveMap[sym] > 0) {
+          setLivePrices(prev => ({ ...prev, [sym]: liveMap[sym] }))
+          setPortfolioForm(prev => ({
+            ...prev,
+            currentPrice: String(liveMap[sym]),
+            averageBuyPrice: prev.averageBuyPrice || String(liveMap[sym])
+          }))
+        }
+      } catch (err) {
+        console.warn('Live ticker fetch failed gracefully:', err)
+      }
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [portfolioForm.symbol, portfolioForm.assetType, showPortfolioModal, s, livePrices])
+
   // Helper number formatter with privacyMode support and small crypto decimal precision
   const fmt = (num) => {
     if (privacyMode) return `${s} •••••`
@@ -144,21 +173,22 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     let priceToUse = livePrices[assetPreset.symbol] || (isUSD ? assetPreset.defaultPriceUSD : assetPreset.defaultPricePHP) || 0
 
     // Fetch fresh live market price converted to active currency (PHP/USD)
-    if (assetPreset.assetType === 'crypto') {
-      try {
-        const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
-        if (liveMap[assetPreset.symbol] && liveMap[assetPreset.symbol] > 0) {
-          priceToUse = liveMap[assetPreset.symbol]
-          setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
-          setPortfolioForm(prev => ({
-            ...prev,
-            currentPrice: String(priceToUse),
-            averageBuyPrice: String(priceToUse),
-          }))
-        }
-      } catch (err) {
-        console.warn('Preset live price fetch failed:', err)
+    try {
+      const liveMap = assetPreset.assetType === 'crypto'
+        ? await fetchCryptoPrices([assetPreset.symbol], s)
+        : await fetchStockPrices([assetPreset.symbol], s)
+
+      if (liveMap[assetPreset.symbol] && liveMap[assetPreset.symbol] > 0) {
+        priceToUse = liveMap[assetPreset.symbol]
+        setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
+        setPortfolioForm(prev => ({
+          ...prev,
+          currentPrice: String(priceToUse),
+          averageBuyPrice: String(priceToUse),
+        }))
       }
+    } catch (err) {
+      console.warn('Preset live price fetch failed:', err)
     }
 
     setPortfolioForm(prev => ({
