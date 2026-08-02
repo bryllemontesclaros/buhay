@@ -132,21 +132,20 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
   const portfolioSummary = useMemo(() => {
     let totalVal = 0
     let totalCost = 0
-    let hasAnyPrice = false
 
     holdings.forEach(asset => {
       const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
       const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
-      const currentPrice = livePrices[symbol] || 0
+      const livePrice = livePrices[symbol] || 0
       const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
+      const effectivePrice = livePrice > 0 ? livePrice : avgBuyPrice
 
-      if (currentPrice > 0) hasAnyPrice = true
-      totalVal += qty * currentPrice
-      totalCost += qty * (avgBuyPrice > 0 ? avgBuyPrice : currentPrice)
+      totalVal += qty * effectivePrice
+      totalCost += qty * (avgBuyPrice > 0 ? avgBuyPrice : effectivePrice)
     })
 
     const totalProfit = totalVal - totalCost
-    return { totalVal, totalProfit, hasAnyPrice }
+    return { totalVal, totalProfit }
   }, [holdings, livePrices])
 
   const openAddPortfolioHolding = (holding = null) => {
@@ -335,9 +334,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             const livePrice = livePrices[symbol] || 0
             const hasLivePrice = livePrice > 0
             const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
-            const assetValue = qty * livePrice
-            const profitLoss = avgBuyPrice > 0 ? qty * (livePrice - avgBuyPrice) : 0
-            const rawPct = avgBuyPrice > 0 && livePrice > 0 ? ((livePrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
+            const effectivePrice = hasLivePrice ? livePrice : avgBuyPrice
+            const assetValue = qty * effectivePrice
+            const profitLoss = (hasLivePrice && avgBuyPrice > 0) ? qty * (livePrice - avgBuyPrice) : 0
+            const rawPct = (hasLivePrice && avgBuyPrice > 0) ? ((livePrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
             const profitLossPct = (Number.isFinite(rawPct) && !isNaN(rawPct)) ? rawPct : 0
 
             return (
@@ -348,11 +348,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                     {hasLivePrice && <span className={styles.livePriceIndicator} title="Live market price active">⚡ Live</span>}
                   </span>
                   <span className={styles.holdingName}>
-                    {privacyMode ? '••' : qty} coins • {hasLivePrice ? `${fmt(livePrice)}/ea` : 'Fetching live price...'}
+                    {privacyMode ? '••' : qty} coins • {hasLivePrice ? `${fmt(livePrice)}/ea` : (isPricesLoading ? 'Fetching live price...' : (avgBuyPrice > 0 ? `${fmt(avgBuyPrice)}/ea` : 'Rate pending'))}
                   </span>
                 </div>
                 <div className={styles.holdingValues}>
-                  {isPricesLoading && !hasLivePrice ? (
+                  {isPricesLoading && !hasLivePrice && avgBuyPrice <= 0 ? (
                     <span className={styles.skeleton} style={{ width: '70px', height: '16px' }}></span>
                   ) : (
                     <span className={styles.holdingValue}>{fmt(assetValue)}</span>

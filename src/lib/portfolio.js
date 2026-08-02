@@ -78,38 +78,11 @@ export async function getLivePhpRate() {
 }
 
 /**
- * Kraken pair name mapping for standard crypto symbols
- */
-const KRAKEN_PAIR_MAP = {
-  'BTC': 'XXBTZUSD',
-  'ETH': 'XETHZUSD',
-  'SOL': 'SOLUSD',
-  'XRP': 'XXRPZUSD',
-  'ADA': 'ADAUSD',
-  'DOT': 'DOTUSD',
-  'LINK': 'LINKUSD',
-  'AVAX': 'AVAXUSD',
-  'MATIC': 'MATICUSD',
-  'DOGE': 'XDGUSD',
-  'LTC': 'XLTCZUSD',
-  'BCH': 'BCHUSD',
-  'ATOM': 'ATOMUSD',
-  'XLM': 'XXLMZUSD',
-  'XMR': 'XXMRZUSD',
-  'USDT': 'USDTZUSD',
-  'USDC': 'USDCUSD',
-  'BNB': 'BNBUSD',
-  'SHIB': 'SHIBUSD',
-  'JUP': 'JUPUSD',
-  'UNI': 'UNIUSD',
-  'AAVE': 'AAVEUSD',
-  'PEPE': 'PEPEUSD',
-  'SUI': 'SUIUSD',
-  'NEAR': 'NEARUSD',
-}
-
-/**
- * Fetch Crypto Prices using free, keyless, CORS-friendly exchange endpoints (Kraken -> Bybit)
+ * Fetch Crypto Prices using free, keyless, CORS-friendly APIs:
+ * 1. Coinbase Public Exchange Rates API (Primary: returns 600+ coins in 1 request)
+ * 2. Kraken Public Ticker API (Secondary fallback per symbol)
+ * 3. Bybit Public Spot Ticker API (Tertiary fallback per symbol)
+ * 
  * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH', 'SOL'])
  * @param {string} currencySymbol Current currency symbol ('₱' or '$')
  * @returns {Promise<Object>} Object mapping symbol to price in target currency
@@ -122,68 +95,68 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // 1. Primary: Kraken Public Ticker API (unblocked in PH, free, no API key, CORS-friendly)
+  // 1. Primary: Coinbase Public Exchange Rates API (fast, 600+ coins, 1 HTTP call, zero CORS/pair-error issues)
   try {
-    const krakenPairs = []
-    const krakenPairToSymbol = {}
-    uniqueSymbols.forEach(sym => {
-      const pair = KRAKEN_PAIR_MAP[sym] || `${sym}USD`
-      krakenPairs.push(pair)
-      krakenPairToSymbol[pair] = sym
-    })
-
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 4000)
-    const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPairs.join(',')}&_t=${Date.now()}`, {
-      signal: controller.signal,
-      cache: 'no-store'
+    const res = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=USD', {
+      signal: controller.signal
     })
     clearTimeout(timeoutId)
 
     if (res.ok) {
       const json = await res.json()
-      if (json?.result) {
-        for (const [returnedPair, tickerData] of Object.entries(json.result)) {
-          const usdPrice = parseFloat(tickerData?.c?.[0])
-          if (!Number.isFinite(usdPrice) || usdPrice <= 0) continue
-
-          let matchedSymbol = null
-          for (const [inputPair, sym] of Object.entries(krakenPairToSymbol)) {
-            if (returnedPair === inputPair || returnedPair.replace(/[XZ]/g, '').includes(sym)) {
-              matchedSymbol = sym
-              break
-            }
-          }
-          if (!matchedSymbol) {
-            const stripped = returnedPair.replace(/USD$|ZUSD$/, '').replace(/^X+/, '')
-            for (const sym of uniqueSymbols) {
-              if (stripped === sym || (sym === 'DOGE' && stripped === 'DG')) {
-                matchedSymbol = sym
-                break
-              }
-            }
-          }
-          if (matchedSymbol && !result[matchedSymbol]) {
-            result[matchedSymbol] = isUSD ? usdPrice : (usdPrice * phpRate)
+      const rates = json?.data?.rates || {}
+      
+      uniqueSymbols.forEach(sym => {
+        const rateVal = parseFloat(rates[sym])
+        if (Number.isFinite(rateVal) && rateVal > 0) {
+          const usdPrice = 1 / rateVal
+          if (Number.isFinite(usdPrice) && usdPrice > 0) {
+            result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
           }
         }
-      }
+      })
     }
   } catch (err) {
-    // Continue to fallback
+    console.warn('Coinbase rates fetch failed, proceeding to fallback:', err)
   }
 
-  // 2. Fallback: Bybit Public Spot Ticker API for any remaining unfetched symbols
-  const missingSymbols = uniqueSymbols.filter(sym => !result[sym])
+  // 2. Secondary: Fetch missing symbols individually via Kraken / Bybit
+  const missingSymbols = uniqueSymbols.filter(sym => !result[sym] || result[sym] <= 0)
   if (missingSymbols.length > 0) {
-    const bybitRequests = missingSymbols.map(async (sym) => {
+    const fallbackRequests = missingSymbols.map(async (sym) => {
+      // Try Kraken single pair
+      try {
+        const krakenPair = KRAKEN_PAIR_MAP[sym] || `${sym}USD`
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+        const res = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${krakenPair}`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        if (res.ok) {
+          const json = await res.json()
+          if (json?.result) {
+            const firstData = Object.values(json.result)[0]
+            const usdPrice = parseFloat(firstData?.c?.[0])
+            if (Number.isFinite(usdPrice) && usdPrice > 0) {
+              result[sym] = isUSD ? usdPrice : (usdPrice * phpRate)
+              return
+            }
+          }
+        }
+      } catch {
+        // Continue to Bybit
+      }
+
+      // Try Bybit single pair
       try {
         const pair = `${sym}USDT`
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3500)
-        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}&_t=${Date.now()}`, {
-          signal: controller.signal,
-          cache: 'no-store'
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+        const res = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${pair}`, {
+          signal: controller.signal
         })
         clearTimeout(timeoutId)
         if (res.ok) {
@@ -195,10 +168,11 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
           }
         }
       } catch {
-        // Ignore single Bybit error safely
+        // Ignore single symbol failure
       }
     })
-    await Promise.allSettled(bybitRequests)
+
+    await Promise.allSettled(fallbackRequests)
   }
 
   return result
