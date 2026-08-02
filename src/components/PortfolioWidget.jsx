@@ -108,11 +108,16 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }
   }
 
+  const livePricesRef = useRef({})
+  useEffect(() => {
+    livePricesRef.current = livePrices
+  }, [livePrices])
+
   // Live price fetcher for manually typed ticker symbols in the modal
   useEffect(() => {
     if (!showPortfolioModal || !portfolioForm.symbol) return
     const sym = portfolioForm.symbol.trim().toUpperCase()
-    if (!sym || (livePrices[sym] && livePrices[sym] > 0)) return
+    if (!sym || (livePricesRef.current[sym] && livePricesRef.current[sym] > 0)) return
 
     const timer = setTimeout(async () => {
       try {
@@ -135,7 +140,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }, 400)
 
     return () => clearTimeout(timer)
-  }, [portfolioForm.symbol, portfolioForm.assetType, showPortfolioModal, s, livePrices])
+  }, [portfolioForm.symbol, portfolioForm.assetType, showPortfolioModal, s])
 
   // Helper number formatter with privacyMode support and small crypto decimal precision
   const fmt = (num) => {
@@ -372,8 +377,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
             const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
             const assetValue = qty * currentPrice
-            const profitLoss = qty * (currentPrice - avgBuyPrice)
-            const profitLossPct = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
+            const rawPct = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
+            const profitLossPct = (Number.isFinite(rawPct) && !isNaN(rawPct)) ? rawPct : 0
 
             return (
               <div key={asset?._id || i} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
@@ -645,8 +650,8 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
                   const hasLivePrice = Boolean(livePrices[symbol])
                   const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-                  const currentPrice = livePrices[symbol] ?? fallbackPrice
-                  const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
+                  const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
+                  const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
                   const assetValue = qty * currentPrice
                   const assetProfit = assetValue - (qty * avgBuyPrice)
 
