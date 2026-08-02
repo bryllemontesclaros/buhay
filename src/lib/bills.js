@@ -154,17 +154,20 @@ export function getVirtualBills(data = {}) {
   const debts = Array.isArray(data.debts) ? data.debts : []
   const accounts = Array.isArray(data.accounts) ? data.accounts : []
   const bills = Array.isArray(data.bills) ? data.bills : []
+  const expenses = Array.isArray(data.expenses) ? data.expenses : []
   
-  // Find accounts that are already explicitly linked to a bill
+  // Find accounts and names already explicitly linked to a bill
   const explicitBillAccountIds = new Set(bills.map(b => b.accountId).filter(Boolean))
+  const explicitBillNames = new Set(bills.map(b => (b.name || '').trim().toLowerCase()).filter(Boolean))
   
   const virtualBills = []
+
+  // 1. Convert Debts into Virtual Bills
   debts.forEach(debt => {
-    // Only link debts that have a specified due date and aren't already linked to a manual bill
-    if (!debt.dueDate) return
+    if (!debt) return
     if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return
+    if (explicitBillNames.has((debt.name || '').trim().toLowerCase())) return
     
-    // Look up the exact current balance from the linked account
     let balance = Number(debt.balance) || 0
     if (debt.accountId) {
       const acc = accounts.find(a => a._id === debt.accountId)
@@ -174,21 +177,108 @@ export function getVirtualBills(data = {}) {
     }
     
     if (balance <= 0) return
-    
-    // Create the virtual bill mapping
+
+    let dueDay = 15
+    if (debt.dueDate) {
+      const parsed = parseInt(String(debt.dueDate).slice(-2), 10)
+      if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) {
+        dueDay = parsed
+      }
+    } else if (debt.statementDate) {
+      const parsed = parseInt(String(debt.statementDate).slice(-2), 10)
+      if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) {
+        dueDay = parsed
+      }
+    }
+
+    const paymentAmount = Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance
+
     virtualBills.push({
       _id: `virtual-debt-${debt._id}`,
-      name: `${debt.name} (Debt)`,
-      amount: balance,
-      due: debt.dueDate,
+      name: `${debt.name} (${debt.type || 'Debt'})`,
+      amount: paymentAmount,
+      due: dueDay,
       freq: 'monthly',
-      cat: debt.type === 'Credit Card' ? 'Credit Card' : 'Debt',
+      cat: 'Bills',
+      subcat: debt.type === 'Credit Card' ? 'Credit Card' : 'Debt',
       accountId: debt.accountId || '',
       isVirtual: true,
       originalDebtId: debt._id,
-      paidPeriods: {}, // We rely on real-time balance for these rather than paid periods
+      paidPeriods: {},
     })
   })
-  
+
+  // 2. Convert Credit Card Accounts into Virtual Bills
+  accounts.forEach(acc => {
+    if (!acc || acc.type !== 'Credit Card') return
+    if (explicitBillAccountIds.has(acc._id)) return
+    const accNameLower = (acc.name || '').trim().toLowerCase()
+    if (explicitBillNames.has(accNameLower)) return
+    if (debts.some(d => d && d.accountId === acc._id)) return
+
+    const balance = Math.abs(Number(acc.balance) || 0)
+    if (balance <= 0) return
+
+    let dueDay = 15
+    if (acc.dueDate) {
+      const parsed = parseInt(String(acc.dueDate).slice(-2), 10)
+      if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) dueDay = parsed
+    } else if (acc.statementDate) {
+      const parsed = parseInt(String(acc.statementDate).slice(-2), 10)
+      if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) dueDay = parsed
+    }
+
+    virtualBills.push({
+      _id: `virtual-acc-${acc._id}`,
+      name: `${acc.name} (Credit Card)`,
+      amount: balance,
+      due: dueDay,
+      freq: 'monthly',
+      cat: 'Bills',
+      subcat: 'Credit Card',
+      accountId: acc._id,
+      isVirtual: true,
+      paidPeriods: {},
+    })
+  })
+
+  // 3. Convert Recurring Expenses into Virtual Bills
+  const chains = {}
+  expenses.forEach(tx => {
+    if (!tx || !tx.recur) return
+    const chainId = tx.recurrenceSourceId || tx._id
+    if (!chains[chainId]) chains[chainId] = []
+    chains[chainId].push(tx)
+  })
+
+  Object.values(chains).forEach(chain => {
+    chain.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    const latest = chain[0]
+    if (!latest || !latest.recur) return
+    if (latest.cat !== 'Bills') return
+
+    const txNameLower = (latest.desc || latest.subcat || 'Recurring Bill').trim().toLowerCase()
+    if (explicitBillNames.has(txNameLower)) return
+
+    let dueDay = 15
+    if (latest.date) {
+      const day = parseInt(String(latest.date).slice(-2), 10)
+      if (Number.isFinite(day) && day >= 1 && day <= 31) dueDay = day
+    }
+
+    virtualBills.push({
+      _id: `virtual-tx-${latest._id}`,
+      name: latest.desc || latest.subcat || 'Recurring Bill',
+      amount: Number(latest.amount) || 0,
+      due: dueDay,
+      freq: latest.recur || 'monthly',
+      cat: 'Bills',
+      subcat: latest.subcat || 'Utilities',
+      accountId: latest.accountId || '',
+      isVirtual: true,
+      paidPeriods: {},
+    })
+  })
+
   return virtualBills
 }

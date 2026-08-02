@@ -5,7 +5,7 @@ import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { RECUR_OPTIONS, fmt, playTick, formatDisplayDate, displayValue, maskMoney } from '../lib/utils'
 import styles from './Page.module.css'
 import sStyles from './Recurring.module.css'
-import { getRecurringOccurrenceKey } from '../lib/recurrence'
+import { getVirtualBills } from '../lib/bills'
 import Bills from './Bills'
 import Subscriptions from './Subscriptions'
 
@@ -230,6 +230,10 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
     )
   }
 
+  const totalBillsCount = useMemo(() => {
+    return [...(data?.bills || []), ...getVirtualBills(data)].length
+  }, [data?.bills, data?.debts, data?.accounts, data?.expenses])
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -276,7 +280,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             onClick={() => handleTabChange('bills')}
           >
             Bills
-            <span className={sStyles.tabCount}>{(data?.bills || []).length}</span>
+            <span className={sStyles.tabCount}>{totalBillsCount}</span>
           </button>
           <button
             type="button"
