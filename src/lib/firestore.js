@@ -34,6 +34,8 @@ export async function fsSavePortfolioHolding(uid, holding = {}) {
   }
   delete payload._id
   delete payload.id
+  delete payload.currentPrice
+  delete payload.price
   delete payload.marketValue
   delete payload.totalCost
   delete payload.gainLoss

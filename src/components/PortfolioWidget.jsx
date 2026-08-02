@@ -1,17 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { fsSavePortfolioHolding, fsDeletePortfolioHolding } from '../lib/firestore'
-import { fetchCryptoPrices, fetchStockPrices, POPULAR_ASSETS } from '../lib/portfolio'
+import { fetchCryptoPrices, POPULAR_ASSETS } from '../lib/portfolio'
 import { notifyApp } from '../lib/appFeedback'
 import styles from './PortfolioWidget.module.css'
-
-const ASSET_TYPES = [
-  { id: 'stock', label: 'Stock / ETF', icon: '📈' },
-  { id: 'crypto', label: 'Crypto', icon: '₿' },
-  { id: 'bond', label: 'Bonds', icon: '🏛️' },
-  { id: 'real_estate', label: 'Real Estate', icon: '🏠' },
-  { id: 'other', label: 'Other', icon: '💎' },
-]
 
 export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMode = false }) {
   const [showPortfolioModal, setShowPortfolioModal] = useState(false)
@@ -19,7 +11,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
   const [editingHolding, setEditingHolding] = useState(null)
   const [isSavingHolding, setIsSavingHolding] = useState(false)
   const [isRefreshingPrices, setIsRefreshingPrices] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [isPricesLoading, setIsPricesLoading] = useState(true)
   const [livePrices, setLivePrices] = useState({})
   const [lastUpdatedStr, setLastUpdatedStr] = useState('')
 
@@ -29,12 +21,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
   const [selectedPresetId, setSelectedPresetId] = useState('')
   const [portfolioForm, setPortfolioForm] = useState({
-    assetType: 'stock',
+    assetType: 'crypto',
     symbol: '',
     name: '',
     quantity: '',
-    averageBuyPrice: '',
-    currentPrice: ''
+    averageBuyPrice: ''
   })
 
   // Lock background scrolling when modal is active
@@ -48,53 +39,45 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }
   }, [showPortfolioModal, showAllHoldingsModal])
 
-  // Safely extract holdings array
+  // Safely extract holdings array from Firestore data
   const holdings = useMemo(() => {
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
   }, [data?.portfolioHoldings])
 
-  // Fetch live prices quietly in background + auto-refresh every 15s
+  // Collect unique crypto ticker symbols from presets and user holdings
+  const targetSymbols = useMemo(() => {
+    const fromHoldings = holdings.map(h => String(h?.symbol || '').trim().toUpperCase()).filter(Boolean)
+    const fromPresets = POPULAR_ASSETS.map(a => a.symbol.toUpperCase())
+    return Array.from(new Set([...fromHoldings, ...fromPresets]))
+  }, [holdings])
+
+  // Fetch live market prices in background + auto-refresh every 30s
   useEffect(() => {
     let isMounted = true
+
     async function loadPrices() {
       try {
-        const knownCryptoSet = new Set(POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => a.symbol.toUpperCase()))
-        const knownStockSet = new Set(['AAPL', 'NVDA', 'TSLA', 'MSFT', 'AMZN', 'META', 'GOOGL', 'PLTR', 'AMD', 'VOO', 'QQQ', 'SPY', 'SM', 'BDO', 'ALI', 'TEL'])
-
-        const cryptoSymbols = Array.from(new Set([
-          ...Array.from(knownCryptoSet),
-          ...holdings.map(h => String(h?.symbol || '').toUpperCase()).filter(sym => {
-            if (!sym) return false
-            if (knownCryptoSet.has(sym)) return true
-            if (knownStockSet.has(sym)) return false
-            const hObj = holdings.find(h => String(h?.symbol).toUpperCase() === sym)
-            return hObj?.assetType === 'crypto' || true // default fallback to crypto API check
-          })
-        ]))
-
-        const stockSymbols = holdings
-          .map(h => String(h?.symbol || '').toUpperCase())
-          .filter(sym => sym && (knownStockSet.has(sym) || holdings.find(h => String(h?.symbol).toUpperCase() === sym)?.assetType === 'stock'))
-
-        const [cryptos, stocks] = await Promise.all([
-          fetchCryptoPrices(cryptoSymbols, s),
-          fetchStockPrices(stockSymbols, s)
-        ])
-
+        const prices = await fetchCryptoPrices(targetSymbols, s)
         if (isMounted) {
-          setLivePrices(prev => ({ ...prev, ...cryptos, ...stocks }))
+          setLivePrices(prev => ({ ...prev, ...prices }))
           setLastUpdatedStr(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+          setIsPricesLoading(false)
         }
       } catch (err) {
-        console.warn('PortfolioWidget: price load failed gracefully:', err)
+        console.warn('PortfolioWidget: live price fetch error:', err)
+        if (isMounted) setIsPricesLoading(false)
       }
     }
 
     loadPricesRef.current = loadPrices
     loadPrices()
-    const interval = setInterval(loadPrices, 15000) // high-frequency live market auto-refresh every 15 seconds
-    return () => { isMounted = false; clearInterval(interval) }
-  }, [holdings, s])
+
+    const interval = setInterval(loadPrices, 30000)
+    return () => {
+      isMounted = false
+      clearInterval(interval)
+    }
+  }, [targetSymbols, s])
 
   const handleManualRefresh = async () => {
     if (isRefreshingPrices || !loadPricesRef.current) return
@@ -117,7 +100,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     livePricesRef.current = livePrices
   }, [livePrices])
 
-  // Live price fetcher for manually typed ticker symbols in the modal
+  // Fetch live price immediately when typing a custom symbol in modal
   useEffect(() => {
     if (!showPortfolioModal || !portfolioForm.symbol) return
     const sym = portfolioForm.symbol.trim().toUpperCase()
@@ -125,18 +108,9 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
     const timer = setTimeout(async () => {
       try {
-        const isCrypto = portfolioForm.assetType === 'crypto'
-        const liveMap = isCrypto
-          ? await fetchCryptoPrices([sym], s)
-          : await fetchStockPrices([sym], s)
-
+        const liveMap = await fetchCryptoPrices([sym], s)
         if (liveMap[sym] && liveMap[sym] > 0) {
           setLivePrices(prev => ({ ...prev, [sym]: liveMap[sym] }))
-          setPortfolioForm(prev => ({
-            ...prev,
-            currentPrice: String(liveMap[sym]),
-            averageBuyPrice: prev.averageBuyPrice || String(liveMap[sym])
-          }))
         }
       } catch (err) {
         console.warn('Live ticker fetch failed gracefully:', err)
@@ -144,9 +118,9 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }, 400)
 
     return () => clearTimeout(timer)
-  }, [portfolioForm.symbol, portfolioForm.assetType, showPortfolioModal, s])
+  }, [portfolioForm.symbol, showPortfolioModal, s])
 
-  // Helper number formatter with privacyMode support and small crypto decimal precision
+  // Helper number formatter with privacyMode support and small decimal precision
   const fmt = (num) => {
     if (privacyMode) return `${s} •••••`
     const val = Number(num) || 0
@@ -154,24 +128,25 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     return `${s} ${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: maxDigits })}`
   }
 
-  // Calculate overall portfolio metrics
+  // Calculate overall portfolio metrics dynamically using live market prices
   const portfolioSummary = useMemo(() => {
     let totalVal = 0
     let totalCost = 0
+    let hasAnyPrice = false
 
     holdings.forEach(asset => {
       const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
       const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
-      const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-      const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
-      const avgBuyPrice = (parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice || 0)
+      const currentPrice = livePrices[symbol] || 0
+      const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
 
+      if (currentPrice > 0) hasAnyPrice = true
       totalVal += qty * currentPrice
-      totalCost += qty * avgBuyPrice
+      totalCost += qty * (avgBuyPrice > 0 ? avgBuyPrice : currentPrice)
     })
 
     const totalProfit = totalVal - totalCost
-    return { totalVal, totalProfit }
+    return { totalVal, totalProfit, hasAnyPrice }
   }, [holdings, livePrices])
 
   const openAddPortfolioHolding = (holding = null) => {
@@ -179,23 +154,21 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       setEditingHolding(holding)
       setSelectedPresetId('custom')
       setPortfolioForm({
-        assetType: holding.assetType || 'stock',
+        assetType: 'crypto',
         symbol: holding.symbol || '',
         name: holding.name || '',
         quantity: String(holding.quantity ?? holding.shares ?? ''),
-        averageBuyPrice: String(holding.averageBuyPrice ?? holding.avgPrice ?? ''),
-        currentPrice: String(holding.currentPrice ?? holding.price ?? '')
+        averageBuyPrice: String(holding.averageBuyPrice ?? holding.avgPrice ?? '')
       })
     } else {
       setEditingHolding(null)
       setSelectedPresetId('')
       setPortfolioForm({
-        assetType: 'stock',
+        assetType: 'crypto',
         symbol: '',
         name: '',
         quantity: '',
-        averageBuyPrice: '',
-        currentPrice: ''
+        averageBuyPrice: ''
       })
     }
     setShowPortfolioModal(true)
@@ -208,38 +181,26 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     const assetPreset = POPULAR_ASSETS.find(a => a.id === presetId)
     if (!assetPreset) return
 
-    const isUSD = (s === '$' || s === 'USD')
-    let priceToUse = livePrices[assetPreset.symbol] || (isUSD ? assetPreset.defaultPriceUSD : assetPreset.defaultPricePHP) || 0
-
-    // Fetch fresh live market price converted to active currency (PHP/USD)
-    try {
-      const liveMap = assetPreset.assetType === 'crypto'
-        ? await fetchCryptoPrices([assetPreset.symbol], s)
-        : await fetchStockPrices([assetPreset.symbol], s)
-
-      if (liveMap[assetPreset.symbol] && liveMap[assetPreset.symbol] > 0) {
-        priceToUse = liveMap[assetPreset.symbol]
-        setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: priceToUse }))
-        setPortfolioForm(prev => ({
-          ...prev,
-          currentPrice: String(priceToUse),
-          averageBuyPrice: String(priceToUse),
-        }))
-      }
-    } catch (err) {
-      console.warn('Preset live price fetch failed:', err)
-    }
-
     setPortfolioForm(prev => ({
       ...prev,
-      assetType: assetPreset.assetType,
+      assetType: 'crypto',
       symbol: assetPreset.symbol,
-      name: assetPreset.name,
-      currentPrice: String(priceToUse),
-      averageBuyPrice: String(priceToUse),
+      name: assetPreset.name
     }))
 
-    // Auto-focus quantity field after selection for a 1-step experience
+    // Fetch fresh live market price if not already cached
+    if (!livePrices[assetPreset.symbol]) {
+      try {
+        const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
+        if (liveMap[assetPreset.symbol]) {
+          setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: liveMap[assetPreset.symbol] }))
+        }
+      } catch (err) {
+        console.warn('Preset price fetch error:', err)
+      }
+    }
+
+    // Auto-focus quantity field after selection
     setTimeout(() => {
       if (quantityInputRef.current) {
         quantityInputRef.current.focus()
@@ -262,17 +223,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     const name = (portfolioForm.name || '').trim()
     const symbol = (portfolioForm.symbol || '').trim().toUpperCase()
     const quantity = parseFloat(portfolioForm.quantity)
-    const livePrice = parseFloat(livePrices[symbol]) || 0
-    const parsedCurrent = parseFloat(portfolioForm.currentPrice)
     const parsedBuy = parseFloat(portfolioForm.averageBuyPrice)
-
-    const finalCurrentPrice = (Number.isFinite(parsedCurrent) && parsedCurrent > 0)
-      ? parsedCurrent
-      : (livePrice > 0 ? livePrice : 0)
-
-    const finalAverageBuyPrice = (Number.isFinite(parsedBuy) && parsedBuy > 0)
-      ? parsedBuy
-      : (finalCurrentPrice > 0 ? finalCurrentPrice : livePrice)
 
     if (!name && !symbol) {
       notifyApp({ title: 'Asset Identifier Required', message: 'Select a preset or enter a ticker symbol.', tone: 'warning' })
@@ -290,10 +241,9 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         ...(editingHolding?._id ? { _id: editingHolding._id } : {}),
         name: name || symbol,
         symbol: symbol || name,
-        assetType: portfolioForm.assetType || 'stock',
+        assetType: 'crypto',
         quantity,
-        averageBuyPrice: finalAverageBuyPrice,
-        currentPrice: finalCurrentPrice
+        averageBuyPrice: Number.isFinite(parsedBuy) && parsedBuy > 0 ? parsedBuy : 0
       })
 
       notifyApp({
@@ -329,15 +279,15 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     <section className={styles.card} aria-label="Asset Portfolio">
       <div className={styles.cardHeader}>
         <div className={styles.cardTitleGroup}>
-          <span className={styles.cardIcon}>📈</span>
-          <h3 className={styles.cardTitle}>Asset Portfolio</h3>
+          <span className={styles.cardIcon}>₿</span>
+          <h3 className={styles.cardTitle}>Crypto Portfolio</h3>
         </div>
         <div className={styles.headerActions}>
           <button 
             className={styles.refreshBtnHeader} 
             onClick={handleManualRefresh} 
             disabled={isRefreshingPrices}
-            title="Refresh live prices from exchange APIs"
+            title="Refresh live prices from exchange orderbooks"
           >
             <span className={`${styles.refreshIcon} ${isRefreshingPrices ? styles.spinning : ''}`}>🔄</span> Refresh
           </button>
@@ -355,10 +305,16 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
           </span>
         </div>
         <div className={styles.summaryRow}>
-          <span className={styles.summaryTotal}>{fmt(portfolioSummary.totalVal)}</span>
-          <span className={`${styles.summaryProfit} ${portfolioSummary.totalProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
-            {privacyMode ? `${s} •••••` : `${portfolioSummary.totalProfit >= 0 ? '+' : ''}${fmt(portfolioSummary.totalProfit)}`}
-          </span>
+          {isPricesLoading && holdings.length > 0 ? (
+            <span className={styles.skeleton} style={{ width: '120px', height: '28px' }}></span>
+          ) : (
+            <span className={styles.summaryTotal}>{fmt(portfolioSummary.totalVal)}</span>
+          )}
+          {!isPricesLoading && portfolioSummary.totalCost > 0 && (
+            <span className={`${styles.summaryProfit} ${portfolioSummary.totalProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+              {privacyMode ? `${s} •••••` : `${portfolioSummary.totalProfit >= 0 ? '+' : ''}${fmt(portfolioSummary.totalProfit)}`}
+            </span>
+          )}
         </div>
       </div>
 
@@ -376,35 +332,38 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
           {visibleHoldings.map((asset, i) => {
             const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
             const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
-            const hasLivePrice = Boolean(livePrices[symbol])
-            const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-            const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
-            const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
-            const assetValue = qty * currentPrice
-            const profitLoss = qty * (currentPrice - avgBuyPrice)
-            const rawPct = avgBuyPrice > 0 ? ((currentPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
+            const livePrice = livePrices[symbol] || 0
+            const hasLivePrice = livePrice > 0
+            const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
+            const assetValue = qty * livePrice
+            const profitLoss = avgBuyPrice > 0 ? qty * (livePrice - avgBuyPrice) : 0
+            const rawPct = avgBuyPrice > 0 && livePrice > 0 ? ((livePrice - avgBuyPrice) / avgBuyPrice) * 100 : 0
             const profitLossPct = (Number.isFinite(rawPct) && !isNaN(rawPct)) ? rawPct : 0
 
             return (
               <div key={asset?._id || i} className={styles.holdingItem} onClick={() => openAddPortfolioHolding(asset)}>
                 <div className={styles.holdingDetails}>
                   <span className={styles.holdingSymbol}>
-                    {symbol || 'ASSET'}
+                    {symbol || 'CRYPTO'}
                     {hasLivePrice && <span className={styles.livePriceIndicator} title="Live market price active">⚡ Live</span>}
                   </span>
                   <span className={styles.holdingName}>
-                    {privacyMode ? '••' : qty} {asset?.assetType === 'crypto' ? 'coins' : 'shares'} • {fmt(currentPrice)}/ea
+                    {privacyMode ? '••' : qty} coins • {hasLivePrice ? `${fmt(livePrice)}/ea` : 'Fetching live price...'}
                   </span>
                 </div>
                 <div className={styles.holdingValues}>
-                  <span className={styles.holdingValue}>{fmt(assetValue)}</span>
-                  {avgBuyPrice > 0 && !privacyMode && Math.abs(profitLoss) > 0.01 ? (
+                  {isPricesLoading && !hasLivePrice ? (
+                    <span className={styles.skeleton} style={{ width: '70px', height: '16px' }}></span>
+                  ) : (
+                    <span className={styles.holdingValue}>{fmt(assetValue)}</span>
+                  )}
+                  {hasLivePrice && avgBuyPrice > 0 && !privacyMode && Math.abs(profitLoss) > 0.01 ? (
                     <span className={`${styles.holdingShares} ${profitLoss >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
                       {profitLoss >= 0 ? '+' : ''}{fmt(profitLoss)} ({profitLossPct >= 0 ? '+' : ''}{profitLossPct.toFixed(1)}%)
                     </span>
                   ) : (
                     <span className={styles.holdingShares}>
-                      {asset?.name || 'Asset'}
+                      {asset?.name || symbol}
                     </span>
                   )}
                 </div>
@@ -414,53 +373,46 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         </div>
       ) : (
         <div className={styles.emptyPortfolio}>
-          <div style={{ fontSize: '24px', marginBottom: '4px' }}>📈</div>
-          <p className={styles.emptyText}>No assets added yet.</p>
+          <div style={{ fontSize: '24px', marginBottom: '4px' }}>₿</div>
+          <p className={styles.emptyText}>No crypto holdings added yet.</p>
           <small style={{ color: 'var(--text3)', fontSize: '11px', display: 'block', marginTop: '2px' }}>
-            Add stocks, crypto, or bonds to track net worth live.
+            Add Bitcoin, Ethereum, Solana, or any token to track live net worth.
           </small>
         </div>
       )}
 
       <button className={styles.addAssetBtn} onClick={() => openAddPortfolioHolding()}>
-        + Add New Asset
+        + Add Crypto Asset
       </button>
 
-      {/* ── ADD/EDIT MODAL (PORTALED DIRECTLY TO BODY) ────────────────── */}
+      {/* ── ADD/EDIT MODAL ────────────────── */}
       {showPortfolioModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closePortfolioModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleGroup}>
-                <span className={styles.modalHeaderIcon}>📈</span>
-                <h3 className={styles.modalTitle}>{editingHolding ? 'Edit Holding' : 'Add Asset'}</h3>
+                <span className={styles.modalHeaderIcon}>₿</span>
+                <h3 className={styles.modalTitle}>{editingHolding ? 'Edit Crypto Holding' : 'Add Crypto Asset'}</h3>
               </div>
               <button className={styles.closeModalBtn} onClick={closePortfolioModal} aria-label="Close">✕</button>
             </div>
 
             <div className={styles.modalBody}>
               
-              {/* Step 1: Asset Picker / Universal Ticker Search */}
+              {/* Step 1: Preset Select */}
               {!editingHolding && (
                 <div className={styles.inputGroup}>
-                  <span className={styles.inputLabel}>1. Select or Search Asset</span>
+                  <span className={styles.inputLabel}>1. Select Popular Crypto</span>
                   <select
                     className={styles.presetSelectField}
                     value={selectedPresetId}
                     onChange={e => handleSelectPresetAsset(e.target.value)}
                   >
-                    <option value="">Search or pick an asset (Crypto, Stocks, ETFs)...</option>
-                    <optgroup label="Popular Crypto">
-                      {POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => (
-                        <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Popular Stocks & ETFs">
-                      {POPULAR_ASSETS.filter(a => a.assetType === 'stock').map(a => (
-                        <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
-                      ))}
-                    </optgroup>
+                    <option value="">Pick a crypto asset (BTC, ETH, SOL, USDT...)</option>
+                    {POPULAR_ASSETS.map(a => (
+                      <option key={a.id} value={a.id}>{a.name} ({a.symbol})</option>
+                    ))}
                     <option value="custom">✏️ Type Custom Ticker Symbol Manually...</option>
                   </select>
                 </div>
@@ -473,7 +425,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   <input 
                     className={styles.inputField} 
                     type="text" 
-                    placeholder="e.g. SOL, AAPL, PEPE" 
+                    placeholder="e.g. SOL, BTC, PEPE" 
                     value={portfolioForm.symbol} 
                     onChange={e => {
                       const sym = e.target.value.toUpperCase()
@@ -496,7 +448,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
 
               {/* Step 2: Quantity Owned */}
               <div className={styles.inputGroup}>
-                <span className={styles.inputLabel}>2. Quantity / Shares Owned</span>
+                <span className={styles.inputLabel}>2. Quantity / Coins Owned</span>
                 <input 
                   ref={quantityInputRef}
                   className={`${styles.inputField} ${styles.inputFieldHighlight}`} 
@@ -512,10 +464,10 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
               {(() => {
                 const qty = parseFloat(portfolioForm.quantity) || 0
                 const sym = (portfolioForm.symbol || '').toUpperCase()
-                const price = parseFloat(livePrices[sym]) || parseFloat(portfolioForm.currentPrice) || parseFloat(portfolioForm.averageBuyPrice) || 0
-                const estValue = qty * price
+                const livePrice = livePrices[sym] || 0
+                const estValue = qty * livePrice
 
-                if (qty > 0 && price > 0) {
+                if (qty > 0 && livePrice > 0) {
                   return (
                     <div style={{
                       background: 'color-mix(in srgb, var(--income) 12%, var(--surface2))',
@@ -523,7 +475,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                       borderRadius: '12px',
                       padding: '12px 14px',
                       marginTop: '4px',
-                      marginBottom: '8px'
+                      marginBottom: '4px'
                     }}>
                       <div style={{ fontSize: '11px', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
                         ⚡ Real-Time Holdings Calculation
@@ -532,7 +484,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                         {fmt(estValue)}
                       </div>
                       <div style={{ fontSize: '12px', color: 'var(--text2)', marginTop: '2px' }}>
-                        {qty} {sym || 'units'} × {fmt(price)} live market price
+                        {qty} {sym} × {fmt(livePrice)} live exchange price
                       </div>
                     </div>
                   )
@@ -540,72 +492,17 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                 return null
               })()}
 
-              {/* Optional Advanced Settings Toggle */}
-              <div style={{ marginTop: '8px' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowAdvanced(!showAdvanced)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text3)',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    padding: '4px 0',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <span>{showAdvanced ? '▼ Hide Advanced Details' : '▶ Show Advanced Details (Cost Basis & Class)'}</span>
-                </button>
-
-                {showAdvanced && (
-                  <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {/* Asset Type Pills */}
-                    <div className={styles.inputGroup}>
-                      <span className={styles.inputLabel}>Asset Class</span>
-                      <div className={styles.pillGrid}>
-                        {ASSET_TYPES.map(type => (
-                          <button
-                            key={type.id}
-                            type="button"
-                            className={`${styles.pillBtn} ${portfolioForm.assetType === type.id ? styles.pillBtnActive : ''}`}
-                            onClick={() => setPortfolioForm(prev => ({ ...prev, assetType: type.id }))}
-                          >
-                            <span className={styles.pillIcon}>{type.icon}</span>
-                            <span>{type.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className={styles.inputRow}>
-                      <div className={styles.inputGroup}>
-                        <span className={styles.inputLabel}>Custom Avg Buy Price ({s})</span>
-                        <input 
-                          className={styles.inputField} 
-                          type="number" 
-                          step="any" 
-                          placeholder="Default: Live Price" 
-                          value={portfolioForm.averageBuyPrice} 
-                          onChange={e => setPortfolioForm(prev => ({ ...prev, averageBuyPrice: e.target.value }))} 
-                        />
-                      </div>
-                      <div className={styles.inputGroup}>
-                        <span className={styles.inputLabel}>Fallback Market Price ({s})</span>
-                        <input 
-                          className={styles.inputField} 
-                          type="number" 
-                          step="any" 
-                          placeholder="Auto-synced via API" 
-                          value={portfolioForm.currentPrice} 
-                          onChange={e => setPortfolioForm(prev => ({ ...prev, currentPrice: e.target.value }))} 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+              {/* Optional Avg Buy Price */}
+              <div className={styles.inputGroup} style={{ marginTop: '8px' }}>
+                <span className={styles.inputLabel}>Average Buy Price ({s}) — Optional for Profit/Loss tracking</span>
+                <input 
+                  className={styles.inputField} 
+                  type="number" 
+                  step="any" 
+                  placeholder="e.g. Price you bought at" 
+                  value={portfolioForm.averageBuyPrice} 
+                  onChange={e => setPortfolioForm(prev => ({ ...prev, averageBuyPrice: e.target.value }))} 
+                />
               </div>
 
             </div>
@@ -635,7 +532,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
         document.body
       )}
 
-      {/* ── VIEW ALL MODAL (PORTALED DIRECTLY TO BODY) ────────────────── */}
+      {/* ── VIEW ALL MODAL ────────────────── */}
       {showAllHoldingsModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={() => setShowAllHoldingsModal(false)}>
           <div className={`${styles.modalContent} ${styles.modalContentLarge}`} onClick={e => e.stopPropagation()}>
@@ -643,7 +540,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
             <div className={styles.modalHeader}>
               <div className={styles.modalHeaderTitleGroup}>
                 <span className={styles.modalHeaderIcon}>📊</span>
-                <h3 className={styles.modalTitle}>All Portfolio Assets ({holdings.length})</h3>
+                <h3 className={styles.modalTitle}>All Crypto Holdings ({holdings.length})</h3>
               </div>
               <button className={styles.closeModalBtn} onClick={() => setShowAllHoldingsModal(false)}>✕</button>
             </div>
@@ -653,28 +550,28 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                 {holdings.map((asset, i) => {
                   const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
                   const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
-                  const hasLivePrice = Boolean(livePrices[symbol])
-                  const fallbackPrice = parseFloat(asset?.currentPrice ?? asset?.price ?? 0) || 0
-                  const currentPrice = (livePrices[symbol] && livePrices[symbol] > 0) ? livePrices[symbol] : fallbackPrice
-                  const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || currentPrice
-                  const assetValue = qty * currentPrice
-                  const assetProfit = assetValue - (qty * avgBuyPrice)
+                  const livePrice = livePrices[symbol] || 0
+                  const hasLivePrice = livePrice > 0
+                  const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
+                  const assetValue = qty * livePrice
+                  const assetProfit = avgBuyPrice > 0 ? assetValue - (qty * avgBuyPrice) : 0
 
                   return (
                     <div key={asset?._id || i} className={styles.holdingItemFull} onClick={() => { setShowAllHoldingsModal(false); openAddPortfolioHolding(asset); }}>
                       <div className={styles.holdingDetailsFull}>
                         <span className={styles.holdingSymbolFull}>
-                          {symbol || 'ASSET'}
-                          {hasLivePrice && <span className={styles.livePriceIndicator} title="Live price synced">⚡</span>}
+                          {symbol || 'CRYPTO'}
+                          {hasLivePrice && <span className={styles.livePriceIndicator} title="Live market rate active">⚡</span>}
                         </span>
-                        <span className={styles.holdingNameFull}>{asset?.name || 'Unnamed Asset'}</span>
-                        <span className={styles.holdingTypeFull}>{asset?.assetType || 'stock'}</span>
+                        <span className={styles.holdingNameFull}>{asset?.name || 'Crypto Asset'}</span>
                       </div>
                       <div className={styles.holdingValuesFull}>
                         <span className={styles.holdingValueFull}>{fmt(assetValue)}</span>
-                        <span className={`${styles.holdingProfitFull} ${assetProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
-                          {assetProfit >= 0 ? '+' : ''}{fmt(assetProfit)}
-                        </span>
+                        {avgBuyPrice > 0 && (
+                          <span className={`${styles.holdingProfitFull} ${assetProfit >= 0 ? styles.subMetricValGreen : styles.subMetricValRed}`}>
+                            {assetProfit >= 0 ? '+' : ''}{fmt(assetProfit)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   )
