@@ -14,6 +14,11 @@ export const POPULAR_ASSETS = [
   { id: 'xrp', name: 'XRP', symbol: 'XRP', assetType: 'crypto', defaultPriceUSD: 1.07, defaultPricePHP: 65.5 },
   { id: 'ada', name: 'Cardano', symbol: 'ADA', assetType: 'crypto', defaultPriceUSD: 0.36, defaultPricePHP: 22.05 },
   { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', assetType: 'crypto', defaultPriceUSD: 0.10, defaultPricePHP: 6.13 },
+  { id: 'jup', name: 'Jupiter', symbol: 'JUP', assetType: 'crypto', defaultPriceUSD: 0.85, defaultPricePHP: 52.06 },
+  { id: 'pump', name: 'Pump.fun', symbol: 'PUMP', assetType: 'crypto', defaultPriceUSD: 0.0022, defaultPricePHP: 0.13 },
+  { id: 'uni', name: 'Uniswap', symbol: 'UNI', assetType: 'crypto', defaultPriceUSD: 6.50, defaultPricePHP: 398.12 },
+  { id: 'aave', name: 'Aave', symbol: 'AAVE', assetType: 'crypto', defaultPriceUSD: 145.00, defaultPricePHP: 8881.25 },
+  { id: 'bp', name: 'Backpack Token', symbol: 'BP', assetType: 'crypto', defaultPriceUSD: 0.37, defaultPricePHP: 22.66 },
   { id: 'shib', name: 'Shiba Inu', symbol: 'SHIB', assetType: 'crypto', defaultPriceUSD: 0.000014, defaultPricePHP: 0.00085 },
   { id: 'pepe', name: 'Pepe', symbol: 'PEPE', assetType: 'crypto', defaultPriceUSD: 0.000008, defaultPricePHP: 0.00049 },
   { id: 'sui', name: 'Sui Network', symbol: 'SUI', assetType: 'crypto', defaultPriceUSD: 1.85, defaultPricePHP: 113.31 },
@@ -52,6 +57,11 @@ const COINGECKO_MAP = {
   'XRP': 'ripple',
   'ADA': 'cardano',
   'DOGE': 'dogecoin',
+  'JUP': 'jupiter-exchange-solana',
+  'PUMP': 'pump-fun',
+  'UNI': 'uniswap',
+  'AAVE': 'aave',
+  'BP': 'backpack',
   'SHIB': 'shiba-inu',
   'PEPE': 'pepe',
   'SUI': 'sui',
@@ -152,6 +162,9 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
     'USDC': 'USDCUSD',
     'BNB': 'BNBUSD',
     'SHIB': 'SHIBUSD',
+    'JUP': 'JUPUSD',
+    'UNI': 'UNIUSD',
+    'AAVE': 'AAVEUSD',
   }
 
   // 1. Primary: Kraken Public Ticker API (unblocked in PH, no API key, CORS-friendly)
