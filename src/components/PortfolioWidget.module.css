@@ -46,6 +46,41 @@
   gap: 8px;
 }
 
+.refreshBtnHeader {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm, 10px);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.refreshBtnHeader:hover {
+  background: var(--surface3, var(--border));
+  color: var(--text);
+}
+
+.refreshIcon {
+  display: inline-block;
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .addBtnHeader {
   background: color-mix(in srgb, var(--accent) 15%, transparent);
   color: var(--accent);

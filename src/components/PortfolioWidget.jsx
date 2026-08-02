@@ -85,10 +85,28 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       }
     }
 
+    loadPricesRef.current = loadPrices
     loadPrices()
     const interval = setInterval(loadPrices, 15000) // high-frequency live market auto-refresh every 15 seconds
     return () => { isMounted = false; clearInterval(interval) }
   }, [holdings, s])
+
+  const handleManualRefresh = async () => {
+    if (isRefreshingPrices || !loadPricesRef.current) return
+    setIsRefreshingPrices(true)
+    try {
+      await loadPricesRef.current()
+      notifyApp({
+        title: 'Prices Refreshed',
+        message: 'Synced fresh market rates from exchange orderbooks.',
+        tone: 'positive'
+      })
+    } catch (err) {
+      console.warn('Manual price refresh error:', err)
+    } finally {
+      setTimeout(() => setIsRefreshingPrices(false), 500)
+    }
+  }
 
   // Live price fetcher for manually typed ticker symbols in the modal
   useEffect(() => {
@@ -306,6 +324,14 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
           <h3 className={styles.cardTitle}>Asset Portfolio</h3>
         </div>
         <div className={styles.headerActions}>
+          <button 
+            className={styles.refreshBtnHeader} 
+            onClick={handleManualRefresh} 
+            disabled={isRefreshingPrices}
+            title="Refresh live prices from exchange APIs"
+          >
+            <span className={`${styles.refreshIcon} ${isRefreshingPrices ? styles.spinning : ''}`}>🔄</span> Refresh
+          </button>
           <button className={styles.addBtnHeader} onClick={() => openAddPortfolioHolding()}>
             + Add
           </button>
