@@ -88,7 +88,7 @@ export async function getLivePhpRate() {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 3500)
-    const res = await fetch('https://open.er-api.com/v6/latest/USD', { signal: controller.signal })
+    const res = await fetch(`https://open.er-api.com/v6/latest/USD?_t=${now}`, { signal: controller.signal })
     clearTimeout(timeoutId)
     if (res.ok) {
       const data = await res.json()
@@ -116,7 +116,7 @@ export function getBaselinePrice(symbol = '', currencySymbol = '₱') {
 }
 
 /**
- * Ultra-Resilient Multi-Provider Crypto Price Fetcher (Mexc -> OKX -> Gate.io -> CoinGecko -> Baseline Fallback)
+ * Ultra-Resilient Multi-Provider Crypto Price Fetcher (Mexc -> OKX -> Gate.io -> Baseline Fallback)
  * @param {string[]} symbols Array of crypto ticker symbols (e.g. ['BTC', 'ETH', 'SOL'])
  * @param {string} currencySymbol Current currency symbol ('₱' or '$')
  * @returns {Promise<Object>} Object mapping symbol to price in target currency
@@ -129,19 +129,11 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
   const result = {}
   const uniqueSymbols = Array.from(new Set(symbols.map(s => String(s || '').trim().toUpperCase()).filter(Boolean)))
 
-  // Pre-seed with baseline reference prices so prices are never 0
-  uniqueSymbols.forEach(sym => {
-    const baseUsd = BASE_CRYPTO_USD_PRICES[sym]
-    if (baseUsd > 0) {
-      result[sym] = isUSD ? baseUsd : (baseUsd * phpRate)
-    }
-  })
-
   // 1. Primary: Mexc Public Ticker API (CORS enabled *, 2,000+ crypto pairs, 1 fast request)
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 4000)
-    const res = await fetch('https://api.mexc.com/api/v3/ticker/price', { signal: controller.signal })
+    const res = await fetch(`https://api.mexc.com/api/v3/ticker/price?_t=${Date.now()}`, { signal: controller.signal })
     clearTimeout(timeoutId)
 
     if (res.ok) {
@@ -178,7 +170,7 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
       try {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3000)
-        const res = await fetch(`https://www.okx.com/api/v5/market/ticker?instId=${sym}-USDT`, { signal: controller.signal })
+        const res = await fetch(`https://www.okx.com/api/v5/market/ticker?instId=${sym}-USDT&_t=${Date.now()}`, { signal: controller.signal })
         clearTimeout(timeoutId)
         if (res.ok) {
           const json = await res.json()
@@ -197,7 +189,7 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
       try {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3000)
-        const res = await fetch(`https://api.gateio.ws/api/v4/spot/tickers?currency_pair=${sym}_USDT`, { signal: controller.signal })
+        const res = await fetch(`https://api.gateio.ws/api/v4/spot/tickers?currency_pair=${sym}_USDT&_t=${Date.now()}`, { signal: controller.signal })
         clearTimeout(timeoutId)
         if (res.ok) {
           const list = await res.json()
@@ -214,6 +206,16 @@ export async function fetchCryptoPrices(symbols = [], currencySymbol = '₱') {
 
     await Promise.allSettled(fallbackRequests)
   }
+
+  // 3. Absolute last resort fallback: assign baseline reference prices only for symbols that failed all live exchanges
+  uniqueSymbols.forEach(sym => {
+    if (!result[sym] || result[sym] <= 0) {
+      const baseUsd = BASE_CRYPTO_USD_PRICES[sym]
+      if (baseUsd > 0) {
+        result[sym] = isUSD ? baseUsd : (baseUsd * phpRate)
+      }
+    }
+  })
 
   return result
 }
