@@ -5,6 +5,7 @@ import { today, formatDisplayDate } from '../lib/utils'
 import { getBalanceAtDate } from '../lib/finance'
 import { HABIT_OPTIONS, dateDaysAgo } from '../lib/lakasHelpers'
 import { generateDashboardInsight } from '../lib/insights'
+import { getBaselinePrice } from '../lib/portfolio'
 import ErrorBoundary from '../components/ErrorBoundary'
 import PortfolioWidget from '../components/PortfolioWidget'
 import styles from './Dashboard.module.css'
@@ -111,7 +112,11 @@ export default function Dashboard({ user, data, profile, onNavigate, privacyMode
     const totalCCDebt = creditCardAccounts.reduce((sum, a) => sum + Math.abs(a?.balance || 0), 0)
     const totalPortfolio = holdings.reduce((sum, h) => {
       const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
-      const price = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
+      const symbol = h?.symbol ? String(h.symbol).toUpperCase() : ''
+      const currentPrice = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
+      const avgBuyPrice = parseFloat(h?.averageBuyPrice ?? h?.avgPrice ?? 0) || 0
+      const basePrice = getBaselinePrice(symbol, s)
+      const price = currentPrice > 0 ? currentPrice : (avgBuyPrice > 0 ? avgBuyPrice : basePrice)
       return sum + (qty * price)
     }, 0)
 
