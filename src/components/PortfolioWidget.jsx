@@ -18,9 +18,14 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
   const [showAllHoldingsModal, setShowAllHoldingsModal] = useState(false)
   const [editingHolding, setEditingHolding] = useState(null)
   const [isSavingHolding, setIsSavingHolding] = useState(false)
+  const [isRefreshingPrices, setIsRefreshingPrices] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [livePrices, setLivePrices] = useState({})
   const [lastUpdatedStr, setLastUpdatedStr] = useState('')
+
+  const loadPricesRef = useRef(null)
+  const livePricesRef = useRef({})
+  const quantityInputRef = useRef(null)
 
   const [selectedPresetId, setSelectedPresetId] = useState('')
   const [portfolioForm, setPortfolioForm] = useState({
@@ -31,8 +36,6 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     averageBuyPrice: '',
     currentPrice: ''
   })
-
-  const quantityInputRef = useRef(null)
 
   // Lock background scrolling when modal is active
   useEffect(() => {
@@ -110,7 +113,6 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     }
   }
 
-  const livePricesRef = useRef({})
   useEffect(() => {
     livePricesRef.current = livePrices
   }, [livePrices])
