@@ -54,11 +54,23 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
     let isMounted = true
     async function loadPrices() {
       try {
-        const popularCryptoSymbols = POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => a.symbol)
-        const holdingCryptoSymbols = holdings.filter(h => h?.assetType === 'crypto' && h?.symbol).map(h => h.symbol)
-        const cryptoSymbols = Array.from(new Set([...popularCryptoSymbols, ...holdingCryptoSymbols]))
+        const knownCryptoSet = new Set(POPULAR_ASSETS.filter(a => a.assetType === 'crypto').map(a => a.symbol.toUpperCase()))
+        const knownStockSet = new Set(['AAPL', 'NVDA', 'TSLA', 'MSFT', 'AMZN', 'META', 'GOOGL', 'PLTR', 'AMD', 'VOO', 'QQQ', 'SPY', 'SM', 'BDO', 'ALI', 'TEL'])
 
-        const stockSymbols = holdings.filter(h => h?.assetType === 'stock' && h?.symbol).map(h => h.symbol)
+        const cryptoSymbols = Array.from(new Set([
+          ...Array.from(knownCryptoSet),
+          ...holdings.map(h => String(h?.symbol || '').toUpperCase()).filter(sym => {
+            if (!sym) return false
+            if (knownCryptoSet.has(sym)) return true
+            if (knownStockSet.has(sym)) return false
+            const hObj = holdings.find(h => String(h?.symbol).toUpperCase() === sym)
+            return hObj?.assetType === 'crypto' || true // default fallback to crypto API check
+          })
+        ]))
+
+        const stockSymbols = holdings
+          .map(h => String(h?.symbol || '').toUpperCase())
+          .filter(sym => sym && (knownStockSet.has(sym) || holdings.find(h => String(h?.symbol).toUpperCase() === sym)?.assetType === 'stock'))
 
         const [cryptos, stocks] = await Promise.all([
           fetchCryptoPrices(cryptoSymbols, s),
