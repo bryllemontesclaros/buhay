@@ -199,16 +199,14 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
       name: assetPreset.name
     }))
 
-    // Fetch fresh live market price if not already cached
-    if (!livePrices[assetPreset.symbol]) {
-      try {
-        const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
-        if (liveMap[assetPreset.symbol]) {
-          setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: liveMap[assetPreset.symbol] }))
-        }
-      } catch (err) {
-        console.warn('Preset price fetch error:', err)
+    // Fetch fresh live market price from orderbook immediately
+    try {
+      const liveMap = await fetchCryptoPrices([assetPreset.symbol], s)
+      if (liveMap[assetPreset.symbol]) {
+        setLivePrices(prev => ({ ...prev, [assetPreset.symbol]: liveMap[assetPreset.symbol] }))
       }
+    } catch (err) {
+      console.warn('Preset price fetch error:', err)
     }
 
     // Auto-focus quantity field after selection
@@ -482,7 +480,7 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
               {(() => {
                 const qty = parseFloat(portfolioForm.quantity) || 0
                 const sym = (portfolioForm.symbol || '').toUpperCase()
-                const livePrice = livePrices[sym] || 0
+                const livePrice = livePrices[sym] || getBaselinePrice(sym, s)
                 const estValue = qty * livePrice
 
                 if (qty > 0 && livePrice > 0) {
@@ -569,9 +567,11 @@ export default function PortfolioWidget({ user, data = {}, s = '₱', privacyMod
                   const qty = parseFloat(asset?.quantity ?? asset?.shares ?? 0) || 0
                   const symbol = asset?.symbol ? String(asset.symbol).toUpperCase() : ''
                   const livePrice = livePrices[symbol] || 0
-                  const hasLivePrice = livePrice > 0
                   const avgBuyPrice = parseFloat(asset?.averageBuyPrice ?? asset?.avgPrice ?? 0) || 0
-                  const assetValue = qty * livePrice
+                  const basePrice = getBaselinePrice(symbol, s)
+                  const effectivePrice = livePrice > 0 ? livePrice : (avgBuyPrice > 0 ? avgBuyPrice : basePrice)
+                  const hasLivePrice = livePrice > 0
+                  const assetValue = qty * effectivePrice
                   const assetProfit = avgBuyPrice > 0 ? assetValue - (qty * avgBuyPrice) : 0
 
                   return (
