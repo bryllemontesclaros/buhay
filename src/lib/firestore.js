@@ -259,7 +259,17 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     source: payment.source || 'bill-payment',
   }, accounts)
   const paidAt = Date.now()
-  await fsUpdate(uid, 'bills', bill._id, {
+  const billData = {
+    name: bill.name || 'Bill',
+    amount: Number(bill.amount) || amount,
+    due: Number(bill.due) || 1,
+    cat: bill.cat || 'Bills',
+    subcat: bill.subcat || 'Other',
+    presetKey: bill.presetKey || '',
+    freq: bill.freq || 'monthly',
+    accountId: bill.accountId || '',
+    autoDeduct: Boolean(bill.autoDeduct),
+    type: 'bill',
     [`paidPeriods.${period.key}`]: {
       paidAt,
       amount,
@@ -272,7 +282,26 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     paidAt,
     lastPaidPeriod: period.key,
     lastPaidExpenseId: txRef.id,
-  })
+  }
+
+  await setDoc(doc(db, 'users', uid, 'bills', bill._id), billData, { merge: true })
+
+  if (bill.originalDebtId) {
+    try {
+      await setDoc(doc(db, 'users', uid, 'debts', bill.originalDebtId), {
+        [`paidPeriods.${period.key}`]: {
+          paidAt,
+          amount,
+          date,
+          accountId,
+          expenseId: txRef.id,
+          dueDate: period.dueDate,
+        }
+      }, { merge: true })
+    } catch (err) {
+      console.warn('Could not update original debt paidPeriods', err)
+    }
+  }
 
   return { transactionId: txRef.id, paidAt, period }
 }
@@ -386,13 +415,17 @@ export async function fsDeleteTransaction(uid, col, tx, accounts = []) {
   }
 
   if (col === 'expenses' && tx.billId && tx.billPeriodKey) {
-    batch.update(doc(db, 'users', uid, 'bills', tx.billId), {
-      [`paidPeriods.${tx.billPeriodKey}`]: deleteField(),
-      paid: false,
-      paidAt: 0,
-      lastPaidPeriod: '',
-      lastPaidExpenseId: '',
-    })
+    const billRef = doc(db, 'users', uid, 'bills', tx.billId)
+    const billSnap = await getDoc(billRef)
+    if (billSnap.exists()) {
+      batch.update(billRef, {
+        [`paidPeriods.${tx.billPeriodKey}`]: deleteField(),
+        paid: false,
+        paidAt: 0,
+        lastPaidPeriod: '',
+        lastPaidExpenseId: '',
+      })
+    }
   }
 
   batch.delete(doc(db, 'users', uid, col, tx._id))
