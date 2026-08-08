@@ -242,6 +242,9 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     throw new Error('This bill is already marked paid for this period.')
   }
   const accountId = payment.accountId || bill.accountId || ''
+  const recurrenceSourceId = bill.recurrenceSourceId || (String(bill._id).startsWith('virtual-tx-') ? String(bill._id).replace('virtual-tx-', '') : '')
+  const recurrenceOccurrenceKey = period.dueDate
+
   const txRef = await fsAddTransaction(uid, 'expenses', {
     desc: `${bill.name || 'Bill'} payment`,
     amount,
@@ -256,6 +259,7 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     accountBalanceLinked: Boolean(accountId),
     billId: bill._id,
     billPeriodKey: period.key,
+    ...(recurrenceSourceId ? { recurrenceSourceId, recurrenceOccurrenceKey } : {}),
     source: payment.source || 'bill-payment',
   }, accounts)
   const paidAt = Date.now()

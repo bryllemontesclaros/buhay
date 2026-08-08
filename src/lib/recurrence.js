@@ -34,12 +34,13 @@ export function isRecurringCycleSettled(entries = [], tx = {}) {
   const occurrenceKey = getRecurringOccurrenceKey(tx)
   if (!sourceId || !occurrenceKey) return false
 
-  // 1. Exact match via recurrenceSourceId and occurrenceKey
-  const hasExactMatch = entries.some(existing => (
-    !existing?._projected
-    && existing?.recurrenceSourceId === sourceId
-    && getRecurringOccurrenceKey(existing) === occurrenceKey
-  ))
+  // 1. Exact match via recurrenceSourceId and occurrenceKey or billId / billPeriodKey
+  const hasExactMatch = entries.some(existing => {
+    if (existing?._projected) return false
+    if (existing?.recurrenceSourceId === sourceId && getRecurringOccurrenceKey(existing) === occurrenceKey) return true
+    if (existing?.billId && (existing.billId === sourceId || existing.billId === `virtual-tx-${sourceId}`) && existing.billPeriodKey && existing.billPeriodKey.includes(occurrenceKey)) return true
+    return false
+  })
   if (hasExactMatch) return true
 
   // 2. Fallback heuristic: check if another actual transaction has already been logged on this date

@@ -276,6 +276,7 @@ export function getVirtualBills(data = {}) {
       subcat: latest.subcat || 'Utilities',
       accountId: latest.accountId || '',
       isVirtual: true,
+      recurrenceSourceId: latest.recurrenceSourceId || latest._id,
       paidPeriods: {},
     })
   })
