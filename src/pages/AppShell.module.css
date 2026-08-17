@@ -1720,23 +1720,25 @@
     overscroll-behavior-y: contain;
   }
   .topBar {
-    min-height: auto;
-    margin: 10px 12px 0;
-    padding: 12px 12px 12px;
-    border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    background: var(--bg);
-    /* box-shadow flattened */
+    min-height: 52px;
+    margin: 0;
+    padding: 10px 16px;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: var(--surface);
     flex-shrink: 0;
     gap: 10px;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     position: relative !important;
     z-index: 10 !important;
   }
   .topBarLeft {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     flex: 1;
     gap: 7px;
     min-width: 0;
@@ -1746,41 +1748,32 @@
     display: none;
   }
   .topBarTitleBlock {
-    display: grid;
+    display: flex;
+    align-items: center;
     gap: 8px;
     min-width: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
   }
   .topBarKicker { display: none; }
   .topBarHeadingRow {
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     flex-wrap: nowrap;
     white-space: nowrap;
   }
-  .editBtnLabel {
-    display: none;
-  }
-  .editLayoutTopBtn, .doneTopBtn {
-    min-width: 40px;
-    height: 40px;
-    padding: 0;
-    justify-content: center;
-    border-radius: 999px;
-    font-size: 15px;
-  }
   .topBarLogo {
     display: block;
     font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
     line-height: 1;
   }
   .topBarMeta { display: none; }
   .topBarStream { display: none; }
   .topBarContextPill {
-    display: inline-flex;
-    min-height: 24px;
-    padding: 4px 8px;
-    font-size: 10px;
-    letter-spacing: 0.06em;
+    display: none;
   }
   .mobileSpaceSwitch {
     display: flex;
@@ -1888,10 +1881,11 @@
   }
   .fabWrap {
     left: auto;
-    right: 22px;
-    bottom: calc(114px + env(safe-area-inset-bottom));
+    right: 16px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
     transform: none;
     align-items: flex-end;
+    z-index: 100;
   }
   .quickAddLayer {
     align-items: flex-end;
@@ -1903,10 +1897,13 @@
     max-height: min(82vh, calc(100vh - 116px - env(safe-area-inset-bottom)));
   }
   .fabButton {
-    width: 58px;
-    height: 58px;
-    font-size: 24px;
-    /* box-shadow flattened */
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
   }
   .fabMenu {
     display: grid;
@@ -1966,17 +1963,17 @@
   .bottomNav {
     display: flex;
     position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: var(--surface);
-    border: 1px solid var(--glass-border);
-    border-radius: 26px;
-    z-index: 100;
-    min-height: 62px;
-    padding: 6px;
-    /* box-shadow flattened */
-
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    z-index: 99;
+    min-height: 56px;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.03);
     transition:
       opacity var(--motion-duration) var(--motion-ease-standard),
       transform var(--motion-duration) var(--motion-ease-out);
