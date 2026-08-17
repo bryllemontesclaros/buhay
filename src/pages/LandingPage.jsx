@@ -115,6 +115,25 @@ function HeroInteractiveMockup() {
   )
 }
 
+const TRUST_POINTS = [
+  {
+    title: '100% Free Forever',
+    desc: 'No credit card required, no forced trial periods, and no locked features behind paywalls.',
+  },
+  {
+    title: 'Zero Bank Credentials Stored',
+    desc: 'Buhay never asks for your bank logins or credentials, keeping your financial accounts safe.',
+  },
+  {
+    title: 'Encrypted & Private',
+    desc: 'Your data is secured directly to your account with optional Privacy Mode to blur financial balances.',
+  },
+  {
+    title: 'Portable Data Export',
+    desc: 'Download your full financial ledger to CSV anytime or create encrypted backup JSON snapshots.',
+  },
+]
+
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay / Takda?',
