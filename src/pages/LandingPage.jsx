@@ -649,40 +649,42 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <table className={styles.comparisonTable}>
-            <thead>
-              <tr>
-                <th>Feature / Capability</th>
-                <th className={styles.highlightCol}>↗ Buhay</th>
-                <th>Bank Apps</th>
-                <th>Spreadsheets</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON_ROWS.map((row, idx) => (
-                <tr key={idx}>
-                  <td>
-                    <strong style={{ color: '#0f172a' }}>{row.feature}</strong>
-                  </td>
-                  <td className={styles.highlightCol}>
-                    <div className={styles.checkYes}>
-                      <span>✓</span> {row.buhay}
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles.checkNo}>
-                      <span>✗</span> {row.banks}
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles.checkNo}>
-                      <span>~</span> {row.sheets}
-                    </div>
-                  </td>
+          <div className={styles.tableResponsiveWrap}>
+            <table className={styles.comparisonTable}>
+              <thead>
+                <tr>
+                  <th>Feature / Capability</th>
+                  <th className={styles.highlightCol}>↗ Buhay</th>
+                  <th>Bank Apps</th>
+                  <th>Spreadsheets</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {COMPARISON_ROWS.map((row, idx) => (
+                  <tr key={idx}>
+                    <td>
+                      <strong style={{ color: '#0f172a' }}>{row.feature}</strong>
+                    </td>
+                    <td className={styles.highlightCol}>
+                      <div className={styles.checkYes}>
+                        <span>✓</span> {row.buhay}
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.checkNo}>
+                        <span>✗</span> {row.banks}
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.checkNo}>
+                        <span>~</span> {row.sheets}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         {/* Privacy & Trust Pillars */}
