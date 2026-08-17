@@ -780,17 +780,13 @@ export default function AppShell({ user }) {
 
   useEffect(() => {
     if (preferredSpaceAppliedRef.current) return
-    if (!['dashboard', 'takda', 'lakas', 'tala'].includes(profile?.preferredSpace)) return
     preferredSpaceAppliedRef.current = true
-    const targetSpace = profile?.preferredSpace === 'takda' ? 'dashboard' : profile.preferredSpace
-    setActiveSpace(targetSpace || 'dashboard')
+    setActiveSpace('takda')
   }, [profile?.preferredSpace])
 
   useEffect(() => {
     if (!user) return
-    const intendedSpace = consumeStartSpaceIntent()
-    if (!['dashboard', 'takda', 'lakas', 'tala'].includes(intendedSpace)) return
-    setActiveSpace(intendedSpace)
+    setActiveSpace('takda')
   }, [user])
 
   useEffect(() => {
@@ -1105,11 +1101,8 @@ export default function AppShell({ user }) {
     if (nextVerified) setVerifyBannerMsg({ text: '', ok: false })
   }, [user])
 
-  const dashboardNav = [
-    { id: 'main', label: 'Dashboard', iconKey: 'dashboard', section: 'Overview' },
-  ]
   const nav = [
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', section: 'Finance' },
+    { id: 'calendar', label: 'Calendar', iconKey: 'calendar', section: 'Finance' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: null },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
@@ -1167,13 +1160,11 @@ export default function AppShell({ user }) {
     : activeSpace === 'lakas'
       ? `lakas:${resolvedLakasPage}`
       : `tala:${talaPage}`
-  const currentSidebarNav = activeSpace === 'dashboard'
-    ? dashboardNav
-    : activeSpace === 'lakas'
-      ? lakasNav
-      : activeSpace === 'tala'
-        ? talaNav
-        : nav
+  const currentSidebarNav = activeSpace === 'lakas'
+    ? lakasNav
+    : activeSpace === 'tala'
+      ? talaNav
+      : nav
   const currentNavItem = (
     activeSpace === 'takda'
       ? [...nav, ...takdaMoreNav]
@@ -1183,7 +1174,7 @@ export default function AppShell({ user }) {
   ).find(item => item.id === visiblePageKey) || currentSidebarNav[0]
   const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
-    { id: 'calendar', label: 'Today', iconKey: 'calendar', space: 'takda' },
+    { id: 'calendar', label: 'Calendar', iconKey: 'calendar', space: 'takda' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', space: 'takda' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'takda' },
     { id: 'history', label: 'Insights', iconKey: 'history', space: 'takda' },
@@ -1198,19 +1189,11 @@ export default function AppShell({ user }) {
     { id: 'track', label: 'Track', iconKey: 'mood', space: 'tala' },
     { id: 'focus', label: 'Focus', iconKey: 'goals', space: 'tala' },
   ]
-  const dashboardBottomNav = [
-    { id: 'main', label: 'Home', iconKey: 'home', space: 'dashboard' },
-    { id: 'calendar', label: 'Wealth', iconKey: 'finance', space: 'takda' },
-    { id: 'workout', label: 'Health', iconKey: 'lakas', space: 'lakas' },
-    { id: 'journal', label: 'Mind', iconKey: 'tala', space: 'tala' },
-  ]
-  const bottomNav = activeSpace === 'dashboard'
-    ? dashboardBottomNav
-    : activeSpace === 'lakas'
-      ? lakasBottomNav
-      : activeSpace === 'tala'
-        ? talaBottomNav
-        : financeBottomNav
+  const bottomNav = activeSpace === 'lakas'
+    ? lakasBottomNav
+    : activeSpace === 'tala'
+      ? talaBottomNav
+      : financeBottomNav
   const financeMoreNav = takdaMoreNav.map(item => ({ ...item, space: 'takda' }))
   const lakasMoreNav = lakasNav
     .filter(item => ['settings'].includes(item.id))
@@ -1715,40 +1698,32 @@ export default function AppShell({ user }) {
             <BrandLogo to="/" />
           </div>
         </div>
-        <div className={styles.sidebarSpaceRail}>
-          {APP_SPACES.map(space => (
-            <button
-              key={space.id}
-              type="button"
-              className={`${styles.spaceRailBtn} ${activeSpace === space.id ? styles.spaceRailBtnActive : ''}`}
-              onClick={() => openSpace(space.id)}
-              title={space.label}
-              aria-label={`Switch to ${space.label}`}
-              aria-pressed={activeSpace === space.id}
-            >
-              {NAV_ICONS[space.iconKey]}
-            </button>
-          ))}
-        </div>
-        <nav className={styles.sidebarNav} aria-label={activeSpace === 'dashboard' ? 'Buhay navigation' : activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
+        {APP_SPACES.length > 1 && (
+          <div className={styles.sidebarSpaceRail}>
+            {APP_SPACES.map(space => (
+              <button
+                key={space.id}
+                type="button"
+                className={`${styles.spaceRailBtn} ${activeSpace === space.id ? styles.spaceRailBtnActive : ''}`}
+                onClick={() => openSpace(space.id)}
+                title={space.label}
+                aria-label={`Switch to ${space.label}`}
+                aria-pressed={activeSpace === space.id}
+              >
+                {NAV_ICONS[space.iconKey]}
+              </button>
+            ))}
+          </div>
+        )}
+        <nav className={styles.sidebarNav} aria-label={activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
           {currentSidebarNav.map(n => (
             <div key={n.id}>
               {n.section && <div className={styles.navSection}>{n.section}</div>}
               <button
                 type="button"
                 id={`${activeSpace}-nav-${n.id}`}
-                className={`${styles.navItem} ${activeSpace === 'dashboard' ? page === n.id ? styles.active : '' : activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
+                className={`${styles.navItem} ${activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
                 onClick={() => {
-                  if (n.id === 'dashboard-home') {
-                    openSpace('dashboard')
-                    return
-                  }
-                  if (activeSpace === 'dashboard') {
-                    // Stay in Buhay space — just switch sub-page (main, settings)
-                    if (n.id === 'settings') openSettings()
-                    else setPage('main')
-                    return
-                  }
                   if (activeSpace === 'lakas') {
                     setLakasPage(n.id)
                     return
@@ -1759,7 +1734,7 @@ export default function AppShell({ user }) {
                   }
                   navigateToFinancePage(n.id)
                 }}
-                aria-current={activeSpace === 'dashboard' ? page === n.id ? 'page' : undefined : activeSpace === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : activeSpace === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
+                aria-current={activeSpace === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : activeSpace === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
                 aria-label={`Open ${n.label}`}
               >
                 <span className={styles.icon} aria-hidden="true">{NAV_ICONS[n.iconKey]}</span> {n.label}
@@ -1798,11 +1773,11 @@ export default function AppShell({ user }) {
             <button 
               type="button"
               className={styles.topBarTitleBlock} 
-              onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
+              onClick={() => APP_SPACES.length > 1 && setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
               aria-expanded={workspaceDropdownOpen}
             >
               <div className={styles.topBarHeadingRow}>
-                <div className={styles.topBarLogo}>{activeWorkspaceLabel} <span className={styles.topBarChevron}>⌄</span></div>
+                <div className={styles.topBarLogo}>{activeWorkspaceLabel} {APP_SPACES.length > 1 && <span className={styles.topBarChevron}>⌄</span>}</div>
                 <div className={styles.topBarContextPill}>{activeSpaceConfig.meta}</div>
               </div>
             </button>
