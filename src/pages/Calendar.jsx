@@ -128,7 +128,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const currentDay = now.getDate()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
-  const [selected, setSelected] = useState(() => today())
+  const [selected, setSelected] = useState(null)
   const defaultAccountId = data?.accounts?.[0]?._id || ''
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState('income')
