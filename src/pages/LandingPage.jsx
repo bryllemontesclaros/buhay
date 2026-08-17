@@ -3,154 +3,79 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { Link, useNavigate } from 'react-router-dom'
 import RouteMeta from '../components/RouteMeta'
 import { auth } from '../lib/firebase'
-import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '../lib/legal'
-import { setStartSpaceIntent } from '../lib/startIntent'
 import takdaLandingShot from '../assets/landing/takda-updated.png'
-import lakasLandingShot from '../assets/landing/lakas-updated.png'
-import talaLandingShot from '../assets/landing/tala-updated.png'
 import mockStyles from './LandingPage.module.css'
 import styles from './LandingPageClean.module.css'
 
 const HERO_SPACES = [
   {
-    label: 'Takda',
-    title: 'Money',
-    desc: 'Interactive cashflow calendars, snowball/avalanche debt optimizers, savings target charts, and step-by-step Guided Tours keep your money path clear.',
+    label: 'Calendar',
+    title: 'Daily Cash Flow',
+    desc: 'Interactive cashflow calendars, daily income and expense tracking, and dynamic balance forecasts.',
     tone: 'takda',
   },
   {
-    label: 'Lakas',
-    title: 'Fitness',
-    desc: 'Workout logger templates, daily habit sheets, automatic barbell plate weight calculators, and competitive Ghost Racer leaderboards build consistency.',
-    tone: 'lakas',
+    label: 'Accounts',
+    title: 'Multi-Account Hub',
+    desc: 'Track cash, banks, e-wallets, and credit cards with unified net worth calculations.',
+    tone: 'takda',
   },
   {
-    label: 'Tala',
-    title: 'Mind',
-    desc: 'Mood distribution wheels, reflection history timelines, daily grounding prompts, and private journaling tags support calm self-focus.',
-    tone: 'tala',
+    label: 'Bills',
+    title: 'Bills & Subscriptions',
+    desc: 'Automated recurring bill due dates, payment status tracking, and active subscription management.',
+    tone: 'takda',
   },
 ]
 
 const SPACE_FEATURES = [
   {
-    title: 'Buhay Home',
-    desc: 'A fully customizable widget dashboard. Brings together cash balance projections, physical training habits, and mood check-in circles. Add, remove, and arrange widgets freely.',
-    tone: 'buhay',
-  },
-  {
-    title: 'Takda (Wealth)',
-    desc: 'Track daily cash flow with dynamic balances, track savings targets, simulate snowball or avalanche debt payoff strategies, and follow interactive step-by-step guided onboarding tours.',
+    title: 'Interactive Cashflow Calendar',
+    desc: 'View income, expenses, and projected balances day-by-day. Tap any date to log a record instantly.',
     tone: 'takda',
   },
   {
-    title: 'Lakas (Health)',
-    desc: 'Log set repetitions, check off daily consistency habits, use the built-in barbell plate calculator, and compete against your own historic runs using the Ghost Racer leaderboard.',
-    tone: 'lakas',
-  },
-  {
-    title: 'Tala (Mind)',
-    desc: 'Log entries with custom mood indicators, view weekly mood distribution wheels, tag reflection topics, and receive gentle grounding prompts during difficult days.',
-    tone: 'tala',
-  },
-]
-
-const FLOW_BEATS = [
-  {
-    title: 'Customizable Widget Dashboard',
-    desc: 'Launch from a fully customizable widget dashboard. Handpick what you want to see—from smart insights to daily fitness progress—all in one step.',
-    beat: 'Cockpit',
-    tone: 'buhay',
-    pills: ['Widgets', 'Unified', 'Home'],
-    mock: 'spaces',
-  },
-  {
-    title: 'Drill Down Easily',
-    desc: 'Go deeper into money forecasting, training workout sheets, or comprehensive reflection wheels when you need full control.',
-    beat: 'Drill',
-    tone: 'lakas',
-    pills: ['Wealth', 'Health', 'Mind'],
-    mock: 'action',
-  },
-  {
-    title: 'See it stay organized',
-    desc: 'Buhay structure ensures all transactions, workouts, and reflection tags are logged cleanly and automatically updated.',
-    beat: 'Organize',
-    tone: 'tala',
-    pills: ['Calendar', 'Totals', 'History'],
-    mock: 'organized',
-  },
-  {
-    title: 'Complete private control',
-    desc: 'Use any combination of tools you like. Local backups, private encryption, and full CSV exports stay in your account.',
-    beat: 'Control',
+    title: 'Multi-Account & Net Worth',
+    desc: 'Keep track of all your accounts in one place with automatic net worth and liquidity calculations.',
     tone: 'takda',
-    pills: ['Free', 'Export', 'Backup'],
-    mock: 'account',
   },
-]
-
-const FLOW_BEAT_IMAGES = [
-  takdaLandingShot,
-  lakasLandingShot,
-  talaLandingShot,
-  takdaLandingShot,
+  {
+    title: 'Bills & Subscription Manager',
+    desc: 'Stay ahead of upcoming bills, auto-deductions, and recurring subscriptions before due dates arrive.',
+    tone: 'takda',
+  },
+  {
+    title: 'Savings & Debt Payoff',
+    desc: 'Set savings targets, track contribution progress, and simulate credit card payoff timelines.',
+    tone: 'takda',
+  },
 ]
 
 const TRUST_POINTS = [
   {
-    title: 'Free to use right now',
-    desc: 'Create one account and use Takda, Lakas, and Tala without a paid plan in the current release.',
+    title: 'Free & Private',
+    desc: 'Create one account and use all financial tools without hidden fees or subscription gates.',
   },
   {
-    title: 'Private account controls',
-    desc: 'Your money, fitness, and reflection records stay tied to your signed-in account, with privacy settings and deletion tools inside the app.',
+    title: 'Complete Data Control',
+    desc: 'Your financial records remain private to your signed-in account with privacy mode and export options.',
   },
   {
-    title: 'Export, backup, restore',
-    desc: 'Export your records, keep backups, and restore them from settings if you switch devices or want an extra copy.',
+    title: 'Local Backup & Export',
+    desc: 'Export your financial records anytime to CSV or keep encrypted local backups in settings.',
   },
   {
-    title: 'Honest limits',
-    desc: 'Buhay is a tracking tool. It is not a bank, not automatic bank sync, not medical advice, and not mental-health advice.',
+    title: 'Honest Manual Tracking',
+    desc: 'Buhay is a manual tracking tool so you stay in total control of what gets recorded.',
   },
 ]
-
-const SPACE_PROMISES = [
-  {
-    label: 'Custom Dashboard',
-    promise: 'Aggregates your net worth, daily training habits, and reflection prompts onto a single screen.',
-    meta: 'Central Cockpit',
-    tone: 'buhay',
-  },
-  {
-    label: 'Takda',
-    promise: 'Includes savings target trackers, snowball/avalanche debt simulators, and daily cashflow calendars.',
-    meta: 'Debt & Savings',
-    tone: 'takda',
-  },
-  {
-    label: 'Lakas',
-    promise: 'Features cardio run logging, workout library builders, and the Ghost Racer podium.',
-    meta: 'Ghost Racer',
-    tone: 'lakas',
-  },
-  {
-    label: 'Tala',
-    promise: 'Visualizes your weekly mood distribution wheel and unlocks Grounding Prompts.',
-    meta: 'Mood Wheels',
-    tone: 'tala',
-  },
-]
-
-// --- CSS Mockup Sub-components & Helpers ---
 
 function TakdaMockup() {
   const [balance, setBalance] = useState(45210.50)
   const [txs, setTxs] = useState([
     { emoji: '🛒', name: 'Groceries', amount: -2350 },
     { emoji: '⚡', name: 'Power Bill', amount: -3100 },
-    { emoji: '💰', name: 'Salary', amount: 45000 }
+    { emoji: '💰', name: 'Salary Deposit', amount: 45000 }
   ])
   const [limitSpent, setLimitSpent] = useState(12500)
 
@@ -159,7 +84,7 @@ function TakdaMockup() {
     setBalance(prev => prev - 500)
     setLimitSpent(prev => Math.min(20000, prev + 500))
     setTxs(prev => [
-      { emoji: '☕', name: 'Sample Coffee', amount: -500 },
+      { emoji: '☕', name: 'Coffee Shop', amount: -500 },
       ...prev
     ])
   }
@@ -170,7 +95,7 @@ function TakdaMockup() {
     setTxs([
       { emoji: '🛒', name: 'Groceries', amount: -2350 },
       { emoji: '⚡', name: 'Power Bill', amount: -3100 },
-      { emoji: '💰', name: 'Salary', amount: 45000 }
+      { emoji: '💰', name: 'Salary Deposit', amount: 45000 }
     ])
   }
 
@@ -182,25 +107,25 @@ function TakdaMockup() {
           <span className={mockStyles.dotYellow}></span>
           <span className={mockStyles.dotGreen}></span>
         </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/takda</div>
+        <div className={mockStyles.mockupUrl}>buhay.app/app</div>
       </div>
       <div className={mockStyles.mockupContent}>
-        <div className={mockStyles.mockCard} style={{ borderLeft: '3px solid var(--blue)' }}>
+        <div className={mockStyles.mockCard} style={{ borderLeft: '3px solid var(--accent)' }}>
           <div className={mockStyles.mockCardHeaderRow}>
-            <div className={mockStyles.mockCardLabel}>Financial Pulse · Healthy</div>
+            <div className={mockStyles.mockCardLabel}>Total Net Worth</div>
             <button type="button" onClick={txs.length > 3 ? reset : addCoffee} className={mockStyles.mockActionBtn}>
-              {txs.length > 3 ? 'Reset' : '⚡ Simulate -₱500'}
+              {txs.length > 3 ? 'Reset' : '⚡ Add -₱500'}
             </button>
           </div>
           <div className={mockStyles.mockBalance}>₱{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
         </div>
         <div className={mockStyles.mockBudget}>
           <div className={mockStyles.mockBudgetHeader}>
-            <span>Limit status</span>
+            <span>Monthly Budget</span>
             <span>₱{(limitSpent / 1000).toFixed(1)}k / ₱20k</span>
           </div>
           <div className={mockStyles.mockProgressBar}>
-            <div className={mockStyles.mockProgressFill} style={{ width: `${(limitSpent / 20000) * 100}%`, backgroundColor: 'var(--blue)' }}></div>
+            <div className={mockStyles.mockProgressFill} style={{ width: `${(limitSpent / 20000) * 100}%`, backgroundColor: 'var(--accent)' }}></div>
           </div>
         </div>
         <div className={mockStyles.mockTransactions}>
@@ -219,275 +144,28 @@ function TakdaMockup() {
   )
 }
 
-function LakasMockup() {
-  const [seconds, setSeconds] = useState(105) // 01:45
-  const [isRunning, setIsRunning] = useState(false)
-  
-  useEffect(() => {
-    if (!isRunning) return
-    const interval = setInterval(() => {
-      setSeconds(s => (s > 0 ? s - 1 : 120))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [isRunning])
-
-  const min = Math.floor(seconds / 60)
-  const sec = seconds % 60
-  const timeStr = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`
-  const percent = (seconds / 120) * 100
-  const radius = 22
-  const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = circumference - (percent / 100) * circumference
-
-  return (
-    <div className={mockStyles.mockupFrame}>
-      <div className={mockStyles.mockupHeader}>
-        <div className={mockStyles.mockupDots}>
-          <span className={mockStyles.dotRed}></span>
-          <span className={mockStyles.dotYellow}></span>
-          <span className={mockStyles.dotGreen}></span>
-        </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/lakas</div>
-      </div>
-      <div className={mockStyles.mockupContent}>
-        <div className={mockStyles.mockCard} style={{ borderLeft: '3px solid var(--accent)' }}>
-          <div className={mockStyles.mockCardHeaderRow}>
-            <div className={mockStyles.mockCardLabel}>Ghost Racer Leaderboard</div>
-            <button type="button" onClick={() => setIsRunning(!isRunning)} className={mockStyles.mockActionBtn}>
-              {isRunning ? '⏸ Pause' : '▶ Start Timer'}
-            </button>
-          </div>
-          <div className={mockStyles.mockWorkoutTitle}>🏆 1st: You (154 pts)</div>
-        </div>
-        
-        <div className={mockStyles.mockTimerGrid}>
-          <div className={mockStyles.mockTimerRing}>
-            <svg width="56" height="56" viewBox="0 0 56 56" className={mockStyles.mockRingSvg}>
-              <circle cx="28" cy="28" r={radius} className={mockStyles.mockRingBg} />
-              <circle 
-                cx="28" 
-                cy="28" 
-                r={radius} 
-                className={mockStyles.mockRingFill} 
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                stroke="var(--accent)"
-              />
-            </svg>
-            <div className={mockStyles.mockTimerText}>{timeStr}</div>
-          </div>
-          
-          <div className={mockStyles.mockSets}>
-            <div className={mockStyles.mockSetItemDone}>🗺️ Outdoor Run: 5.2 km logged</div>
-            <div className={mockStyles.mockSetItemActive}>⚡ Consistency: {isRunning ? 'Active Tracker' : 'Paused'}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function TalaMockup() {
-  const [mood, setMood] = useState('⛈️')
-  
-  const moodPrompts = {
-    '☀️': 'Sunny: Wonderful day. Grateful for today\'s clear skies.',
-    '🌤️': 'Partly Sunny: Calm focus. Balanced state and light exercises.',
-    '🌧️': 'Rainy: Tired state. Remember to take a break and rest.',
-    '⛈️': 'Heavy: Heavy state detected. Grounding prompt active...'
-  }
-
-  const moodColors = {
-    '☀️': 'var(--yellow)',
-    '🌤️': 'var(--blue)',
-    '🌧️': 'var(--accent)',
-    '⛈️': 'var(--purple)'
-  }
-
-  return (
-    <div className={mockStyles.mockupFrame}>
-      <div className={mockStyles.mockupHeader}>
-        <div className={mockStyles.mockupDots}>
-          <span className={mockStyles.dotRed}></span>
-          <span className={mockStyles.dotYellow}></span>
-          <span className={mockStyles.dotGreen}></span>
-        </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/tala</div>
-      </div>
-      <div className={mockStyles.mockupContent}>
-        <div className={mockStyles.mockCard} style={{ borderLeft: `3px solid ${moodColors[mood]}` }}>
-          <div className={mockStyles.mockPanicBar}>
-            <span className={mockStyles.mockCardLabel}>Grounded Reflection Prompt</span>
-            <span className={mockStyles.mockPanicBtn}>🔒 Private default</span>
-          </div>
-        </div>
-        
-        <div className={mockStyles.mockTextareaBlur}>
-          {moodPrompts[mood]}
-        </div>
-
-        <div className={mockStyles.mockCalendarDots}>
-          {['☀️', '🌤️', '🌧️', '⛈️'].map(m => (
-            <button 
-              key={m} 
-              type="button" 
-              onClick={() => setMood(m)} 
-              className={`${mockStyles.mockMoodBtn} ${mood === m ? mockStyles.mockMoodBtnActive : ''}`}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function BentoMockup() {
-  return (
-    <div className={mockStyles.mockupFrame}>
-      <div className={mockStyles.mockupHeader}>
-        <div className={mockStyles.mockupDots}>
-          <span className={mockStyles.dotRed}></span>
-          <span className={mockStyles.dotYellow}></span>
-          <span className={mockStyles.dotGreen}></span>
-        </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/app</div>
-      </div>
-      <div className={mockStyles.mockupContent}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-           <div style={{ fontSize: '10px', opacity: 0.7, fontWeight: '600' }}>Good morning</div>
-           <button style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', color: 'white', borderRadius: '99px', fontSize: '9px', padding: '3px 8px', cursor: 'pointer', fontWeight: '600' }}>Edit Layout</button>
-        </div>
-        
-        <div className={mockStyles.mockBentoGrid} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {/* Daily Priority Focus */}
-          <div style={{ padding: '6px 10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🎯</span>
-            <span style={{ color: 'var(--text-primary, #f0f0f0)', fontWeight: '500' }}>Priority: Lock in main goals for today</span>
-          </div>
-
-          {/* Smart Insight Banner */}
-          <div style={{ padding: '8px 10px', background: 'color-mix(in srgb, var(--accent) 12%, rgba(0,0,0,0.3))', border: '1px solid color-mix(in srgb, var(--accent) 30%, transparent)', borderRadius: '10px', color: 'var(--text)' }}>
-            <div style={{ fontSize: '9px', fontWeight: '700', marginBottom: '2px', color: 'var(--accent)' }}>💡 Smart Insight</div>
-            <div style={{ fontSize: '11px', opacity: 0.9 }}>Your daily cashflow & fitness rhythm are fully on track.</div>
-          </div>
-
-          {/* Key Stats Strip */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
-            <div style={{ background: 'color-mix(in srgb, #10b981 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #10b981 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#10b981' }}>₱45k</div>
-              <div style={{ fontSize: '8px', opacity: 0.75 }}>Net Worth</div>
-            </div>
-            <div style={{ background: 'color-mix(in srgb, #ff4500 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #ff4500 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#ff4500' }}>14🔥</div>
-              <div style={{ fontSize: '8px', opacity: 0.75 }}>Fitness Streak</div>
-            </div>
-            <div style={{ background: 'color-mix(in srgb, #c084fc 10%, rgba(255,255,255,0.02))', border: '1px solid color-mix(in srgb, #c084fc 25%, transparent)', borderRadius: '10px', padding: '6px 8px', textAlign: 'center' }}>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#c084fc' }}>4 📝</div>
-              <div style={{ fontSize: '8px', opacity: 0.75 }}>Reflections</div>
-            </div>
-          </div>
-
-          {/* 3-Space Bento Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
-             <div style={{ borderLeft: '3px solid #10b981', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#10b981' }}>
-               <div style={{ fontSize: '9px', fontWeight: '700', color: '#10b981', marginBottom: '3px' }}>Takda Wealth</div>
-               <div style={{ fontSize: '10px', fontWeight: '500' }}>Budget: 75%</div>
-             </div>
-             <div style={{ borderLeft: '3px solid #ff4500', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#ff4500' }}>
-               <div style={{ fontSize: '9px', fontWeight: '700', color: '#ff4500', marginBottom: '3px' }}>Lakas Health</div>
-               <div style={{ fontSize: '10px', fontWeight: '500' }}>Upper Body 🏋️‍♂️</div>
-             </div>
-             <div style={{ borderLeft: '3px solid #c084fc', padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', borderLeftWidth: '3px', borderLeftColor: '#c084fc' }}>
-               <div style={{ fontSize: '9px', fontWeight: '700', color: '#c084fc', marginBottom: '3px' }}>Tala Mind</div>
-               <div style={{ fontSize: '10px', fontWeight: '500' }}>Calm & Grateful</div>
-             </div>
-          </div>
-          
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function renderMockup(tone) {
-  if (tone === 'takda') return <TakdaMockup />
-  if (tone === 'lakas') return <LakasMockup />
-  if (tone === 'tala') return <TalaMockup />
-  if (tone === 'buhay') return <BentoMockup />
-  return <TakdaMockup />
-}
-
-function useScrollVisible(threshold = 0.1) {
-  const [ref, setRef] = useState(null)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    if (!ref) return
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true)
-        observer.unobserve(ref)
-      }
-    }, { threshold })
-    observer.observe(ref)
-    return () => observer.disconnect()
-  }, [ref, threshold])
-
-  return [setRef, isVisible]
-}
-
-function ScrollReveal({ children, className = '' }) {
-  const [setRef, isVisible] = useScrollVisible(0.12)
-  return (
-    <div
-      ref={setRef}
-      className={`${className} ${mockStyles.fadeUp} ${isVisible ? mockStyles.visible : ''}`}
-    >
-      {children}
-    </div>
-  )
-}
-
-
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay?',
-    answer: 'Buhay is one account with three spaces: Takda for money, Lakas for fitness, and Tala for reflection.',
+    answer: 'Buhay (Takda) is a clean, private personal finance system for daily cashflow tracking, multi-account balance management, recurring bills, and budget goals.',
   },
   {
     question: 'Is Buhay free to use?',
-    answer: 'Yes. Buhay is free to use in its current release.',
+    answer: 'Yes! Buhay is completely free to use.',
   },
   {
-    question: 'Do I need to set up everything right away?',
-    answer: 'No. You can begin with one space and add the rest only when they become useful.',
+    question: 'Does Buhay connect to my bank automatically?',
+    answer: 'No. Buhay is an intentional manual tracking tool, putting you in total control of your money records and data privacy.',
   },
   {
-    question: 'Can I use only one space first?',
-    answer: 'Yes. You can stay in Takda, Lakas, or Tala first without needing to fully set up the others.',
+    question: 'Is my financial data private?',
+    answer: 'Yes. Your records are tied strictly to your account, with built-in privacy toggles, export features, and data reset tools.',
   },
   {
-    question: 'Is my data private?',
-    answer: 'Your records are tied to your signed-in account, and Buhay includes privacy, backup, restore, and deletion controls inside the app.',
-  },
-  {
-    question: 'Does Takda connect to banks automatically?',
-    answer: 'No. Takda is a manual tracking tool today, so you stay in control of what gets recorded.',
-  },
-  {
-    question: 'Is Buhay advice?',
-    answer: 'No. Buhay helps you track money, fitness, and reflection more clearly, but it does not replace professional financial, medical, or mental-health advice.',
-  },
-  {
-    question: 'Is there a guide to help me learn how to use the app?',
-    answer: 'Yes! Buhay includes premium, interactive step-by-step Guided Onboarding Tours for every space (Takda, Lakas, and Tala) to show you around and help you get started instantly.',
+    question: 'Can I export my data?',
+    answer: 'Yes. You can export your income, expenses, accounts, and bills to CSV files or save local encrypted backups anytime in settings.',
   },
 ]
-
-
-
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -503,25 +181,22 @@ export default function LandingPage() {
   }, [])
 
   const primaryLabel = authReady
-    ? (isSignedIn ? 'Open the app' : 'Join Beta')
+    ? (isSignedIn ? 'Open Buhay' : 'Get Started Free')
     : 'Open Buhay'
 
-  const openPrimary = (spaceOverride) => {
-    const intended = spaceOverride || 'explore'
-    setStartSpaceIntent(intended)
-    navigate(isSignedIn ? '/app' : '/login', { state: { startSpace: intended } })
+  const openPrimary = () => {
+    navigate(isSignedIn ? '/app' : '/login')
   }
 
   const goLogin = () => {
-    setStartSpaceIntent('explore')
     navigate('/login')
   }
 
   return (
     <div className={styles.page}>
       <RouteMeta
-        title="Buhay — Takda, Lakas, and Tala in one calm account"
-        description="Track money, fitness, and reflection in three focused spaces inside one account."
+        title="Buhay — Personal Finance & Cash Flow Calendar"
+        description="Track accounts, forecast daily cash flow, manage recurring bills, and reach savings goals with complete privacy."
         path="/"
       />
       
@@ -534,125 +209,77 @@ export default function LandingPage() {
 
           <div className={styles.navActions}>
             <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={goLogin}>Sign in</button>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => openPrimary()}>{primaryLabel}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={openPrimary}>{primaryLabel}</button>
           </div>
         </div>
       </nav>
 
       <main>
         <section className={styles.hero}>
-          <div className={`${styles.heroKicker} ${styles.reveal}`}>Wealth · Health · Mind</div>
-          <h1 className={`${styles.heroTitle} ${styles.reveal} ${styles.delay1}`}>The Unified Life System.</h1>
+          <div className={`${styles.heroKicker} ${styles.reveal}`}>Personal Finance & Cash Flow</div>
+          <h1 className={`${styles.heroTitle} ${styles.reveal} ${styles.delay1}`}>Financial Clarity for Real Life.</h1>
           <p className={`${styles.heroSub} ${styles.reveal} ${styles.delay2}`}>
-            Buhay centralizes your cashflow forecasting, fitness rhythms, and mood reflections into a fully customizable home dashboard.
+            Buhay centralizes your account balances, daily cash flow projections, recurring bills, and budget targets into one calm, private dashboard.
           </p>
           <div className={`${styles.heroActions} ${styles.reveal} ${styles.delay3}`}>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => openPrimary()}>{primaryLabel}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={openPrimary}>{primaryLabel}</button>
             <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={goLogin}>Sign in</button>
           </div>
           
           <div className={`${styles.heroVisual} ${styles.reveal} ${styles.delay3}`}>
-            <BentoMockup />
+            <TakdaMockup />
           </div>
         </section>
 
         <section className={styles.features}>
-          <h2 className={styles.sectionTitle}>Spaces & Features</h2>
-          <p className={styles.sectionSub}>Each space stays focused on one job.</p>
+          <h2 className={styles.sectionTitle}>Everything for Money Clarity</h2>
+          <p className={styles.sectionSub}>Structured tools to keep your financial direction clear.</p>
           
           <div className={styles.featureGrid}>
-            <div className={styles.featureCard}>
-              <div className={`${styles.featureLabel} ${styles.labelBuhay}`}>Buhay Home</div>
-              <h3 className={styles.featureTitle}>Dashboard</h3>
-              <p className={styles.featureDesc}>
-                A customizable cockpit dashboard bringing together cash flow projections, daily workout habits, and mood check-in circles on one screen.
-              </p>
-              <div style={{ marginTop: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ background: 'var(--bg-base)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Central Cockpit</div>
-                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
-                    <span>💵 Takda Net Cashflow</span>
-                    <span style={{ color: '#10b981', fontWeight: 'bold' }}>+₱45,210</span>
-                  </div>
-                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
-                    <span>🔥 Lakas Fitness Ring</span>
-                    <span style={{ color: '#ff4500', fontWeight: 'bold' }}>80% Completed</span>
-                  </div>
-                  <div style={{ fontSize: '13px', display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
-                    <span>✨ Tala Daily Mood</span>
-                    <span style={{ color: '#c084fc', fontWeight: 'bold' }}>Calm & Focused</span>
-                  </div>
-                </div>
+            {SPACE_FEATURES.map((feat, idx) => (
+              <div key={idx} className={styles.featureCard}>
+                <div className={`${styles.featureLabel} ${styles.labelTakda}`}>Takda</div>
+                <h3 className={styles.featureTitle}>{feat.title}</h3>
+                <p className={styles.featureDesc}>{feat.desc}</p>
               </div>
-            </div>
-
-            <div className={styles.featureCard}>
-              <div className={`${styles.featureLabel} ${styles.labelTakda}`}>Takda</div>
-              <h3 className={styles.featureTitle}>Money</h3>
-              <p className={styles.featureDesc}>
-                Interactive cashflow calendars, snowball/avalanche debt optimizers, and savings target charts keep your money path clear.
-              </p>
-              <div style={{ marginTop: '24px' }}>
-                 <TakdaMockup />
-              </div>
-            </div>
-            
-            <div className={styles.featureCard}>
-              <div className={`${styles.featureLabel} ${styles.labelLakas}`}>Lakas</div>
-              <h3 className={styles.featureTitle}>Fitness</h3>
-              <p className={styles.featureDesc}>
-                Workout logger templates, daily habit sheets, and competitive Ghost Racer leaderboards build consistency.
-              </p>
-              <div style={{ marginTop: '24px' }}>
-                 <LakasMockup />
-              </div>
-            </div>
-            
-            <div className={styles.featureCard}>
-              <div className={`${styles.featureLabel} ${styles.labelTala}`}>Tala</div>
-              <h3 className={styles.featureTitle}>Mind</h3>
-              <p className={styles.featureDesc}>
-                Mood distribution wheels, reflection history timelines, and daily grounding prompts support calm self-focus.
-              </p>
-              <div style={{ marginTop: '24px' }}>
-                 <TalaMockup />
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
         <section className={styles.privacy}>
           <div className={styles.privacyInner}>
-            <h2 className={styles.privacyTitle}>Free, private, and honest about limits.</h2>
+            <h2 className={styles.privacyTitle}>Free, private, and built for control.</h2>
             <p className={styles.privacyDesc}>
-              Buhay is free to use right now, and it stays clear about your data, your controls, and what the product does not replace.
+              Buhay is free to use with zero hidden fees and full privacy controls for your data.
             </p>
             
             <div className={styles.privacyGrid}>
-              <div className={styles.privacyItem}>
-                <h3 className={styles.privacyItemTitle}>Free to use right now</h3>
-                <p className={styles.privacyItemDesc}>Create one account and use Takda, Lakas, and Tala without a paid plan in the current release.</p>
-              </div>
-              <div className={styles.privacyItem}>
-                <h3 className={styles.privacyItemTitle}>Private account controls</h3>
-                <p className={styles.privacyItemDesc}>Your money, fitness, and reflection records stay tied to your signed-in account, with privacy settings and deletion tools inside the app.</p>
-              </div>
-              <div className={styles.privacyItem}>
-                <h3 className={styles.privacyItemTitle}>Export, backup, restore</h3>
-                <p className={styles.privacyItemDesc}>Export your records, keep backups, and restore them from settings if you switch devices or want an extra copy.</p>
-              </div>
-              <div className={styles.privacyItem}>
-                <h3 className={styles.privacyItemTitle}>Honest limits</h3>
-                <p className={styles.privacyItemDesc}>Buhay is a manual tracking tool. It is not a bank, not automatic bank sync, and not a replacement for medical advice.</p>
-              </div>
+              {TRUST_POINTS.map((item, idx) => (
+                <div key={idx} className={styles.privacyItem}>
+                  <h3 className={styles.privacyItemTitle}>{item.title}</h3>
+                  <p className={styles.privacyItemDesc}>{item.desc}</p>
+                </div>
+              ))}
             </div>
+          </div>
+        </section>
+
+        <section style={{ padding: '60px 24px', maxWidth: '800px', margin: '0 auto' }}>
+          <h2 className={styles.sectionTitle} style={{ textAlign: 'center', marginBottom: '32px' }}>Frequently Asked Questions</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {FAQ_ITEMS.map((faq, idx) => (
+              <div key={idx} style={{ background: 'var(--bg-base, #111)', border: '1px solid var(--border-light, #222)', borderRadius: '16px', padding: '20px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '8px', color: 'var(--text, #fff)' }}>{faq.question}</h3>
+                <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-muted, #aaa)', margin: 0 }}>{faq.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <p>© {new Date().getFullYear()} Buhay. Bawat araw, mas malinaw.</p>
+          <p>© {new Date().getFullYear()} Buhay. Financial clarity for real life.</p>
           <div className={styles.footerLinks}>
             <Link to="/privacy">Privacy Policy</Link>
             <Link to="/terms">Terms of Use</Link>

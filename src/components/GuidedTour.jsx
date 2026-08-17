@@ -24,46 +24,6 @@ const TOUR_CONFIGS = {
         tab: 'debts'
       }
     ]
-  },
-  lakas: {
-    accentColor: 'var(--accent)',
-    steps: [
-      {
-        target: '#lakas-start-workout',
-        title: 'Quick Workout Logger',
-        body: 'Begin a new workout template (Push, Pull, Legs) or log custom exercises directly.',
-        tab: 'workout'
-      },
-      {
-        target: '#lakas-charts',
-        title: 'Weekly Progress & Habits',
-        body: 'Monitor step trends, active minutes, and weight check-ins in focused weekly layouts.',
-        tab: 'progress'
-      },
-      {
-        target: '#lakas-plate-calc',
-        title: 'Plate Weight Calculator',
-        body: 'Expand this tool during any barbell set to calculate the exact plates to load per side.',
-        tab: 'workout'
-      }
-    ]
-  },
-  tala: {
-    accentColor: 'var(--accent)',
-    steps: [
-      {
-        target: '#tala-new-entry',
-        title: 'Daily Reflection Space',
-        body: 'Log your mood, set a primary focus, and write down an honest reflection for today.',
-        tab: 'journal'
-      },
-      {
-        target: '#tala-history',
-        title: 'Reflection History',
-        body: 'Scroll back through your timeline of moods and written logs to trace your personal growth.',
-        tab: 'journal'
-      }
-    ]
   }
 }
 
