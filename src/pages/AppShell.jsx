@@ -383,7 +383,7 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
-  { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
+  { id: 'takda', label: 'Buhay', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
 ]
 
 const DEFAULT_SPACE_PAGES = {
@@ -1772,17 +1772,7 @@ export default function AppShell({ user }) {
       <div className={`${styles.mainWrap} ${isCalendarPage ? styles.mainWrapCalendar : ''} ${chromeMode.compact ? styles.mainWrapScrolled : ''} ${chromeMode.hidden ? styles.mainWrapChromeHidden : ''}`}>
         <header className={styles.topBar}>
           <div className={styles.topBarLeft}>
-            <button 
-              type="button"
-              className={styles.topBarTitleBlock} 
-              onClick={() => APP_SPACES.length > 1 && setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
-              aria-expanded={workspaceDropdownOpen}
-            >
-              <div className={styles.topBarHeadingRow}>
-                <div className={styles.topBarLogo}>{activeWorkspaceLabel} {APP_SPACES.length > 1 && <span className={styles.topBarChevron}>⌄</span>}</div>
-                <div className={styles.topBarContextPill}>{activeSpaceConfig.meta}</div>
-              </div>
-            </button>
+            <BrandLogo to="/app" />
           </div>
           <div className={styles.topBarRight}>
 
