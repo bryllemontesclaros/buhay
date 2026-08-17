@@ -1657,7 +1657,7 @@
     flex: 1;
     overflow-y: auto;
     /* Safe layout boundary so bottom cards and buttons sit completely clear of the fixed FAB button (+). */
-    padding-bottom: calc(var(--app-mobile-bottom-offset) + 180px);
+    padding-bottom: calc(var(--app-mobile-bottom-offset) + 80px);
     -webkit-overflow-scrolling: touch;
     position: relative !important;
     z-index: 1 !important;
