@@ -900,7 +900,6 @@ export default function AppShell({ user }) {
   }, [user, data.income, data.expenses, data.accounts, data.bills])
 
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
-  const [isDashboardEditing, setIsDashboardEditing] = useState(false)
   const [privacyMode, setPrivacyMode] = useState(() => {
     try {
       return localStorage.getItem('takda_privacy_mode') === 'true'
@@ -1637,8 +1636,6 @@ export default function AppShell({ user }) {
     onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
     onTakdaAction: openTakdaAction,
     onLakasTabChange: setLakasPage,
-    isEditing: isDashboardEditing,
-    onToggleEdit: () => setIsDashboardEditing(prev => !prev),
     onNavigate: handleDashboardNavigate,
   }
 

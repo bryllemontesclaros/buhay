@@ -482,8 +482,8 @@ export default function LandingPage() {
   }, [])
 
   const primaryLabel = authReady
-    ? (isSignedIn ? 'Open App Dashboard' : 'Get Started Free')
-    : 'Open App Dashboard'
+    ? (isSignedIn ? 'Open App' : 'Get Started Free')
+    : 'Open App'
 
   const handleOpenPrimary = () => {
     navigate(isSignedIn ? '/app' : '/login')
