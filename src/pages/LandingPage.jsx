@@ -394,7 +394,7 @@ export default function LandingPage() {
             {FAQ_ITEMS.map((faq, idx) => (
               <div key={idx} className={styles.faqItem}>
                 <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                <p className={faq.faqAnswer}>{faq.answer}</p>
+                <p className={styles.faqAnswer}>{faq.answer}</p>
               </div>
             ))}
           </div>
