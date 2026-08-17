@@ -386,15 +386,11 @@ const STREAK_MILESTONES = [3, 7, 14]
 const APP_SPACES = [
   { id: 'dashboard', label: 'Life Hub', meta: 'Overview', iconKey: 'home', cue: 'Cockpit overview' },
   { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
-  { id: 'lakas', label: 'Lakas', meta: 'Fitness', iconKey: 'lakas', cue: 'Training rhythm' },
-  { id: 'tala', label: 'Tala', meta: 'Reflection', iconKey: 'tala', cue: 'Calm reflection' },
 ]
 
 const DEFAULT_SPACE_PAGES = {
   dashboard: 'main',
   takda: 'calendar',
-  lakas: 'workout',
-  tala: 'journal',
 }
 
 const FINANCE_PAGE_ALIASES = {
@@ -406,7 +402,7 @@ const FINANCE_PAGE_ALIASES = {
   bills: { page: 'bills' },
   budget: { page: 'budget' },
   debts: { page: 'debts' },
-  subscriptions: { page: 'subscriptions' },
+  subscriptions: { page: 'bills' },
 }
 
 const MONEY_TOOLS = [
@@ -440,7 +436,7 @@ const PLAN_TOOLS = [
   {
     id: 'bills',
     label: 'Bills',
-    meta: 'Due dates and paid status',
+    meta: 'Due dates and recurring services',
     Component: Bills,
   },
   {
@@ -454,12 +450,6 @@ const PLAN_TOOLS = [
     label: 'Debts',
     meta: 'CC & loan payoff tracking',
     Component: Debts,
-  },
-  {
-    id: 'subscriptions',
-    label: 'Subscriptions',
-    meta: 'Recurring income & expenses',
-    Component: Subscriptions,
   },
 ]
 

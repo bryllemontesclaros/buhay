@@ -11,7 +11,7 @@ import PortfolioWidget from '../components/PortfolioWidget'
 import styles from './Dashboard.module.css'
 
 // Default layout if user has no saved layout
-const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'portfolioCard', 'healthCard', 'mindCard', 'pulseFeed']
+const DEFAULT_LAYOUT = ['insightBanner', 'statStrip', 'wealthCard', 'portfolioCard', 'pulseFeed']
 
 const WIDGET_TITLES = {
   insightBanner: 'Smart Insight',

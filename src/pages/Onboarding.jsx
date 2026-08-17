@@ -8,13 +8,11 @@ import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getTran
 import { CURRENCIES, RECUR_OPTIONS, fmt, normalizeDate } from '../lib/utils'
 import styles from './Onboarding.module.css'
 
-const STEPS = ['spaces', 'currency', 'accounts', 'bills', 'quickstart', 'review']
+const STEPS = ['currency', 'accounts', 'bills', 'review']
 const STEP_DETAILS = {
-  spaces: { label: 'Spaces', desc: 'Choose where to start' },
   currency: { label: 'Currency', desc: 'Money format across the app' },
   accounts: { label: 'Accounts', desc: 'Opening balances across your accounts' },
   bills: { label: 'Bills', desc: 'Recurring monthly commitments' },
-  quickstart: { label: 'Quick starts', desc: 'Optional Lakas and Tala defaults' },
   review: { label: 'Review', desc: 'Save your baseline and begin' },
 }
 const SPACE_OPTIONS = [
