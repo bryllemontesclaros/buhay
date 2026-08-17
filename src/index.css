@@ -337,15 +337,25 @@ body::after {
   html,
   body {
     height: 100%;
-    min-height: -webkit-fill-available;
-    overflow: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   #root {
     min-height: 100%;
-    min-height: -webkit-fill-available;
-    overflow: visible;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
+}
+
+:global(html:has([class*="shell"])),
+:global(body:has([class*="shell"])),
+html:has([class*="shell"]),
+body:has([class*="shell"]) {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  height: 100% !important;
+  height: 100dvh !important;
 }
 
 input, select, button, textarea {

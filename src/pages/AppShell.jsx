@@ -1087,6 +1087,26 @@ export default function AppShell({ user }) {
   }, [activeSpace, visiblePageKey])
 
   useEffect(() => {
+    if (typeof document === 'undefined') return
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    const prevHtmlOverscroll = document.documentElement.style.overscrollBehavior
+    const prevBodyOverscroll = document.body.style.overscrollBehavior
+
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overscrollBehavior = 'none'
+    document.body.style.overscrollBehavior = 'none'
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.overflow = prevBodyOverflow
+      document.documentElement.style.overscrollBehavior = prevHtmlOverscroll
+      document.body.style.overscrollBehavior = prevBodyOverscroll
+    }
+  }, [])
+
+  useEffect(() => {
     setChromeMode({ compact: false, hidden: false })
     lastMainScrollRef.current = 0
     if (mainRef.current) {
