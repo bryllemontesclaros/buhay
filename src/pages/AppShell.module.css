@@ -1652,19 +1652,7 @@
 
     position: relative !important;
   }
-  .mainWrap::before {
-    content: '' !important;
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 92px !important;
-    background: var(--bg) !important;
-    z-index: 5 !important;
-    pointer-events: none !important;
-  }
-    .mainWrapCalendar { overflow: visible; }
+  .mainWrapCalendar { overflow: visible; }
   .main {
     flex: 1;
     overflow-y: auto;
@@ -1728,7 +1716,7 @@
     min-height: 0;
     overflow-x: clip;
     overflow-y: auto;
-    padding-bottom: calc(var(--app-mobile-bottom-offset) + 24px);
+    padding-bottom: calc(var(--app-mobile-bottom-offset) + 90px);
     overscroll-behavior-y: contain;
   }
   .topBar {
