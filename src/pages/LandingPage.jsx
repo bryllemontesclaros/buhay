@@ -3,158 +3,467 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { Link, useNavigate } from 'react-router-dom'
 import RouteMeta from '../components/RouteMeta'
 import { auth } from '../lib/firebase'
-import mockStyles from './LandingPage.module.css'
 import styles from './LandingPageClean.module.css'
 
-function HeroInteractiveMockup() {
-  const [balance, setBalance] = useState(45210.50)
-  const [txs, setTxs] = useState([
-    { emoji: '💰', name: 'Salary Deposit', amount: 45000, date: 'Today' },
-    { emoji: '🛒', name: 'Supermarket Groceries', amount: -2350, date: 'Today' },
-    { emoji: '⚡', name: 'Monthly Electricity Bill', amount: -3100, date: 'Yesterday' }
+function LiveAppMockup() {
+  const [netWorth, setNetWorth] = useState(482500)
+  const [liquidCash, setLiquidCash] = useState(68240)
+  const [budgetSpent, setBudgetSpent] = useState(18400)
+  const budgetLimit = 25000
+  const [txList, setTxList] = useState([
+    { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
+    { id: 2, name: 'S&R Supermarket Haul', date: 'Today · 1:15 PM', amount: -3450, icon: '🛒', pos: false },
+    { id: 3, name: 'Meralco Power Bill', date: 'Yesterday', amount: -3100, icon: '⚡', pos: false },
+    { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false }
   ])
-  const [limitSpent, setLimitSpent] = useState(12500)
 
-  const addCoffee = () => {
-    if (balance <= 1000) return
-    setBalance(prev => prev - 500)
-    setLimitSpent(prev => Math.min(20000, prev + 500))
-    setTxs(prev => [
-      { emoji: '☕', name: 'Coffee & Snacks', amount: -500, date: 'Just now' },
-      ...prev
+  const handleSalary = () => {
+    setNetWorth(prev => prev + 35000)
+    setLiquidCash(prev => prev + 35000)
+    setTxList(prev => [
+      { id: Date.now(), name: 'Salary / Consulting Payout', date: 'Just now', amount: 35000, icon: '💰', pos: true },
+      ...prev.slice(0, 4)
     ])
   }
 
-  const addSalary = () => {
-    setBalance(prev => prev + 15000)
-    setTxs(prev => [
-      { emoji: '💵', name: 'Freelance Payout', amount: 15000, date: 'Just now' },
-      ...prev
+  const handleGrocery = () => {
+    if (liquidCash <= 2000) return
+    setNetWorth(prev => prev - 2400)
+    setLiquidCash(prev => prev - 2400)
+    setBudgetSpent(prev => Math.min(budgetLimit, prev + 2400))
+    setTxList(prev => [
+      { id: Date.now(), name: 'Weekly Market Run', date: 'Just now', amount: -2400, icon: '🥦', pos: false },
+      ...prev.slice(0, 4)
     ])
   }
 
-  const reset = () => {
-    setBalance(45210.50)
-    setLimitSpent(12500)
-    setTxs([
-      { emoji: '💰', name: 'Salary Deposit', amount: 45000, date: 'Today' },
-      { emoji: '🛒', name: 'Supermarket Groceries', amount: -2350, date: 'Today' },
-      { emoji: '⚡', name: 'Monthly Electricity Bill', amount: -3100, date: 'Yesterday' }
+  const handleCoffee = () => {
+    if (liquidCash <= 500) return
+    setNetWorth(prev => prev - 380)
+    setLiquidCash(prev => prev - 380)
+    setBudgetSpent(prev => Math.min(budgetLimit, prev + 380))
+    setTxList(prev => [
+      { id: Date.now(), name: 'Matcha Latte & Bagel', date: 'Just now', amount: -380, icon: '🍵', pos: false },
+      ...prev.slice(0, 4)
     ])
   }
+
+  const handleReset = () => {
+    setNetWorth(482500)
+    setLiquidCash(68240)
+    setBudgetSpent(18400)
+    setTxList([
+      { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
+      { id: 2, name: 'S&R Supermarket Haul', date: 'Today · 1:15 PM', amount: -3450, icon: '🛒', pos: false },
+      { id: 3, name: 'Meralco Power Bill', date: 'Yesterday', amount: -3100, icon: '⚡', pos: false },
+      { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false }
+    ])
+  }
+
+  const budgetPct = Math.min(100, Math.round((budgetSpent / budgetLimit) * 100))
 
   return (
-    <div className={mockStyles.mockupFrame} style={{ margin: 0, borderRadius: 0 }}>
-      <div className={mockStyles.mockupHeader}>
-        <div className={mockStyles.mockupDots}>
-          <span className={mockStyles.dotRed}></span>
-          <span className={mockStyles.dotYellow}></span>
-          <span className={mockStyles.dotGreen}></span>
+    <div className={styles.mockupContainer}>
+      <div className={styles.mockupHeader}>
+        <div className={styles.windowControls}>
+          <span className={`${styles.controlDot} ${styles.dotClose}`}></span>
+          <span className={`${styles.controlDot} ${styles.dotMin}`}></span>
+          <span className={`${styles.controlDot} ${styles.dotMax}`}></span>
         </div>
-        <div className={mockStyles.mockupUrl}>buhay.app/app</div>
+        <div className={styles.mockupAddressBar}>
+          <span>🔒</span> buhay.app/takda
+        </div>
+        <div className={styles.mockupWindowMeta}>
+          <span>●</span> Live Demo
+        </div>
       </div>
-      
-      <div className={mockStyles.mockupContent} style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+
+      <div className={styles.mockupBody}>
+        {/* Interactive Simulator Control Bar */}
+        <div className={styles.simulatorBar}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: 1 }}>Live Money Cockpit</div>
-            <div style={{ fontSize: 13, color: '#94a3b8' }}>Real-time net worth & transaction log</div>
+            <div className={styles.simulatorTitle}>⚡ Live Financial Cockpit</div>
+            <div className={styles.simulatorSubtitle}>Click any button below to test real-time cashflow reaction:</div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button type="button" onClick={addCoffee} className={mockStyles.mockActionBtn}>
-              + Expense (-₱500)
+          <div className={styles.simulatorButtons}>
+            <button type="button" onClick={handleSalary} className={`${styles.simBtn} ${styles.simBtnPrimary}`}>
+              + Salary (+₱35k)
             </button>
-            <button type="button" onClick={addSalary} className={mockStyles.mockActionBtn} style={{ borderColor: 'rgba(16,185,129,0.4)', background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
-              + Income (+₱15k)
+            <button type="button" onClick={handleGrocery} className={styles.simBtn}>
+              - Groceries (-₱2.4k)
             </button>
-            <button type="button" onClick={reset} className={mockStyles.mockActionBtn} style={{ opacity: 0.6 }}>
+            <button type="button" onClick={handleCoffee} className={styles.simBtn}>
+              - Coffee (-₱380)
+            </button>
+            <button type="button" onClick={handleReset} className={styles.simBtn} style={{ opacity: 0.7 }}>
               Reset
             </button>
           </div>
         </div>
 
-        <div className={mockStyles.mockCard} style={{ borderLeft: '4px solid #10b981', background: 'rgba(16,185,129,0.06)', marginBottom: 16 }}>
-          <div className={mockStyles.mockCardHeaderRow}>
-            <div className={mockStyles.mockCardLabel}>Total Cash & Liquidity</div>
-            <span style={{ fontSize: 11, background: 'rgba(16,185,129,0.2)', color: '#10b981', padding: '2px 8px', borderRadius: 99, fontWeight: 700 }}>
-              +12.4% this month
-            </span>
-          </div>
-          <div className={mockStyles.mockBalance} style={{ fontSize: 32, fontWeight: 800 }}>
-            ₱{balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-        </div>
-
-        <div className={mockStyles.mockBudget} style={{ marginBottom: 20 }}>
-          <div className={mockStyles.mockBudgetHeader}>
-            <span style={{ fontSize: 12, fontWeight: 600 }}>Monthly Spending Limit</span>
-            <span style={{ fontSize: 12, color: '#10b981', fontWeight: 700 }}>₱{(limitSpent / 1000).toFixed(1)}k / ₱20k (62%)</span>
-          </div>
-          <div className={mockStyles.mockProgressBar} style={{ height: 8 }}>
-            <div className={mockStyles.mockProgressFill} style={{ width: `${(limitSpent / 20000) * 100}%`, backgroundColor: '#10b981' }}></div>
-          </div>
-        </div>
-
-        <div className={mockStyles.mockTransactions}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8, textAlign: 'left' }}>Recent Cashflow Timeline</div>
-          {txs.slice(0, 3).map((tx, i) => (
-            <div key={i} className={mockStyles.mockTxItem} style={{ padding: '10px 12px' }}>
-              <span style={{ fontSize: 16 }}>{tx.emoji}</span>
-              <div style={{ flex: 1, textAlign: 'left' }}>
-                <div className={mockStyles.txName}>{tx.name}</div>
-                <div style={{ fontSize: 10, color: '#64748b' }}>{tx.date}</div>
-              </div>
-              <span className={tx.amount > 0 ? mockStyles.txAmountPositive : mockStyles.txAmount} style={{ fontSize: 14, fontWeight: 700 }}>
-                {tx.amount > 0 ? '+' : ''}₱{Math.abs(tx.amount).toLocaleString()}
-              </span>
+        {/* 4 Metrics Strip */}
+        <div className={styles.metricsStrip}>
+          <div className={styles.metricCard}>
+            <div className={styles.metricCardLabel}>Estimated Net Worth</div>
+            <div className={styles.metricCardValue}>
+              ₱{netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-          ))}
+            <div className={styles.metricCardSub}>+14.2% YoY growth</div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricCardLabel}>Liquid Cashflow</div>
+            <div className={styles.metricCardValue} style={{ color: '#34d399' }}>
+              ₱{liquidCash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            <div className={styles.metricCardSub}>Available across 4 accounts</div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricCardLabel}>Bills (Next 7 Days)</div>
+            <div className={styles.metricCardValue} style={{ color: '#f59e0b' }}>
+              ₱4,999.00
+            </div>
+            <div className={styles.metricCardSub} style={{ color: '#f59e0b' }}>2 bills approaching</div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricCardLabel}>Monthly Budget Target</div>
+            <div className={styles.metricCardValue}>
+              {budgetPct}%
+            </div>
+            <div style={{ height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 99, marginTop: 8, overflow: 'hidden' }}>
+              <div style={{ width: `${budgetPct}%`, height: '100%', background: budgetPct > 85 ? '#ef4444' : '#10b981', transition: 'width 0.3s ease' }}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cockpit Grid */}
+        <div className={styles.cockpitGrid}>
+          {/* Left: Projected 30-Day Cashflow Curve */}
+          <div className={styles.cockpitPanel}>
+            <div className={styles.panelTitle}>
+              <span>📈 30-Day Cashflow Forecast</span>
+              <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>● Positive Runway</span>
+            </div>
+            <div style={{ height: 130, position: 'relative', display: 'flex', alignItems: 'flex-end' }}>
+              <svg viewBox="0 0 400 120" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                <defs>
+                  <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20 L 400 120 L 0 120 Z"
+                  fill="url(#curveGrad)"
+                />
+                <path
+                  d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20"
+                  fill="none"
+                  stroke="#10b981"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <circle cx="200" cy="40" r="4" fill="#34d399" />
+                <circle cx="400" cy="20" r="5" fill="#34d399" stroke="#ffffff" strokeWidth="2" />
+              </svg>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginTop: 8 }}>
+              <span>Day 1 (₱52k)</span>
+              <span>Day 15 (Salary Spike ₱87k)</span>
+              <span>Day 30 (Forecast ₱79k)</span>
+            </div>
+          </div>
+
+          {/* Right: Real-time Cashflow Timeline */}
+          <div className={styles.cockpitPanel}>
+            <div className={styles.panelTitle}>
+              <span>⚡ Live Activity Stream</span>
+              <span style={{ fontSize: 11, color: '#64748b' }}>Latest Entries</span>
+            </div>
+            <div className={styles.txTimeline}>
+              {txList.map(tx => (
+                <div key={tx.id} className={styles.txItem}>
+                  <div className={styles.txIcon}>{tx.icon}</div>
+                  <div className={styles.txDetails}>
+                    <div className={styles.txName}>{tx.name}</div>
+                    <div className={styles.txMeta}>{tx.date}</div>
+                  </div>
+                  <div className={tx.pos ? styles.txAmountPos : styles.txAmountNeg}>
+                    {tx.pos ? '+' : ''}₱{Math.abs(tx.amount).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
+function CalendarWidget() {
+  const [selectedDay, setSelectedDay] = useState(17)
+  const dayForecasts = {
+    14: { balance: 48500, note: 'Regular spending day (-₱450)' },
+    15: { balance: 83500, note: '🎉 Mid-month salary deposit (+₱35,000)' },
+    16: { balance: 81200, note: 'Electric utility bill due (-₱2,300)' },
+    17: { balance: 80750, note: '🟢 Current active day · Safe cashflow (+₱58.4k projection)' },
+    18: { balance: 79250, note: 'Internet subscription recurring (-₱1,500)' },
+    19: { balance: 78600, note: 'Scheduled savings transfer to Emergency Fund (-₱650)' },
+    20: { balance: 77900, note: 'Planned grocery replenishment' }
+  }
+
+  const activeInfo = dayForecasts[selectedDay] || dayForecasts[17]
+
+  return (
+    <div className={styles.bentoWidgetArea}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#ffffff' }}>📅 August 2026 Interactive Calendar</div>
+        <div style={{ fontSize: 12, color: '#34d399', fontWeight: 700 }}>₱{activeInfo.balance.toLocaleString()} balance</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, textAlign: 'center', marginBottom: 12 }}>
+        {['S','M','T','W','T','F','S'].map((d, i) => (
+          <div key={i} style={{ fontSize: 10, fontWeight: 700, color: '#64748b' }}>{d}</div>
+        ))}
+        {[14,15,16,17,18,19,20].map((d) => (
+          <button
+            key={d}
+            type="button"
+            onClick={() => setSelectedDay(d)}
+            style={{
+              background: d === selectedDay ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+              border: d === selectedDay ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 8,
+              padding: '8px 4px',
+              color: d === selectedDay ? '#34d399' : '#cbd5e1',
+              fontWeight: d === selectedDay ? 800 : 500,
+              fontSize: 12,
+              cursor: 'pointer',
+              transition: 'all 0.18s ease'
+            }}
+          >
+            {d}
+            <div style={{ fontSize: 7, color: d === 15 ? '#34d399' : d === 16 ? '#f87171' : d === 17 ? '#10b981' : '#64748b', marginTop: 2 }}>●</div>
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '10px 14px', borderRadius: 10, fontSize: 12, color: '#cbd5e1' }}>
+        <strong style={{ color: '#34d399' }}>Day {selectedDay} Snapshot:</strong> {activeInfo.note}
+      </div>
+    </div>
+  )
+}
+
+function AccountsWidget() {
+  const [activeTab, setActiveTab] = useState('all')
+
+  const accounts = [
+    { name: '🏦 BDO Savings Account', cat: 'liquid', balance: 48720, type: 'Bank' },
+    { name: '📱 GCash Wallet', cat: 'liquid', balance: 12450, type: 'E-Wallet' },
+    { name: '⚡ Maya Personal', cat: 'liquid', balance: 7070, type: 'E-Wallet' },
+    { name: '📈 Global Stock Index ETF', cat: 'invest', balance: 320400, type: 'Investment' },
+    { name: '💳 Titanium Credit Card', cat: 'credit', balance: -8400, type: 'Credit' }
+  ]
+
+  const filtered = activeTab === 'all'
+    ? accounts
+    : accounts.filter(a => activeTab === 'liquid' ? a.cat === 'liquid' : a.cat === 'invest' || a.cat === 'credit')
+
+  return (
+    <div className={styles.bentoWidgetArea}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        {['all', 'liquid', 'invest'].map(tab => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            style={{
+              background: activeTab === tab ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+              border: activeTab === tab ? '1px solid #10b981' : '1px solid transparent',
+              color: activeTab === tab ? '#34d399' : '#94a3b8',
+              padding: '4px 12px',
+              borderRadius: 99,
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: 'capitalize',
+              cursor: 'pointer'
+            }}
+          >
+            {tab === 'all' ? 'All Accounts' : tab === 'liquid' ? 'Liquid Cash' : 'Invest & Debt'}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {filtered.map((acc, idx) => (
+          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
+            <span style={{ color: '#ffffff', fontWeight: 600 }}>{acc.name}</span>
+            <strong style={{ color: acc.balance >= 0 ? '#34d399' : '#ef4444' }}>
+              {acc.balance >= 0 ? '' : '-'}₱{Math.abs(acc.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function BillsWidget() {
+  const [bills, setBills] = useState([
+    { id: 1, name: 'Meralco Electricity', amount: 3100, due: 'Due in 2 days', paid: false, urgent: true },
+    { id: 2, name: 'Globe Fiber WiFi 200Mbps', amount: 1899, due: 'Due in 6 days', paid: false, urgent: false },
+    { id: 3, name: 'Netflix Premium HD', amount: 549, due: 'Auto-debit on 24th', paid: true, urgent: false }
+  ])
+
+  const togglePaid = (id) => {
+    setBills(prev => prev.map(b => b.id === id ? { ...b, paid: !b.paid } : b))
+  }
+
+  return (
+    <div className={styles.bentoWidgetArea}>
+      <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10 }}>
+        Tap checkbox to mark bills as paid in real-time:
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {bills.map(bill => (
+          <div
+            key={bill.id}
+            onClick={() => togglePaid(bill.id)}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              background: bill.paid ? 'rgba(16, 185, 129, 0.08)' : bill.urgent ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+              border: bill.paid ? '1px solid rgba(16, 185, 129, 0.3)' : bill.urgent ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.06)',
+              padding: '10px 14px',
+              borderRadius: 10,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 20,
+                height: 20,
+                borderRadius: 6,
+                background: bill.paid ? '#10b981' : 'rgba(255,255,255,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                color: '#ffffff'
+              }}>
+                {bill.paid ? '✓' : ''}
+              </div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: bill.paid ? '#94a3b8' : '#ffffff', textDecoration: bill.paid ? 'line-through' : 'none' }}>
+                  {bill.name}
+                </div>
+                <div style={{ fontSize: 10, color: bill.paid ? '#34d399' : bill.urgent ? '#f87171' : '#94a3b8' }}>
+                  {bill.paid ? 'Marked as Paid' : bill.due}
+                </div>
+              </div>
+            </div>
+            <strong style={{ fontSize: 13, color: bill.paid ? '#34d399' : bill.urgent ? '#f87171' : '#ffffff' }}>
+              ₱{bill.amount.toLocaleString()}
+            </strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function BudgetGoalsWidget() {
+  return (
+    <div className={styles.bentoWidgetArea}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+            <span style={{ color: '#ffffff', fontWeight: 600 }}>🎯 Emergency Fund Target</span>
+            <strong style={{ color: '#34d399' }}>₱75,000 / ₱100,000 (75%)</strong>
+          </div>
+          <div style={{ height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}></div>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+            <span style={{ color: '#ffffff', fontWeight: 600 }}>💳 Credit Debt Snowball</span>
+            <strong style={{ color: '#06b6d4' }}>Debt Free in 5 Months!</strong>
+          </div>
+          <div style={{ height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ width: '82%', height: '100%', background: 'linear-gradient(90deg, #06b6d4, #3b82f6)' }}></div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: 11, color: '#94a3b8' }}>
+          <span>Monthly Safe-to-Spend Envelope</span>
+          <strong style={{ color: '#34d399' }}>₱1,250 / day</strong>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const COMPARISON_ROWS = [
+  { feature: 'Data Privacy & Security', buhay: '100% Client-Side. No data selling', banks: 'Shared with marketing & credit networks', sheets: 'Vulnerable cloud sharing' },
+  { feature: 'Bank Login Requirements', buhay: 'Zero bank logins or passwords needed', banks: 'Mandatory passwords & SMS OTP friction', sheets: 'Manual formulas only' },
+  { feature: 'Visual Cashflow Forecasting', buhay: '30-Day interactive calendar forecast', banks: 'Past statement histories only', sheets: 'Complex custom macros' },
+  { feature: 'Multi-Account Net Worth', buhay: 'Auto-aggregated cash, debt & investments', banks: 'Locked to single institution accounts', sheets: 'Prone to broken formulas' },
+  { feature: 'Subscription & Bill Radar', buhay: 'Automated recurrence & paid checkoffs', banks: 'Surprise auto-debits without alert', sheets: 'No recurring trigger alerts' },
+  { feature: 'Cost / Pricing', buhay: '100% Free Forever', banks: 'Hidden fees & minimum balance penalties', sheets: 'Free (but high maintenance)' }
+]
+
 const TRUST_POINTS = [
   {
-    title: '100% Free Forever',
-    desc: 'No credit card required, no forced trial periods, and no locked features behind paywalls.',
-  },
-  {
+    icon: '🛡️',
     title: 'Zero Bank Credentials Stored',
-    desc: 'Buhay never asks for your bank logins or credentials, keeping your financial accounts safe.',
+    desc: 'Buhay never asks for your bank passwords, OTPs, or API logins. Your accounts stay strictly yours.'
   },
   {
+    icon: '⚡',
+    title: '100% Free Forever',
+    desc: 'No credit card required, no 14-day trial tricks, and zero features locked behind paywalls.'
+  },
+  {
+    icon: '🔒',
     title: 'Encrypted & Private',
-    desc: 'Your data is secured directly to your account with optional Privacy Mode to blur financial balances.',
+    desc: 'All financial logs belong exclusively to your user ID with optional Privacy Mode to blur monetary values.'
   },
   {
-    title: 'Portable Data Export',
-    desc: 'Download your full financial ledger to CSV anytime or create encrypted backup JSON snapshots.',
-  },
+    icon: '📥',
+    title: 'Universal Data Export',
+    desc: 'Export your entire transaction ledger to CSV spreadsheets or full JSON snapshots anytime.'
+  }
 ]
 
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay / Takda?',
-    answer: 'Buhay is a calm, private personal finance web app that centralizes daily cashflow forecasting, account balances, recurring bills, and savings targets into one clear system.',
+    answer: 'Buhay is an ultra-fast, private personal finance web app designed to map your daily cashflow, aggregate multi-account net worth, forecast upcoming bills, and guide your savings goals without complexity.'
   },
   {
-    question: 'Is Buhay free to use?',
-    answer: 'Yes! Buhay is 100% free to use with no hidden trial periods or subscription lock-ins.',
+    question: 'Why do you not connect directly to banks?',
+    answer: 'Traditional finance apps connect to banks by requesting your online banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never exposed.'
   },
   {
-    question: 'Does Buhay connect to my bank automatically?',
-    answer: 'No. Buhay is an intentional manual tracking app so your bank credentials stay 100% private and you remain in total control of what gets logged.',
+    question: 'Can I use Buhay on my mobile phone?',
+    answer: 'Yes! Buhay is fully responsive and installable as a Progressive Web App (PWA) on iOS and Android. You can add it directly to your home screen for lightning-fast 1-tap tracking.'
   },
   {
-    question: 'Is my financial data secure and private?',
-    answer: 'Yes. Your records are tied strictly to your signed-in account. You can enable Privacy Mode to mask money numbers, and export or backup data anytime in settings.',
+    question: 'Is there a limit on how many transactions or accounts I can add?',
+    answer: 'No! You can track unlimited cash wallets, bank accounts, credit cards, bills, and savings goals without hitting any limits.'
   },
   {
-    question: 'Can I export my data or move devices?',
-    answer: 'Yes. You can download your transaction records to CSV spreadsheets or export full encrypted JSON backups to restore on any new device.',
-  },
+    question: 'How do I backup my financial data?',
+    answer: 'Inside the Settings page, you can download a full CSV transaction ledger or export an encrypted JSON backup snapshot to restore anytime.'
+  }
 ]
 
 export default function LandingPage() {
@@ -171,14 +480,14 @@ export default function LandingPage() {
   }, [])
 
   const primaryLabel = authReady
-    ? (isSignedIn ? 'Open Buhay App' : 'Get Started Free')
-    : 'Open Buhay App'
+    ? (isSignedIn ? 'Open App Dashboard' : 'Get Started Free')
+    : 'Open App Dashboard'
 
-  const openPrimary = () => {
+  const handleOpenPrimary = () => {
     navigate(isSignedIn ? '/app' : '/login')
   }
 
-  const goLogin = () => {
+  const handleSignIn = () => {
     navigate('/login')
   }
 
@@ -186,11 +495,15 @@ export default function LandingPage() {
     <div className={styles.page}>
       <RouteMeta
         title="Buhay — Personal Finance & Cash Flow Calendar"
-        description="Track accounts, forecast daily cash flow, manage recurring bills, and reach savings goals with complete privacy."
+        description="Master your money with complete clarity: forecast daily cash flow, sync multi-account net worth, automate bills, and reach savings goals with total privacy."
         path="/"
       />
-      
-      {/* Sticky Navigation */}
+
+      {/* Atmospheric Background Lights */}
+      <div className={styles.bgGlowTop}></div>
+      <div className={styles.bgGridPattern}></div>
+
+      {/* Sticky Glass Navbar */}
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <Link to="/" className={styles.brand}>
@@ -199,8 +512,12 @@ export default function LandingPage() {
           </Link>
 
           <div className={styles.navActions}>
-            <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={goLogin}>Sign in</button>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={openPrimary}>{primaryLabel}</button>
+            <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={handleSignIn}>
+              Sign in
+            </button>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={handleOpenPrimary}>
+              {primaryLabel} <span>→</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -208,216 +525,221 @@ export default function LandingPage() {
       <main>
         {/* Hero Section */}
         <section className={styles.hero}>
-          <div className={`${styles.heroKicker} ${styles.reveal}`}>
-            <span>✨</span> Personal Finance & Cash Flow
+          <div className={styles.heroBadge}>
+            <span className={styles.heroBadgeDot}></span>
+            <span>Buhay 2.0 · Personal Finance Simplified</span>
           </div>
-          
-          <h1 className={`${styles.heroTitle} ${styles.reveal} ${styles.delay1}`}>
-            Financial Clarity for Real Life.
+
+          <h1 className={styles.heroTitle}>
+            Master Your Money. <br />
+            <span className={styles.gradientHighlight}>Zero Stress, Total Privacy.</span>
           </h1>
-          
-          <p className={`${styles.heroSub} ${styles.reveal} ${styles.delay2}`}>
-            Buhay centralizes account balances, daily cash flow projections, recurring bills, and budget targets into one calm, private dashboard.
+
+          <p className={styles.heroSub}>
+            The calm financial cockpit that forecasts daily cash flow, tracks multi-account net worth, stays ahead of bills, and crushes debt without selling your bank data.
           </p>
-          
-          <div className={`${styles.heroActions} ${styles.reveal} ${styles.delay3}`}>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={openPrimary}>
+
+          <div className={styles.heroActions}>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} onClick={handleOpenPrimary}>
               {primaryLabel} <span>→</span>
             </button>
-            <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={goLogin}>
-              Sign in
+            <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnLg}`} onClick={handleSignIn}>
+              Sign In to Your Account
             </button>
           </div>
-          
-          {/* Interactive Hero Visual Mockup */}
-          <div className={`${styles.heroVisual} ${styles.reveal} ${styles.delay3}`}>
-            <HeroInteractiveMockup />
+
+          <div className={styles.heroTrustBadges}>
+            <div className={styles.heroTrustItem}>
+              <span>✓</span> 100% Free Forever
+            </div>
+            <div className={styles.heroTrustItem}>
+              <span>✓</span> Zero Bank Passwords Needed
+            </div>
+            <div className={styles.heroTrustItem}>
+              <span>✓</span> Instant CSV / JSON Export
+            </div>
           </div>
+
+          {/* Hyper-realistic Interactive App Cockpit Mockup */}
+          <LiveAppMockup />
         </section>
 
-        {/* 2x2 Feature Bento Grid Section */}
+        {/* Bento Grid Feature Suite */}
         <section className={styles.features}>
-          <h2 className={styles.sectionTitle}>Built for Complete Money Clarity</h2>
-          <p className={styles.sectionSub}>Four structured financial tools staying in sync without complexity.</p>
-          
-          <div className={styles.featureGrid}>
-            {/* Feature Card 1: Calendar */}
-            <div className={styles.featureCard}>
-              <div className={styles.featureCardHeader}>
-                <div className={styles.featureIcon}>📅</div>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionEyebrow}>Core Architecture</div>
+            <h2 className={styles.sectionTitle}>Four Flagship Tools In Perfect Sync</h2>
+            <p className={styles.sectionSub}>
+              Everything you need to manage your personal finances effortlessly in one unified platform.
+            </p>
+          </div>
+
+          <div className={styles.bentoGrid}>
+            {/* Bento Card 1: Calendar */}
+            <div className={styles.bentoCard}>
+              <div className={styles.bentoCardTop}>
+                <div className={styles.bentoIcon}>📅</div>
                 <div>
-                  <div className={styles.featureLabel}>Takda Calendar</div>
-                  <h3 className={styles.featureTitle}>Interactive Cashflow</h3>
+                  <div className={styles.bentoTag}>Takda Engine</div>
+                  <h3 className={styles.bentoCardTitle}>Interactive Cashflow Calendar</h3>
                 </div>
               </div>
-              <p className={styles.featureDesc}>
-                View daily income, expenses, and projected balances on a visual timeline. Tap any date to add a record or inspect daily activity.
+              <p className={styles.bentoCardDesc}>
+                Stop guessing your end-of-month balance. View daily incomes, scheduled bills, and accurate 30-day cash projections at a glance.
               </p>
-              
-              <div className={styles.featureWidgetWrap}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 8, color: '#10b981' }}>
-                  <span>August 2026</span>
-                  <span>Forecast: ₱58,400</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, textAlign: 'center', fontSize: 10 }}>
-                  {['S','M','T','W','T','F','S'].map((d, i) => (
-                    <div key={i} style={{ color: '#64748b', fontWeight: 700 }}>{d}</div>
-                  ))}
-                  {[14,15,16,17,18,19,20].map((day, idx) => (
-                    <div key={idx} style={{
-                      background: day === 17 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.03)',
-                      border: day === 17 ? '1px solid #10b981' : '1px solid transparent',
-                      borderRadius: 6,
-                      padding: '6px 2px',
-                      color: day === 17 ? '#10b981' : '#e2e8f0',
-                      fontWeight: day === 17 ? 800 : 500
-                    }}>
-                      {day}
-                      <div style={{ fontSize: 7, color: day === 17 ? '#10b981' : '#64748b', marginTop: 2 }}>●</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <CalendarWidget />
             </div>
 
-            {/* Feature Card 2: Accounts */}
-            <div className={styles.featureCard}>
-              <div className={styles.featureCardHeader}>
-                <div className={styles.featureIcon}>💳</div>
+            {/* Bento Card 2: Multi-Account Hub */}
+            <div className={styles.bentoCard}>
+              <div className={styles.bentoCardTop}>
+                <div className={styles.bentoIcon}>💳</div>
                 <div>
-                  <div className={styles.featureLabel}>Accounts & Balances</div>
-                  <h3 className={styles.featureTitle}>Multi-Account Hub</h3>
+                  <div className={styles.bentoTag}>Net Worth Engine</div>
+                  <h3 className={styles.bentoCardTitle}>Multi-Account Balance Hub</h3>
                 </div>
               </div>
-              <p className={styles.featureDesc}>
-                Track cash, bank accounts, e-wallets, and credit cards in one place with automatic net worth and liquidity calculations.
+              <p className={styles.bentoCardDesc}>
+                Consolidate bank accounts, e-wallets, credit cards, and investments into one real-time liquidity and net worth view.
               </p>
-
-              <div className={styles.featureWidgetWrap}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-                    <span>💵 Cash Wallet</span>
-                    <strong style={{ color: '#10b981' }}>₱12,500.00</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-                    <span>🏦 Main Bank Account</span>
-                    <strong style={{ color: '#10b981' }}>₱32,710.50</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-                    <span>💳 Credit Card</span>
-                    <strong style={{ color: '#ef4444' }}>-₱4,200.00</strong>
-                  </div>
-                </div>
-              </div>
+              <AccountsWidget />
             </div>
 
-            {/* Feature Card 3: Bills */}
-            <div className={styles.featureCard}>
-              <div className={styles.featureCardHeader}>
-                <div className={styles.featureIcon}>⚡</div>
+            {/* Bento Card 3: Smart Bills */}
+            <div className={styles.bentoCard}>
+              <div className={styles.bentoCardTop}>
+                <div className={styles.bentoIcon}>⚡</div>
                 <div>
-                  <div className={styles.featureLabel}>Bills & Subscriptions</div>
-                  <h3 className={styles.featureTitle}>Automated Due Dates</h3>
+                  <div className={styles.bentoTag}>Recurring Radar</div>
+                  <h3 className={styles.bentoCardTitle}>Smart Bills & Subscriptions</h3>
                 </div>
               </div>
-              <p className={styles.featureDesc}>
-                Stay ahead of upcoming bills, auto-deduction dates, and active recurring subscriptions before deadlines pass.
+              <p className={styles.bentoCardDesc}>
+                Prevent late penalties and unexpected auto-debits with intelligent due date reminders and one-tap payment checkoffs.
               </p>
-
-              <div className={styles.featureWidgetWrap}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-                    <div>
-                      <strong style={{ color: '#ef4444' }}>🔴 Power Utility Bill</strong>
-                      <div style={{ fontSize: 10, color: '#94a3b8' }}>Due in 2 days</div>
-                    </div>
-                    <strong style={{ color: '#ef4444' }}>₱3,100.00</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-                    <div>
-                      <strong style={{ color: '#10b981' }}>✅ Internet Fiber</strong>
-                      <div style={{ fontSize: 10, color: '#94a3b8' }}>Marked Paid</div>
-                    </div>
-                    <strong style={{ color: '#10b981' }}>₱1,899.00</strong>
-                  </div>
-                </div>
-              </div>
+              <BillsWidget />
             </div>
 
-            {/* Feature Card 4: Budget & Savings */}
-            <div className={styles.featureCard}>
-              <div className={styles.featureCardHeader}>
-                <div className={styles.featureIcon}>🎯</div>
+            {/* Bento Card 4: Budgets & Goals */}
+            <div className={styles.bentoCard}>
+              <div className={styles.bentoCardTop}>
+                <div className={styles.bentoIcon}>🎯</div>
                 <div>
-                  <div className={styles.featureLabel}>Budget & Goals</div>
-                  <h3 className={styles.featureTitle}>Targets & Debt Payoff</h3>
+                  <div className={styles.bentoTag}>Growth & Freedom</div>
+                  <h3 className={styles.bentoCardTitle}>Envelope Budgets & Debt Freedom</h3>
                 </div>
               </div>
-              <p className={styles.featureDesc}>
-                Set category spending limits, track savings milestones, and simulate payoff timelines for debt freedom.
+              <p className={styles.bentoCardDesc}>
+                Build emergency funds with milestone tracking and calculate your exact debt payoff date with structured payoff simulations.
               </p>
-
-              <div className={styles.featureWidgetWrap}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                      <span>🎯 Emergency Fund Target</span>
-                      <strong style={{ color: '#10b981' }}>₱45,000 / ₱60,000 (75%)</strong>
-                    </div>
-                    <div style={{ height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>
-                      <div style={{ width: '75%', height: '100%', background: '#10b981' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                      <span>📊 Monthly Groceries Budget</span>
-                      <strong style={{ color: '#3b82f6' }}>₱7,350 / ₱10,000 (73%)</strong>
-                    </div>
-                    <div style={{ height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>
-                      <div style={{ width: '73%', height: '100%', background: '#3b82f6' }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <BudgetGoalsWidget />
             </div>
           </div>
         </section>
 
-        {/* Privacy & Trust Section */}
-        <section className={styles.privacy}>
-          <div className={styles.privacyInner}>
-            <h2 className={styles.privacyTitle}>Free, Private & Built for Control</h2>
-            <p className={styles.privacyDesc}>
-              Buhay is free to use with zero hidden fees, zero bank credential lock-ins, and full privacy controls for your data.
+        {/* Comparison Section: Buhay vs Alternatives */}
+        <section className={styles.comparisonSection}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionEyebrow}>Why Buhay?</div>
+            <h2 className={styles.sectionTitle}>Built for You, Not Financial Advertisers</h2>
+            <p className={styles.sectionSub}>
+              See how Buhay delivers superior speed, privacy, and clarity compared to traditional methods.
             </p>
-            
+          </div>
+
+          <table className={styles.comparisonTable}>
+            <thead>
+              <tr>
+                <th>Feature / Capability</th>
+                <th className={styles.highlightCol}>↗ Buhay</th>
+                <th>Bank Apps</th>
+                <th>Spreadsheets</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row, idx) => (
+                <tr key={idx}>
+                  <td>
+                    <strong style={{ color: '#ffffff' }}>{row.feature}</strong>
+                  </td>
+                  <td className={styles.highlightCol}>
+                    <div className={styles.checkYes}>
+                      <span>✓</span> {row.buhay}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.checkNo}>
+                      <span>✗</span> {row.banks}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.checkNo}>
+                      <span>~</span> {row.sheets}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        {/* Privacy & Trust Pillars */}
+        <section className={styles.privacySection}>
+          <div className={styles.privacyInner}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionEyebrow}>Security & Ownership</div>
+              <h2 className={styles.sectionTitle}>Private by Design, Free Forever</h2>
+              <p className={styles.sectionSub}>
+                Your financial data should remain strictly confidential. Here is how we ensure zero compromise.
+              </p>
+            </div>
+
             <div className={styles.privacyGrid}>
-              {TRUST_POINTS.map((item, idx) => (
-                <div key={idx} className={styles.privacyItem}>
-                  <h3 className={styles.privacyItemTitle}>
-                    <span>🛡️</span> {item.title}
-                  </h3>
-                  <p className={styles.privacyItemDesc}>{item.desc}</p>
+              {TRUST_POINTS.map((pt, idx) => (
+                <div key={idx} className={styles.privacyCard}>
+                  <div className={styles.privacyIcon}>{pt.icon}</div>
+                  <h3 className={styles.privacyCardTitle}>{pt.title}</h3>
+                  <p className={styles.privacyCardDesc}>{pt.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* FAQ Accordion Section */}
+        {/* FAQ Section */}
         <section className={styles.faqSection}>
-          <h2 className={styles.sectionTitle} style={{ textAlign: 'center' }}>Frequently Asked Questions</h2>
-          <p className={styles.sectionSub} style={{ marginBottom: 32 }}>Everything you need to know about Buhay.</p>
-          
-          <div className={styles.faqGrid}>
-            {FAQ_ITEMS.map((faq, idx) => (
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionEyebrow}>Support & Answers</div>
+            <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
+            <p className={styles.sectionSub}>
+              Clear answers to the most common questions about using Buhay.
+            </p>
+          </div>
+
+          <div className={styles.faqList}>
+            {FAQ_ITEMS.map((item, idx) => (
               <div key={idx} className={styles.faqItem}>
-                <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                <p className={styles.faqAnswer}>{faq.answer}</p>
+                <h3 className={styles.faqQuestion}>
+                  <span>Q.</span> {item.question}
+                </h3>
+                <p className={styles.faqAnswer}>{item.answer}</p>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Bottom CTA Banner */}
+        <div style={{ padding: '0 24px' }}>
+          <div className={styles.ctaBanner}>
+            <h2 className={styles.ctaTitle}>Experience Complete Financial Clarity</h2>
+            <p className={styles.ctaSub}>
+              Take control of your daily cashflow, recurring bills, and savings milestones in less than two minutes.
+            </p>
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} onClick={handleOpenPrimary}>
+              {primaryLabel} <span>→</span>
+            </button>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
@@ -426,7 +748,8 @@ export default function LandingPage() {
           <p>© {new Date().getFullYear()} Buhay. Financial clarity for real life.</p>
           <div className={styles.footerLinks}>
             <Link to="/privacy">Privacy Policy</Link>
-            <Link to="/terms">Terms of Use</Link>
+            <Link to="/terms">Terms of Service</Link>
+            <Link to="/login">Sign In</Link>
           </div>
         </div>
       </footer>
