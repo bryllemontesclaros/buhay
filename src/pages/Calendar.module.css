@@ -171,6 +171,8 @@
   }
 
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     padding: 8px 4px;
     border: none;
     background: transparent;
@@ -283,6 +285,8 @@
   padding: 0.9rem;
   border-radius: var(--bento-radius-lg);
   background: var(--surface);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* CALENDAR HEADER */
@@ -294,6 +298,8 @@
   border: 1px solid var(--border2);
   border-radius: 20px;
   background: var(--surface);
+  width: 100%;
+  box-sizing: border-box;
   /* box-shadow flattened */
 }
 .nav {
@@ -302,6 +308,7 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
+  box-sizing: border-box;
 }
 .monthJumpWrap {
   position: relative;
@@ -319,6 +326,7 @@
   cursor: pointer;
   text-align: center;
   transition: color 0.15s ease, opacity 0.15s ease;
+  box-sizing: border-box;
 }
 .monthJumpWrap::after {
   content: '▾';
@@ -335,7 +343,19 @@
 .monthJumpWrap:focus-within::after {
   color: var(--accent);
 }
-.monthLabel { font-family: var(--font-display); font-size: var(--type-title-md); color: var(--text); width: 100%; text-align: center; line-height: 1.05; pointer-events: none; letter-spacing: -0.02em; }
+.monthLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-title-md);
+  color: var(--text);
+  width: 100%;
+  text-align: center;
+  line-height: 1.05;
+  pointer-events: none;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .monthJumpMeta { display: none; }
 .monthJumpInput {
   position: absolute;
@@ -375,6 +395,8 @@
   min-height: 0;
   height: 100%;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 .calendarMain {
   flex: 1;
@@ -384,8 +406,10 @@
   min-height: 0;
   height: 100%;
   overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
-.dayNames { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 4px; }
+.dayNames { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 4px; width: 100%; box-sizing: border-box; }
 .dayName { text-align: center; font-size: var(--type-overline); color: color-mix(in srgb, var(--text3) 82%, transparent); font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; padding: 2px 0; }
 .grid {
   display: grid;
@@ -396,6 +420,8 @@
   min-height: 0;
   height: 100%;
   align-content: stretch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* CELL — clean, no text overflow */
@@ -1379,6 +1405,8 @@
     margin-inline: auto;
   }
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     padding: 1rem;
   }
   .calHeader {
@@ -1468,6 +1496,8 @@
     display: none;
   }
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     flex: none;
     height: auto;
     min-height: 0;
@@ -1824,6 +1854,8 @@
 /* Final winning mobile layer. Keep this at EOF so older calendar rules cannot override it. */
 @media (max-width: 1024px) {
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     padding: 10px;
     border-width: 3px;
     border-radius: 24px;
@@ -1958,6 +1990,8 @@
 /* Final phone calendar correction: seven columns need lighter chrome and compact values. */
 @media (max-width: 1024px) {
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     padding: 8px;
     border-width: 3px;
     border-radius: 22px;
@@ -2032,6 +2066,8 @@
 
 @media (max-width: 390px) {
   .calendarCard {
+    width: 100%;
+    box-sizing: border-box;
     padding: 6px;
   }
 

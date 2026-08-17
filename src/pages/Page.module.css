@@ -3,8 +3,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--layout-section-gap);
+  width: 100%;
   max-width: var(--page-max-tight);
   margin-inline: auto;
+  box-sizing: border-box;
   padding: var(--layout-page-pad-y) var(--layout-page-pad-x) calc(var(--layout-page-pad-y-lg) + env(safe-area-inset-bottom, 0px));
   animation: fadeIn var(--motion-duration-slow) var(--motion-ease-out) both;
   isolation: isolate;
@@ -246,6 +248,8 @@
 .formCard,
 .goalCard {
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
   overflow: hidden;
   isolation: isolate;
   content-visibility: auto;
