@@ -13,8 +13,6 @@ import {
 import { deleteField } from 'firebase/firestore'
 import { auth, getEmailActionSettings, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsAdd, fsDel, fsDeleteAccountData, fsResetFinancialData, fsRestoreBackup, fsSetProfile, fsUpdate } from '../lib/firestore'
-import { getLakasSettings, sanitizeLakasSettings } from '../lib/lakasHelpers'
-import { getTalaSettings, sanitizeTalaSettings, WEEK_DAYS } from './Tala'
 import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '../lib/legal'
 import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs } from '../lib/notifications'
 import { generateMonthlyReport } from '../lib/report'
@@ -289,57 +287,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [jsonExportDone, setJsonExportDone] = useState(false)
   const [rates, setRates] = useState(null)
   const [ratesLoading, setRatesLoading] = useState(false)
-
-  const [lakasSettingsForm, setLakasSettingsForm] = useState(() => getLakasSettings(profile))
-  const [savingLakasSettings, setSavingLakasSettings] = useState(false)
-
-  const [talaSettingsForm, setTalaSettingsForm] = useState(() => getTalaSettings(profile))
-  const [savingTalaSettings, setSavingTalaSettings] = useState(false)
-
-  // Sync lakas and tala settings when profile changes
-  useEffect(() => {
-    setLakasSettingsForm(getLakasSettings(profile))
-    setTalaSettingsForm(getTalaSettings(profile))
-  }, [profile])
-
-  function updateLakasSettingGroup(group, key, value) {
-    setLakasSettingsForm(current => ({
-      ...current,
-      [group]: { ...current[group], [key]: value },
-    }))
-  }
-
-  function updateTalaSettings(key, value) {
-    setTalaSettingsForm(current => ({ ...current, [key]: value }))
-  }
-
-  async function handleSaveLakasSettings() {
-    setSavingLakasSettings(true)
-    try {
-      const nextSettings = sanitizeLakasSettings(lakasSettingsForm)
-      await fsSetProfile(user.uid, { lakasSettings: nextSettings })
-      setLakasSettingsForm(nextSettings)
-      setNotifMsg({ text: 'Lakas preferences saved.', ok: true })
-    } catch {
-      setNotifMsg({ text: 'Could not save Lakas preferences.', ok: false })
-    } finally {
-      setSavingLakasSettings(false)
-    }
-  }
-
-  async function handleSaveTalaSettings() {
-    setSavingTalaSettings(true)
-    try {
-      const nextSettings = sanitizeTalaSettings(talaSettingsForm)
-      await fsSetProfile(user.uid, { talaSettings: nextSettings })
-      setTalaSettingsForm(nextSettings)
-      setNotifMsg({ text: 'Tala preferences saved.', ok: true })
-    } catch {
-      setNotifMsg({ text: 'Could not save Tala preferences.', ok: false })
-    } finally {
-      setSavingTalaSettings(false)
-    }
-  }
 
 
   const [accountForm, setAccountForm] = useState({ displayName: '', newEmail: '', password: '' })
@@ -842,19 +789,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     ? new Date(restorePreview.exportedAt).toLocaleString()
     : restorePreview?.exportedAt
   const enabledNotificationCount = NOTIFICATION_OPTIONS.filter(option => notificationPrefs[option.key]).length
-  const lakasRecords = (data.lakasRoutines || []).length
-    + (data.lakasWorkouts || []).length
-    + (data.lakasBodyLogs || []).length
-    + (data.lakasActivities || []).length
-    + (data.lakasHabits || []).length
-    + (data.lakasReminders || []).length
-    + (data.lakasMeals || []).length
-    + (data.lakasGoals || []).length
-  const talaRecords = (data.talaCheckins || []).length
-    + (data.talaJournal || []).length
-    + (data.talaMoods || []).length
-    + (data.talaTasks || []).length
-    + (data.talaGoals || []).length
   const trackedRecords = totalTx
     + data.bills.length
     + data.goals.length
@@ -862,8 +796,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     + data.budgets.length
     + (data.transfers || []).length
     + (data.portfolioHoldings || []).length
-    + lakasRecords
-    + talaRecords
   const goalDateSelected = Boolean(goalForm.date)
   const settingsCardClass = `${styles.card} ${settStyles.surfaceCard}`
   const settingsWideCardClass = `${styles.card} ${settStyles.surfaceCard} ${settStyles.fullSpanCard}`
@@ -1214,8 +1146,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.accounts.length}</div><div className={settStyles.summaryLabel}>Accounts</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{data.budgets.length}</div><div className={settStyles.summaryLabel}>Budgets</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{(data.transfers || []).length}</div><div className={settStyles.summaryLabel}>Transfers</div></div>
-              <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{lakasRecords}</div><div className={settStyles.summaryLabel}>Lakas records</div></div>
-              <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{talaRecords}</div><div className={settStyles.summaryLabel}>Tala records</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal} style={{ color: 'var(--accent)' }}>{money(savingsTotal)}</div><div className={settStyles.summaryLabel}>Total saved</div></div>
               <div className={settStyles.summaryItem}><div className={settStyles.summaryVal}>{totalTx}</div><div className={settStyles.summaryLabel}>Total transactions</div></div>
             </div>
@@ -1383,93 +1313,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         </div>
       </DisclosureCard>
 
-      
-      <DisclosureCard
-        className={settingsWideCardClass}
-        eyebrow="Fitness"
-        title="Lakas preferences"
-        description="Set your preferred units and core fitness settings."
-      >
-        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Weight unit</label>
-            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.weight} onChange={event => updateLakasSettingGroup('units', 'weight', event.target.value)}>
-              <option value="kg">Kilograms (kg)</option>
-              <option value="lb">Pounds (lb)</option>
-            </select>
-          </div>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Body measurements</label>
-            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.body} onChange={event => updateLakasSettingGroup('units', 'body', event.target.value)}>
-              <option value="cm">Centimeters (cm)</option>
-              <option value="in">Inches (in)</option>
-            </select>
-          </div>
-        </div>
-        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Distance unit</label>
-            <select className={settStyles.settingsSelect} value={lakasSettingsForm.units.distance} onChange={event => updateLakasSettingGroup('units', 'distance', event.target.value)}>
-              <option value="km">Kilometers (km)</option>
-              <option value="mi">Miles (mi)</option>
-            </select>
-          </div>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Show BMI</label>
-            <select className={settStyles.settingsSelect} value={lakasSettingsForm.display.showBmi ? 'yes' : 'no'} onChange={event => updateLakasSettingGroup('display', 'showBmi', event.target.value === 'yes')}>
-              <option value="yes">Show BMI</option>
-              <option value="no">Hide BMI</option>
-            </select>
-          </div>
-        </div>
-        <div className={settStyles.settingsActionRow}>
-          <Button type="button" className={settStyles.btnLakas} fullWidth onClick={handleSaveLakasSettings} disabled={savingLakasSettings}>
-            {savingLakasSettings ? 'Saving...' : 'Save Lakas preferences'}
-          </Button>
-        </div>
-      </DisclosureCard>
 
-      <DisclosureCard
-        className={settingsWideCardClass}
-        eyebrow="Habits"
-        title="Tala defaults"
-        description="Configure how Tala guides your journaling and routines."
-      >
-        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Reminder time</label>
-            <input type="time" className={settStyles.settingsSelect} value={talaSettingsForm.reminderTime} onChange={event => updateTalaSettings('reminderTime', event.target.value)} />
-          </div>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Weekly review day</label>
-            <select className={settStyles.settingsSelect} value={talaSettingsForm.weeklyReviewDay} onChange={event => updateTalaSettings('weeklyReviewDay', event.target.value)}>
-              {WEEK_DAYS.map(day => <option key={day}>{day}</option>)}
-            </select>
-          </div>
-        </div>
-        <div className={settStyles.settingsFormRow} style={{ marginBottom: 12 }}>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Prompt style</label>
-            <select className={settStyles.settingsSelect} value={talaSettingsForm.promptStyle} onChange={event => updateTalaSettings('promptStyle', event.target.value)}>
-              <option>Gentle</option>
-              <option>Direct</option>
-              <option>Reflective</option>
-            </select>
-          </div>
-          <div className={settStyles.settingsFormGroup}>
-            <label>Journal default privacy</label>
-            <select className={settStyles.settingsSelect} value={talaSettingsForm.privateByDefault ? 'private' : 'open'} onChange={event => updateTalaSettings('privateByDefault', event.target.value === 'private')}>
-              <option value="private">Private by default</option>
-              <option value="open">Open by default</option>
-            </select>
-          </div>
-        </div>
-        <div className={settStyles.settingsActionRow}>
-          <Button type="button" className={settStyles.btnTala} fullWidth onClick={handleSaveTalaSettings} disabled={savingTalaSettings}>
-            {savingTalaSettings ? 'Saving...' : 'Save Tala defaults'}
-          </Button>
-        </div>
-      </DisclosureCard>
 
       <div className={settingsDangerCardClass}>
         <CardHeader
