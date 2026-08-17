@@ -1657,7 +1657,7 @@
     flex: 1;
     overflow-y: auto;
     /* Safe layout boundary so bottom cards and buttons sit completely clear of the fixed FAB button (+). */
-    padding-bottom: calc(var(--app-mobile-bottom-offset) + 80px);
+    padding-bottom: calc(var(--app-mobile-bottom-offset) + 12px);
     -webkit-overflow-scrolling: touch;
     position: relative !important;
     z-index: 1 !important;
@@ -1716,7 +1716,7 @@
     min-height: 0;
     overflow-x: clip;
     overflow-y: auto;
-    padding-bottom: calc(var(--app-mobile-bottom-offset) + 90px);
+    padding-bottom: calc(var(--app-mobile-bottom-offset) + 12px);
     overscroll-behavior-y: contain;
   }
   .topBar {

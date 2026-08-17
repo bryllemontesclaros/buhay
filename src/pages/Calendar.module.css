@@ -2154,3 +2154,43 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   font-weight: 700;
 }
+
+
+/* --- DEFINITIVE MOBILE CALENDAR LAYOUT --- */
+@media (max-width: 1024px) {
+  .calendarCard {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .monthBoard {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .calendarMain {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .grid {
+    flex: 1 !important;
+    display: grid !important;
+    grid-template-rows: repeat(6, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-content: stretch !important;
+    gap: 4px !important;
+  }
+  .cell {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
