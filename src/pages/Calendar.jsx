@@ -2001,87 +2001,69 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const expPct = dailyVolumes.maxExp > 0 && dayVol.expense > 0 ? Math.max(15, Math.min(100, (dayVol.expense / dailyVolumes.maxExp) * 100)) : 0
               const overdueBills = unpaidBillsByDateKey[ds] || []
 
-              let isEndOfSelectedWeek = false;
-              if (isMobile && selected) {
-                const [sY, sM, sD] = selected.split('-');
-                if (parseInt(sY, 10) === year && parseInt(sM, 10) === month + 1) {
-                  const selectedDayInt = parseInt(sD, 10);
-                  const selectedGridIndex = firstDay + selectedDayInt - 1;
-                  const endOfWeekGridIndex = selectedGridIndex + (6 - (selectedGridIndex % 7));
-                  const currentGridIndex = firstDay + index;
-                  if (currentGridIndex === endOfWeekGridIndex || (currentGridIndex === firstDay + daysInMonth - 1 && currentGridIndex < endOfWeekGridIndex)) {
-                    isEndOfSelectedWeek = true;
-                  }
-                }
-              }
+              const dayDueDebts = dueDebtsByDateKey[ds] || []
+              const dayStatementDebts = statementDebtsByDateKey[ds] || []
+              return (
+                <button
+                  type="button"
+                  key={day}
+                  className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''}`}
+                  onClick={() => {
+                    playTick()
+                    setSelected(ds)
+                  }}
+                  aria-pressed={isSelected}
+                  aria-label={dayAriaLabel}
+                >
+                  <div className={calStyles.cellAlerts}>
+                    {dayDueDebts.map(debt => (
+                      <div 
+                        key={debt._id} 
+                        className={calStyles.debtDueAlert} 
+                        style={{ background: debt.color || 'var(--amber)', boxShadow: `0 0 6px ${debt.color || 'var(--amber)'}` }} 
+                        title={`Payment due: ${debt.name}`} 
+                      />
+                    ))}
+                    {dayStatementDebts.map(debt => (
+                      <svg 
+                        key={debt._id} 
+                        className={calStyles.debtStatementAlert} 
+                        style={{ color: debt.color || 'var(--text3)' }} 
+                        title={`Statement closes: ${debt.name}`} 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="3"
+                      >
+                        <rect x="3" y="4" width="18" height="16" rx="2" />
+                        <line x1="7" y1="8" x2="17" y2="8" />
+                        <line x1="7" y1="12" x2="13" y2="12" />
+                      </svg>
+                    ))}
+                  </div>
 
-                      const dayDueDebts = dueDebtsByDateKey[ds] || []
-                      const dayStatementDebts = statementDebtsByDateKey[ds] || []
-                      return (
-                        <Fragment key={day}>
-                            <button
-                              type="button"
-                              key={day}
-                              className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''}`}
-                              onClick={() => {
-                                playTick()
-                                setSelected(ds)
-                              }}
-                              aria-pressed={isSelected}
-                              aria-label={dayAriaLabel}
-                            >
-                              <div className={calStyles.cellAlerts}>
-                                {dayDueDebts.map(debt => (
-                                  <div 
-                                    key={debt._id} 
-                                    className={calStyles.debtDueAlert} 
-                                    style={{ background: debt.color || 'var(--amber)', boxShadow: `0 0 6px ${debt.color || 'var(--amber)'}` }} 
-                                    title={`Payment due: ${debt.name}`} 
-                                  />
-                                ))}
-                                {dayStatementDebts.map(debt => (
-                                  <svg 
-                                    key={debt._id} 
-                                    className={calStyles.debtStatementAlert} 
-                                    style={{ color: debt.color || 'var(--text3)' }} 
-                                    title={`Statement closes: ${debt.name}`} 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="3"
-                                  >
-                                    <rect x="3" y="4" width="18" height="16" rx="2" />
-                                    <line x1="7" y1="8" x2="17" y2="8" />
-                                    <line x1="7" y1="12" x2="13" y2="12" />
-                                  </svg>
-                                ))}
-                              </div>
-    
-                      <div className={calStyles.cellTop}>
-                        <div className={calStyles.dateNum}>{day}</div>
-                        {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
-                      </div>
-    
-                      {(hasIncome || hasExpense || hasTransfer) && (
-                        <div className={calStyles.activityDots}>
-                          {hasIncome && <div className={calStyles.activityDotInc} data-size={incPct < 25 ? 'small' : incPct < 75 ? 'medium' : 'large'} title="Income recorded" />}
-                          {hasExpense && <div className={calStyles.activityDotExp} data-size={expPct < 25 ? 'small' : expPct < 75 ? 'medium' : 'large'} title="Expense recorded" />}
-                          {hasTransfer && <div className={calStyles.activityDotTrsf} data-size="small" title="Transfer recorded" />}
-                        </div>
-                      )}
-    
-                      {!privacyMode && (
-                        <div
-                          className={calStyles.cellBalance}
-                          title={formatRoundedBalance(displayValue, s)}
-                        >
-                          {balanceLabel}
-                        </div>
-                      )}
-                    </button>
- 
-                  {isEndOfSelectedWeek && isMobile && renderedDayPanel}
-                </Fragment>
+                  <div className={calStyles.cellTop}>
+                    <div className={calStyles.dateNum}>{day}</div>
+                    {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
+                  </div>
+
+                  {(hasIncome || hasExpense || hasTransfer) && (
+                    <div className={calStyles.activityDots}>
+                      {hasIncome && <div className={calStyles.activityDotInc} data-size={incPct < 25 ? 'small' : incPct < 75 ? 'medium' : 'large'} title="Income recorded" />}
+                      {hasExpense && <div className={calStyles.activityDotExp} data-size={expPct < 25 ? 'small' : expPct < 75 ? 'medium' : 'large'} title="Expense recorded" />}
+                      {hasTransfer && <div className={calStyles.activityDotTrsf} data-size="small" title="Transfer recorded" />}
+                    </div>
+                  )}
+
+                  {!privacyMode && (
+                    <div
+                      className={calStyles.cellBalance}
+                      title={formatRoundedBalance(displayValue, s)}
+                    >
+                      {balanceLabel}
+                    </div>
+                  )}
+                </button>
               )
             })}
             {Array.from({ length: trailingDayCount }, (_, index) => (
@@ -2093,6 +2075,15 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           </div>
           {!isMobile && renderedDayPanel}
         </div>
+
+        {isMobile && selected && typeof document !== 'undefined' && createPortal(
+          <div className={calStyles.daySheetOverlay} onClick={closeSelectedDay}>
+            <div className={calStyles.daySheet} onClick={event => event.stopPropagation()}>
+              {renderedDayPanel}
+            </div>
+          </div>,
+          document.body
+        )}
 
         <div
           className={calStyles.balanceRail}
