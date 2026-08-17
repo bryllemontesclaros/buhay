@@ -1092,6 +1092,11 @@ export default function AppShell({ user }) {
     if (mainRef.current) {
       mainRef.current.scrollTop = 0
     }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
   }, [activeSpace, visiblePageKey])
 
   useEffect(() => {
