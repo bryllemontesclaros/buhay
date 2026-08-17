@@ -113,7 +113,7 @@ function LiveAppMockup() {
 
           <div className={styles.metricCard}>
             <div className={styles.metricCardLabel}>Liquid Cashflow</div>
-            <div className={styles.metricCardValue} style={{ color: '#34d399' }}>
+            <div className={styles.metricCardValue} style={{ color: '#059669' }}>
               ₱{liquidCash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div className={styles.metricCardSub}>Available across 4 accounts</div>
@@ -121,10 +121,10 @@ function LiveAppMockup() {
 
           <div className={styles.metricCard}>
             <div className={styles.metricCardLabel}>Bills (Next 7 Days)</div>
-            <div className={styles.metricCardValue} style={{ color: '#f59e0b' }}>
+            <div className={styles.metricCardValue} style={{ color: '#d97706' }}>
               ₱4,999.00
             </div>
-            <div className={styles.metricCardSub} style={{ color: '#f59e0b' }}>2 bills approaching</div>
+            <div className={styles.metricCardSub} style={{ color: '#d97706' }}>2 bills approaching</div>
           </div>
 
           <div className={styles.metricCard}>
@@ -132,7 +132,7 @@ function LiveAppMockup() {
             <div className={styles.metricCardValue}>
               {budgetPct}%
             </div>
-            <div style={{ height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 99, marginTop: 8, overflow: 'hidden' }}>
+            <div style={{ height: 6, background: '#e2e8f0', borderRadius: 99, marginTop: 8, overflow: 'hidden' }}>
               <div style={{ width: `${budgetPct}%`, height: '100%', background: budgetPct > 85 ? '#ef4444' : '#10b981', transition: 'width 0.3s ease' }}></div>
             </div>
           </div>
@@ -144,29 +144,29 @@ function LiveAppMockup() {
           <div className={styles.cockpitPanel}>
             <div className={styles.panelTitle}>
               <span>📈 30-Day Cashflow Forecast</span>
-              <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>● Positive Runway</span>
+              <span style={{ fontSize: 11, color: '#059669', fontWeight: 700 }}>● Positive Runway</span>
             </div>
             <div style={{ height: 130, position: 'relative', display: 'flex', alignItems: 'flex-end' }}>
               <svg viewBox="0 0 400 120" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                 <defs>
-                  <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                  <linearGradient id="curveGradLight" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
                     <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
                 <path
                   d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20 L 400 120 L 0 120 Z"
-                  fill="url(#curveGrad)"
+                  fill="url(#curveGradLight)"
                 />
                 <path
                   d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20"
                   fill="none"
-                  stroke="#10b981"
+                  stroke="#059669"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
-                <circle cx="200" cy="40" r="4" fill="#34d399" />
-                <circle cx="400" cy="20" r="5" fill="#34d399" stroke="#ffffff" strokeWidth="2" />
+                <circle cx="200" cy="40" r="4" fill="#059669" />
+                <circle cx="400" cy="20" r="5" fill="#059669" stroke="#ffffff" strokeWidth="2" />
               </svg>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginTop: 8 }}>
@@ -220,8 +220,8 @@ function CalendarWidget() {
   return (
     <div className={styles.bentoWidgetArea}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#ffffff' }}>📅 August 2026 Interactive Calendar</div>
-        <div style={{ fontSize: 12, color: '#34d399', fontWeight: 700 }}>₱{activeInfo.balance.toLocaleString()} balance</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>📅 August 2026 Interactive Calendar</div>
+        <div style={{ fontSize: 12, color: '#059669', fontWeight: 800 }}>₱{activeInfo.balance.toLocaleString()} balance</div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, textAlign: 'center', marginBottom: 12 }}>
@@ -234,25 +234,26 @@ function CalendarWidget() {
             type="button"
             onClick={() => setSelectedDay(d)}
             style={{
-              background: d === selectedDay ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.04)',
-              border: d === selectedDay ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.06)',
+              background: d === selectedDay ? '#ecfdf5' : '#ffffff',
+              border: d === selectedDay ? '2px solid #059669' : '1px solid #e2e8f0',
               borderRadius: 8,
               padding: '8px 4px',
-              color: d === selectedDay ? '#34d399' : '#cbd5e1',
-              fontWeight: d === selectedDay ? 800 : 500,
+              color: d === selectedDay ? '#059669' : '#334155',
+              fontWeight: d === selectedDay ? 800 : 600,
               fontSize: 12,
               cursor: 'pointer',
+              boxShadow: d === selectedDay ? '0 2px 8px rgba(16,185,129,0.2)' : 'none',
               transition: 'all 0.18s ease'
             }}
           >
             {d}
-            <div style={{ fontSize: 7, color: d === 15 ? '#34d399' : d === 16 ? '#f87171' : d === 17 ? '#10b981' : '#64748b', marginTop: 2 }}>●</div>
+            <div style={{ fontSize: 7, color: d === 15 ? '#059669' : d === 16 ? '#ef4444' : d === 17 ? '#10b981' : '#94a3b8', marginTop: 2 }}>●</div>
           </button>
         ))}
       </div>
 
-      <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '10px 14px', borderRadius: 10, fontSize: 12, color: '#cbd5e1' }}>
-        <strong style={{ color: '#34d399' }}>Day {selectedDay} Snapshot:</strong> {activeInfo.note}
+      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '10px 14px', borderRadius: 10, fontSize: 12, color: '#065f46' }}>
+        <strong style={{ color: '#047857' }}>Day {selectedDay} Snapshot:</strong> {activeInfo.note}
       </div>
     </div>
   )
@@ -282,9 +283,9 @@ function AccountsWidget() {
             type="button"
             onClick={() => setActiveTab(tab)}
             style={{
-              background: activeTab === tab ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: activeTab === tab ? '1px solid #10b981' : '1px solid transparent',
-              color: activeTab === tab ? '#34d399' : '#94a3b8',
+              background: activeTab === tab ? '#ecfdf5' : '#ffffff',
+              border: activeTab === tab ? '1px solid #10b981' : '1px solid #e2e8f0',
+              color: activeTab === tab ? '#059669' : '#64748b',
               padding: '4px 12px',
               borderRadius: 99,
               fontSize: 11,
@@ -300,9 +301,9 @@ function AccountsWidget() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {filtered.map((acc, idx) => (
-          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
-            <span style={{ color: '#ffffff', fontWeight: 600 }}>{acc.name}</span>
-            <strong style={{ color: acc.balance >= 0 ? '#34d399' : '#ef4444' }}>
+          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', border: '1px solid #e2e8f0', padding: '8px 12px', borderRadius: 8, fontSize: 12 }}>
+            <span style={{ color: '#0f172a', fontWeight: 600 }}>{acc.name}</span>
+            <strong style={{ color: acc.balance >= 0 ? '#059669' : '#dc2626' }}>
               {acc.balance >= 0 ? '' : '-'}₱{Math.abs(acc.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </strong>
           </div>
@@ -325,7 +326,7 @@ function BillsWidget() {
 
   return (
     <div className={styles.bentoWidgetArea}>
-      <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10 }}>
+      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>
         Tap checkbox to mark bills as paid in real-time:
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -337,8 +338,8 @@ function BillsWidget() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              background: bill.paid ? 'rgba(16, 185, 129, 0.08)' : bill.urgent ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-              border: bill.paid ? '1px solid rgba(16, 185, 129, 0.3)' : bill.urgent ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.06)',
+              background: bill.paid ? '#ecfdf5' : bill.urgent ? '#fef2f2' : '#ffffff',
+              border: bill.paid ? '1px solid #a7f3d0' : bill.urgent ? '1px solid #fecaca' : '1px solid #e2e8f0',
               padding: '10px 14px',
               borderRadius: 10,
               cursor: 'pointer',
@@ -350,7 +351,8 @@ function BillsWidget() {
                 width: 20,
                 height: 20,
                 borderRadius: 6,
-                background: bill.paid ? '#10b981' : 'rgba(255,255,255,0.1)',
+                background: bill.paid ? '#10b981' : '#f1f5f9',
+                border: bill.paid ? 'none' : '1px solid #cbd5e1',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -360,15 +362,15 @@ function BillsWidget() {
                 {bill.paid ? '✓' : ''}
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: bill.paid ? '#94a3b8' : '#ffffff', textDecoration: bill.paid ? 'line-through' : 'none' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: bill.paid ? '#94a3b8' : '#0f172a', textDecoration: bill.paid ? 'line-through' : 'none' }}>
                   {bill.name}
                 </div>
-                <div style={{ fontSize: 10, color: bill.paid ? '#34d399' : bill.urgent ? '#f87171' : '#94a3b8' }}>
+                <div style={{ fontSize: 10, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#64748b' }}>
                   {bill.paid ? 'Marked as Paid' : bill.due}
                 </div>
               </div>
             </div>
-            <strong style={{ fontSize: 13, color: bill.paid ? '#34d399' : bill.urgent ? '#f87171' : '#ffffff' }}>
+            <strong style={{ fontSize: 13, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#0f172a' }}>
               ₱{bill.amount.toLocaleString()}
             </strong>
           </div>
@@ -384,27 +386,27 @@ function BudgetGoalsWidget() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-            <span style={{ color: '#ffffff', fontWeight: 600 }}>🎯 Emergency Fund Target</span>
-            <strong style={{ color: '#34d399' }}>₱75,000 / ₱100,000 (75%)</strong>
+            <span style={{ color: '#0f172a', fontWeight: 700 }}>🎯 Emergency Fund Target</span>
+            <strong style={{ color: '#059669' }}>₱75,000 / ₱100,000 (75%)</strong>
           </div>
-          <div style={{ height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}></div>
+          <div style={{ height: 8, background: '#e2e8f0', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #10b981, #059669)' }}></div>
           </div>
         </div>
 
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-            <span style={{ color: '#ffffff', fontWeight: 600 }}>💳 Credit Debt Snowball</span>
-            <strong style={{ color: '#06b6d4' }}>Debt Free in 5 Months!</strong>
+            <span style={{ color: '#0f172a', fontWeight: 700 }}>💳 Credit Debt Snowball</span>
+            <strong style={{ color: '#0284c7' }}>Debt Free in 5 Months!</strong>
           </div>
-          <div style={{ height: 8, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ width: '82%', height: '100%', background: 'linear-gradient(90deg, #06b6d4, #3b82f6)' }}></div>
+          <div style={{ height: 8, background: '#e2e8f0', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ width: '82%', height: '100%', background: 'linear-gradient(90deg, #0284c7, #2563eb)' }}></div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: 11, color: '#94a3b8' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', background: '#ffffff', border: '1px solid #e2e8f0', padding: '8px 12px', borderRadius: 8, fontSize: 11, color: '#64748b' }}>
           <span>Monthly Safe-to-Spend Envelope</span>
-          <strong style={{ color: '#34d399' }}>₱1,250 / day</strong>
+          <strong style={{ color: '#059669' }}>₱1,250 / day</strong>
         </div>
       </div>
     </div>
@@ -499,7 +501,7 @@ export default function LandingPage() {
         path="/"
       />
 
-      {/* Atmospheric Background Lights */}
+      {/* Atmospheric Background Lights (Subtle Light Mode Emerald) */}
       <div className={styles.bgGlowTop}></div>
       <div className={styles.bgGridPattern}></div>
 
@@ -660,7 +662,7 @@ export default function LandingPage() {
               {COMPARISON_ROWS.map((row, idx) => (
                 <tr key={idx}>
                   <td>
-                    <strong style={{ color: '#ffffff' }}>{row.feature}</strong>
+                    <strong style={{ color: '#0f172a' }}>{row.feature}</strong>
                   </td>
                   <td className={styles.highlightCol}>
                     <div className={styles.checkYes}>
