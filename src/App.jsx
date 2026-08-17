@@ -7,13 +7,30 @@ import { PageLoader } from './components/Loading'
 import AppFeedback from './components/AppFeedback'
 import ErrorBoundary from './components/ErrorBoundary'
 
-// Lazy-loaded route components for performance code-splitting
-const LandingPage = lazy(() => import('./pages/LandingPage'))
-const AuthScreen = lazy(() => import('./pages/AuthScreen'))
-const AppShell = lazy(() => import('./pages/AppShell'))
-const Onboarding = lazy(() => import('./pages/Onboarding'))
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
-const TermsPage = lazy(() => import('./pages/TermsPage'))
+function safeLazy(importFn) {
+  return lazy(() => {
+    return importFn().catch(error => {
+      console.warn('Failed to load dynamic chunk, reloading app...', error)
+      if (typeof window !== 'undefined') {
+        const key = 'buhay_chunk_reload_count'
+        const count = Number(sessionStorage.getItem(key) || 0)
+        if (count < 2) {
+          sessionStorage.setItem(key, String(count + 1))
+          window.location.reload()
+        }
+      }
+      return { default: () => null }
+    })
+  })
+}
+
+// Lazy-loaded route components for performance code-splitting with reload recovery
+const LandingPage = safeLazy(() => import('./pages/LandingPage'))
+const AuthScreen = safeLazy(() => import('./pages/AuthScreen'))
+const AppShell = safeLazy(() => import('./pages/AppShell'))
+const Onboarding = safeLazy(() => import('./pages/Onboarding'))
+const PrivacyPolicy = safeLazy(() => import('./pages/PrivacyPolicy'))
+const TermsPage = safeLazy(() => import('./pages/TermsPage'))
 
 const AUTH_FLASH_KEY = 'takda_auth_flash'
 
