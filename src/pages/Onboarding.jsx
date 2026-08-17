@@ -607,7 +607,7 @@ export default function Onboarding({ user, onDone, notice = '' }) {
         : []
       const profilePayload = {
         currency: form.currency,
-        preferredSpace: form.startingSpace === 'explore' ? 'dashboard' : form.startingSpace,
+        preferredSpace: 'takda',
         onboarding: {
           startingSpace: form.startingSpace,
           quickStarts: {

@@ -22,7 +22,6 @@ import Budget from './Budget'
 import Savings from './Savings'
 import History from './History'
 import Breakdown from './Breakdown'
-import Dashboard from './Dashboard'
 import Subscriptions from './Subscriptions'
 import Recurring from './Recurring'
 import { Button } from '../components/ui/Button'
@@ -384,18 +383,16 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
-  { id: 'dashboard', label: 'Life Hub', meta: 'Overview', iconKey: 'home', cue: 'Cockpit overview' },
   { id: 'takda', label: 'Takda', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
 ]
 
 const DEFAULT_SPACE_PAGES = {
-  dashboard: 'main',
   takda: 'calendar',
 }
 
 const FINANCE_PAGE_ALIASES = {
   accounts: { page: 'accounts' },
-  portfolio: { page: 'portfolio' },
+  portfolio: { page: 'accounts' },
   history: { page: 'history' },
   breakdown: { page: 'breakdown' },
   savings: { page: 'savings' },
@@ -548,7 +545,7 @@ function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pag
 
 
 export default function AppShell({ user }) {
-  const [activeSpace, setActiveSpace] = useState('dashboard')
+  const [activeSpace, setActiveSpace] = useState('takda')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
   const [lakasPage, setLakasPage] = useState(DEFAULT_SPACE_PAGES.lakas)
@@ -565,7 +562,6 @@ export default function AppShell({ user }) {
     receipts: [],
     transfers: [],
     calendarEvents: [],
-    portfolioHoldings: [],
     balanceOverrideLog: [],
     lakasRoutines: [],
     lakasWorkouts: [],
@@ -724,9 +720,6 @@ export default function AppShell({ user }) {
       listenCol(uid, 'calendarEvents', rows => {
         setData(d => ({ ...d, calendarEvents: rows }))
       }, error => handleRealtimeError('calendarEvents', error)),
-      listenCol(uid, 'portfolioHoldings', rows => {
-        setData(d => ({ ...d, portfolioHoldings: rows }))
-      }, error => handleRealtimeError('portfolioHoldings', error)),
       listenCol(uid, 'balanceOverrideLog', rows => {
         setData(d => ({ ...d, balanceOverrideLog: rows }))
       }, error => handleRealtimeError('balanceOverrideLog', error)),
@@ -1154,15 +1147,13 @@ export default function AppShell({ user }) {
     bills: Bills,
     subscriptions: Subscriptions,
   }
-  const PageComponent = activeSpace === 'dashboard'
-    ? Dashboard
-    : activeSpace === 'lakas'
-      ? Lakas
-      : activeSpace === 'tala'
-        ? Tala
-        : page === 'settings'
-          ? Settings
-          : financePages[page] || Calendar
+  const PageComponent = activeSpace === 'lakas'
+    ? Lakas
+    : activeSpace === 'tala'
+      ? Tala
+      : page === 'settings'
+        ? Settings
+        : financePages[page] || Calendar
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
     ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
@@ -1412,7 +1403,7 @@ export default function AppShell({ user }) {
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
-    const normalizedSpace = ['dashboard', 'takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'dashboard'
+    const normalizedSpace = ['takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'takda'
     setActiveSpace(normalizedSpace)
     if (normalizedSpace === 'takda') setPage(DEFAULT_SPACE_PAGES.takda)
     if (normalizedSpace === 'lakas') setLakasPage(DEFAULT_SPACE_PAGES.lakas)
@@ -1817,21 +1808,6 @@ export default function AppShell({ user }) {
             </button>
           </div>
           <div className={styles.topBarRight}>
-            {activeSpace === 'dashboard' && (
-              <button
-                type="button"
-                className={isDashboardEditing ? styles.doneTopBtn : styles.editLayoutTopBtn}
-                onClick={() => setIsDashboardEditing(prev => !prev)}
-                title={isDashboardEditing ? 'Finish editing layout' : 'Customize Dashboard Layout'}
-                aria-label={isDashboardEditing ? 'Finish editing layout' : 'Customize Dashboard Layout'}
-              >
-                {isDashboardEditing ? (
-                  <>✓ <span className={styles.editBtnLabel}>Done</span></>
-                ) : (
-                  <><span aria-hidden="true">⚙️</span> <span className={styles.editBtnLabel}>Edit Layout</span></>
-                )}
-              </button>
-            )}
 
 
             <button

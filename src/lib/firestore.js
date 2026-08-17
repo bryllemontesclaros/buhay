@@ -6,7 +6,6 @@ import {
 import { deleteObject, ref as storageRef, uploadBytes } from 'firebase/storage'
 import { getAccountBalanceDelta, shouldAffectCurrentAccountBalance } from './finance'
 import { getBillPeriodInfo } from './bills'
-import { normalizePortfolioHolding } from './portfolio'
 import { normalizeDate, today } from './utils'
 
 export function userCol(uid, col) {
@@ -23,41 +22,6 @@ export async function fsDel(uid, col, id) {
 
 export async function fsUpdate(uid, col, id, data) {
   return await updateDoc(doc(db, 'users', uid, col, id), data)
-}
-
-export async function fsSavePortfolioHolding(uid, holding = {}) {
-  const now = Date.now()
-  const normalized = normalizePortfolioHolding(holding)
-  const payload = {
-    ...normalized,
-    updatedAt: now,
-  }
-  delete payload._id
-  delete payload.id
-  delete payload.currentPrice
-  delete payload.price
-  delete payload.marketValue
-  delete payload.totalCost
-  delete payload.gainLoss
-  delete payload.gainLossPct
-
-  if (holding._id || holding.id) {
-    const id = holding._id || holding.id
-    await updateDoc(doc(db, 'users', uid, 'portfolioHoldings', id), payload)
-    return id
-  }
-
-  const targetRef = doc(userCol(uid, 'portfolioHoldings'))
-  await setDoc(targetRef, {
-    ...payload,
-    createdAt: now,
-  })
-  return targetRef.id
-}
-
-export async function fsDeletePortfolioHolding(uid, holdingId) {
-  if (!holdingId) return
-  await deleteDoc(doc(db, 'users', uid, 'portfolioHoldings', holdingId))
 }
 
 export async function fsDeleteAccountAndUnlinkTransactions(uid, accountId, data = {}) {

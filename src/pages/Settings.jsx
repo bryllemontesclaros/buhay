@@ -795,7 +795,6 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     + data.accounts.length
     + data.budgets.length
     + (data.transfers || []).length
-    + (data.portfolioHoldings || []).length
   const goalDateSelected = Boolean(goalForm.date)
   const settingsCardClass = `${styles.card} ${settStyles.surfaceCard}`
   const settingsWideCardClass = `${styles.card} ${settStyles.surfaceCard} ${settStyles.fullSpanCard}`
