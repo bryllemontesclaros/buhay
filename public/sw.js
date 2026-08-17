@@ -1,65 +1,34 @@
-const CACHE = 'buhay-v9'
-const APP_SHELL = '/'
-const ASSETS = ['/manifest.json', '/buhay-icon.svg', '/favicon.svg']
-
+// Buhay / Takda Service Worker (Network-First, Auto-Purge Old Caches)
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  )
+  self.skipWaiting()
 })
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => self.clients.claim())
   )
 })
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url)
 
-  // Never cache Firebase, Google auth, API calls, or non-GET writes.
+  // Never intercept Firebase, Google auth, analytics, APIs, or non-GET writes.
   if (
     url.hostname.includes('firebase') ||
     url.hostname.includes('google') ||
     url.hostname.includes('googleapis') ||
     url.hostname.includes('gstatic') ||
     url.hostname.includes('firebaseapp') ||
-    url.hostname.includes('openstreetmap') || // Bypass OSM map tiles
-    url.hostname.includes('cartocdn') ||      // Bypass CartoDB map tiles
-    url.hostname.includes('unpkg') ||          // Bypass Leaflet CDN
+    url.hostname.includes('openstreetmap') ||
+    url.hostname.includes('cartocdn') ||
+    url.hostname.includes('unpkg') ||
     e.request.method !== 'GET'
   ) {
-    return // Let browser handle normally
-  }
-
-  // Network-first for app navigations, fallback to the cached shell for PWA launches/offline refreshes.
-  if (e.request.mode === 'navigate' || e.request.headers.get('accept')?.includes('text/html')) {
-    e.respondWith(
-      fetch(e.request)
-        .then(res => {
-          const clone = res.clone()
-          caches.open(CACHE).then(c => c.put(APP_SHELL, clone))
-          return res
-        })
-        .catch(() => caches.match(e.request).then(cached => cached || caches.match(APP_SHELL)))
-    )
     return
   }
 
-  // Cache-first for static assets (JS, CSS, fonts)
-  if (url.pathname.match(/\.(js|css|woff2?|ttf|svg|png|ico)$/)) {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-        const clone = res.clone()
-        caches.open(CACHE).then(c => c.put(e.request, clone))
-        return res
-      }))
-    )
-    return
-  }
-
-  // Network-first for everything else
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)))
+  // Network-first for EVERYTHING: Always try network to get newest deployment, fallback to cache only if truly offline
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
+  )
 })
