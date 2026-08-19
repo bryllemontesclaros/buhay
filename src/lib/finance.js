@@ -141,7 +141,7 @@ export function getProjectedCcCharges(accounts = [], income = [], expenses = [],
   const safeIncome = Array.isArray(income) ? income.filter(Boolean) : []
   const safeExpenses = Array.isArray(expenses) ? expenses.filter(Boolean) : []
 
-  const projectedLedger = getProjectedLedgerBetweenDates(safeIncome, safeExpenses, anchorKey, targetKey)
+  const projectedLedger = getProjectedLedgerBetweenDates(safeAccounts, [], safeIncome, safeExpenses, anchorKey, targetKey)
   const seenKeys = new Set()
   let netCcCharges = 0
 
@@ -155,19 +155,6 @@ export function getProjectedCcCharges(accounts = [], income = [], expenses = [],
           netCcCharges += Math.abs(amt)
         } else if (entry.type === 'income' || entry.signedAmount > 0) {
           netCcCharges -= Math.abs(amt)
-        }
-      }
-    }
-  })
-
-  safeExpenses.forEach(tx => {
-    if (tx && tx.accountId && creditCardAccountIds.has(tx.accountId)) {
-      const d = normalizeDate(tx.date)
-      if (d && d > anchorKey && d <= targetKey) {
-        const key = tx._id || `exp:${d}:${tx.amount}`
-        if (!seenKeys.has(key)) {
-          seenKeys.add(key)
-          netCcCharges += Math.abs(Number(tx.amount) || 0)
         }
       }
     }
@@ -377,11 +364,20 @@ function toProjectedLedgerEntry(tx, sign) {
   }
 }
 
-function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, targetDate) {
+function getProjectedLedgerBetweenDates(accounts = [], transfers = [], income = [], expenses = [], anchorDate, targetDate) {
   const anchor = normalizeDate(anchorDate)
   const target = normalizeDate(targetDate)
 
   if (!anchor || !target || target <= anchor) return []
+
+  const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
+  const accountLookup = new Map(safeAccounts.map(a => [a?._id, a]))
+  function isLiquid(accountId) {
+    if (!accountId) return true
+    const account = accountLookup.get(accountId)
+    if (!account) return true
+    return ['Cash', 'Bank', 'E-wallet'].includes(account.type)
+  }
 
   const cursor = getMonthCursor(new Date(`${anchor}T00:00:00`))
   const end = getMonthCursor(new Date(`${target}T00:00:00`))
@@ -390,11 +386,12 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
 
   const safeIncome = Array.isArray(income) ? income.filter(Boolean) : []
   const safeExpenses = Array.isArray(expenses) ? expenses.filter(Boolean) : []
+  const safeTransfers = Array.isArray(transfers) ? transfers.filter(Boolean) : []
 
   // 1) Include all single/scheduled future transactions in income and expenses between anchor and target
   safeIncome.forEach(tx => {
     const d = normalizeDate(tx?.date)
-    if (d && d > anchor && d <= target) {
+    if (d && d > anchor && d <= target && isLiquid(tx.accountId)) {
       const key = tx._id || `inc:${d}:${tx.amount}:${tx.title || tx.desc || ''}`
       if (!seen.has(key)) {
         seen.add(key)
@@ -406,13 +403,28 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
 
   safeExpenses.forEach(tx => {
     const d = normalizeDate(tx?.date)
-    if (d && d > anchor && d <= target) {
+    if (d && d > anchor && d <= target && isLiquid(tx.accountId)) {
       const key = tx._id || `exp:${d}:${tx.amount}:${tx.title || tx.desc || ''}`
       if (!seen.has(key)) {
         seen.add(key)
         const entry = toProjectedLedgerEntry(tx, -1)
         if (entry) entries.push(entry)
       }
+    }
+  })
+
+  safeTransfers.forEach(tx => {
+    const d = normalizeDate(tx?.date)
+    if (!d || d <= anchor || d > target) return
+    const fromLiquid = isLiquid(tx.fromAccountId)
+    const toLiquid = isLiquid(tx.toAccountId)
+    if (fromLiquid === toLiquid) return
+    const sign = fromLiquid ? -1 : 1
+    const key = tx._id || `trsf:${d}:${tx.amount}:${tx.fromAccountId}->${tx.toAccountId}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      const entry = toProjectedLedgerEntry(tx, sign)
+      if (entry) entries.push(entry)
     }
   })
 
@@ -425,6 +437,7 @@ function getProjectedLedgerBetweenDates(income = [], expenses = [], anchorDate, 
     projected.forEach(tx => {
       const date = normalizeDate(tx?.date)
       if (!date || date <= anchor || date > target) return
+      if (!isLiquid(tx.accountId)) return
 
       const key = tx._id || `${tx.type}:${tx._sourceId || tx.desc}:${date}`
       if (seen.has(key)) return
@@ -488,8 +501,8 @@ export function getBalanceAtDate(accounts = [], transfers = [], income = [], exp
     return (currentBalance || 0) - deltaAfterTarget
   }
 
-  const projectedLedger = getProjectedLedgerBetweenDates(income, expenses, anchor, target)
-  const deltaUntilTarget = [...actualLedger, ...projectedLedger]
+  const projectedLedger = getProjectedLedgerBetweenDates(accounts, transfers, income, expenses, anchor, target)
+  const deltaUntilTarget = projectedLedger
     .filter(entry => entry.date > anchor && entry.date <= target)
     .reduce((sum, entry) => sum + entry.signedAmount, 0)
 
