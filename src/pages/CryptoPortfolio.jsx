@@ -22,6 +22,25 @@ const EMPTY_FORM = {
   notes: '',
 }
 
+const COIN_GRADIENTS = {
+  bitcoin: 'linear-gradient(135deg, #f7931a, #d47a08)',
+  ethereum: 'linear-gradient(135deg, #627eea, #3b5998)',
+  solana: 'linear-gradient(135deg, #14f195, #9945ff)',
+  tether: 'linear-gradient(135deg, #26a17b, #1b7a5b)',
+  ripple: 'linear-gradient(135deg, #333d47, #181d22)',
+  dogecoin: 'linear-gradient(135deg, #c2a633, #9e8218)',
+  binancecoin: 'linear-gradient(135deg, #f3ba2f, #d49810)',
+  cardano: 'linear-gradient(135deg, #0033ad, #001f66)',
+  'avalanche-2': 'linear-gradient(135deg, #e84142, #b82526)',
+  sui: 'linear-gradient(135deg, #4da2ff, #1a75db)',
+  'usd-coin': 'linear-gradient(135deg, #2775ca, #1a5699)',
+  chainlink: 'linear-gradient(135deg, #375bd2, #243f9c)',
+  polkadot: 'linear-gradient(135deg, #e6007a, #b3005f)',
+  near: 'linear-gradient(135deg, #3a3a3a, #111111)',
+  uniswap: 'linear-gradient(135deg, #ff007a, #c7005f)',
+  'shiba-inu': 'linear-gradient(135deg, #f00500, #b80400)',
+}
+
 export default function CryptoPortfolio({
   user,
   data = {},
@@ -240,17 +259,21 @@ export default function CryptoPortfolio({
   }
 
   async function handleDelete(holding) {
+    const target = holding || editHolding
+    if (!target) return
+
     const confirmed = await confirmApp({
-      title: `Delete ${holding.symbol}?`,
-      message: `Are you sure you want to remove ${holding.symbol} (${holding.name}) from your portfolio?`,
+      title: `Delete ${target.symbol}?`,
+      message: `Are you sure you want to remove ${target.symbol} (${target.name}) from your portfolio?`,
       confirmLabel: 'Delete Holding',
       danger: true,
     })
     if (!confirmed) return
 
     try {
-      await fsDel(user.uid, 'portfolioHoldings', holding._id)
-      notifyApp({ title: 'Holding deleted', message: `${holding.symbol} removed.`, tone: 'neutral' })
+      await fsDel(user.uid, 'portfolioHoldings', target._id)
+      notifyApp({ title: 'Holding deleted', message: `${target.symbol} removed.`, tone: 'neutral' })
+      if (showModal) closeModal()
     } catch (err) {
       console.error('[CryptoPortfolio] Delete error:', err)
       notifyApp({ title: 'Delete failed', message: 'Could not delete holding.', tone: 'danger' })
@@ -271,13 +294,20 @@ export default function CryptoPortfolio({
   // Allocation Colors Palette
   const ALLOCATION_COLORS = ['#f7931a', '#627eea', '#14f195', '#26a17b', '#23292f', '#f3ba2f', '#0033ad', '#e84142', '#375bd2', '#e6007a']
 
+  // Delta states for badges
+  const has24hChange = Math.abs(metrics.total24hChangeAmount) > 0.05
+  const is24hPositive = metrics.total24hChangeAmount > 0
+
+  const hasPnl = metrics.totalCostBasis > 0 && Math.abs(metrics.totalPnlAmount) > 0.05
+  const isPnlPositive = metrics.totalPnlAmount > 0
+
   return (
     <div className={styles.wrap}>
       {/* HERO PORTFOLIO PERFORMANCE CARD */}
       <div className={styles.heroCard}>
         <div className={styles.heroTop}>
           <div className={styles.heroTag}>
-            <span>🪙 Crypto Portfolio</span>
+            <span className={styles.heroTitle}>🪙 Crypto Portfolio</span>
             <div className={styles.liveIndicator}>
               <span className={styles.liveDot} />
               <span>{refreshing ? 'Syncing...' : `Live · ${updatedAgo}`}</span>
@@ -324,20 +354,22 @@ export default function CryptoPortfolio({
             {/* 24h P&L Badge */}
             <div
               className={`${styles.badge} ${
-                metrics.total24hChangeAmount > 0
+                !has24hChange
+                  ? styles.badgeNeutral
+                  : is24hPositive
                   ? styles.badgePositive
-                  : metrics.total24hChangeAmount < 0
-                  ? styles.badgeNegative
-                  : styles.badgeNeutral
+                  : styles.badgeNegative
               }`}
             >
-              <span>{metrics.total24hChangeAmount >= 0 ? '▲' : '▼'}</span>
+              <span>{has24hChange ? (is24hPositive ? '▲' : '▼') : '—'}</span>
               <span>
                 {privacyMode
                   ? '••••'
-                  : `${metrics.total24hChangeAmount >= 0 ? '+' : ''}${fmt(metrics.total24hChangeAmount, s)}`}
+                  : has24hChange
+                  ? `${is24hPositive ? '+' : ''}${fmt(metrics.total24hChangeAmount, s)}`
+                  : '0.00'}
               </span>
-              <span>({metrics.total24hPct >= 0 ? '+' : ''}{metrics.total24hPct.toFixed(2)}%)</span>
+              <span>({has24hChange ? `${is24hPositive ? '+' : ''}${metrics.total24hPct.toFixed(2)}%` : '0.00%'})</span>
               <span className={styles.badgeLabel}>24h</span>
             </div>
 
@@ -345,16 +377,22 @@ export default function CryptoPortfolio({
             {metrics.totalCostBasis > 0 && (
               <div
                 className={`${styles.badge} ${
-                  metrics.totalPnlAmount >= 0 ? styles.badgePositive : styles.badgeNegative
+                  !hasPnl
+                    ? styles.badgeNeutral
+                    : isPnlPositive
+                    ? styles.badgePositive
+                    : styles.badgeNegative
                 }`}
               >
-                <span>{metrics.totalPnlAmount >= 0 ? '▲' : '▼'}</span>
+                <span>{hasPnl ? (isPnlPositive ? '▲' : '▼') : '—'}</span>
                 <span>
                   {privacyMode
                     ? '••••'
-                    : `${metrics.totalPnlAmount >= 0 ? '+' : ''}${fmt(metrics.totalPnlAmount, s)}`}
+                    : hasPnl
+                    ? `${isPnlPositive ? '+' : ''}${fmt(metrics.totalPnlAmount, s)}`
+                    : '0.00'}
                 </span>
-                <span>({metrics.totalPnlPct >= 0 ? '+' : ''}{metrics.totalPnlPct.toFixed(1)}%)</span>
+                <span>({hasPnl ? `${isPnlPositive ? '+' : ''}${metrics.totalPnlPct.toFixed(1)}%` : '0.0%'})</span>
                 <span className={styles.badgeLabel}>All-Time Return</span>
               </div>
             )}
@@ -370,7 +408,7 @@ export default function CryptoPortfolio({
                   key={h._id || h.coinId || i}
                   className={styles.allocationSegment}
                   style={{
-                    width: `${Math.max(1, h.allocationPct)}%`,
+                    width: `${Math.max(2, h.allocationPct)}%`,
                     backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length],
                   }}
                   title={`${h.symbol}: ${h.allocationPct.toFixed(1)}%`}
@@ -378,7 +416,7 @@ export default function CryptoPortfolio({
               ))}
             </div>
             <div className={styles.allocationLegend}>
-              {metrics.holdings.slice(0, 5).map((h, i) => (
+              {metrics.holdings.slice(0, 4).map((h, i) => (
                 <div key={h._id || h.coinId || i} className={styles.legendItem}>
                   <span
                     className={styles.legendDot}
@@ -419,12 +457,26 @@ export default function CryptoPortfolio({
       ) : (
         <div className={styles.holdingsList}>
           {metrics.holdings.map(h => {
-            const isPos24h = h.change24hPct >= 0
-            const isPosPnl = h.pnlAmount >= 0
+            const hasHolding24h = Math.abs(h.change24hPct) > 0.01
+            const isHolding24hPos = h.change24hPct > 0
+
+            const hasHoldingPnl = h.costBasis > 0 && Math.abs(h.pnlAmount) > 0.05
+            const isHoldingPnlPos = h.pnlAmount > 0
+
+            const avatarBg = COIN_GRADIENTS[h.coinId] || 'linear-gradient(135deg, #3a3a4c, #222230)'
+
             return (
-              <div key={h._id} className={styles.holdingCard}>
+              <div
+                key={h._id}
+                className={styles.holdingCard}
+                onClick={() => openEdit(h)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEdit(h)}
+                aria-label={`Holding ${h.symbol}, tap to edit`}
+              >
                 <div className={styles.holdingLeft}>
-                  <div className={styles.coinAvatar}>
+                  <div className={styles.coinAvatar} style={{ background: avatarBg }}>
                     {POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId)?.icon || '🪙'}
                   </div>
                   <div className={styles.coinInfo}>
@@ -446,42 +498,35 @@ export default function CryptoPortfolio({
                     </div>
                     <div
                       className={`${styles.holdingPnl} ${
-                        isPos24h ? styles.badgePositive : styles.badgeNegative
+                        !hasHolding24h
+                          ? styles.badgeNeutral
+                          : isHolding24hPos
+                          ? styles.badgePositive
+                          : styles.badgeNegative
                       }`}
                     >
-                      {isPos24h ? '▲ +' : '▼ '}
-                      {h.change24hPct.toFixed(2)}% (24h)
+                      {hasHolding24h ? (isHolding24hPos ? '▲ +' : '▼ ') : '— '}
+                      {hasHolding24h ? `${h.change24hPct.toFixed(2)}%` : '0.00%'} (24h)
                     </div>
                     {h.costBasis > 0 && (
                       <div
                         className={styles.coinSub}
-                        style={{ color: isPosPnl ? 'var(--income)' : 'var(--expense)' }}
+                        style={{
+                          color: !hasHoldingPnl
+                            ? 'var(--text3)'
+                            : isHoldingPnlPos
+                            ? 'var(--income)'
+                            : 'var(--expense)',
+                        }}
                       >
-                        {isPosPnl ? '+' : ''}{privacyMode ? '••••' : fmt(h.pnlAmount, s)} ({isPosPnl ? '+' : ''}{h.pnlPct.toFixed(1)}%)
+                        {hasHoldingPnl ? (isHoldingPnlPos ? '+' : '') : ''}
+                        {privacyMode ? '••••' : hasHoldingPnl ? fmt(h.pnlAmount, s) : '₱0.00'}{' '}
+                        ({hasHoldingPnl ? `${isHoldingPnlPos ? '+' : ''}${h.pnlPct.toFixed(1)}%` : '0.0%'})
                       </div>
                     )}
                   </div>
 
-                  <div className={styles.holdingActions}>
-                    <button
-                      type="button"
-                      className={styles.actionBtn}
-                      onClick={() => openEdit(h)}
-                      title="Edit holding"
-                      aria-label={`Edit ${h.symbol}`}
-                    >
-                      ✎
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.actionBtn} ${styles.actionBtnDel}`}
-                      onClick={() => handleDelete(h)}
-                      title="Delete holding"
-                      aria-label={`Delete ${h.symbol}`}
-                    >
-                      ✕
-                    </button>
-                  </div>
+                  <span className={styles.holdingChevron} aria-hidden="true">›</span>
                 </div>
               </div>
             )
@@ -625,12 +670,23 @@ export default function CryptoPortfolio({
             </div>
 
             <div className={styles.modalFooter}>
-              <button type="button" className={styles.cancelBtn} onClick={closeModal}>
-                Cancel
-              </button>
-              <button type="button" className={styles.saveBtn} onClick={handleSave}>
-                {editHolding ? 'Save Changes' : 'Add to Portfolio'}
-              </button>
+              {editHolding && (
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={() => handleDelete(editHolding)}
+                >
+                  Delete Holding
+                </button>
+              )}
+              <div className={styles.footerRight}>
+                <button type="button" className={styles.cancelBtn} onClick={closeModal}>
+                  Cancel
+                </button>
+                <button type="button" className={styles.saveBtn} onClick={handleSave}>
+                  {editHolding ? 'Save Changes' : 'Add to Portfolio'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
