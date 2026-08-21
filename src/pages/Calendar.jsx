@@ -38,6 +38,7 @@ import {
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
+import { getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
@@ -256,12 +257,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     if (!data?.debts || !Array.isArray(data.debts)) return map
     
     const currentMonthKey = `${year}-${String(month + 1).padStart(2, '0')}`
-    
     const explicitBillAccountIds = new Set((data?.bills || []).map(b => b.accountId).filter(Boolean))
+    const todayStr = today()
 
     data.debts.forEach(debt => {
       if (debt.paidPeriods && debt.paidPeriods[currentMonthKey]) return
-      if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return // already explicitly tracked
+      if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return
 
       const dayStr = String(debt.dueDate || '').trim()
       if (!dayStr) return
@@ -285,11 +286,33 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         if (startKey && dateKey < startKey) return
       }
 
+      // Check if debt has statement cut-off date (Credit Card Cycle)
+      const statementDay = parseDayOfMonth(debt.statementDate)
+      const dueDay = parseDayOfMonth(debt.dueDate)
+      let balanceForDue = currentBalance
+
+      if (statementDay && dueDay) {
+        const cycle = getCreditCardCycleDetails(
+          { ...debt, balance: currentBalance },
+          data?.expenses || [],
+          data?.transfers || [],
+          dateKey
+        )
+        // If this due date has passed and that cycle was already paid:
+        if (dateKey < todayStr && cycle.isPaid) {
+          return // Settled / Paid! Do not resurrect with post-cutoff swipes
+        }
+        balanceForDue = dateKey <= todayStr ? cycle.billedAmount : (cycle.billedAmount || cycle.unbilledAmount || currentBalance)
+        if (balanceForDue <= 0 && dateKey <= todayStr) {
+          return // Paid!
+        }
+      }
+
       if (!map[dateKey]) map[dateKey] = []
-      map[dateKey].push({ ...debt, balance: currentBalance }) // Inject real-time balance
+      map[dateKey].push({ ...debt, balance: balanceForDue })
     })
     return map
-  }, [data?.debts, data?.accounts, data?.bills, year, month])
+  }, [data?.debts, data?.accounts, data?.bills, data?.expenses, data?.transfers, year, month])
 
   const statementDebtsByDateKey = useMemo(() => {
     const map = {}
@@ -305,15 +328,37 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const day = parseInt(dayStr, 10)
       if (isNaN(day) || day < 1 || day > 31) return
       
+      let currentBalance = Number(debt.balance) || 0
+      if (debt.accountId && Array.isArray(data.accounts)) {
+        const linkedAccount = data.accounts.find(a => a._id === debt.accountId)
+        if (linkedAccount) {
+          currentBalance = Math.abs(Number(linkedAccount.balance) || 0)
+        }
+      }
+
       const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
       const effectiveDay = Math.min(day, lastDayOfMonth)
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(effectiveDay).padStart(2, '0')}`
       
+      const statementDay = parseDayOfMonth(debt.statementDate)
+      const dueDay = parseDayOfMonth(debt.dueDate)
+      let stmtBalance = currentBalance
+
+      if (statementDay && dueDay) {
+        const cycle = getCreditCardCycleDetails(
+          { ...debt, balance: currentBalance },
+          data?.expenses || [],
+          data?.transfers || [],
+          dateKey
+        )
+        stmtBalance = cycle.billedAmount || cycle.totalBalance || currentBalance
+      }
+
       if (!map[dateKey]) map[dateKey] = []
-      map[dateKey].push(debt)
+      map[dateKey].push({ ...debt, balance: stmtBalance })
     })
     return map
-  }, [data?.debts, year, month])
+  }, [data?.debts, data?.accounts, data?.expenses, data?.transfers, year, month])
 
   const dailyVolumes = useMemo(() => {
     const map = {}

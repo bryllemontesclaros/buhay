@@ -1,4 +1,5 @@
 import { formatDisplayDate, getMonthKey, normalizeDate, today } from './utils'
+import { getCreditCardCycleDetails } from './billingCycles'
 
 function toLocalDate(value = new Date()) {
   if (value instanceof Date) return new Date(value.getFullYear(), value.getMonth(), value.getDate())
@@ -191,7 +192,22 @@ export function getVirtualBills(data = {}) {
       }
     }
 
-    const paymentAmount = Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance
+    let paymentAmount = Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance
+
+    // If this is a credit card with billing cycle info
+    const cycleDetails = getCreditCardCycleDetails(
+      { ...debt, balance },
+      expenses,
+      [],
+      today()
+    )
+
+    if (cycleDetails.hasCycle && cycleDetails.isPaid && cycleDetails.unbilledAmount > 0) {
+      // Past statement is paid, upcoming cycle has new unbilled transactions
+      paymentAmount = cycleDetails.unbilledAmount
+    } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
+      paymentAmount = cycleDetails.billedAmount
+    }
 
     virtualBills.push({
       _id: `virtual-debt-${debt._id}`,
@@ -204,7 +220,7 @@ export function getVirtualBills(data = {}) {
       accountId: debt.accountId || '',
       isVirtual: true,
       originalDebtId: debt._id,
-      paidPeriods: {},
+      paidPeriods: cycleDetails.hasCycle && cycleDetails.isPaid ? { [`monthly_${cycleDetails.dueDate}`]: { paid: true } } : {},
     })
   })
 
@@ -228,17 +244,31 @@ export function getVirtualBills(data = {}) {
       if (Number.isFinite(parsed) && parsed >= 1 && parsed <= 31) dueDay = parsed
     }
 
+    const cycleDetails = getCreditCardCycleDetails(
+      { ...acc, balance },
+      expenses,
+      [],
+      today()
+    )
+
+    let billAmount = balance
+    if (cycleDetails.hasCycle && cycleDetails.isPaid && cycleDetails.unbilledAmount > 0) {
+      billAmount = cycleDetails.unbilledAmount
+    } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
+      billAmount = cycleDetails.billedAmount
+    }
+
     virtualBills.push({
       _id: `virtual-acc-${acc._id}`,
       name: `${acc.name} (Credit Card)`,
-      amount: balance,
+      amount: billAmount,
       due: dueDay,
       freq: 'monthly',
       cat: 'Bills',
       subcat: 'Credit Card',
       accountId: acc._id,
       isVirtual: true,
-      paidPeriods: {},
+      paidPeriods: cycleDetails.hasCycle && cycleDetails.isPaid ? { [`monthly_${cycleDetails.dueDate}`]: { paid: true } } : {},
     })
   })
 
