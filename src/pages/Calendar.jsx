@@ -6,6 +6,7 @@ import {
   getMonthForecast,
   getMonthTransactions,
   getTakdaTransactionLifecycle,
+  getTakdaTotalAssets,
   getTakdaTotalDebts,
   getTakdaTotalSavings,
   hasDailyBalanceOverride,
@@ -1113,9 +1114,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayRawBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, balanceOverrides))
     : 0
+  const totalCryptoAssets = useMemo(() => {
+    const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
+    return getTakdaTotalAssets([], holdings)
+  }, [data?.portfolioHoldings])
+
   const selectedDayTotalDebts = getTakdaTotalDebts(accountList, data?.debts, selected, incomeList, expenseList)
   const selectedDayBalance = calendarViewMode === 'netWorth'
-    ? (selectedDayRawBalance + (Number(totalSavings) || 0) - selectedDayTotalDebts)
+    ? (selectedDayRawBalance + (Number(totalSavings) || 0) + totalCryptoAssets - selectedDayTotalDebts)
     : selectedDayRawBalance
   const selectedDayAutoBalance = selected
     ? getBalanceAtDate(accountList, transferList, incomeList, expenseList, selected)
@@ -1133,7 +1139,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     : 0
   const focusTotalDebts = getTakdaTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
   const balanceFocusValue = calendarViewMode === 'netWorth'
-    ? (baseFocusValue + (Number(totalSavings) || 0) - focusTotalDebts)
+    ? (baseFocusValue + (Number(totalSavings) || 0) + totalCryptoAssets - focusTotalDebts)
     : baseFocusValue
   const balanceRailMeta = selected
     ? 'Calendar close · includes forecast'
@@ -1992,7 +1998,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const forecast = forecastMap[ds]
               const baseValue = forecast ? forecast.runningBalance : 0
               const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
-              const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) - cellTotalDebts) : baseValue
+              const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts) : baseValue
               const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
