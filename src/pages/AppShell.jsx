@@ -392,7 +392,8 @@ const DEFAULT_SPACE_PAGES = {
 
 const FINANCE_PAGE_ALIASES = {
   accounts: { page: 'accounts' },
-  portfolio: { page: 'accounts' },
+  crypto: { page: 'accounts', subTab: 'crypto' },
+  portfolio: { page: 'accounts', subTab: 'crypto' },
   history: { page: 'history' },
   breakdown: { page: 'breakdown' },
   savings: { page: 'savings' },
@@ -1206,6 +1207,7 @@ export default function AppShell({ user }) {
     { id: 'focus', label: 'Focus', iconKey: 'goals', section: null },
   ]
   const takdaMoreNav = [
+    { id: 'crypto', label: 'Crypto 🪙', iconKey: 'portfolio', section: 'Finance' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: 'Review' },
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
