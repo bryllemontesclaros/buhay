@@ -352,10 +352,12 @@ body::after {
 :global(body:has([class*="shell"])),
 html:has([class*="shell"]),
 body:has([class*="shell"]) {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   overflow: hidden !important;
   overscroll-behavior: none !important;
-  height: 100% !important;
-  height: 100dvh !important;
 }
 
 input, select, button, textarea {

@@ -723,6 +723,9 @@ export default function AppShell({ user }) {
       listenCol(uid, 'balanceOverrideLog', rows => {
         setData(d => ({ ...d, balanceOverrideLog: rows }))
       }, error => handleRealtimeError('balanceOverrideLog', error)),
+      listenCol(uid, 'portfolioHoldings', rows => {
+        setData(d => ({ ...d, portfolioHoldings: rows }))
+      }, error => handleRealtimeError('portfolioHoldings', error)),
       listenProfile(uid, p => {
         setProfile(p)
       }, error => handleRealtimeError('profile', error)),
@@ -1092,17 +1095,77 @@ export default function AppShell({ user }) {
     const prevBodyOverflow = document.body.style.overflow
     const prevHtmlOverscroll = document.documentElement.style.overscrollBehavior
     const prevBodyOverscroll = document.body.style.overscrollBehavior
+    const prevHtmlPosition = document.documentElement.style.position
+    const prevBodyPosition = document.body.style.position
 
     document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     document.documentElement.style.overscrollBehavior = 'none'
     document.body.style.overscrollBehavior = 'none'
+    document.documentElement.style.position = 'fixed'
+    document.body.style.position = 'fixed'
+    document.documentElement.style.inset = '0'
+    document.body.style.inset = '0'
+    document.documentElement.style.width = '100%'
+    document.body.style.width = '100%'
+    document.documentElement.style.height = '100%'
+    document.body.style.height = '100%'
+
+    const resetViewport = () => {
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0)
+        if (document.documentElement) document.documentElement.scrollTop = 0
+        if (document.body) document.body.scrollTop = 0
+      }
+    }
+
+    resetViewport()
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        resetViewport()
+        window.requestAnimationFrame(resetViewport)
+        setTimeout(resetViewport, 60)
+        setTimeout(resetViewport, 180)
+      }
+    }
+
+    const handleScroll = () => {
+      if (window.scrollY !== 0 || window.scrollX !== 0) {
+        window.scrollTo(0, 0)
+      }
+    }
+
+    window.addEventListener('pageshow', resetViewport)
+    window.addEventListener('focus', resetViewport)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', resetViewport)
+    }
 
     return () => {
       document.documentElement.style.overflow = prevHtmlOverflow
       document.body.style.overflow = prevBodyOverflow
       document.documentElement.style.overscrollBehavior = prevHtmlOverscroll
       document.body.style.overscrollBehavior = prevBodyOverscroll
+      document.documentElement.style.position = prevHtmlPosition
+      document.body.style.position = prevBodyPosition
+      document.documentElement.style.inset = ''
+      document.body.style.inset = ''
+      document.documentElement.style.width = ''
+      document.body.style.width = ''
+      document.documentElement.style.height = ''
+      document.body.style.height = ''
+
+      window.removeEventListener('pageshow', resetViewport)
+      window.removeEventListener('focus', resetViewport)
+      window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('visibilitychange', handleVisibility)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', resetViewport)
+      }
     }
   }, [])
 

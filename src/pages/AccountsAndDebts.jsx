@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Accounts from './Accounts'
 import Debts from './Debts'
+import CryptoPortfolio from './CryptoPortfolio'
 import styles from './Page.module.css'
 import tStyles from '../components/SharedTabs.module.css'
 import { fmt } from '../lib/utils'
@@ -19,23 +20,32 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
   const debts = Array.isArray(data?.debts) ? data.debts : []
+  const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
 
-  const totalAssets = getTakdaTotalAssets(accounts)
+  const cashAssets = getTakdaTotalAssets(accounts, [])
+  const totalAssets = getTakdaTotalAssets(accounts, holdings)
+  const cryptoAssets = Math.max(0, totalAssets - cashAssets)
   const totalDebts = getTakdaTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <div className={styles.title}>Accounts & Debts</div>
-        <div className={styles.sub}>Manage cash flow accounts, track card utilization, and plan debt payoff strategies.</div>
+        <div className={styles.title}>Accounts & Wealth</div>
+        <div className={styles.sub}>Manage liquid cash accounts, track live crypto holdings, and plan debt payoff strategies.</div>
       </div>
 
       <div className={tStyles.summaryStrip}>
         <div className={tStyles.summaryCard}>
           <div className={tStyles.summaryLabel}>Total Cash Assets</div>
           <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-            {privacyMode ? '••••' : fmt(totalAssets, s)}
+            {privacyMode ? '••••' : fmt(cashAssets, s)}
+          </div>
+        </div>
+        <div className={tStyles.summaryCard}>
+          <div className={tStyles.summaryLabel}>Crypto Assets</div>
+          <div className={`${tStyles.summaryValue} ${cryptoAssets > 0 ? tStyles.summaryValuePositive : ''}`}>
+            {privacyMode ? '••••' : fmt(cryptoAssets, s)}
           </div>
         </div>
         <div className={tStyles.summaryCard}>
@@ -67,6 +77,16 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
           <button
             type="button"
             role="tab"
+            aria-selected={activeTab === 'crypto'}
+            className={`${tStyles.tab} ${activeTab === 'crypto' ? tStyles.tabActive : ''}`}
+            onClick={() => setActiveTab('crypto')}
+          >
+            Crypto 🪙
+            <span className={tStyles.tabCount}>{holdings.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
             aria-selected={activeTab === 'debts'}
             className={`${tStyles.tab} ${activeTab === 'debts' ? tStyles.tabActive : ''}`}
             onClick={() => setActiveTab('debts')}
@@ -87,6 +107,14 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
           onTogglePrivacy={onTogglePrivacy}
           hideHeader={true}
         />
+      ) : activeTab === 'crypto' ? (
+        <CryptoPortfolio
+          user={user}
+          data={data}
+          profile={profile}
+          privacyMode={privacyMode}
+          onTogglePrivacy={onTogglePrivacy}
+        />
       ) : (
         <Debts
           user={user}
@@ -100,3 +128,4 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
     </div>
   )
 }
+

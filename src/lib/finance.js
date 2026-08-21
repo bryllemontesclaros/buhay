@@ -219,7 +219,7 @@ export function getTakdaTotalAssets(accounts = [], holdings = []) {
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   const holdingsSum = safeHoldings.reduce((sum, h) => {
     const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
-    const price = parseFloat(h?.currentPrice ?? h?.price ?? 0) || 0
+    const price = parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
     return sum + (qty * price)
   }, 0)
 

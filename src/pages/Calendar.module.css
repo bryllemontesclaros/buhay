@@ -347,7 +347,7 @@
   font-family: var(--font-display);
   font-size: var(--type-title-md);
   color: var(--text);
-  width: 100%;
+  max-width: 100%;
   text-align: center;
   line-height: 1.05;
   pointer-events: none;
