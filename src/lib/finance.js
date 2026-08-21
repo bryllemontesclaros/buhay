@@ -210,17 +210,29 @@ export function getTakdaTotalSavings(savings = []) {
   return safeSavings.reduce((sum, s) => sum + (Number(s?.balance) || 0), 0)
 }
 
-export function getTakdaTotalAssets(accounts = [], holdings = []) {
+export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = null) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const accountsSum = safeAccounts
     .filter(acc => acc?.type !== 'Credit Card')
     .reduce((sum, acc) => sum + Math.max(0, Number(acc?.balance) || 0), 0)
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
+  let prices = livePrices
+  if (!prices && typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('buhay_crypto_prices_v4') || localStorage.getItem('buhay_crypto_prices_v3')
+      if (raw) prices = JSON.parse(raw)?.data
+    } catch {
+      // ignore
+    }
+  }
+  prices = prices || {}
+
   const holdingsSum = safeHoldings.reduce((sum, h) => {
     const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
-    const price = parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
-    return sum + (qty * price)
+    const quote = prices[h?.coinId] || prices[h?.symbol?.toUpperCase()] || prices[h?.symbol?.toLowerCase()] || {}
+    const livePrice = parseFloat(quote?.php) || parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
+    return sum + (qty * livePrice)
   }, 0)
 
   return accountsSum + holdingsSum

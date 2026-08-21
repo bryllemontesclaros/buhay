@@ -100,20 +100,26 @@ export default function CryptoPortfolio({
         if (typeof onPricesUpdated === 'function') {
           onPricesUpdated(res.prices)
         }
+        if (force) {
+          notifyApp({ title: 'Prices Updated', message: 'Crypto market quotes refreshed.', tone: 'positive' })
+        }
       }
     } catch (err) {
       console.warn('[CryptoPortfolio] Price update failed:', err)
+      if (force) {
+        notifyApp({ title: 'Sync Failed', message: 'Could not fetch latest quotes.', tone: 'danger' })
+      }
     } finally {
       setRefreshing(false)
     }
   }
 
-  // Initial load & 45s interval
+  // Initial load & 30s live interval
   useEffect(() => {
     loadPrices(false)
     const interval = setInterval(() => {
       loadPrices(false)
-    }, 45000)
+    }, 30000)
     return () => clearInterval(interval)
   }, [activeCoinIds.join(',')])
 
@@ -128,7 +134,7 @@ export default function CryptoPortfolio({
   // Calculate overall metrics
   const metrics = useMemo(() => {
     return calculatePortfolioMetrics(holdings, livePrices, vsCurrency)
-  }, [holdings, livePrices, vsCurrency])
+  }, [holdings, livePrices, vsCurrency, lastUpdated])
 
   // Search handler for coin modal
   useEffect(() => {

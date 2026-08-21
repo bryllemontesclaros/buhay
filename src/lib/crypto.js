@@ -1,12 +1,12 @@
 /**
  * High-speed, real-time Cryptocurrency Pricing Engine for Buhay / Takda.
- * Uses CoinPaprika + Binance Vision + CoinGecko failover pipelines.
- * Fully CORS-enabled, native PHP (₱) and USD ($) quotes, 24h market change,
- * smart background caching, search autocomplete, and P&L analytics.
+ * Multi-source pipeline: CoinPaprika (2,000+ coins) + Binance Vision + Forex.
+ * Native PHP (₱) and USD ($) quotes, live 24h market change,
+ * dynamic currency switching, search autocomplete, and accurate P&L math.
  */
 
-const CACHE_KEY = 'buhay_crypto_prices_v3'
-const CACHE_TTL_MS = 30000 // 30 seconds cache TTL for live updates
+const CACHE_KEY = 'buhay_crypto_prices_v4'
+const CACHE_TTL_MS = 25000 // 25 seconds live cache TTL
 
 export const POPULAR_CRYPTO_COINS = [
   { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', icon: '₿', color: '#f7931a', paprikaId: 'btc-bitcoin', binance: 'BTCUSDT' },
@@ -44,8 +44,43 @@ export const CRYPTO_WALLETS = [
   'Other',
 ]
 
+const KNOWN_PAPRIKA_MAPPING = {
+  bitcoin: 'btc-bitcoin',
+  btc: 'btc-bitcoin',
+  ethereum: 'eth-ethereum',
+  eth: 'eth-ethereum',
+  solana: 'sol-solana',
+  sol: 'sol-solana',
+  tether: 'usdt-tether',
+  usdt: 'usdt-tether',
+  ripple: 'xrp-xrp',
+  xrp: 'xrp-xrp',
+  dogecoin: 'doge-dogecoin',
+  doge: 'doge-dogecoin',
+  binancecoin: 'bnb-binance-coin',
+  bnb: 'bnb-binance-coin',
+  cardano: 'ada-cardano',
+  ada: 'ada-cardano',
+  'avalanche-2': 'avax-avalanche',
+  avax: 'avax-avalanche',
+  sui: 'sui-sui',
+  'usd-coin': 'usdc-usd-coin',
+  usdc: 'usdc-usd-coin',
+  chainlink: 'link-chainlink',
+  link: 'link-chainlink',
+  polkadot: 'dot-polkadot',
+  dot: 'dot-polkadot',
+  near: 'near-near-protocol',
+  uniswap: 'uni-uniswap',
+  uni: 'uni-uniswap',
+  'shiba-inu': 'shib-shiba-inu',
+  shib: 'shib-shiba-inu',
+}
+
+let cachedForexRate = 61.7
+
 /**
- * Get cached prices from localStorage.
+ * Read cached price data from localStorage.
  */
 export function getCachedPrices() {
   if (typeof window === 'undefined') return null
@@ -54,6 +89,7 @@ export function getCachedPrices() {
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (parsed && typeof parsed.data === 'object' && Object.keys(parsed.data).length > 0) {
+      if (parsed.forexRate) cachedForexRate = parsed.forexRate
       return parsed
     }
   } catch (err) {
@@ -65,13 +101,14 @@ export function getCachedPrices() {
 /**
  * Save prices to localStorage.
  */
-export function setCachedPrices(data) {
+export function setCachedPrices(data, forexRate = cachedForexRate) {
   if (typeof window === 'undefined' || !data) return
   try {
     localStorage.setItem(
       CACHE_KEY,
       JSON.stringify({
         data,
+        forexRate,
         timestamp: Date.now(),
       })
     )
@@ -81,9 +118,9 @@ export function setCachedPrices(data) {
 }
 
 /**
- * Fetch USD to PHP conversion rate from public forex feed.
+ * Fetch USD to PHP conversion rate from open forex feed.
  */
-async function fetchUsdToPhpRate() {
+export async function fetchUsdToPhpRate() {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 3500)
@@ -92,21 +129,24 @@ async function fetchUsdToPhpRate() {
     if (res.ok) {
       const data = await res.json()
       const rate = parseFloat(data?.rates?.PHP)
-      if (rate > 40 && rate < 100) return rate
+      if (rate > 40 && rate < 100) {
+        cachedForexRate = rate
+        return rate
+      }
     }
   } catch (err) {
-    // fallback rate
+    // fallback
   }
-  return 58.5
+  return cachedForexRate || 61.7
 }
 
 /**
- * Source 1: CoinPaprika (High Reliability, Native PHP & USD quotes, Zero rate limit).
+ * Source 1: CoinPaprika 2,000+ Tickers API.
  */
 async function fetchCoinPaprikaPrices() {
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    const timeoutId = setTimeout(() => controller.abort(), 6000)
     const res = await fetch('https://api.coinpaprika.com/v1/tickers?quotes=USD,PHP', { signal: controller.signal })
     clearTimeout(timeoutId)
 
@@ -114,29 +154,68 @@ async function fetchCoinPaprikaPrices() {
     const tickers = await res.json()
     if (!Array.isArray(tickers) || tickers.length === 0) return null
 
-    const tickerMap = {}
+    const idMap = new Map()
+    const symbolMap = new Map()
+
     tickers.forEach(t => {
-      if (t.id) tickerMap[t.id] = t
-      if (t.symbol) tickerMap[t.symbol.toUpperCase()] = t
+      if (t.id) idMap.set(t.id.toLowerCase(), t)
+      if (t.symbol) {
+        const sym = t.symbol.toUpperCase()
+        if (!symbolMap.has(sym) || (t.rank && t.rank < (symbolMap.get(sym).rank || 99999))) {
+          symbolMap.set(sym, t)
+        }
+      }
     })
 
     const results = {}
-    POPULAR_CRYPTO_COINS.forEach(c => {
-      const t = (c.paprikaId && tickerMap[c.paprikaId]) || tickerMap[c.symbol]
+
+    // 1. Process known top coins
+    for (const [key, paprikaId] of Object.entries(KNOWN_PAPRIKA_MAPPING)) {
+      const t = idMap.get(paprikaId) || symbolMap.get(key.toUpperCase())
       if (t && t.quotes) {
         const usdQuote = t.quotes.USD
         const phpQuote = t.quotes.PHP
         const usdPrice = parseFloat(usdQuote?.price) || 0
-        const phpPrice = parseFloat(phpQuote?.price) || usdPrice * 58.5
+        const phpPrice = parseFloat(phpQuote?.price) || usdPrice * cachedForexRate
         const change24hUsd = parseFloat(usdQuote?.percent_change_24h) || 0
         const change24hPhp = parseFloat(phpQuote?.percent_change_24h) || change24hUsd
 
-        results[c.id] = {
+        const quoteObj = {
           usd: usdPrice,
           php: phpPrice,
           usd_24h_change: change24hUsd,
           php_24h_change: change24hPhp,
         }
+
+        results[key] = quoteObj
+        results[key.toUpperCase()] = quoteObj
+        results[key.toLowerCase()] = quoteObj
+        if (t.symbol) {
+          results[t.symbol.toUpperCase()] = quoteObj
+          results[t.symbol.toLowerCase()] = quoteObj
+        }
+      }
+    }
+
+    // 2. Map all other symbol tickers
+    symbolMap.forEach((t, sym) => {
+      if (t && t.quotes && !results[sym]) {
+        const usdQuote = t.quotes.USD
+        const phpQuote = t.quotes.PHP
+        const usdPrice = parseFloat(usdQuote?.price) || 0
+        const phpPrice = parseFloat(phpQuote?.price) || usdPrice * cachedForexRate
+        const change24hUsd = parseFloat(usdQuote?.percent_change_24h) || 0
+        const change24hPhp = parseFloat(phpQuote?.percent_change_24h) || change24hUsd
+
+        const quoteObj = {
+          usd: usdPrice,
+          php: phpPrice,
+          usd_24h_change: change24hUsd,
+          php_24h_change: change24hPhp,
+        }
+        results[sym] = quoteObj
+        results[sym.toLowerCase()] = quoteObj
+        if (t.id) results[t.id] = quoteObj
       }
     })
 
@@ -148,9 +227,9 @@ async function fetchCoinPaprikaPrices() {
 }
 
 /**
- * Source 2: Binance Vision (High Speed, Public CORS feed).
+ * Source 2: Binance Vision Spot API.
  */
-async function fetchBinanceVisionPrices(usdToPhpRate = 58.5) {
+async function fetchBinanceVisionPrices(usdToPhpRate = 61.7) {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 4500)
@@ -167,14 +246,17 @@ async function fetchBinanceVisionPrices(usdToPhpRate = 58.5) {
     })
 
     const results = {}
+
     POPULAR_CRYPTO_COINS.forEach(c => {
       if (c.id === 'tether' || c.id === 'usd-coin') {
-        results[c.id] = {
+        const stableQuote = {
           usd: 1.0,
           php: usdToPhpRate,
           usd_24h_change: 0,
           php_24h_change: 0,
         }
+        results[c.id] = stableQuote
+        results[c.symbol] = stableQuote
         return
       }
 
@@ -182,12 +264,15 @@ async function fetchBinanceVisionPrices(usdToPhpRate = 58.5) {
       if (ticker) {
         const usdPrice = parseFloat(ticker.lastPrice) || 0
         const change24h = parseFloat(ticker.priceChangePercent) || 0
-        results[c.id] = {
+        const quoteObj = {
           usd: usdPrice,
           php: usdPrice * usdToPhpRate,
           usd_24h_change: change24h,
           php_24h_change: change24h,
         }
+        results[c.id] = quoteObj
+        results[c.symbol] = quoteObj
+        results[c.symbol.toLowerCase()] = quoteObj
       }
     })
 
@@ -200,9 +285,9 @@ async function fetchBinanceVisionPrices(usdToPhpRate = 58.5) {
 
 /**
  * Fetch live cryptocurrency prices with multi-source fallback.
- * @param {string[]} coinIds Array of CoinGecko coin IDs
+ * @param {string[]} coinIds Array of coin IDs or symbols
  * @param {boolean} forceRefresh If true, bypasses the client-side TTL check
- * @returns {Promise<{ prices: Record<string, any>, isLive: boolean, updatedAt: number }>}
+ * @returns {Promise<{ prices: Record<string, any>, isLive: boolean, updatedAt: number, forexRate: number }>}
  */
 export async function fetchLiveCryptoPrices(coinIds = [], forceRefresh = false) {
   const cached = getCachedPrices()
@@ -213,57 +298,68 @@ export async function fetchLiveCryptoPrices(coinIds = [], forceRefresh = false) 
       prices: cached.data,
       isLive: true,
       updatedAt: cached.timestamp,
+      forexRate: cached.forexRate || cachedForexRate,
     }
   }
 
-  // 1. Try CoinPaprika First (Fastest & Native PHP/USD)
+  // Update forex rate in background
+  const usdToPhp = await fetchUsdToPhpRate()
+
+  // 1. Primary: CoinPaprika 2,000+ Coins Feed
   const paprikaPrices = await fetchCoinPaprikaPrices()
   if (paprikaPrices && Object.keys(paprikaPrices).length > 0) {
     const merged = { ...(cached?.data || {}), ...paprikaPrices }
-    setCachedPrices(merged)
+    setCachedPrices(merged, usdToPhp)
     return {
       prices: merged,
       isLive: true,
       updatedAt: Date.now(),
+      forexRate: usdToPhp,
     }
   }
 
-  // 2. Try Binance Vision + Forex
-  const usdToPhp = await fetchUsdToPhpRate()
+  // 2. Secondary: Binance Vision + Forex
   const binancePrices = await fetchBinanceVisionPrices(usdToPhp)
   if (binancePrices && Object.keys(binancePrices).length > 0) {
     const merged = { ...(cached?.data || {}), ...binancePrices }
-    setCachedPrices(merged)
+    setCachedPrices(merged, usdToPhp)
     return {
       prices: merged,
       isLive: true,
       updatedAt: Date.now(),
+      forexRate: usdToPhp,
     }
   }
 
-  // 3. Fallback to cached prices
+  // 3. Fallback: Cached prices
   if (cached?.data && Object.keys(cached.data).length > 0) {
     return {
       prices: cached.data,
       isLive: true,
       updatedAt: cached.timestamp,
+      forexRate: cached.forexRate || usdToPhp,
     }
   }
 
-  // 4. Default baseline quotes
-  const fallback = {
-    bitcoin: { usd: 76950, php: 76950 * usdToPhp, usd_24h_change: 7.2, php_24h_change: 7.2 },
-    ethereum: { usd: 2382, php: 2382 * usdToPhp, usd_24h_change: 3.8, php_24h_change: 3.8 },
-    solana: { usd: 91.2, php: 91.2 * usdToPhp, usd_24h_change: 4.1, php_24h_change: 4.1 },
-    tether: { usd: 1.0, php: usdToPhp, usd_24h_change: 0, php_24h_change: 0 },
-    ripple: { usd: 1.34, php: 1.34 * usdToPhp, usd_24h_change: 16.2, php_24h_change: 16.2 },
-    dogecoin: { usd: 0.084, php: 0.084 * usdToPhp, usd_24h_change: 9.8, php_24h_change: 9.8 },
-  }
+  // 4. Default baseline fallback
+  const fallback = {}
+  POPULAR_CRYPTO_COINS.forEach(c => {
+    const usd = c.id === 'bitcoin' ? 77200 : c.id === 'ethereum' ? 2388 : c.id === 'solana' ? 91.3 : c.id === 'ripple' ? 1.34 : 1.0
+    const quoteObj = {
+      usd,
+      php: usd * usdToPhp,
+      usd_24h_change: c.id === 'bitcoin' ? 7.4 : c.id === 'ethereum' ? 4.6 : 0,
+      php_24h_change: c.id === 'bitcoin' ? 7.3 : c.id === 'ethereum' ? 4.5 : 0,
+    }
+    fallback[c.id] = quoteObj
+    fallback[c.symbol] = quoteObj
+  })
 
   return {
     prices: fallback,
     isLive: true,
     updatedAt: Date.now(),
+    forexRate: usdToPhp,
   }
 }
 
@@ -318,12 +414,32 @@ export async function searchCryptoCoins(query = '') {
 }
 
 /**
+ * Helper to resolve the correct quote from livePrices.
+ */
+export function getHoldingQuote(h, livePrices = {}) {
+  if (!h) return {}
+  const coinId = (h.coinId || '').toLowerCase()
+  const symbol = (h.symbol || '').toUpperCase()
+  const symLower = symbol.toLowerCase()
+
+  return (
+    livePrices[coinId] ||
+    livePrices[symbol] ||
+    livePrices[symLower] ||
+    livePrices[KNOWN_PAPRIKA_MAPPING[coinId]] ||
+    livePrices[KNOWN_PAPRIKA_MAPPING[symLower]] ||
+    {}
+  )
+}
+
+/**
  * Calculates complete portfolio performance metrics.
  */
-export function calculatePortfolioMetrics(holdings = [], livePrices = {}, vsCurrency = 'PHP') {
+export function calculatePortfolioMetrics(holdings = [], livePrices = {}, vsCurrency = 'PHP', forexRate = 61.7) {
   const curr = String(vsCurrency).toLowerCase() === 'usd' ? 'usd' : 'php'
   const isUsd = curr === 'usd'
   const currencySymbol = isUsd ? '$' : '₱'
+  const fxRate = forexRate > 0 ? forexRate : cachedForexRate || 61.7
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
 
@@ -332,16 +448,24 @@ export function calculatePortfolioMetrics(holdings = [], livePrices = {}, vsCurr
   let total24hChangeAmount = 0
 
   const enrichedHoldings = safeHoldings.map(h => {
-    const coinId = h.coinId || (h.symbol ? h.symbol.toLowerCase() : 'bitcoin')
     const qty = parseFloat(h.quantity ?? h.shares ?? 0) || 0
-    const buyPrice = parseFloat(h.buyPrice ?? h.price ?? 0) || 0
-    const quote = livePrices[coinId] || livePrices[h.symbol?.toLowerCase()] || {}
+    const rawBuyPrice = parseFloat(h.buyPrice ?? h.price ?? 0) || 0
+    const quote = getHoldingQuote(h, livePrices)
 
-    const livePrice = parseFloat(quote[curr]) || buyPrice || 0
+    const livePrice = parseFloat(quote[curr]) || (isUsd ? rawBuyPrice / fxRate : rawBuyPrice) || 0
     const change24hPct = parseFloat(quote[`${curr}_24h_change`]) || 0
 
+    // Handle cross-currency cost basis conversion
+    const holdingCurrency = (h.currency || 'PHP').toUpperCase()
+    let unitCostInVsCurrency = rawBuyPrice
+    if (holdingCurrency === 'PHP' && isUsd) {
+      unitCostInVsCurrency = rawBuyPrice / fxRate
+    } else if (holdingCurrency === 'USD' && !isUsd) {
+      unitCostInVsCurrency = rawBuyPrice * fxRate
+    }
+
     const currentValue = qty * livePrice
-    const costBasis = qty * buyPrice
+    const costBasis = qty * unitCostInVsCurrency
     const pnlAmount = currentValue - costBasis
     const pnlPct = costBasis > 0 ? (pnlAmount / costBasis) * 100 : 0
 
@@ -352,10 +476,12 @@ export function calculatePortfolioMetrics(holdings = [], livePrices = {}, vsCurr
     totalCostBasis += costBasis
     total24hChangeAmount += change24hValue
 
+    const coinId = h.coinId || (h.symbol ? h.symbol.toLowerCase() : 'bitcoin')
+
     return {
       ...h,
       qty,
-      buyPrice,
+      buyPrice: unitCostInVsCurrency,
       livePrice,
       currentValue,
       costBasis,
