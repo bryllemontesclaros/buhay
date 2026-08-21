@@ -308,10 +308,6 @@ export default function CryptoPortfolio({
         <div className={styles.heroTop}>
           <div className={styles.heroTag}>
             <span className={styles.heroTitle}>🪙 Crypto Portfolio</span>
-            <div className={styles.liveIndicator}>
-              <span className={styles.liveDot} />
-              <span>{refreshing ? 'Syncing...' : `Live · ${updatedAgo}`}</span>
-            </div>
           </div>
 
           <div className={styles.heroControls}>
@@ -345,7 +341,13 @@ export default function CryptoPortfolio({
         </div>
 
         <div className={styles.heroMain}>
-          <div className={styles.heroLabel}>Total Crypto Assets</div>
+          <div className={styles.heroLabelRow}>
+            <span className={styles.heroLabel}>Total Crypto Assets</span>
+            <div className={styles.liveIndicator}>
+              <span className={styles.liveDot} />
+              <span>{refreshing ? 'Syncing...' : `Live · ${updatedAgo}`}</span>
+            </div>
+          </div>
           <div className={styles.heroValue}>
             {privacyMode ? '••••' : fmt(metrics.totalCurrentValue, s)}
           </div>
