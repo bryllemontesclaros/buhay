@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { fmt, maskMoney } from '../lib/utils'
+import { fmt, maskMoney, playTick } from '../lib/utils'
 import {
   calculatePortfolioMetrics,
   CRYPTO_WALLETS,
@@ -90,9 +90,14 @@ export default function CryptoPortfolio({
 
   // Load and refresh live prices
   async function loadPrices(force = false) {
+    if (force) playTick()
     setRefreshing(true)
+    const minDelay = force ? new Promise(r => setTimeout(r, 450)) : Promise.resolve()
     try {
-      const res = await fetchLiveCryptoPrices(activeCoinIds, force)
+      const [res] = await Promise.all([
+        fetchLiveCryptoPrices(activeCoinIds, force),
+        minDelay,
+      ])
       if (res?.prices) {
         setLivePrices(res.prices)
         setIsLive(res.isLive)
@@ -101,7 +106,7 @@ export default function CryptoPortfolio({
           onPricesUpdated(res.prices)
         }
         if (force) {
-          notifyApp({ title: 'Prices Updated', message: 'Crypto market quotes refreshed.', tone: 'positive' })
+          notifyApp({ title: 'Prices Updated', message: 'Live Binance & Forex quotes refreshed.', tone: 'positive' })
         }
       }
     } catch (err) {

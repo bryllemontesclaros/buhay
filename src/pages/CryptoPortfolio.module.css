@@ -84,15 +84,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--surface2);
   color: var(--text2);
-  font-size: 13px;
+  font-size: 15px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .refreshBtn:hover {
@@ -100,8 +102,13 @@
   color: var(--text);
 }
 
+.refreshBtn:active {
+  transform: scale(0.88);
+}
+
 .refreshing {
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  color: var(--income);
 }
 
 @keyframes spin {

@@ -164,9 +164,10 @@ async function fetchBinanceSpotPrices() {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
 
+    const tStamp = Date.now()
     const [forexRes, binanceRes] = await Promise.all([
-      fetch('https://open.er-api.com/v6/latest/USD', { signal: controller.signal }),
-      fetch('https://data-api.binance.vision/api/v3/ticker/24hr', { signal: controller.signal }),
+      fetch(`https://open.er-api.com/v6/latest/USD?_t=${tStamp}`, { signal: controller.signal, cache: 'no-store' }),
+      fetch(`https://data-api.binance.vision/api/v3/ticker/24hr?_t=${tStamp}`, { signal: controller.signal, cache: 'no-store' }),
     ])
     clearTimeout(timeoutId)
 
@@ -256,7 +257,7 @@ async function fetchCoinPaprikaPrices() {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 6000)
-    const res = await fetch('https://api.coinpaprika.com/v1/tickers?quotes=USD,PHP', { signal: controller.signal })
+    const res = await fetch(`https://api.coinpaprika.com/v1/tickers?quotes=USD,PHP&_t=${Date.now()}`, { signal: controller.signal, cache: 'no-store' })
     clearTimeout(timeoutId)
 
     if (!res.ok) throw new Error(`CoinPaprika HTTP ${res.status}`)
