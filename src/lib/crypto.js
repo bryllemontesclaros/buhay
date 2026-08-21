@@ -1,11 +1,11 @@
 /**
  * Ultra-Fast, Real-Time Cryptocurrency Spot Pricing Engine for Buhay / Takda.
- * Primary: Binance Vision Direct Spot Matching Engine (Sub-second live ticks) + Live Forex
+ * Primary: Binance Vision Direct Spot Orderbook (Sub-second live ticks) + Live Forex
  * Secondary: CoinPaprika 2,000+ Coins Feed
  * Tertiary: CoinGecko API
  */
 
-const CACHE_KEY = 'buhay_crypto_prices_v5'
+const CACHE_KEY = 'buhay_crypto_prices_v6'
 const CACHE_TTL_MS = 15000 // 15 seconds live cache TTL for snappy real-time updates
 
 export const POPULAR_CRYPTO_COINS = [
@@ -85,7 +85,7 @@ let cachedForexRate = 61.718
 function cleanupOldCaches() {
   if (typeof window === 'undefined') return
   try {
-    ['buhay_crypto_prices_v1', 'buhay_crypto_prices_v2', 'buhay_crypto_prices_v3'].forEach(k => {
+    ['buhay_crypto_prices_v1', 'buhay_crypto_prices_v2', 'buhay_crypto_prices_v3', 'buhay_crypto_prices_v4', 'buhay_crypto_prices_v5'].forEach(k => {
       localStorage.removeItem(k)
     })
   } catch {
@@ -139,7 +139,7 @@ export async function fetchUsdToPhpRate() {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 3500)
-    const res = await fetch('https://open.er-api.com/v6/latest/USD', { signal: controller.signal })
+    const res = await fetch(`https://open.er-api.com/v6/latest/USD?_t=${Date.now()}`, { signal: controller.signal, cache: 'no-store' })
     clearTimeout(timeoutId)
     if (res.ok) {
       const data = await res.json()
@@ -357,7 +357,7 @@ export async function fetchLiveCryptoPrices(coinIds = [], forceRefresh = false) 
     }
   }
 
-  // 3. Fallback: Cached prices
+  // 3. Fallback: Cached prices if available
   if (cached?.data && Object.keys(cached.data).length > 0) {
     return {
       prices: cached.data,
@@ -367,15 +367,15 @@ export async function fetchLiveCryptoPrices(coinIds = [], forceRefresh = false) 
     }
   }
 
-  // 4. Default baseline fallback
+  // 4. Default baseline fallback (NEVER cached to disk)
   const fallback = {}
   POPULAR_CRYPTO_COINS.forEach(c => {
-    const usd = c.id === 'bitcoin' ? 78150 : c.id === 'ethereum' ? 2430 : c.id === 'solana' ? 92.6 : c.id === 'ripple' ? 1.38 : 1.0
+    const usd = c.id === 'bitcoin' ? 78150 : c.id === 'ethereum' ? 2393 : c.id === 'solana' ? 92.6 : c.id === 'ripple' ? 1.38 : 1.0
     const quoteObj = {
       usd,
       php: usd * cachedForexRate,
-      usd_24h_change: c.id === 'bitcoin' ? 8.9 : c.id === 'ethereum' ? 6.8 : 0,
-      php_24h_change: c.id === 'bitcoin' ? 8.9 : c.id === 'ethereum' ? 6.8 : 0,
+      usd_24h_change: c.id === 'bitcoin' ? 8.9 : c.id === 'ethereum' ? 5.2 : 0,
+      php_24h_change: c.id === 'bitcoin' ? 8.9 : c.id === 'ethereum' ? 5.2 : 0,
     }
     fallback[c.id] = quoteObj
     fallback[c.symbol] = quoteObj
