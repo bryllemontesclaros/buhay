@@ -1,7 +1,6 @@
 import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance } from './forecast'
 import { getProjectedTransactions } from './recurrence'
 import { getMonthKey, normalizeDate, toMonthKey, today } from './utils'
-import { getCachedPrices } from './crypto'
 
 export function isTransactionPaid(tx = {}) {
   return String(tx?.paymentStatus || 'paid').toLowerCase() !== 'unpaid'
@@ -219,9 +218,13 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   let prices = livePrices
-  if (!prices) {
-    const cached = getCachedPrices()
-    prices = cached?.data || null
+  if (!prices && typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('buhay_crypto_prices_v6')
+      if (raw) prices = JSON.parse(raw)?.data
+    } catch {
+      // ignore
+    }
   }
   prices = prices || {}
 
