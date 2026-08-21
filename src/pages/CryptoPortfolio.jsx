@@ -132,7 +132,7 @@ export default function CryptoPortfolio({
     }
   }, [searchQuery])
 
-  function selectCoin(coin) {
+  async function selectCoin(coin) {
     const quote = livePrices[coin.id] || {}
     const currKey = vsCurrency.toLowerCase()
     const currentLivePrice = quote[currKey] ? String(quote[currKey]) : ''
@@ -142,9 +142,22 @@ export default function CryptoPortfolio({
       coinId: coin.id,
       symbol: coin.symbol,
       name: coin.name,
-      // Auto-fill buy price if empty or editing newly chosen coin
-      buyPrice: prev.buyPrice || currentLivePrice,
+      buyPrice: currentLivePrice,
     }))
+
+    // If price is not yet cached for an altcoin, fetch it instantly
+    if (!currentLivePrice) {
+      try {
+        const res = await fetchLiveCryptoPrices([coin.id], true)
+        if (res?.prices?.[coin.id]?.[currKey]) {
+          const freshPrice = String(res.prices[coin.id][currKey])
+          setLivePrices(prev => ({ ...prev, ...res.prices }))
+          setForm(prev => (prev.coinId === coin.id ? { ...prev, buyPrice: freshPrice } : prev))
+        }
+      } catch (err) {
+        console.warn('[crypto] Failed to fetch price for coin:', err)
+      }
+    }
   }
 
   function openAdd() {
