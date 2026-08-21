@@ -218,10 +218,15 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   let prices = livePrices
+  let forexRate = 61.718
   if (!prices && typeof window !== 'undefined') {
     try {
       const raw = localStorage.getItem('buhay_crypto_prices_v6')
-      if (raw) prices = JSON.parse(raw)?.data
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        prices = parsed?.data || null
+        if (parsed?.forexRate) forexRate = parseFloat(parsed.forexRate) || 61.718
+      }
     } catch {
       // ignore
     }
@@ -230,9 +235,17 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
 
   const holdingsSum = safeHoldings.reduce((sum, h) => {
     const qty = parseFloat(h?.quantity ?? h?.shares ?? 0) || 0
-    const quote = prices[h?.coinId] || prices[h?.symbol?.toUpperCase()] || prices[h?.symbol?.toLowerCase()] || {}
-    const livePrice = parseFloat(quote?.php) || parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
-    return sum + (qty * livePrice)
+    const coinId = (h?.coinId || '').toLowerCase()
+    const symbol = (h?.symbol || '').toUpperCase()
+    const quote = prices[coinId] || prices[symbol] || prices[symbol.toLowerCase()] || {}
+
+    let livePriceInPhp = parseFloat(quote?.php)
+    if (!livePriceInPhp || isNaN(livePriceInPhp) || livePriceInPhp <= 0) {
+      const rawPrice = parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
+      const isUsd = (h?.currency || '').toUpperCase() === 'USD' || (rawPrice < 10000 && (coinId === 'bitcoin' || coinId === 'ethereum' || symbol === 'BTC' || symbol === 'ETH'))
+      livePriceInPhp = isUsd ? rawPrice * forexRate : rawPrice
+    }
+    return sum + (qty * livePriceInPhp)
   }, 0)
 
   return accountsSum + holdingsSum

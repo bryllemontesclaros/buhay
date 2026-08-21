@@ -22,8 +22,29 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   const debts = Array.isArray(data?.debts) ? data.debts : []
   const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
 
+  const [cryptoPriceMap, setCryptoPriceMap] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('buhay_crypto_prices_v6')
+        if (raw) return JSON.parse(raw)?.data || {}
+      } catch {}
+    }
+    return {}
+  })
+
+  useEffect(() => {
+    if (holdings.length > 0 && typeof window !== 'undefined') {
+      const activeIds = holdings.map(h => h.coinId || h.symbol).filter(Boolean)
+      import('../lib/crypto').then(m => {
+        m.fetchLiveCryptoPrices(activeIds, false).then(res => {
+          if (res?.prices) setCryptoPriceMap(res.prices)
+        }).catch(() => {})
+      })
+    }
+  }, [holdings.length])
+
   const cashAssets = getTakdaTotalAssets(accounts, [])
-  const totalAssets = getTakdaTotalAssets(accounts, holdings)
+  const totalAssets = getTakdaTotalAssets(accounts, holdings, cryptoPriceMap)
   const cryptoAssets = Math.max(0, totalAssets - cashAssets)
   const totalDebts = getTakdaTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
