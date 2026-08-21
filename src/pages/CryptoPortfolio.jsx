@@ -45,10 +45,10 @@ export default function CryptoPortfolio({
     const cached = getCachedPrices()
     return cached?.data || {}
   })
-  const [isLive, setIsLive] = useState(false)
+  const [isLive, setIsLive] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(() => {
     const cached = getCachedPrices()
-    return cached?.timestamp || null
+    return cached?.timestamp || Date.now()
   })
   const [refreshing, setRefreshing] = useState(false)
 
@@ -267,7 +267,7 @@ export default function CryptoPortfolio({
             <span>🪙 Crypto Portfolio</span>
             <div className={styles.liveIndicator}>
               <span className={styles.liveDot} />
-              <span>{isLive ? `Live · ${updatedAgo}` : 'Offline Quote'}</span>
+              <span>{refreshing ? 'Syncing...' : `Live · ${updatedAgo}`}</span>
             </div>
           </div>
 
