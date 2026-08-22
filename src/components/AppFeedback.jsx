@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './AppFeedback.module.css'
 
 const DEFAULT_TOAST = {
@@ -81,7 +82,7 @@ export default function AppFeedback() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [confirmState, toast])
 
-  return (
+  const content = (
     <>
       {toast && (
         <div className={styles.toastWrap}>
@@ -142,6 +143,11 @@ export default function AppFeedback() {
       )}
     </>
   )
+
+  if (typeof document !== 'undefined') {
+    return createPortal(content, document.body)
+  }
+  return content
 }
 
 function capitalizeTone(tone = '') {

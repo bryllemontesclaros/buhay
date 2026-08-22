@@ -2,7 +2,7 @@
   position: fixed;
   top: calc(18px + env(safe-area-inset-top));
   right: 18px;
-  z-index: 5000;
+  z-index: 10000002;
   pointer-events: none;
 }
 
@@ -75,7 +75,7 @@
 .confirmOverlay {
   position: fixed;
   inset: 0;
-  z-index: 4990;
+  z-index: 10000001;
   display: flex;
   align-items: center;
   justify-content: center;

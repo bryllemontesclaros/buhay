@@ -335,17 +335,21 @@ export default function CryptoPortfolio({
   async function handleDeleteHolding() {
     const holdingId = editHolding?._id || editHolding?.id
     if (!holdingId) return
+    const symbol = editHolding?.symbol || 'holding'
+    const name = editHolding?.name || 'Crypto'
+
     const confirmed = await confirmApp({
-      title: `Delete ${editHolding.symbol}?`,
-      message: `Are you sure you want to remove this ${editHolding.name} holding?`,
-      confirmText: 'Delete',
-      danger: true,
+      title: `Delete ${symbol}?`,
+      message: `Are you sure you want to remove this ${name} holding?`,
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      tone: 'danger',
     })
     if (!confirmed) return
 
     try {
       await fsDel(user.uid, 'portfolioHoldings', holdingId)
-      notifyApp({ title: 'Holding deleted', message: `${editHolding.symbol} removed.`, tone: 'neutral' })
+      notifyApp({ title: 'Holding deleted', message: `${symbol} removed.`, tone: 'neutral' })
       closeHoldingModal()
     } catch (err) {
       console.error('[CryptoPortfolio] Delete error:', err)
