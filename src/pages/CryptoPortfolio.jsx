@@ -168,8 +168,6 @@ export default function CryptoPortfolio({
     playTick()
     setEditHolding(null)
     const defaultCoin = POPULAR_CRYPTO_COINS[0]
-    const isUsd = vsCurrency === 'USD'
-    const defaultPrice = isUsd ? defaultCoin.defaultUsd : defaultCoin.defaultUsd * DEFAULT_FOREX_RATE
 
     setHoldingForm({
       ...EMPTY_FORM,
@@ -177,8 +175,8 @@ export default function CryptoPortfolio({
       symbol: defaultCoin.symbol,
       name: defaultCoin.name,
       buyCurrency: vsCurrency,
-      buyPrice: String(defaultPrice),
-      currentPrice: String(defaultPrice),
+      buyPrice: '',
+      currentPrice: '',
     })
     setSearchQuery('')
     setShowHoldingModal(true)
@@ -252,17 +250,12 @@ export default function CryptoPortfolio({
 
   function selectCoin(c) {
     playTick()
-    const isUsd = holdingForm.buyCurrency === 'USD'
-    const defaultPrice = isUsd ? (c.defaultUsd || 1) : (c.defaultUsd ? c.defaultUsd * DEFAULT_FOREX_RATE : DEFAULT_FOREX_RATE)
-
     setHoldingForm(prev => ({
       ...prev,
       coinId: c.id,
       symbol: c.symbol,
       name: c.name,
       isCustom: false,
-      buyPrice: prev.buyPrice ? prev.buyPrice : String(defaultPrice),
-      currentPrice: prev.currentPrice ? prev.currentPrice : String(defaultPrice),
     }))
   }
 

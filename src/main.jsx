@@ -6,7 +6,7 @@ import { ThemeProvider } from './lib/theme.jsx'
 import './index.css'
 
 if (typeof window !== 'undefined') {
-  const APP_BUILD_VER = '2026-08-22-v23'
+  const APP_BUILD_VER = '2026-08-22-v24'
   if ('caches' in window) {
     if (localStorage.getItem('takda_build_ver') !== APP_BUILD_VER) {
       localStorage.setItem('takda_build_ver', APP_BUILD_VER)
