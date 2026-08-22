@@ -571,22 +571,37 @@ export default function CryptoPortfolio({
               </div>
             )}
 
-            {/* QUANTITY */}
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Quantity Held</label>
-              <input
-                type="number"
-                step="any"
-                className={styles.input}
-                placeholder="e.g. 1.0715"
-                value={holdingForm.quantity}
-                onChange={e => setHoldingForm(prev => ({ ...prev, quantity: e.target.value }))}
-                required
-              />
+            {/* ROW 1: QUANTITY + WALLET */}
+            <div className={styles.formRow2}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Quantity Held</label>
+                <input
+                  type="number"
+                  step="any"
+                  className={styles.input}
+                  placeholder="e.g. 1.0715"
+                  value={holdingForm.quantity}
+                  onChange={e => setHoldingForm(prev => ({ ...prev, quantity: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Wallet / Exchange</label>
+                <select
+                  className={styles.select}
+                  value={holdingForm.wallet}
+                  onChange={e => setHoldingForm(prev => ({ ...prev, wallet: e.target.value }))}
+                >
+                  {CRYPTO_WALLETS.map(w => (
+                    <option key={w} value={w}>{w}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            {/* BUY PRICE & CURRENCY */}
-            <div className={styles.formRow}>
+            {/* ROW 2: BUY PRICE & CURRENCY */}
+            <div className={styles.formRow2}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Buy Price per Coin</label>
                 <input
@@ -612,7 +627,7 @@ export default function CryptoPortfolio({
               </div>
             </div>
 
-            {/* CURRENT ASSET PRICE */}
+            {/* ROW 3: CURRENT ASSET PRICE */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Current Asset Price ({holdingForm.buyCurrency})</label>
               <input
@@ -623,20 +638,6 @@ export default function CryptoPortfolio({
                 value={holdingForm.currentPrice}
                 onChange={e => setHoldingForm(prev => ({ ...prev, currentPrice: e.target.value }))}
               />
-            </div>
-
-            {/* WALLET */}
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Wallet / Exchange</label>
-              <select
-                className={styles.select}
-                value={holdingForm.wallet}
-                onChange={e => setHoldingForm(prev => ({ ...prev, wallet: e.target.value }))}
-              >
-                {CRYPTO_WALLETS.map(w => (
-                  <option key={w} value={w}>{w}</option>
-                ))}
-              </select>
             </div>
 
             {/* MODAL ACTIONS */}
