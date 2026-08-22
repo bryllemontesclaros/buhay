@@ -185,41 +185,63 @@ export default function CryptoPortfolio({
   }
 
   function openEditHolding(h) {
-    playTick()
-    setEditHolding(h)
-    const quote = getHoldingQuote(h, userPrices)
-    const targetCurrency = (h.holdingCurrency || h.currency || vsCurrency).toUpperCase()
-    const isUsd = targetCurrency === 'USD'
-    
-    let resolvedCurrentPrice = ''
-    if (quote && (quote.usd !== undefined || quote.php !== undefined)) {
-      resolvedCurrentPrice = isUsd 
-        ? (quote.usd ?? (quote.php ? quote.php / DEFAULT_FOREX_RATE : ''))
-        : (quote.php ?? (quote.usd ? quote.usd * DEFAULT_FOREX_RATE : ''))
-    } else if (h.currentPrice > 0) {
-      if (vsCurrency === 'PHP' && isUsd) {
-        resolvedCurrentPrice = h.currentPrice / DEFAULT_FOREX_RATE
-      } else if (vsCurrency === 'USD' && !isUsd) {
-        resolvedCurrentPrice = h.currentPrice * DEFAULT_FOREX_RATE
-      } else {
-        resolvedCurrentPrice = h.currentPrice
+    if (!h) return
+    try {
+      playTick()
+      setEditHolding(h)
+      const targetCurrency = String(h.holdingCurrency || h.currency || vsCurrency || 'USD').toUpperCase()
+      const isUsd = targetCurrency === 'USD'
+      
+      const quote = getHoldingQuote(h, userPrices)
+      let resolvedCurrentPrice = ''
+      if (quote && (quote.usd !== undefined || quote.php !== undefined)) {
+        resolvedCurrentPrice = isUsd 
+          ? (quote.usd ?? (quote.php ? quote.php / DEFAULT_FOREX_RATE : ''))
+          : (quote.php ?? (quote.usd ? quote.usd * DEFAULT_FOREX_RATE : ''))
+      } else if (Number(h.currentPrice) > 0) {
+        if (vsCurrency === 'PHP' && isUsd) {
+          resolvedCurrentPrice = Number(h.currentPrice) / DEFAULT_FOREX_RATE
+        } else if (vsCurrency === 'USD' && !isUsd) {
+          resolvedCurrentPrice = Number(h.currentPrice) * DEFAULT_FOREX_RATE
+        } else {
+          resolvedCurrentPrice = h.currentPrice
+        }
       }
-    }
 
-    setHoldingForm({
-      coinId: h.coinId || (h.symbol ? h.symbol.toLowerCase() : 'bitcoin'),
-      symbol: h.symbol || 'BTC',
-      name: h.name || 'Bitcoin',
-      quantity: String(h.quantity ?? h.shares ?? ''),
-      buyPrice: String(h.rawBuyPrice ?? h.buyPrice ?? ''),
-      buyCurrency: targetCurrency,
-      currentPrice: resolvedCurrentPrice !== '' ? String(resolvedCurrentPrice) : String(h.rawBuyPrice ?? h.buyPrice ?? ''),
-      wallet: h.wallet || 'Binance',
-      notes: h.notes || '',
-      isCustom: h.isCustom || false,
-    })
-    setSearchQuery('')
-    setShowHoldingModal(true)
+      const rawBuy = h.rawBuyPrice ?? h.buyPrice ?? h.unitBuyPrice ?? ''
+      const qtyVal = h.quantity ?? h.qty ?? h.shares ?? ''
+
+      setHoldingForm({
+        coinId: h.coinId || (h.symbol ? String(h.symbol).toLowerCase() : 'bitcoin'),
+        symbol: String(h.symbol || 'BTC').toUpperCase(),
+        name: h.name || h.symbol || 'Bitcoin',
+        quantity: qtyVal !== '' ? String(qtyVal) : '',
+        buyPrice: rawBuy !== '' ? String(rawBuy) : '',
+        buyCurrency: targetCurrency,
+        currentPrice: resolvedCurrentPrice !== '' ? String(resolvedCurrentPrice) : (rawBuy !== '' ? String(rawBuy) : ''),
+        wallet: h.wallet || 'Binance',
+        notes: h.notes || '',
+        isCustom: Boolean(h.isCustom),
+      })
+      setSearchQuery('')
+      setShowHoldingModal(true)
+    } catch (err) {
+      console.error('[CryptoPortfolio] Error opening edit holding modal:', err)
+      setEditHolding(h)
+      setHoldingForm({
+        coinId: h?.coinId || 'bitcoin',
+        symbol: String(h?.symbol || 'BTC').toUpperCase(),
+        name: h?.name || 'Crypto',
+        quantity: String(h?.quantity || h?.qty || 1),
+        buyPrice: String(h?.buyPrice || h?.rawBuyPrice || ''),
+        buyCurrency: vsCurrency,
+        currentPrice: String(h?.currentPrice || ''),
+        wallet: h?.wallet || 'Binance',
+        notes: h?.notes || '',
+        isCustom: false,
+      })
+      setShowHoldingModal(true)
+    }
   }
 
   function closeHoldingModal() {
@@ -268,13 +290,15 @@ export default function CryptoPortfolio({
       currency: holdingForm.buyCurrency || vsCurrency,
       wallet: holdingForm.wallet || 'Binance',
       notes: holdingForm.notes || '',
-      isCustom: holdingForm.isCustom || false,
+      isCustom: Boolean(holdingForm.isCustom),
       updatedAt: Date.now(),
     }
 
+    const holdingId = editHolding?._id || editHolding?.id
+
     try {
-      if (editHolding?._id) {
-        await fsUpdate(user.uid, 'portfolioHoldings', editHolding._id, payload)
+      if (holdingId) {
+        await fsUpdate(user.uid, 'portfolioHoldings', holdingId, payload)
         notifyApp({ title: 'Holding updated', message: `${payload.symbol} holding saved.`, tone: 'positive' })
       } else {
         await fsAdd(user.uid, 'portfolioHoldings', payload)
@@ -309,7 +333,8 @@ export default function CryptoPortfolio({
   }
 
   async function handleDeleteHolding() {
-    if (!editHolding?._id) return
+    const holdingId = editHolding?._id || editHolding?.id
+    if (!holdingId) return
     const confirmed = await confirmApp({
       title: `Delete ${editHolding.symbol}?`,
       message: `Are you sure you want to remove this ${editHolding.name} holding?`,
@@ -319,7 +344,7 @@ export default function CryptoPortfolio({
     if (!confirmed) return
 
     try {
-      await fsDel(user.uid, 'portfolioHoldings', editHolding._id)
+      await fsDel(user.uid, 'portfolioHoldings', holdingId)
       notifyApp({ title: 'Holding deleted', message: `${editHolding.symbol} removed.`, tone: 'neutral' })
       closeHoldingModal()
     } catch (err) {
@@ -461,7 +486,7 @@ export default function CryptoPortfolio({
 
             return (
               <div
-                key={h._id}
+                key={h._id || h.id || h.symbol}
                 className={styles.holdingCard}
                 onClick={() => openEditHolding(h)}
                 role="button"
