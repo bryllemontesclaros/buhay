@@ -206,23 +206,38 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     throw new Error('This bill is already marked paid for this period.')
   }
   const accountId = payment.accountId || bill.accountId || ''
-  const txRef = await fsAddTransaction(uid, 'expenses', {
-    desc: `${bill.name || 'Bill'} payment`,
+  
+  let expenseId = ''
+  if (!payment.skipExpense) {
+    const txRef = await fsAddTransaction(uid, 'expenses', {
+      desc: `${bill.name || 'Bill'} payment`,
+      amount,
+      date,
+      cat: 'Bills',
+      subcat: bill.subcat || 'Other',
+      presetKey: bill.presetKey || '',
+      recur: '',
+      type: 'expense',
+      paymentStatus: 'paid',
+      accountId,
+      accountBalanceLinked: Boolean(accountId),
+      billId: bill._id,
+      billPeriodKey: period.key,
+      source: payment.source || 'bill-payment',
+    }, accounts)
+    expenseId = txRef.id
+  }
+
+  const paidAt = Date.now()
+  const periodRecord = {
+    paidAt,
     amount,
     date,
-    cat: 'Bills',
-    subcat: bill.subcat || 'Other',
-    presetKey: bill.presetKey || '',
-    recur: '',
-    type: 'expense',
-    paymentStatus: 'paid',
     accountId,
-    accountBalanceLinked: Boolean(accountId),
-    billId: bill._id,
-    billPeriodKey: period.key,
-    source: payment.source || 'bill-payment',
-  }, accounts)
-  const paidAt = Date.now()
+    expenseId,
+    dueDate: period.dueDate,
+  }
+
   const billData = {
     name: bill.name || 'Bill',
     amount: Number(bill.amount) || amount,
@@ -234,40 +249,36 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     accountId: bill.accountId || '',
     autoDeduct: Boolean(bill.autoDeduct),
     type: 'bill',
-    [`paidPeriods.${period.key}`]: {
-      paidAt,
-      amount,
-      date,
-      accountId,
-      expenseId: txRef.id,
-      dueDate: period.dueDate,
-    },
+    [`paidPeriods.${period.key}`]: periodRecord,
     paid: true,
     paidAt,
     lastPaidPeriod: period.key,
-    lastPaidExpenseId: txRef.id,
+    lastPaidExpenseId: expenseId,
   }
 
-  await setDoc(doc(db, 'users', uid, 'bills', bill._id), billData, { merge: true })
+  if (!bill.isVirtual) {
+    await setDoc(doc(db, 'users', uid, 'bills', bill._id), billData, { merge: true })
+  }
 
   if (bill.originalDebtId) {
     try {
       await setDoc(doc(db, 'users', uid, 'debts', bill.originalDebtId), {
-        [`paidPeriods.${period.key}`]: {
-          paidAt,
-          amount,
-          date,
-          accountId,
-          expenseId: txRef.id,
-          dueDate: period.dueDate,
-        }
+        [`paidPeriods.${period.key}`]: periodRecord,
       }, { merge: true })
     } catch (err) {
       console.warn('Could not update original debt paidPeriods', err)
     }
+  } else if (bill.accountId && String(bill._id).startsWith('virtual-acc-')) {
+    try {
+      await setDoc(doc(db, 'users', uid, 'accounts', bill.accountId), {
+        [`paidPeriods.${period.key}`]: periodRecord,
+      }, { merge: true })
+    } catch (err) {
+      console.warn('Could not update virtual account paidPeriods', err)
+    }
   }
 
-  return { transactionId: txRef.id, paidAt, period }
+  return { transactionId: expenseId, paidAt, period }
 }
 
 function getTransferOutDelta(account = {}, amount = 0) {

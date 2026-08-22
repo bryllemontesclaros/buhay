@@ -156,6 +156,11 @@ export function getVirtualBills(data = {}) {
   const accounts = Array.isArray(data.accounts) ? data.accounts : []
   const bills = Array.isArray(data.bills) ? data.bills : []
   const expenses = Array.isArray(data.expenses) ? data.expenses : []
+  const transfers = Array.isArray(data.transfers) ? data.transfers : []
+  const payments = Array.isArray(data.payments) ? data.payments : [
+    ...transfers,
+    ...expenses.filter(e => e.cat === 'Debts' || e.cat === 'Debt' || e.debtId || (e.desc && e.desc.toLowerCase().includes('payment')))
+  ]
   
   // Find accounts and names already explicitly linked to a bill
   const explicitBillAccountIds = new Set(bills.map(b => b.accountId).filter(Boolean))
@@ -198,7 +203,7 @@ export function getVirtualBills(data = {}) {
     const cycleDetails = getCreditCardCycleDetails(
       { ...debt, balance },
       expenses,
-      [],
+      payments,
       today()
     )
 
@@ -208,6 +213,9 @@ export function getVirtualBills(data = {}) {
     } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
       paymentAmount = cycleDetails.billedAmount
     }
+
+    const currentPeriodKey = getBillPeriodKey({ due: dueDay, freq: 'monthly' }, today())
+    const isDebtPaid = (cycleDetails.hasCycle && cycleDetails.isPaid) || Boolean(debt.paidPeriods && debt.paidPeriods[currentPeriodKey])
 
     virtualBills.push({
       _id: `virtual-debt-${debt._id}`,
@@ -220,7 +228,7 @@ export function getVirtualBills(data = {}) {
       accountId: debt.accountId || '',
       isVirtual: true,
       originalDebtId: debt._id,
-      paidPeriods: cycleDetails.hasCycle && cycleDetails.isPaid ? { [`monthly_${cycleDetails.dueDate}`]: { paid: true } } : {},
+      paidPeriods: isDebtPaid ? { [currentPeriodKey]: { paid: true } } : (debt.paidPeriods || {}),
     })
   })
 
@@ -247,7 +255,7 @@ export function getVirtualBills(data = {}) {
     const cycleDetails = getCreditCardCycleDetails(
       { ...acc, balance },
       expenses,
-      [],
+      payments,
       today()
     )
 
@@ -257,6 +265,9 @@ export function getVirtualBills(data = {}) {
     } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
       billAmount = cycleDetails.billedAmount
     }
+
+    const currentPeriodKey = getBillPeriodKey({ due: dueDay, freq: 'monthly' }, today())
+    const isCardPaid = (cycleDetails.hasCycle && cycleDetails.isPaid) || Boolean(acc.paidPeriods && acc.paidPeriods[currentPeriodKey])
 
     virtualBills.push({
       _id: `virtual-acc-${acc._id}`,
@@ -268,7 +279,7 @@ export function getVirtualBills(data = {}) {
       subcat: 'Credit Card',
       accountId: acc._id,
       isVirtual: true,
-      paidPeriods: cycleDetails.hasCycle && cycleDetails.isPaid ? { [`monthly_${cycleDetails.dueDate}`]: { paid: true } } : {},
+      paidPeriods: isCardPaid ? { [currentPeriodKey]: { paid: true } } : (acc.paidPeriods || {}),
     })
   })
 

@@ -326,14 +326,10 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
     setPaymentForm({ amount: '', date: today(), accountId: '' })
   }
 
-  async function handleMarkPaid() {
+  async function handleMarkPaid(skipExpense = false) {
     playTick()
     if (!paymentBill) return
-    const amount = Number(paymentForm.amount)
-    if (!Number.isFinite(amount) || amount <= 0) {
-      notifyApp({ title: 'Check payment amount', message: 'Payment amount must be greater than zero.', tone: 'warning' })
-      return
-    }
+    const amount = Number(paymentForm.amount) || Number(paymentBill.amount) || 0
     if (!paymentForm.date) {
       notifyApp({ title: 'Payment date needed', message: 'Choose the date this bill was paid.', tone: 'warning' })
       return
@@ -342,18 +338,22 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
     setPaymentSaving(true)
     try {
       await fsMarkBillPaid(user.uid, paymentBill, {
-        amount,
+        amount: amount > 0 ? amount : 1,
         date: paymentForm.date,
-        accountId: paymentForm.accountId,
+        accountId: skipExpense ? '' : paymentForm.accountId,
+        skipExpense,
         source: 'bill-payment',
       }, accounts)
       notifyApp({
-        title: 'Bill marked paid',
-        message: `${paymentBill.name} was saved as an expense${paymentForm.accountId ? ' and applied to the selected account' : ''}.`,
+        title: skipExpense ? 'Cycle marked settled' : 'Bill marked paid',
+        message: skipExpense 
+          ? `${paymentBill.name} was moved to the next upcoming cycle without creating a duplicate expense.`
+          : `${paymentBill.name} was saved as an expense${paymentForm.accountId ? ' and applied to the selected account' : ''}.`,
         tone: 'success',
       })
       closePayment()
-    } catch {
+    } catch (err) {
+      console.error(err)
       notifyApp({ title: 'Payment not saved', message: 'Could not save this payment right now. Check your connection and try again.', tone: 'error' })
     } finally {
       setPaymentSaving(false)
@@ -885,10 +885,20 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                   {paymentAccountName ? `This will deduct ${s}${paymentForm.amount || 0} from ${paymentAccountName} and record the expense in your history.` : 'This will record the expense in your history without affecting your account balances.'}
                 </div>
               </div>
-              <div className={styles.formRow} style={{ justifyContent: 'flex-end', marginTop: 32 }}>
+              <div className={styles.formRow} style={{ justifyContent: 'flex-end', gap: 8, marginTop: 28, flexWrap: 'wrap' }}>
                 <button type="button" className={styles.btnGhost} onClick={closePayment} disabled={paymentSaving}>Cancel</button>
-                <button type="button" className={styles.btnAdd} style={{ width: 'auto', padding: '0 24px' }} onClick={handleMarkPaid} disabled={paymentSaving}>
-                  {paymentSaving ? 'Saving...' : 'Save payment'}
+                <button 
+                  type="button" 
+                  className={styles.btnGhost} 
+                  style={{ border: '1px solid var(--border2)', color: 'var(--text)', background: 'var(--surface2)', padding: '0 14px' }}
+                  onClick={() => handleMarkPaid(true)} 
+                  disabled={paymentSaving}
+                  title="Marks this cycle as settled without creating a duplicate expense"
+                >
+                  ✓ Already paid
+                </button>
+                <button type="button" className={styles.btnAdd} style={{ width: 'auto', padding: '0 20px' }} onClick={() => handleMarkPaid(false)} disabled={paymentSaving}>
+                  {paymentSaving ? 'Saving...' : 'Deduct & Save Expense'}
                 </button>
               </div>
             </div>
