@@ -37,6 +37,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
   const [editForm, setEditForm] = useState({ desc: '', amount: '', cat: '', subcat: '', presetKey: '', accountId: '', paymentStatus: 'paid' })
   const [detailsMode, setDetailsMode] = useState('')
 
+  const hasActiveFilters = filterType !== 'All types' || filterCat !== 'All categories' || Boolean(filterMonth)
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
 
   // Lock background body scroll when edit modal or details modal is active
