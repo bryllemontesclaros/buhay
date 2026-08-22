@@ -318,13 +318,33 @@ export function getVirtualBills(data = {}) {
     if (!latest || !latest.recur) return
     if (latest.cat !== 'Bills') return
 
-    const txNameLower = (latest.desc || latest.subcat || 'Recurring Bill').trim().toLowerCase()
-    if (explicitBillNames.has(txNameLower)) return
+    const paidPeriods = {}
+    chain.forEach(tx => {
+      if (tx.date) {
+        const periodKey = `${latest.recur || 'monthly'}_${tx.date}`
+        paidPeriods[periodKey] = {
+          paidAt: tx.createdAt || new Date(tx.date).getTime(),
+          amount: tx.amount,
+          date: tx.date,
+          accountId: tx.accountId,
+          expenseId: tx._id,
+        }
+      }
+    })
 
-    let dueDay = 15
-    if (latest.date) {
-      const day = parseInt(String(latest.date).slice(-2), 10)
-      if (Number.isFinite(day) && day >= 1 && day <= 31) dueDay = day
+    // If the latest transaction was logged in the current month or matches due date, mark this period paid
+    const currentPeriodKey = getBillPeriodKey({ due: dueDay, freq: latest.recur || 'monthly' }, today())
+    const currentMonthKey = getMonthKey(today())
+    const hasCurrentMonthTx = chain.some(tx => tx.date && getMonthKey(tx.date) === currentMonthKey)
+    if (hasCurrentMonthTx) {
+      paidPeriods[currentPeriodKey] = {
+        paidAt: latest.createdAt || Date.now(),
+        amount: latest.amount,
+        date: latest.date || today(),
+        accountId: latest.accountId,
+        expenseId: latest._id,
+        paid: true,
+      }
     }
 
     virtualBills.push({
@@ -337,7 +357,7 @@ export function getVirtualBills(data = {}) {
       subcat: latest.subcat || 'Utilities',
       accountId: latest.accountId || '',
       isVirtual: true,
-      paidPeriods: {},
+      paidPeriods,
     })
   })
 

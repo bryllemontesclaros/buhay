@@ -262,9 +262,7 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     lastPaidExpenseId: expenseId,
   }
 
-  if (!bill.isVirtual) {
-    await setDoc(doc(db, 'users', uid, 'bills', bill._id), billData, { merge: true })
-  }
+  await setDoc(doc(db, 'users', uid, 'bills', bill._id), billData, { merge: true })
 
   if (bill.originalDebtId) {
     try {
