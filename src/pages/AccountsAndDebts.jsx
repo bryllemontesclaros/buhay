@@ -58,6 +58,38 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
         <div className={styles.sub}>Manage liquid cash accounts, track live crypto holdings, and plan debt payoff strategies.</div>
       </div>
 
+      {/* UNIFIED WEALTH & NET WORTH HERO CARD */}
+      <div className={tStyles.wealthHeroCard}>
+        <div className={tStyles.wealthHeroTop}>
+          <span className={tStyles.wealthHeroLabel}>Total Estimated Net Worth</span>
+          <span className={tStyles.wealthHeroBadge}>
+            {activeTab === 'accounts' ? 'Asset Accounts' : activeTab === 'crypto' ? 'Crypto Portfolio' : 'Debt Payoffs'}
+          </span>
+        </div>
+        <div className={tStyles.wealthHeroVal}>
+          {privacyMode ? '••••' : fmt(netWorth, s)}
+        </div>
+
+        <div className={tStyles.wealthBreakdownStrip}>
+          <div className={tStyles.wealthMiniStat}>
+            <span className={tStyles.wealthMiniLabel}>💵 Cash Assets</span>
+            <span className={tStyles.wealthMiniVal}>{privacyMode ? '••••' : fmt(cashAssets, s)}</span>
+          </div>
+          <div className={tStyles.wealthMiniDivider} />
+          <div className={tStyles.wealthMiniStat}>
+            <span className={tStyles.wealthMiniLabel}>🪙 Crypto Assets</span>
+            <span className={tStyles.wealthMiniVal}>{privacyMode ? '••••' : fmt(cryptoAssets, s)}</span>
+          </div>
+          <div className={tStyles.wealthMiniDivider} />
+          <div className={tStyles.wealthMiniStat}>
+            <span className={tStyles.wealthMiniLabel}>💳 Total Debts</span>
+            <span className={`${tStyles.wealthMiniVal} ${totalDebts > 0 ? tStyles.wealthMiniValDebt : ''}`}>
+              {privacyMode ? '••••' : fmt(totalDebts, s)}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div className={tStyles.tabsWrap}>
         <div className={tStyles.tabs} role="tablist">
           <button
@@ -94,43 +126,15 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
       </div>
 
       {activeTab === 'accounts' ? (
-        <>
-          <div className={tStyles.summaryStrip}>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Total Cash Assets</div>
-              <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-                {privacyMode ? '••••' : fmt(cashAssets, s)}
-              </div>
-            </div>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Crypto Assets</div>
-              <div className={`${tStyles.summaryValue} ${cryptoAssets > 0 ? tStyles.summaryValuePositive : ''}`}>
-                {privacyMode ? '••••' : fmt(cryptoAssets, s)}
-              </div>
-            </div>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Total Debts & Cards</div>
-              <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
-                {privacyMode ? '••••' : fmt(totalDebts, s)}
-              </div>
-            </div>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Net Worth</div>
-              <div className={`${tStyles.summaryValue} ${netWorth >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
-                {privacyMode ? '••••' : fmt(netWorth, s)}
-              </div>
-            </div>
-          </div>
-          <Accounts
-            user={user}
-            data={data}
-            profile={profile}
-            symbol={symbol}
-            privacyMode={privacyMode}
-            onTogglePrivacy={onTogglePrivacy}
-            hideHeader={true}
-          />
-        </>
+        <Accounts
+          user={user}
+          data={data}
+          profile={profile}
+          symbol={symbol}
+          privacyMode={privacyMode}
+          onTogglePrivacy={onTogglePrivacy}
+          hideHeader={true}
+        />
       ) : activeTab === 'crypto' ? (
         <CryptoPortfolio
           user={user}
@@ -140,36 +144,14 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
           onTogglePrivacy={onTogglePrivacy}
         />
       ) : (
-        <>
-          <div className={tStyles.summaryStrip}>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Total Debts & Cards</div>
-              <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
-                {privacyMode ? '••••' : fmt(totalDebts, s)}
-              </div>
-            </div>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Total Cash Assets</div>
-              <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-                {privacyMode ? '••••' : fmt(cashAssets, s)}
-              </div>
-            </div>
-            <div className={tStyles.summaryCard}>
-              <div className={tStyles.summaryLabel}>Net Worth</div>
-              <div className={`${tStyles.summaryValue} ${netWorth >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
-                {privacyMode ? '••••' : fmt(netWorth, s)}
-              </div>
-            </div>
-          </div>
-          <Debts
-            user={user}
-            data={data}
-            profile={profile}
-            symbol={symbol}
-            privacyMode={privacyMode}
-            hideHeader={true}
-          />
-        </>
+        <Debts
+          user={user}
+          data={data}
+          profile={profile}
+          symbol={symbol}
+          privacyMode={privacyMode}
+          hideHeader={true}
+        />
       )}
     </div>
   )

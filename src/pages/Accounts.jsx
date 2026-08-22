@@ -240,11 +240,13 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      <div className={accStyles.totalCard}>
-        <div className={accStyles.totalLabel}>Total balance now</div>
-        <div className={accStyles.totalVal}>{money(totalBalance)}</div>
-        <div className={accStyles.totalSub}>{accountCountLabel}</div>
-      </div>
+      {!hideHeader && (
+        <div className={accStyles.totalCard}>
+          <div className={accStyles.totalLabel}>Total balance now</div>
+          <div className={accStyles.totalVal}>{money(totalBalance)}</div>
+          <div className={accStyles.totalSub}>{accountCountLabel}</div>
+        </div>
+      )}
 
       {dueLinkedEntries.length > 0 && (
         <div className={accStyles.syncNotice} role="status" aria-live="polite">

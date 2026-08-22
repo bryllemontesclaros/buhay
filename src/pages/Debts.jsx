@@ -985,19 +985,21 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
       )}
 
       {/* Main Totals */}
-      <div id="takda-debts-summary" className={dStyles.totalCard}>
-        <div className={dStyles.totalLabel}>Total Outstanding Debt</div>
-        <div className={dStyles.totalVal}>{money(totalDebtOwed)}</div>
-        <div className={dStyles.totalSub}>
-          {schedule.error ? (
-            <span className={dStyles.growWarning}>⚠️ {schedule.error}</span>
-          ) : schedule.payoffDate ? (
-            `Projected Debt-Free: ${formatPayoffDate(schedule.payoffDate, { month: 'long', year: 'numeric' })} (${schedule.months} months)`
-          ) : (
-            'Add outstanding balances to simulate payoff targets.'
-          )}
+      {!hideHeader && (
+        <div id="takda-debts-summary" className={dStyles.totalCard}>
+          <div className={dStyles.totalLabel}>Total Outstanding Debt</div>
+          <div className={dStyles.totalVal}>{money(totalDebtOwed)}</div>
+          <div className={dStyles.totalSub}>
+            {schedule.error ? (
+              <span className={dStyles.growWarning}>⚠️ {schedule.error}</span>
+            ) : schedule.payoffDate ? (
+              `Projected Debt-Free: ${formatPayoffDate(schedule.payoffDate, { month: 'long', year: 'numeric' })} (${schedule.months} months)`
+            ) : (
+              'Add outstanding balances to simulate payoff targets.'
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
 
 
