@@ -187,14 +187,33 @@ export default function CryptoPortfolio({
   function openEditHolding(h) {
     playTick()
     setEditHolding(h)
+    const quote = getHoldingQuote(h, userPrices)
+    const targetCurrency = (h.holdingCurrency || h.currency || vsCurrency).toUpperCase()
+    const isUsd = targetCurrency === 'USD'
+    
+    let resolvedCurrentPrice = ''
+    if (quote && (quote.usd !== undefined || quote.php !== undefined)) {
+      resolvedCurrentPrice = isUsd 
+        ? (quote.usd ?? (quote.php ? quote.php / DEFAULT_FOREX_RATE : ''))
+        : (quote.php ?? (quote.usd ? quote.usd * DEFAULT_FOREX_RATE : ''))
+    } else if (h.currentPrice > 0) {
+      if (vsCurrency === 'PHP' && isUsd) {
+        resolvedCurrentPrice = h.currentPrice / DEFAULT_FOREX_RATE
+      } else if (vsCurrency === 'USD' && !isUsd) {
+        resolvedCurrentPrice = h.currentPrice * DEFAULT_FOREX_RATE
+      } else {
+        resolvedCurrentPrice = h.currentPrice
+      }
+    }
+
     setHoldingForm({
-      coinId: h.coinId || 'bitcoin',
+      coinId: h.coinId || (h.symbol ? h.symbol.toLowerCase() : 'bitcoin'),
       symbol: h.symbol || 'BTC',
       name: h.name || 'Bitcoin',
       quantity: String(h.quantity ?? h.shares ?? ''),
       buyPrice: String(h.rawBuyPrice ?? h.buyPrice ?? ''),
-      buyCurrency: h.holdingCurrency || vsCurrency,
-      currentPrice: String(h.currentPrice ?? ''),
+      buyCurrency: targetCurrency,
+      currentPrice: resolvedCurrentPrice !== '' ? String(resolvedCurrentPrice) : String(h.rawBuyPrice ?? h.buyPrice ?? ''),
       wallet: h.wallet || 'Binance',
       notes: h.notes || '',
       isCustom: h.isCustom || false,
@@ -239,11 +258,13 @@ export default function CryptoPortfolio({
     const currentP = parseFloat(holdingForm.currentPrice) || buyP
 
     const payload = {
-      coinId: holdingForm.coinId.toLowerCase(),
+      coinId: (holdingForm.coinId || holdingForm.symbol).toLowerCase(),
       symbol: holdingForm.symbol.toUpperCase(),
       name: holdingForm.name || holdingForm.symbol.toUpperCase(),
       quantity: qty,
       buyPrice: buyP,
+      currentPrice: currentP,
+      price: currentP,
       currency: holdingForm.buyCurrency || vsCurrency,
       wallet: holdingForm.wallet || 'Binance',
       notes: holdingForm.notes || '',
@@ -260,15 +281,21 @@ export default function CryptoPortfolio({
         notifyApp({ title: 'Holding added', message: `${payload.symbol} added to your portfolio.`, tone: 'positive' })
       }
 
-      // Also update user's price map with current price
+      // Update user's price map with current price across all lookup keys
       if (currentP > 0) {
-        const isUsd = holdingForm.buyCurrency === 'USD'
+        const isUsd = (holdingForm.buyCurrency || vsCurrency) === 'USD'
+        const quoteObj = {
+          usd: isUsd ? currentP : currentP / DEFAULT_FOREX_RATE,
+          php: isUsd ? currentP * DEFAULT_FOREX_RATE : currentP,
+        }
+        const coinId = payload.coinId.toLowerCase()
+        const symbol = payload.symbol.toUpperCase()
+        const symLower = symbol.toLowerCase()
         const updated = {
           ...userPrices,
-          [payload.coinId]: {
-            usd: isUsd ? currentP : currentP / DEFAULT_FOREX_RATE,
-            php: isUsd ? currentP * DEFAULT_FOREX_RATE : currentP,
-          },
+          [coinId]: quoteObj,
+          [symbol]: quoteObj,
+          [symLower]: quoteObj,
         }
         setUserPrices(updated)
         setCachedPrices(updated, DEFAULT_FOREX_RATE)
