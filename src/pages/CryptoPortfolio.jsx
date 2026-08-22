@@ -305,31 +305,20 @@ export default function CryptoPortfolio({
             <span className={styles.heroTitle}>🪙 Crypto Portfolio</span>
           </div>
 
-          <div className={styles.heroControls}>
-            <div className={styles.currencyToggle} role="group" aria-label="Quote Currency">
-              <button
-                type="button"
-                className={`${styles.currencyBtn} ${vsCurrency === 'PHP' ? styles.currencyBtnActive : ''}`}
-                onClick={() => handleCurrencyToggle('PHP')}
-              >
-                ₱ PHP
-              </button>
-              <button
-                type="button"
-                className={`${styles.currencyBtn} ${vsCurrency === 'USD' ? styles.currencyBtnActive : ''}`}
-                onClick={() => handleCurrencyToggle('USD')}
-              >
-                $ USD
-              </button>
-            </div>
-
+          <div className={styles.currencyToggle} role="group" aria-label="Quote Currency">
             <button
               type="button"
-              className={styles.updatePricesBtn}
-              onClick={openPriceModal}
-              title="Update current asset prices"
+              className={`${styles.currencyBtn} ${vsCurrency === 'PHP' ? styles.currencyBtnActive : ''}`}
+              onClick={() => handleCurrencyToggle('PHP')}
             >
-              ⚡ Update Prices
+              ₱ PHP
+            </button>
+            <button
+              type="button"
+              className={`${styles.currencyBtn} ${vsCurrency === 'USD' ? styles.currencyBtnActive : ''}`}
+              onClick={() => handleCurrencyToggle('USD')}
+            >
+              $ USD
             </button>
           </div>
         </div>
@@ -343,14 +332,25 @@ export default function CryptoPortfolio({
             {privacyMode ? '••••' : formatCryptoValue(metrics.totalCurrentValue, s, 2)}
           </div>
 
-          <div className={styles.heroPnlRow}>
-            {hasPnl && (
-              <div className={`${styles.pnlBadge} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
-                <span>{isPnlPositive ? '▲ +' : '▼ -'}</span>
-                <span>{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)}</span>
-                <span>({metrics.totalPnlPct.toFixed(1)}%) All-Time Return</span>
-              </div>
-            )}
+          <div className={styles.heroBottomRow}>
+            <div className={styles.heroPnlWrap}>
+              {hasPnl && (
+                <div className={`${styles.pnlBadge} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
+                  <span>{isPnlPositive ? '▲ +' : '▼ -'}</span>
+                  <span>{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)}</span>
+                  <span>({metrics.totalPnlPct.toFixed(1)}%) All-Time</span>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className={styles.updatePricesBtn}
+              onClick={openPriceModal}
+              title="Update current asset prices"
+            >
+              ⚡ Update Prices
+            </button>
           </div>
         </div>
 
