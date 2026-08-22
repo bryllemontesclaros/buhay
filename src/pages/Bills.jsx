@@ -600,8 +600,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                         </div>
                         <button
                           type="button"
-                          className={bStyles.delBtn}
-                          style={{ width: 'auto', padding: '4px 8px', fontSize: 11 }}
+                          className={bStyles.stopBtn}
                           onClick={() => handleStopRecurrence(tx)}
                         >
                           Stop recurring
