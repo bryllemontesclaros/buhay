@@ -81,11 +81,11 @@ function formatCompactCellBalance(value) {
   const sign = numericValue < 0 ? '−' : ''
 
   if (absoluteValue >= 1_000_000) {
-    return `${sign}${(absoluteValue / 1_000_000).toFixed(absoluteValue >= 10_000_000 ? 0 : 1)}M`
+    return `${sign}${(absoluteValue / 1_000_000).toFixed(absoluteValue >= 10_000_000 ? 1 : 2)}M`
   }
 
   if (absoluteValue >= 1_000) {
-    return `${sign}${Math.round(absoluteValue / 1_000)}k`
+    return `${sign}${(absoluteValue / 1_000).toFixed(1)}k`
   }
 
   return `${sign}${Math.round(absoluteValue)}`
@@ -2103,28 +2103,25 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
                   </div>
 
-                  <div className={calStyles.cellActivityStack}>
-                    {hasIncome && (
-                      <span className={calStyles.dayFlowPillInc}>
-                        +{formatCompactCellBalance(dayVol.income || 0)}
-                      </span>
-                    )}
-                    {hasExpense && (
-                      <span className={calStyles.dayFlowPillExp}>
-                        −{formatCompactCellBalance(dayVol.expense || 0)}
-                      </span>
-                    )}
-                    {!hasIncome && !hasExpense && hasTransfer && (
-                      <span className={calStyles.dayFlowPillTrsf}>
-                        ⇄ Transfer
-                      </span>
-                    )}
-                    {dayDueDebts.length > 0 && !hasIncome && !hasExpense && (
-                      <span className={calStyles.dayFlowPillDue}>
-                        ⚡ Due
-                      </span>
-                    )}
-                  </div>
+                  {(hasIncome || hasExpense || hasTransfer) ? (
+                    <div className={calStyles.activityDots}>
+                      {hasIncome && <div className={calStyles.activityDotInc} title="Income" />}
+                      {hasExpense && <div className={calStyles.activityDotExp} title="Expense" />}
+                      {hasTransfer && <div className={calStyles.activityDotTrsf} title="Transfer" />}
+                    </div>
+                  ) : (
+                    <div className={calStyles.activityDotsSpacer} />
+                  )}
+
+                  {!privacyMode && forecast && (
+                    <div
+                      className={calStyles.cellBalance}
+                      title={formatRoundedBalance(displayValue, s)}
+                    >
+                      <span className={calStyles.balanceCurrency}>{s}</span>
+                      {formatCompactCellBalance(displayValue)}
+                    </div>
+                  )}
                 </button>
               )
             })}

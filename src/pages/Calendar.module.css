@@ -572,85 +572,76 @@
   width: 100%;
 }
 
-.dateNum {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1;
-  transition: transform 0.15s ease;
-}
-
-.cellActivityStack {
+.activityDots {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 100%;
   align-items: center;
-  overflow: hidden;
+  justify-content: center;
+  gap: 3px;
+  min-height: 5px;
+  margin: 1px 0;
+}
+
+.activityDotsSpacer {
+  min-height: 5px;
+  margin: 1px 0;
+}
+
+.activityDotInc {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--income);
+  box-shadow: 0 0 5px var(--income);
+}
+
+.activityDotExp {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--expense);
+  box-shadow: 0 0 5px var(--expense);
+}
+
+.activityDotTrsf {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 5px #3b82f6;
+}
+
+.cellBalance {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  line-height: 1;
   margin-top: auto;
-}
-
-.dayFlowPillInc {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 4px;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  background: rgba(34, 197, 94, 0.15);
-  color: var(--income);
+  padding: 2px 4px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  transition: all 0.15s ease;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.2;
 }
 
-.dayFlowPillExp {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 4px;
-  border-radius: 4px;
+.cell:hover .cellBalance {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.selectedCell .cellBalance {
+  color: var(--accent) !important;
+  font-weight: 800;
+}
+
+.balanceCurrency {
   font-size: 9px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--expense);
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.2;
-}
-
-.dayFlowPillTrsf {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 4px;
-  border-radius: 4px;
-  font-size: 8px;
-  font-weight: 600;
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  line-height: 1.2;
-}
-
-.dayFlowPillDue {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1px 4px;
-  border-radius: 4px;
-  font-size: 8px;
-  font-weight: 700;
-  background: rgba(245, 158, 11, 0.18);
-  color: #f59e0b;
-  line-height: 1.2;
-  animation: pulseAlert 2s infinite ease-in-out;
+  color: var(--text3);
+  margin-right: 1px;
 }
 
 .incomeDot {
@@ -1728,10 +1719,10 @@
     height: auto;
   }
   .cell {
-    min-height: 52px;
+    min-height: 56px;
     height: auto;
-    padding: 4px 2px 6px;
-    gap: 2px;
+    padding: 5px 2px 5px;
+    gap: 1px;
     border-radius: 10px;
   }
   .cellTop {
@@ -1741,14 +1732,16 @@
     font-size: 11px;
   }
   .todayDateBadge {
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
     font-size: 10px !important;
   }
-  .dayFlowPillInc,
-  .dayFlowPillExp {
-    font-size: 8px;
+  .cellBalance {
+    font-size: 9.5px;
     padding: 1px 3px;
+  }
+  .balanceCurrency {
+    font-size: 8px;
   }
   .balanceRail {
     margin-top: 8px;
