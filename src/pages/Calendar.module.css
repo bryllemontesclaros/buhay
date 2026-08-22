@@ -1214,7 +1214,7 @@
   background: color-mix(in srgb, var(--bg) 60%, rgba(0, 0, 0, 0.4));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  z-index: 540;
+  z-index: 10000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1230,11 +1230,12 @@
   box-shadow: var(--shadow-resting);
   position: relative;
   overflow-y: auto;
+  max-height: calc(100dvh - 32px);
   width: 100%;
   padding: 24px;
   box-sizing: border-box;
 }
-@media (min-width: 640px) { .modal { max-width: 500px; max-height: unset; padding: 32px; } }
+@media (min-width: 640px) { .modal { max-width: 500px; max-height: calc(100dvh - 64px); padding: 32px; } }
 .modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.25rem; }
 .modalTitle { font-family: var(--font-display); font-size: var(--type-title-xl); color: var(--text); min-width: 0; }
 .modalClose {
