@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import {
@@ -1381,7 +1382,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
       </div>
       </div>
 
-      {feedbackModal && (
+      {feedbackModal && typeof document !== 'undefined' && createPortal(
         <div ref={feedbackOverlayRef} className={settStyles.feedbackOverlay} onClick={event => { if (event.target === event.currentTarget) setFeedbackModal(null) }}>
           <div className={settStyles.feedbackModal}>
             <div className={settStyles.feedbackHeader}>
@@ -1435,7 +1436,8 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { fsAdd, fsDel, fsSetProfile, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { formatDisplayDate, today, playTick } from '../lib/utils'
@@ -1296,7 +1297,7 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
 
   return (
     <div className={`${styles.page} ${tStyles.page}`}>
-      {talaSettings.pinEnabled && talaSettings.pinCode && !isUnlocked && (
+      {talaSettings.pinEnabled && talaSettings.pinCode && !isUnlocked && typeof document !== 'undefined' && createPortal(
         <div className={tStyles.pinOverlay}>
           <div className={tStyles.pinCard}>
             <div className={tStyles.pinLockIcon}>🔒</div>
@@ -1319,7 +1320,8 @@ export default function Tala({ user, data = {}, profile = {}, privacyMode = fals
               <button type="button" className={`${tStyles.keypadBtn} ${tStyles.keypadBtnDel}`} onClick={handleKeypadDelete}>⌫</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       {trackSwitcher}
       {focusSwitcher}

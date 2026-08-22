@@ -2954,7 +2954,7 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
 
   return (
     <div className={`${styles.page} ${lStyles.page}`}>
-      {celebrationGoal && (
+      {celebrationGoal && typeof document !== 'undefined' && createPortal(
         <div className={lStyles.celebrationOverlay} onClick={() => setCelebrationGoal(null)}>
           <div className={lStyles.celebrationContent}>
             <div className={lStyles.confettiWrapper}>
@@ -2979,7 +2979,8 @@ export default function Lakas({ user, data = {}, profile = {}, privacyMode = fal
             </span>
             <small>Tap anywhere to close</small>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       <datalist id="lakas-exercise-library">
         {exerciseSuggestions.map(name => (

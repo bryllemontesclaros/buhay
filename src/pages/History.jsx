@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { fsDeleteTransaction, fsDeleteTransfer, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
 import {
   getTakdaTransactionLifecycle,
@@ -543,7 +544,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
         )
       })}
 
-      {editTx && (
+      {editTx && typeof document !== 'undefined' && createPortal(
         <div className={hStyles.modalOverlay} onClick={event => { if (event.target === event.currentTarget) setEditTx(null) }}>
           <div className={hStyles.modal}>
             <div className={hStyles.modalHeader}>
@@ -631,7 +632,8 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
               <button onClick={handleSaveEdit} className={styles.btnAdd} style={{ flex: 2 }}>Save changes</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <DetailsModal

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { calculatePayoffSchedule } from '../lib/debts'
 import { isTransactionPaid } from '../lib/finance'
@@ -1331,7 +1332,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
         </div>
       )}
 
-      {activeMilestone && (
+      {activeMilestone && typeof document !== 'undefined' && createPortal(
         <div className={dStyles.celebrationOverlay} onClick={() => setActiveMilestone(null)}>
           <div className={dStyles.celebrationModal}>
             <div className={dStyles.confettiWrapper}>
@@ -1349,7 +1350,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
             <p>You have made major progress paying off <strong>{activeMilestone.debtName}</strong>. Keep going!</p>
             <button className={dStyles.primaryButton} onClick={() => setActiveMilestone(null)}>Awesome</button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
