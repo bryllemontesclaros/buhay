@@ -91,6 +91,20 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
   const [activeSubTab, setActiveSubTab] = useState('bills')
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
 
+  // Lock background body scroll when drawer or payment modal is open
+  useEffect(() => {
+    if (showDrawer || paymentBill) {
+      const prevBodyOverflow = document.body.style.overflow
+      const prevHtmlOverflow = document.documentElement.style.overflow
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prevBodyOverflow
+        document.documentElement.style.overflow = prevHtmlOverflow
+      }
+    }
+  }, [showDrawer, paymentBill])
+
   const activeSubscriptions = useMemo(() => {
     const allTx = [...(data?.income || []), ...(data?.expenses || [])]
     const chains = {}

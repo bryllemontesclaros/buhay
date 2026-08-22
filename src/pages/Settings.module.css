@@ -999,20 +999,23 @@
   position: fixed;
   inset: 0;
   background: var(--glass-3);
-
-  z-index: 320;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .feedbackModal {
   width: min(540px, 100%);
-  max-height: 90vh;
+  max-height: calc(100dvh - 32px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--surface);
-
   border: 1px solid var(--border2);
   border-radius: var(--radius-lg);
   padding: 1.25rem;

@@ -133,6 +133,20 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const [expandedHistory, setExpandedHistory] = useState({})
   const [activeMilestone, setActiveMilestone] = useState(null)
 
+  // Lock background body scroll when celebration milestone modal is open
+  useEffect(() => {
+    if (activeMilestone) {
+      const prevBodyOverflow = document.body.style.overflow
+      const prevHtmlOverflow = document.documentElement.style.overflow
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prevBodyOverflow
+        document.documentElement.style.overflow = prevHtmlOverflow
+      }
+    }
+  }, [activeMilestone])
+
   useEffect(() => {
     if (!debtPaymentTarget?.debtId) return
     if (globalHandledDebtTargetAt === debtPaymentTarget.at) return

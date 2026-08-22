@@ -36,8 +36,22 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
   const [editForm, setEditForm] = useState({ desc: '', amount: '', cat: '', subcat: '', presetKey: '', accountId: '', paymentStatus: 'paid' })
   const [detailsMode, setDetailsMode] = useState('')
 
-  const hasActiveFilters = filterType !== 'All types' || filterCat !== 'All categories' || filterMonth !== getMonthKey(today())
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
+
+  // Lock background body scroll when edit modal or details modal is active
+  useEffect(() => {
+    if (editTx || detailsMode) {
+      const prevBodyOverflow = document.body.style.overflow
+      const prevHtmlOverflow = document.documentElement.style.overflow
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prevBodyOverflow
+        document.documentElement.style.overflow = prevHtmlOverflow
+      }
+    }
+  }, [editTx, detailsMode])
+
   const accountLookup = useMemo(
     () => Object.fromEntries((data.accounts || []).map(account => [account._id, account])),
     [data.accounts],

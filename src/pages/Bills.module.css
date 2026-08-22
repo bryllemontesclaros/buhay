@@ -183,6 +183,8 @@
   z-index: 10000;
   display: flex;
   justify-content: flex-end;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .drawerModal {
@@ -195,6 +197,7 @@
   flex-direction: column;
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.25s var(--motion-ease-out) forwards;
+  overscroll-behavior: contain;
 }
 
 .drawerHeader {
