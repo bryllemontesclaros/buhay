@@ -1987,9 +1987,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       <div id="takda-calendar" className={`${styles.card} ${calStyles.calendarCard}`}>
         <div className={calStyles.calHeader}>
           <div className={calStyles.nav}>
-            <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">←</button>
+            <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">‹</button>
             <label className={calStyles.monthJumpWrap} aria-label={`Jump to another date. Currently showing ${label}.`}>
-              <span className={calStyles.monthLabel} id="calendar-month-label">{label}</span>
+              <span className={calStyles.monthLabel} id="calendar-month-label">{label} ▾</span>
               <input
                 type="date"
                 className={calStyles.monthJumpInput}
@@ -1998,26 +1998,36 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 aria-label="Jump to any date"
               />
             </label>
-            <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">→</button>
+            <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">›</button>
           </div>
-          <div className={calStyles.viewToggleWrap}>
-            <button 
-              type="button"
-              className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'cash' ? calStyles.viewToggleActive : ''}`}
-              onClick={() => setCalendarViewMode('cash')}
-            >Cash</button>
-            <button 
-              type="button"
-              className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'netWorth' ? calStyles.viewToggleActive : ''}`}
-              onClick={() => setCalendarViewMode('netWorth')}
-            >Net Worth</button>
+
+          <div className={calStyles.headerRightControls}>
+            <div className={calStyles.monthNetChip} title="Net Cashflow for this month">
+              <span className={calStyles.monthNetLabel}>Net</span>
+              <strong className={monthSummaryTotals.net >= 0 ? calStyles.monthNetPositive : calStyles.monthNetNegative}>
+                {monthSummaryTotals.net >= 0 ? '+' : '−'}{money(Math.abs(monthSummaryTotals.net))}
+              </strong>
+            </div>
+
+            <div className={calStyles.viewToggleWrap}>
+              <button 
+                type="button"
+                className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'cash' ? calStyles.viewToggleActive : ''}`}
+                onClick={() => setCalendarViewMode('cash')}
+              >Cash</button>
+              <button 
+                type="button"
+                className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'netWorth' ? calStyles.viewToggleActive : ''}`}
+                onClick={() => setCalendarViewMode('netWorth')}
+              >Net Worth</button>
+            </div>
           </div>
         </div>
 
         <div className={calStyles.monthBoard}>
           <div className={calStyles.calendarMain}>
           <div className={calStyles.dayNames}>
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <div key={index} className={calStyles.dayName}>{day}</div>)}
+            {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day, index) => <div key={index} className={calStyles.dayName}>{day}</div>)}
           </div>
 
           <div
@@ -2044,14 +2054,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const baseValue = forecast ? forecast.runningBalance : 0
               const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts) : baseValue
-              const balanceLabel = forecast ? formatCellBalance(displayValue) : ''
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
               const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
-              const incPct = dailyVolumes.maxInc > 0 && dayVol.income > 0 ? Math.max(15, Math.min(100, (dayVol.income / dailyVolumes.maxInc) * 100)) : 0
-              const expPct = dailyVolumes.maxExp > 0 && dayVol.expense > 0 ? Math.max(15, Math.min(100, (dayVol.expense / dailyVolumes.maxExp) * 100)) : 0
-              const overdueBills = unpaidBillsByDateKey[ds] || []
-
               const dayDueDebts = dueDebtsByDateKey[ds] || []
               const dayStatementDebts = statementDebtsByDateKey[ds] || []
               return (
@@ -2094,26 +2099,32 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   </div>
 
                   <div className={calStyles.cellTop}>
-                    <div className={calStyles.dateNum}>{day}</div>
+                    <span className={`${calStyles.dateNum} ${isToday ? calStyles.todayDateBadge : ''}`}>{day}</span>
                     {hasManualBalance && <div className={calStyles.manualBalancePin} title="Manual balance override" />}
                   </div>
 
-                  {(hasIncome || hasExpense || hasTransfer) && (
-                    <div className={calStyles.activityDots}>
-                      {hasIncome && <div className={calStyles.activityDotInc} data-size={incPct < 25 ? 'small' : incPct < 75 ? 'medium' : 'large'} title="Income recorded" />}
-                      {hasExpense && <div className={calStyles.activityDotExp} data-size={expPct < 25 ? 'small' : expPct < 75 ? 'medium' : 'large'} title="Expense recorded" />}
-                      {hasTransfer && <div className={calStyles.activityDotTrsf} data-size="small" title="Transfer recorded" />}
-                    </div>
-                  )}
-
-                  {!privacyMode && (
-                    <div
-                      className={calStyles.cellBalance}
-                      title={formatRoundedBalance(displayValue, s)}
-                    >
-                      {balanceLabel}
-                    </div>
-                  )}
+                  <div className={calStyles.cellActivityStack}>
+                    {hasIncome && (
+                      <span className={calStyles.dayFlowPillInc}>
+                        +{formatCompactCellBalance(dayVol.income || 0)}
+                      </span>
+                    )}
+                    {hasExpense && (
+                      <span className={calStyles.dayFlowPillExp}>
+                        −{formatCompactCellBalance(dayVol.expense || 0)}
+                      </span>
+                    )}
+                    {!hasIncome && !hasExpense && hasTransfer && (
+                      <span className={calStyles.dayFlowPillTrsf}>
+                        ⇄ Transfer
+                      </span>
+                    )}
+                    {dayDueDebts.length > 0 && !hasIncome && !hasExpense && (
+                      <span className={calStyles.dayFlowPillDue}>
+                        ⚡ Due
+                      </span>
+                    )}
+                  </div>
                 </button>
               )
             })}

@@ -278,85 +278,67 @@
 }
 
 .calendarCard {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   margin-bottom: 0;
-  padding: 0.9rem;
+  padding: 14px;
   border-radius: var(--bento-radius-lg);
   background: var(--surface);
+  border: 1px solid var(--border);
   width: 100%;
   box-sizing: border-box;
 }
 
 /* CALENDAR HEADER */
 .calHeader {
-  display: grid;
-  margin-bottom: 0.9rem;
-  gap: 10px;
-  padding: 10px;
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  background: var(--surface);
-  width: 100%;
-  box-sizing: border-box;
-  /* box-shadow flattened */
-}
-.nav {
-  display: grid;
-  grid-template-columns: minmax(34px, auto) minmax(0, 1fr) minmax(34px, auto);
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 96%, var(--surface2));
   width: 100%;
   box-sizing: border-box;
+  flex-wrap: wrap;
 }
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .monthJumpWrap {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  min-width: 0;
-  min-height: var(--control-h-icon);
-  padding: 0 2px;
-  border: none;
-  border-radius: 0;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 10px;
   background: transparent;
   cursor: pointer;
-  text-align: center;
-  transition: color 0.15s ease, opacity 0.15s ease;
-  box-sizing: border-box;
+  transition: background 0.15s ease;
 }
-.monthJumpWrap::after {
-  content: '▾';
-  font-size: var(--type-caption);
-  line-height: 1;
-  color: var(--text3);
-  transform: translateY(1px);
+
+.monthJumpWrap:hover {
+  background: var(--surface2);
 }
-.monthJumpWrap:hover { opacity: 0.86; }
-.monthJumpWrap:focus-within {
-  color: var(--accent);
-}
-.monthJumpWrap:focus-within .monthLabel,
-.monthJumpWrap:focus-within::after {
-  color: var(--accent);
-}
+
 .monthLabel {
   font-family: var(--font-display);
-  font-size: var(--type-title-md);
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text);
-  max-width: 100%;
-  text-align: center;
-  line-height: 1.05;
-  pointer-events: none;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-.monthJumpMeta { display: none; }
+
 .monthJumpInput {
   position: absolute;
   inset: 0;
@@ -365,6 +347,7 @@
   opacity: 0;
   cursor: pointer;
 }
+
 .monthJumpInput::-webkit-calendar-picker-indicator {
   position: absolute;
   inset: 0;
@@ -373,19 +356,101 @@
   margin: 0;
   cursor: pointer;
 }
-.navBtn { background: var(--surface); border: 1px solid var(--border2); color: var(--text2); border-radius: 999px; padding: 0; cursor: pointer; font-size: var(--type-body-lg); min-width: var(--control-h-icon); min-height: var(--control-h-icon); flex-shrink: 0; transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease; /* box-shadow flattened */ }
-.navBtn:first-child { justify-self: start; }
-.navBtn:last-child { justify-self: end; }
-.navBtn:hover { border-color: color-mix(in srgb, var(--accent) 24%, var(--glass-border)); color: var(--text); background: var(--surface); transform: translateY(-1px); }
 
-/* ADD BUTTONS */
-.addBtns { display: flex; gap: 6px; }
-.addBtnIncome { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--accent); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; /* box-shadow flattened */ }
-.addBtnIncome:hover { opacity: 0.92; transform: translateY(-1px); }
-.addBtnExpense { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--red); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, transform 0.15s ease; /* box-shadow flattened */ }
-.addBtnExpense:hover { opacity: 0.92; transform: translateY(-1px); }
-.addBtnImport { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); border-radius: var(--radius-sm); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); min-height: var(--control-h-icon); transition: opacity 0.15s, border-color 0.15s, transform 0.15s ease; /* box-shadow flattened */ }
-.addBtnImport:hover { opacity: 0.96; border-color: var(--accent); transform: translateY(-1px); }
+.navBtn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.navBtn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--surface2);
+  transform: scale(1.05);
+}
+
+.headerRightControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.monthNetChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.monthNetLabel {
+  color: var(--text3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.monthNetPositive {
+  color: var(--income);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.monthNetNegative {
+  color: var(--expense);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.viewToggleWrap {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewToggleBtn {
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.viewToggleBtn:hover {
+  color: var(--text);
+}
+
+.viewToggleActive {
+  background: var(--surface2);
+  color: var(--text) !important;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
 
 /* DAY NAMES + GRID */
 .monthBoard {
@@ -398,6 +463,7 @@
   width: 100%;
   box-sizing: border-box;
 }
+
 .calendarMain {
   flex: 1;
   display: flex;
@@ -409,94 +475,182 @@
   width: 100%;
   box-sizing: border-box;
 }
-.dayNames { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 4px; width: 100%; box-sizing: border-box; }
-.dayName { text-align: center; font-size: var(--type-overline); color: color-mix(in srgb, var(--text3) 82%, transparent); font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; padding: 2px 0; }
-.grid {
+
+.dayNames {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-template-rows: repeat(6, minmax(4.8rem, 1fr));
-  grid-auto-rows: minmax(0, 1fr);
-  gap: 4px;
-  min-height: 0;
-  height: 100%;
-  align-content: stretch;
+  gap: 6px;
+  margin-bottom: 6px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* CELL — clean, no text overflow */
+.dayName {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* MODERN CELL DESIGN */
 .cell {
   appearance: none;
-  min-height: 5.5rem;
+  min-height: 64px;
   height: auto;
-  background: var(--surface);
-  border: 1px solid var(--border2);
+  background: color-mix(in srgb, var(--surface) 60%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
   border-radius: 14px;
-  padding: 10px;
+  padding: 6px 4px 8px;
   cursor: pointer;
-  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   position: relative;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 6px;
-  text-align: left;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  text-align: center;
   font-family: var(--font-body);
-  /* box-shadow flattened */
+  box-sizing: border-box;
 }
+
 .cell:hover {
-  border-color: color-mix(in srgb, var(--accent) 64%, var(--border));
-  background: color-mix(in srgb, var(--accent-glow) 6%, var(--surface));
-  transform: translateY(-2px);
-  /* box-shadow flattened */
+  border-color: var(--accent);
+  background: var(--surface2);
+  transform: translateY(-1px);
   z-index: 2;
 }
+
 .today {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface)) !important;
   border-color: var(--accent) !important;
-  background: color-mix(in srgb, var(--accent-glow) 4%, var(--surface)) !important;
-  /* box-shadow flattened */
 }
+
+.todayDateBadge {
+  background: var(--accent);
+  color: #05160e !important;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.selectedCell {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface)) !important;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 35%, transparent) !important;
+}
+
 .otherMonth {
-  opacity: 0.12;
+  opacity: 0.18;
   pointer-events: none;
   background: transparent !important;
   border-color: transparent !important;
-  /* box-shadow flattened */
 }
-.selectedCell {
-  border-color: #10b981 !important;
-  background: color-mix(in srgb, #10b981 12%, var(--surface)) !important;
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.22) !important;
-}
-.hasData { border-color: color-mix(in srgb, var(--border2) 88%, transparent); }
 
-.cellTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; min-width: 0; }
-.dateNum { font-size: var(--type-support); font-weight: 700; color: var(--text); line-height: 1.2; letter-spacing: -0.02em; transition: transform 0.2s ease; }
-.cell:hover .dateNum { transform: scale(1.1); color: var(--accent); }
-.today .dateNum { color: var(--accent); }
-.cellBalance {
-  font-size: var(--type-caption);
-  line-height: 1.18;
-  color: var(--text2);
-  font-family: var(--font-mono);
+.cellTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.dateNum {
+  font-size: 13px;
   font-weight: 600;
-  min-width: 0;
+  color: var(--text);
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.cellActivityStack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  align-items: center;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.dayFlowPillInc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--income);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-/* DOTS ONLY — no amount text in cells */
-.manualBalancePin {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #007aff;
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
-  flex-shrink: 0;
+.dayFlowPillExp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--expense);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.dayFlowPillTrsf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  line-height: 1.2;
+}
+
+.dayFlowPillDue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  line-height: 1.2;
+  animation: pulseAlert 2s infinite ease-in-out;
 }
 
 .incomeDot {
@@ -1502,98 +1656,107 @@
     flex: none;
     height: auto;
     min-height: 0;
-    padding: 10px;
+    padding: 8px;
     border-radius: 16px;
-    grid-template-rows: auto auto auto;
     align-content: start;
   }
   .calHeader {
     margin-bottom: 8px;
-    gap: 8px;
-    padding: 10px;
-    border-radius: 18px;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .nav {
-    min-height: 44px;
-    gap: 0.25rem;
+    min-height: 36px;
+    gap: 4px;
   }
   .monthLabel {
-    font-size: var(--type-title-md);
+    font-size: 14px;
     min-width: 0;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .monthJumpWrap {
-    flex: 1;
+    flex: none;
     width: auto;
     min-width: 0;
-    min-height: 44px;
-    padding: 0;
-    border-radius: 0;
+    min-height: 32px;
+    padding: 2px 4px;
   }
   .navBtn {
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
     padding: 0;
-    font-size: var(--type-body-lg);
+    font-size: 15px;
   }
-  .addBtns { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .addBtnIncome, .addBtnExpense, .addBtnImport { width: 100%; min-height: 40px; text-align: center; justify-content: center; padding-inline: 10px; font-size: var(--type-support); }
-  .addBtnImport { grid-column: 1 / -1; }
-  .monthBoard {
+  .headerRightControls {
     gap: 6px;
+    margin-left: auto;
+  }
+  .monthNetChip {
+    padding: 3px 6px;
+    font-size: 10px;
+    gap: 3px;
+  }
+  .viewToggleWrap {
+    padding: 2px;
+  }
+  .viewToggleBtn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  .monthBoard {
+    gap: 4px;
     height: auto;
     overflow: visible;
   }
   .dayNames {
-    margin-bottom: 0;
+    margin-bottom: 2px;
+    gap: 4px;
   }
   .dayName {
     padding: 1px 0;
-    font-size: var(--type-overline);
+    font-size: 9px;
   }
   .grid {
-    grid-template-rows: none;
-    grid-auto-rows: auto;
+    gap: 4px;
     height: auto;
-    align-content: start;
   }
   .cell {
-    min-height: 60px;
+    min-height: 52px;
     height: auto;
-    padding: 7px;
-    gap: 4px;
-    border-radius: 12px;
-    justify-content: space-between;
+    padding: 4px 2px 6px;
+    gap: 2px;
+    border-radius: 10px;
   }
   .cellTop {
-    gap: 3px;
+    gap: 2px;
   }
   .dateNum {
-    font-size: var(--type-support);
+    font-size: 11px;
   }
-  .cellBalance {
-    display: -webkit-box;
-    font-size: var(--type-overline);
-    line-height: 1.18;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+  .todayDateBadge {
+    width: 20px;
+    height: 20px;
+    font-size: 10px !important;
   }
-  .dots {
-    gap: 3px;
-  }
-  .dot {
-    width: 5px;
-    height: 5px;
+  .dayFlowPillInc,
+  .dayFlowPillExp {
+    font-size: 8px;
+    padding: 1px 3px;
   }
   .balanceRail {
-    margin-top: 6px;
-    padding: 9px 10px;
-    min-height: 54px;
-    border-radius: 12px;
+    margin-top: 8px;
+    padding: 10px 12px;
+    min-height: 50px;
+    border-radius: 14px;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .balanceRailLabel {
     display: none;
