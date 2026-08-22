@@ -318,6 +318,16 @@ export function getVirtualBills(data = {}) {
     if (!latest || !latest.recur) return
     if (latest.cat !== 'Bills') return
 
+    const txNameLower = (latest.desc || latest.subcat || 'Recurring Bill').trim().toLowerCase()
+    if (explicitBillNames.has(txNameLower)) return
+    if (explicitBillIds.has(`virtual-tx-${latest._id}`)) return
+
+    let dueDay = 15
+    if (latest.date) {
+      const day = parseInt(String(latest.date).slice(-2), 10)
+      if (Number.isFinite(day) && day >= 1 && day <= 31) dueDay = day
+    }
+
     const paidPeriods = {}
     chain.forEach(tx => {
       if (tx.date) {
