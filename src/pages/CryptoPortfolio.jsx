@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { fmt, maskMoney, playTick } from '../lib/utils'
@@ -481,7 +482,7 @@ export default function CryptoPortfolio({
       )}
 
       {/* QUICK PRICE UPDATE MODAL */}
-      {showPriceModal && (
+      {showPriceModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closePriceModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
@@ -543,11 +544,12 @@ export default function CryptoPortfolio({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ADD / EDIT HOLDING MODAL */}
-      {showHoldingModal && (
+      {showHoldingModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closeHoldingModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
@@ -674,7 +676,8 @@ export default function CryptoPortfolio({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
