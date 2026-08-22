@@ -176,7 +176,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
   const allBillsList = useMemo(() => [
     ...(data?.bills || []),
     ...getVirtualBills(data)
-  ], [data?.bills, data?.debts, data?.accounts])
+  ], [data?.bills, data?.debts, data?.accounts, data?.expenses, data?.transfers])
 
   const billsWithStatus = useMemo(() => allBillsList.map(bill => ({
     ...bill,

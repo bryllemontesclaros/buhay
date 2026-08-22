@@ -77,7 +77,19 @@ export function getBillPeriodKey(bill = {}, referenceDate = new Date()) {
 }
 
 export function getBillPaidPeriods(bill = {}) {
-  return bill?.paidPeriods && typeof bill.paidPeriods === 'object' ? bill.paidPeriods : {}
+  if (!bill || typeof bill !== 'object') return {}
+  const map = bill.paidPeriods && typeof bill.paidPeriods === 'object' ? { ...bill.paidPeriods } : {}
+  // Also collect any flattened dot keys like 'paidPeriods.monthly_2026-08-11'
+  Object.keys(bill).forEach(k => {
+    if (k.startsWith('paidPeriods.')) {
+      const subKey = k.replace('paidPeriods.', '')
+      map[subKey] = bill[k]
+    }
+  })
+  if (bill.lastPaidPeriod) {
+    map[bill.lastPaidPeriod] = map[bill.lastPaidPeriod] || { paidAt: bill.paidAt || Date.now(), paid: true }
+  }
+  return map
 }
 
 export function getBillPeriodPayment(bill = {}, referenceDate = new Date()) {
@@ -85,23 +97,26 @@ export function getBillPeriodPayment(bill = {}, referenceDate = new Date()) {
   const periods = getBillPaidPeriods(bill)
   if (periods[key]) return { key, payment: periods[key] }
 
-  const hasPeriodRecords = Object.keys(periods).length > 0
-  if (hasPeriodRecords || !bill?.paid || !bill?.paidAt) return { key, payment: null }
+  if (bill?.paid && bill?.lastPaidPeriod === key) {
+    return { key, payment: { paidAt: bill.paidAt || Date.now(), paid: true } }
+  }
 
   const dueDate = getBillDueDate(bill, referenceDate)
-  const paidMonth = getMonthKey(new Date(Number(bill.paidAt)))
-  if (paidMonth !== getMonthKey(dueDate)) return { key, payment: null }
-
-  return {
-    key,
-    payment: {
-      paidAt: bill.paidAt,
-      amount: Number(bill.amount) || 0,
-      date: normalizeDate(new Date(Number(bill.paidAt))) || today(),
-      accountId: bill.accountId || '',
-      legacy: true,
-    },
+  const paidMonth = bill.paidAt ? getMonthKey(new Date(Number(bill.paidAt))) : ''
+  if (bill?.paid && paidMonth && paidMonth === getMonthKey(dueDate)) {
+    return {
+      key,
+      payment: {
+        paidAt: bill.paidAt,
+        amount: Number(bill.amount) || 0,
+        date: normalizeDate(new Date(Number(bill.paidAt))) || today(),
+        accountId: bill.accountId || '',
+        legacy: true,
+      },
+    }
   }
+
+  return { key, payment: null }
 }
 
 export function isBillPaidForPeriod(bill = {}, referenceDate = new Date()) {
@@ -162,15 +177,19 @@ export function getVirtualBills(data = {}) {
     ...expenses.filter(e => e.cat === 'Debts' || e.cat === 'Debt' || e.debtId || (e.desc && e.desc.toLowerCase().includes('payment')))
   ]
   
-  // Find accounts and names already explicitly linked to a bill
+  // Find accounts, debts, and IDs already explicitly in bills
   const explicitBillAccountIds = new Set(bills.map(b => b.accountId).filter(Boolean))
+  const explicitBillDebtIds = new Set(bills.map(b => b.originalDebtId).filter(Boolean))
   const explicitBillNames = new Set(bills.map(b => (b.name || '').trim().toLowerCase()).filter(Boolean))
+  const explicitBillIds = new Set(bills.map(b => b._id).filter(Boolean))
   
   const virtualBills = []
 
   // 1. Convert Debts into Virtual Bills
   debts.forEach(debt => {
     if (!debt) return
+    if (explicitBillDebtIds.has(debt._id)) return
+    if (explicitBillIds.has(`virtual-debt-${debt._id}`)) return
     if (debt.accountId && explicitBillAccountIds.has(debt.accountId)) return
     if (explicitBillNames.has((debt.name || '').trim().toLowerCase())) return
     
@@ -236,6 +255,7 @@ export function getVirtualBills(data = {}) {
   accounts.forEach(acc => {
     if (!acc || acc.type !== 'Credit Card') return
     if (explicitBillAccountIds.has(acc._id)) return
+    if (explicitBillIds.has(`virtual-acc-${acc._id}`)) return
     const accNameLower = (acc.name || '').trim().toLowerCase()
     if (explicitBillNames.has(accNameLower)) return
     if (debts.some(d => d && d.accountId === acc._id)) return

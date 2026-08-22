@@ -238,6 +238,12 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     dueDate: period.dueDate,
   }
 
+  const existingPeriods = bill.paidPeriods && typeof bill.paidPeriods === 'object' ? bill.paidPeriods : {}
+  const mergedPaidPeriods = {
+    ...existingPeriods,
+    [period.key]: periodRecord,
+  }
+
   const billData = {
     name: bill.name || 'Bill',
     amount: Number(bill.amount) || amount,
@@ -249,7 +255,7 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
     accountId: bill.accountId || '',
     autoDeduct: Boolean(bill.autoDeduct),
     type: 'bill',
-    [`paidPeriods.${period.key}`]: periodRecord,
+    paidPeriods: mergedPaidPeriods,
     paid: true,
     paidAt,
     lastPaidPeriod: period.key,
@@ -263,7 +269,7 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
   if (bill.originalDebtId) {
     try {
       await setDoc(doc(db, 'users', uid, 'debts', bill.originalDebtId), {
-        [`paidPeriods.${period.key}`]: periodRecord,
+        paidPeriods: mergedPaidPeriods,
       }, { merge: true })
     } catch (err) {
       console.warn('Could not update original debt paidPeriods', err)
@@ -271,7 +277,7 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
   } else if (bill.accountId && String(bill._id).startsWith('virtual-acc-')) {
     try {
       await setDoc(doc(db, 'users', uid, 'accounts', bill.accountId), {
-        [`paidPeriods.${period.key}`]: periodRecord,
+        paidPeriods: mergedPaidPeriods,
       }, { merge: true })
     } catch (err) {
       console.warn('Could not update virtual account paidPeriods', err)
