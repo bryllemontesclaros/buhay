@@ -1,125 +1,107 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 16px;
   width: 100%;
-  padding-bottom: calc(var(--app-mobile-bottom-offset, 80px) + 32px);
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 112px;
 }
 
 /* HERO CARD */
 .heroCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.15rem;
-  padding: 1.35rem 1.5rem;
-  border-radius: 26px;
   background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-resting);
-  overflow: hidden;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .heroTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .heroTag {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 0;
+  gap: 8px;
 }
 
 .heroTitle {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.01em;
-  white-space: nowrap;
 }
 
 .heroControls {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
 .currencyToggle {
-  display: inline-flex;
+  display: flex;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 2px;
-  gap: 2px;
-  box-sizing: border-box;
 }
 
 .currencyBtn {
-  border: none;
   background: transparent;
-  color: var(--text3);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 9px;
+  border: none;
+  padding: 5px 12px;
   border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-  line-height: 1;
+  transition: all 0.15s ease;
 }
 
 .currencyBtnActive {
   background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-.refreshBtn {
+.updatePricesBtn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text2);
-  font-size: 15px;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.refreshBtn:hover {
-  background: var(--surface3);
-  color: var(--text);
-}
-
-.refreshBtn:active {
-  transform: scale(0.88);
-}
-
-.refreshing {
-  animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(56, 239, 125, 0.15), rgba(17, 153, 142, 0.15));
+  border: 1px solid rgba(56, 239, 125, 0.35);
   color: var(--income);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.updatePricesBtn:hover {
+  background: linear-gradient(135deg, rgba(56, 239, 125, 0.25), rgba(17, 153, 142, 0.25));
+  transform: translateY(-1px);
+}
+
+.updatePricesBtn:active {
+  transform: scale(0.96);
 }
 
 .heroMain {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .heroLabelRow {
@@ -127,93 +109,60 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  width: 100%;
 }
 
 .heroLabel {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text3);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.liveIndicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10.5px;
-  font-weight: 600;
+.userValuationBadge {
+  font-size: 10px;
+  font-weight: 700;
   color: var(--income);
-  background: var(--income-dim);
-  padding: 2px 7px;
+  background: rgba(56, 239, 125, 0.12);
+  padding: 2px 8px;
   border-radius: 999px;
-  white-space: nowrap;
-}
-
-.liveDot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--income);
-  box-shadow: 0 0 6px var(--income);
-  animation: pulseDot 2s infinite;
-}
-
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.8); }
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .heroValue {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 7vw, 42px);
+  font-size: 32px;
   font-weight: 800;
-  letter-spacing: -0.03em;
   color: var(--text);
-  line-height: 1.05;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-family: inherit;
 }
 
-.heroBadges {
+.heroPnlRow {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 6px;
+  gap: 8px;
 }
 
-.badge {
+.pnlBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 4px 9px;
-  border-radius: 8px;
-  line-height: 1.2;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
 }
 
 .badgePositive {
+  background: rgba(56, 239, 125, 0.12);
   color: var(--income);
-  background: var(--income-dim);
 }
 
 .badgeNegative {
+  background: rgba(255, 75, 75, 0.12);
   color: var(--expense);
-  background: var(--expense-dim);
-}
-
-.badgeNeutral {
-  color: var(--text3);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-}
-
-.badgeLabel {
-  font-size: 10.5px;
-  font-weight: 500;
-  opacity: 0.8;
-  margin-left: 2px;
 }
 
 /* ALLOCATION BAR */
@@ -221,7 +170,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .allocationBar {
@@ -230,37 +179,40 @@
   width: 100%;
   border-radius: 999px;
   overflow: hidden;
-  background: var(--surface3);
+  background: var(--surface2);
+  gap: 2px;
 }
 
 .allocationSegment {
   height: 100%;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.3s ease;
 }
 
 .allocationLegend {
   display: flex;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 10px;
 }
 
 .legendItem {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 5px;
   font-size: 11px;
   color: var(--text2);
+  font-weight: 600;
 }
 
 .legendDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
 }
 
 .legendPct {
-  color: var(--text);
-  font-weight: 600;
+  color: var(--text3);
+  font-weight: 500;
 }
 
 /* SECTION HEADER */
@@ -268,12 +220,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.25rem;
+  gap: 12px;
 }
 
 .sectionTitle {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text);
 }
@@ -282,30 +233,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #000000;
-  border: none;
-  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
   font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-:global([data-theme="light"]) .addBtn,
-:global(.force-light-theme) .addBtn {
-  background: #111111;
-  color: #ffffff;
+  transition: all 0.15s ease;
 }
 
 .addBtn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.addBtn:active {
-  transform: translateY(0);
+  background: var(--surface2);
+  border-color: var(--text3);
 }
 
 /* HOLDINGS LIST */
@@ -316,25 +257,22 @@
 }
 
 .holdingCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-resting);
+  gap: 12px;
   cursor: pointer;
-  text-align: left;
-  width: 100%;
-  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  transition: all 0.15s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .holdingCard:hover {
-  border-color: var(--border2);
-  background: var(--surface2);
+  border-color: var(--text3);
   transform: translateY(-1px);
 }
 
@@ -347,23 +285,19 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
-  flex: 1;
 }
 
 .coinAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
   color: #ffffff;
-  background: var(--surface2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .coinInfo {
@@ -383,202 +317,271 @@
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.coinName {
-  font-size: 12px;
-  color: var(--text3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .walletBadge {
   font-size: 10px;
   font-weight: 600;
+  color: var(--text3);
+  background: var(--surface2);
   padding: 2px 6px;
   border-radius: 6px;
-  background: var(--surface2);
-  color: var(--text2);
   border: 1px solid var(--border);
-  line-height: 1;
+}
+
+.coinName {
+  font-size: 12px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .coinSub {
   font-size: 11px;
   color: var(--text3);
+  font-weight: 500;
 }
 
 .holdingRight {
   display: flex;
   align-items: center;
   gap: 10px;
+  text-align: right;
   flex-shrink: 0;
 }
 
 .holdingValues {
   display: flex;
   flex-direction: column;
+  gap: 3px;
   align-items: flex-end;
-  gap: 2px;
 }
 
 .holdingTotal {
-  font-family: var(--font-display);
-  font-size: 15.5px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.02em;
 }
 
 .holdingPnl {
   font-size: 11px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.holdingChevron {
-  font-size: 16px;
+.cardChevron {
+  font-size: 18px;
   color: var(--text3);
-  font-weight: 400;
-  transition: transform 0.15s ease, color 0.15s ease;
-  padding-left: 2px;
 }
 
-.holdingCard:hover .holdingChevron {
-  transform: translateX(2px);
+/* EMPTY STATE */
+.emptyState {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.emptyIcon {
+  font-size: 40px;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text);
 }
 
-/* MODAL */
+.emptyDesc {
+  font-size: 13px;
+  color: var(--text2);
+  max-width: 320px;
+  line-height: 1.4;
+}
+
+/* MODAL STYLES */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  z-index: var(--z-modal);
-  animation: fadeIn 0.15s ease-out;
+  padding: 16px;
+  z-index: 9999;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
+.modalContent {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 28px;
-  box-shadow: var(--shadow-modal);
-  display: flex;
-  flex-direction: column;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
-  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.96) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .modalHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem 0.85rem;
-  border-bottom: 1px solid var(--border);
 }
 
 .modalTitle {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
 }
 
 .modalClose {
+  background: var(--surface2);
   border: none;
-  background: transparent;
-  color: var(--text3);
-  font-size: 18px;
+  color: var(--text2);
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 8px;
-  transition: color 0.15s ease;
 }
 
-.modalClose:hover {
-  color: var(--text);
+/* QUICK PRICE UPDATE MODAL SPECIFIC */
+.quickPriceDesc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.4;
 }
 
-.modalBody {
-  padding: 1.25rem 1.5rem;
+.quickPriceList {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 12px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-.chipsLabel {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.quickChips {
+.quickPriceItem {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.chip {
-  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 999px;
+  justify-content: space-between;
+  gap: 14px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
-.chip:hover {
-  background: var(--surface3);
+.quickPriceCoin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quickPriceIcon {
+  font-size: 24px;
+}
+
+.quickPriceSymbol {
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text);
 }
 
-.chipSelected {
-  background: var(--accent);
-  color: #000000;
-  border-color: var(--accent);
+.quickPriceQty {
+  font-size: 11px;
+  color: var(--text3);
 }
 
-:global([data-theme="light"]) .chipSelected,
-:global(.force-light-theme) .chipSelected {
-  background: #111111;
-  color: #ffffff;
+.quickPriceInputWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
+.inputPrefixWrap {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  width: 140px;
+}
+
+.inputPrefix {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text3);
+  margin-right: 4px;
+}
+
+.quickInput {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  outline: none;
+}
+
+.quickItemTotal {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+}
+
+.quickModalFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.quickTotalPreview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.quickTotalPreview strong {
+  font-size: 18px;
+  color: var(--income);
+  font-weight: 800;
+}
+
+/* FORM FIELDS */
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
 }
 
 .label {
@@ -587,143 +590,109 @@
   color: var(--text2);
 }
 
-.input,
-.select {
-  width: 100%;
-  padding: 11px 14px;
-  border-radius: 12px;
+.input, .select {
   background: var(--surface2);
   border: 1px solid var(--border);
-  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
   font-size: 14px;
-  outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-  font-family: inherit;
-}
-
-.input:focus,
-.select:focus {
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-.inputRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.inputHelper {
-  font-size: 11px;
-  color: var(--text3);
-}
-
-.modalFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 1rem 1.5rem 1.25rem;
-  border-top: 1px solid var(--border);
-}
-
-.footerRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.deleteBtn {
-  padding: 9px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--expense-dim);
-  background: transparent;
-  color: var(--expense);
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.deleteBtn:hover {
-  background: var(--expense-dim);
-}
-
-.cancelBtn {
-  padding: 9px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text2);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.cancelBtn:hover {
-  background: var(--surface2);
   color: var(--text);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.saveBtn {
-  padding: 9px 20px;
-  border-radius: 12px;
-  border: none;
+.input:focus, .select:focus {
+  border-color: var(--income);
+}
+
+.coinPillsWrap {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-top: 6px;
+}
+
+.coinPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.coinPillActive {
   background: var(--income);
   color: #000000;
-  font-size: 13px;
+  border-color: var(--income);
   font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.saveBtn:hover {
+.modalActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btnPrimary {
+  background: var(--income);
+  color: #000000;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnPrimary:hover {
   opacity: 0.9;
   transform: translateY(-1px);
 }
 
-/* EMPTY STATE */
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1.5rem;
-  border-radius: 24px;
-  background: var(--surface);
-  border: 1px dashed var(--border2);
-  gap: 12px;
-}
-
-.emptyIcon {
-  font-size: 44px;
-  margin-bottom: 4px;
-}
-
-.emptyTitle {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.emptyDesc {
+.btnSecondary {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border);
   font-size: 13px;
-  color: var(--text3);
-  max-width: 340px;
-  line-height: 1.4;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-@media (max-width: 640px) {
-  .heroCard {
-    padding: 1.15rem 1.25rem;
+.btnDanger {
+  background: rgba(255, 75, 75, 0.12);
+  color: var(--expense);
+  border: 1px solid rgba(255, 75, 75, 0.25);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .heroTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
-  .inputRow {
+  .heroControls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .formRow {
     grid-template-columns: 1fr;
-  }
-  .holdingCard {
-    padding: 12px 14px;
   }
 }

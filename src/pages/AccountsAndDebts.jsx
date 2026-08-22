@@ -25,23 +25,25 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   const [cryptoPriceMap, setCryptoPriceMap] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
-        const raw = localStorage.getItem('buhay_crypto_prices_v6')
+        const raw = localStorage.getItem('buhay_crypto_prices_v7') || localStorage.getItem('buhay_crypto_prices_v6')
         if (raw) return JSON.parse(raw)?.data || {}
       } catch {}
     }
     return {}
   })
 
+  // Keep cryptoPriceMap in sync with localStorage updates
   useEffect(() => {
-    if (holdings.length > 0 && typeof window !== 'undefined') {
-      const activeIds = holdings.map(h => h.coinId || h.symbol).filter(Boolean)
-      import('../lib/crypto').then(m => {
-        m.fetchLiveCryptoPrices(activeIds, false).then(res => {
-          if (res?.prices) setCryptoPriceMap(res.prices)
-        }).catch(() => {})
-      })
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('buhay_crypto_prices_v7') || localStorage.getItem('buhay_crypto_prices_v6')
+        if (raw) {
+          const parsed = JSON.parse(raw)?.data
+          if (parsed) setCryptoPriceMap(parsed)
+        }
+      } catch {}
     }
-  }, [holdings.length])
+  }, [holdings])
 
   const cashAssets = getTakdaTotalAssets(accounts, [])
   const totalAssets = getTakdaTotalAssets(accounts, holdings, cryptoPriceMap)

@@ -1,14 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { fmt, maskMoney, playTick } from '../lib/utils'
 import {
   calculatePortfolioMetrics,
+  COIN_GRADIENTS,
   CRYPTO_WALLETS,
-  fetchLiveCryptoPrices,
+  DEFAULT_FOREX_RATE,
+  formatCryptoValue,
   getCachedPrices,
   POPULAR_CRYPTO_COINS,
   searchCryptoCoins,
+  setCachedPrices,
 } from '../lib/crypto'
 import styles from './CryptoPortfolio.module.css'
 
@@ -18,27 +21,11 @@ const EMPTY_FORM = {
   name: 'Bitcoin',
   quantity: '',
   buyPrice: '',
+  buyCurrency: 'USD',
+  currentPrice: '',
   wallet: 'Binance',
   notes: '',
-}
-
-const COIN_GRADIENTS = {
-  bitcoin: 'linear-gradient(135deg, #f7931a, #d47a08)',
-  ethereum: 'linear-gradient(135deg, #627eea, #3b5998)',
-  solana: 'linear-gradient(135deg, #14f195, #9945ff)',
-  tether: 'linear-gradient(135deg, #26a17b, #1b7a5b)',
-  ripple: 'linear-gradient(135deg, #333d47, #181d22)',
-  dogecoin: 'linear-gradient(135deg, #c2a633, #9e8218)',
-  binancecoin: 'linear-gradient(135deg, #f3ba2f, #d49810)',
-  cardano: 'linear-gradient(135deg, #0033ad, #001f66)',
-  'avalanche-2': 'linear-gradient(135deg, #e84142, #b82526)',
-  sui: 'linear-gradient(135deg, #4da2ff, #1a75db)',
-  'usd-coin': 'linear-gradient(135deg, #2775ca, #1a5699)',
-  chainlink: 'linear-gradient(135deg, #375bd2, #243f9c)',
-  polkadot: 'linear-gradient(135deg, #e6007a, #b3005f)',
-  near: 'linear-gradient(135deg, #3a3a3a, #111111)',
-  uniswap: 'linear-gradient(135deg, #ff007a, #c7005f)',
-  'shiba-inu': 'linear-gradient(135deg, #f00500, #b80400)',
+  isCustom: false,
 }
 
 export default function CryptoPortfolio({
@@ -60,76 +47,24 @@ export default function CryptoPortfolio({
     return profile?.currency === 'USD' ? 'USD' : 'PHP'
   })
 
-  const [livePrices, setLivePrices] = useState(() => {
+  const [userPrices, setUserPrices] = useState(() => {
     const cached = getCachedPrices()
     return cached?.data || {}
   })
-  const [isLive, setIsLive] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState(() => {
-    const cached = getCachedPrices()
-    return cached?.timestamp || Date.now()
-  })
-  const [refreshing, setRefreshing] = useState(false)
 
-  // Editor Modal State
-  const [showModal, setShowModal] = useState(false)
+  // Quick Price Update Modal State
+  const [showPriceModal, setShowPriceModal] = useState(false)
+  const [priceForm, setPriceForm] = useState({})
+
+  // Add / Edit Holding Modal State
+  const [showHoldingModal, setShowHoldingModal] = useState(false)
   const [editHolding, setEditHolding] = useState(null)
-  const [form, setForm] = useState(EMPTY_FORM)
+  const [holdingForm, setHoldingForm] = useState(EMPTY_FORM)
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState(POPULAR_CRYPTO_COINS)
-  const [searching, setSearching] = useState(false)
-
-  // Extract all active coin IDs from holdings
-  const activeCoinIds = useMemo(() => {
-    const ids = new Set(POPULAR_CRYPTO_COINS.map(c => c.id))
-    holdings.forEach(h => {
-      if (h.coinId) ids.add(h.coinId)
-    })
-    return Array.from(ids)
-  }, [holdings])
-
-  // Load and refresh live prices
-  async function loadPrices(force = false) {
-    if (force) playTick()
-    setRefreshing(true)
-    const minDelay = force ? new Promise(r => setTimeout(r, 450)) : Promise.resolve()
-    try {
-      const [res] = await Promise.all([
-        fetchLiveCryptoPrices(activeCoinIds, force),
-        minDelay,
-      ])
-      if (res?.prices) {
-        setLivePrices(res.prices)
-        setIsLive(res.isLive)
-        setLastUpdated(res.updatedAt)
-        if (typeof onPricesUpdated === 'function') {
-          onPricesUpdated(res.prices)
-        }
-        if (force) {
-          notifyApp({ title: 'Prices Updated', message: 'Live Binance & Forex quotes refreshed.', tone: 'positive' })
-        }
-      }
-    } catch (err) {
-      console.warn('[CryptoPortfolio] Price update failed:', err)
-      if (force) {
-        notifyApp({ title: 'Sync Failed', message: 'Could not fetch latest quotes.', tone: 'danger' })
-      }
-    } finally {
-      setRefreshing(false)
-    }
-  }
-
-  // Initial load & 30s live interval
-  useEffect(() => {
-    loadPrices(false)
-    const interval = setInterval(() => {
-      loadPrices(false)
-    }, 30000)
-    return () => clearInterval(interval)
-  }, [activeCoinIds.join(',')])
 
   // Persist currency preference
   function handleCurrencyToggle(curr) {
+    playTick()
     setVsCurrency(curr)
     if (typeof window !== 'undefined') {
       localStorage.setItem('buhay_crypto_vs_currency', curr)
@@ -138,153 +73,213 @@ export default function CryptoPortfolio({
 
   // Calculate overall metrics
   const metrics = useMemo(() => {
-    return calculatePortfolioMetrics(holdings, livePrices, vsCurrency)
-  }, [holdings, livePrices, vsCurrency, lastUpdated])
+    return calculatePortfolioMetrics(holdings, userPrices, vsCurrency, DEFAULT_FOREX_RATE)
+  }, [holdings, userPrices, vsCurrency])
 
-  // Search handler for coin modal
+  // Sync prices with parent listeners
   useEffect(() => {
-    let active = true
-    const timer = setTimeout(async () => {
-      if (!searchQuery.trim()) {
-        setSearchResults(POPULAR_CRYPTO_COINS)
-        return
-      }
-      setSearching(true)
-      const results = await searchCryptoCoins(searchQuery)
-      if (active) {
-        setSearchResults(results)
-        setSearching(false)
-      }
-    }, 250)
-    return () => {
-      active = false
-      clearTimeout(timer)
+    if (typeof onPricesUpdated === 'function') {
+      onPricesUpdated(userPrices)
     }
-  }, [searchQuery])
+  }, [userPrices, onPricesUpdated])
 
-  async function selectCoin(coin) {
-    const quote = livePrices[coin.id] || {}
-    const currKey = vsCurrency.toLowerCase()
-    const currentLivePrice = quote[currKey] ? String(quote[currKey]) : ''
+  // ==========================================
+  // QUICK PRICE UPDATE MODAL LOGIC
+  // ==========================================
+  function openPriceModal() {
+    playTick()
+    const initial = {}
+    const isUsd = vsCurrency === 'USD'
 
-    setForm(prev => ({
-      ...prev,
-      coinId: coin.id,
-      symbol: coin.symbol,
-      name: coin.name,
-      buyPrice: currentLivePrice,
-    }))
+    metrics.holdings.forEach(h => {
+      const key = h.coinId || h.symbol.toLowerCase()
+      initial[key] = h.currentPrice > 0 ? String(h.currentPrice) : ''
+    })
 
-    // If price is not yet cached for an altcoin, fetch it instantly
-    if (!currentLivePrice) {
-      try {
-        const res = await fetchLiveCryptoPrices([coin.id], true)
-        if (res?.prices?.[coin.id]?.[currKey]) {
-          const freshPrice = String(res.prices[coin.id][currKey])
-          setLivePrices(prev => ({ ...prev, ...res.prices }))
-          setForm(prev => (prev.coinId === coin.id ? { ...prev, buyPrice: freshPrice } : prev))
-        }
-      } catch (err) {
-        console.warn('[crypto] Failed to fetch price for coin:', err)
-      }
-    }
+    setPriceForm(initial)
+    setShowPriceModal(true)
   }
 
-  function openAdd() {
+  function closePriceModal() {
+    setShowPriceModal(false)
+  }
+
+  function handlePriceInputChange(coinKey, val) {
+    setPriceForm(prev => ({
+      ...prev,
+      [coinKey]: val,
+    }))
+  }
+
+  function saveQuickPrices() {
+    playTick()
+    const updated = { ...userPrices }
+    const isUsd = vsCurrency === 'USD'
+
+    Object.entries(priceForm).forEach(([coinKey, priceVal]) => {
+      const p = parseFloat(priceVal) || 0
+      if (p > 0) {
+        const quoteObj = {
+          usd: isUsd ? p : p / DEFAULT_FOREX_RATE,
+          php: isUsd ? p * DEFAULT_FOREX_RATE : p,
+        }
+        updated[coinKey] = quoteObj
+        updated[coinKey.toUpperCase()] = quoteObj
+        updated[coinKey.toLowerCase()] = quoteObj
+      }
+    })
+
+    setUserPrices(updated)
+    setCachedPrices(updated, DEFAULT_FOREX_RATE)
+    setShowPriceModal(false)
+    notifyApp({ title: 'Prices Updated', message: 'Portfolio recalculated with your updated prices.', tone: 'positive' })
+  }
+
+  // Preview total value inside quick price modal
+  const modalLiveTotal = useMemo(() => {
+    let total = 0
+    metrics.holdings.forEach(h => {
+      const key = h.coinId || h.symbol.toLowerCase()
+      const enteredPrice = parseFloat(priceForm[key]) || h.currentPrice || 0
+      total += h.qty * enteredPrice
+    })
+    return total
+  }, [metrics.holdings, priceForm])
+
+  // ==========================================
+  // ADD / EDIT HOLDING MODAL LOGIC
+  // ==========================================
+  function openAddHolding() {
+    playTick()
     setEditHolding(null)
     const defaultCoin = POPULAR_CRYPTO_COINS[0]
-    const quote = livePrices[defaultCoin.id] || {}
-    const currKey = vsCurrency.toLowerCase()
-    const currentLivePrice = quote[currKey] ? String(quote[currKey]) : ''
+    const isUsd = vsCurrency === 'USD'
+    const defaultPrice = isUsd ? defaultCoin.defaultUsd : defaultCoin.defaultUsd * DEFAULT_FOREX_RATE
 
-    setForm({
+    setHoldingForm({
       ...EMPTY_FORM,
       coinId: defaultCoin.id,
       symbol: defaultCoin.symbol,
       name: defaultCoin.name,
-      buyPrice: currentLivePrice,
+      buyCurrency: vsCurrency,
+      buyPrice: String(defaultPrice),
+      currentPrice: String(defaultPrice),
     })
     setSearchQuery('')
-    setShowModal(true)
+    setShowHoldingModal(true)
   }
 
-  function openEdit(holding) {
-    setEditHolding(holding)
-    setForm({
-      coinId: holding.coinId || 'bitcoin',
-      symbol: holding.symbol || 'BTC',
-      name: holding.name || 'Bitcoin',
-      quantity: String(holding.quantity ?? holding.shares ?? ''),
-      buyPrice: String(holding.buyPrice ?? holding.price ?? ''),
-      wallet: holding.wallet || 'Binance',
-      notes: holding.notes || '',
+  function openEditHolding(h) {
+    playTick()
+    setEditHolding(h)
+    setHoldingForm({
+      coinId: h.coinId || 'bitcoin',
+      symbol: h.symbol || 'BTC',
+      name: h.name || 'Bitcoin',
+      quantity: String(h.quantity ?? h.shares ?? ''),
+      buyPrice: String(h.rawBuyPrice ?? h.buyPrice ?? ''),
+      buyCurrency: h.holdingCurrency || vsCurrency,
+      currentPrice: String(h.currentPrice ?? ''),
+      wallet: h.wallet || 'Binance',
+      notes: h.notes || '',
+      isCustom: h.isCustom || false,
     })
     setSearchQuery('')
-    setShowModal(true)
+    setShowHoldingModal(true)
   }
 
-  function closeModal() {
-    setShowModal(false)
+  function closeHoldingModal() {
+    setShowHoldingModal(false)
     setEditHolding(null)
-    setForm(EMPTY_FORM)
+    setHoldingForm(EMPTY_FORM)
   }
 
-  async function handleSave() {
-    if (!form.coinId || !form.symbol) {
-      notifyApp({ title: 'Select a coin', message: 'Please select a cryptocurrency.', tone: 'warning' })
+  function selectCoin(c) {
+    playTick()
+    const isUsd = holdingForm.buyCurrency === 'USD'
+    const defaultPrice = isUsd ? (c.defaultUsd || 1) : (c.defaultUsd ? c.defaultUsd * DEFAULT_FOREX_RATE : DEFAULT_FOREX_RATE)
+
+    setHoldingForm(prev => ({
+      ...prev,
+      coinId: c.id,
+      symbol: c.symbol,
+      name: c.name,
+      isCustom: false,
+      buyPrice: prev.buyPrice ? prev.buyPrice : String(defaultPrice),
+      currentPrice: prev.currentPrice ? prev.currentPrice : String(defaultPrice),
+    }))
+  }
+
+  async function handleSaveHolding() {
+    if (!holdingForm.symbol) {
+      notifyApp({ title: 'Enter symbol', message: 'Please enter a crypto symbol.', tone: 'warning' })
       return
     }
-    const qty = parseFloat(form.quantity)
+    const qty = parseFloat(holdingForm.quantity)
     if (!qty || qty <= 0 || isNaN(qty)) {
-      notifyApp({ title: 'Invalid quantity', message: 'Please enter a valid amount greater than 0.', tone: 'warning' })
+      notifyApp({ title: 'Invalid quantity', message: 'Please enter a valid quantity greater than 0.', tone: 'warning' })
       return
     }
-    const buyP = parseFloat(form.buyPrice) || 0
+    const buyP = parseFloat(holdingForm.buyPrice) || 0
+    const currentP = parseFloat(holdingForm.currentPrice) || buyP
 
     const payload = {
-      coinId: form.coinId,
-      symbol: form.symbol.toUpperCase(),
-      name: form.name,
+      coinId: holdingForm.coinId.toLowerCase(),
+      symbol: holdingForm.symbol.toUpperCase(),
+      name: holdingForm.name || holdingForm.symbol.toUpperCase(),
       quantity: qty,
       buyPrice: buyP,
-      currency: vsCurrency,
-      wallet: form.wallet || 'Wallet',
-      notes: form.notes || '',
+      currency: holdingForm.buyCurrency || vsCurrency,
+      wallet: holdingForm.wallet || 'Binance',
+      notes: holdingForm.notes || '',
+      isCustom: holdingForm.isCustom || false,
       updatedAt: Date.now(),
     }
 
     try {
-      if (editHolding) {
+      if (editHolding?._id) {
         await fsUpdate(user.uid, 'portfolioHoldings', editHolding._id, payload)
-        notifyApp({ title: 'Holding updated', message: `${payload.symbol} holding updated successfully.`, tone: 'positive' })
+        notifyApp({ title: 'Holding updated', message: `${payload.symbol} holding saved.`, tone: 'positive' })
       } else {
-        await fsAdd(user.uid, 'portfolioHoldings', { ...payload, createdAt: Date.now() })
+        await fsAdd(user.uid, 'portfolioHoldings', payload)
         notifyApp({ title: 'Holding added', message: `${payload.symbol} added to your portfolio.`, tone: 'positive' })
       }
-      closeModal()
-      loadPrices(true)
+
+      // Also update user's price map with current price
+      if (currentP > 0) {
+        const isUsd = holdingForm.buyCurrency === 'USD'
+        const updated = {
+          ...userPrices,
+          [payload.coinId]: {
+            usd: isUsd ? currentP : currentP / DEFAULT_FOREX_RATE,
+            php: isUsd ? currentP * DEFAULT_FOREX_RATE : currentP,
+          },
+        }
+        setUserPrices(updated)
+        setCachedPrices(updated, DEFAULT_FOREX_RATE)
+      }
+
+      closeHoldingModal()
     } catch (err) {
       console.error('[CryptoPortfolio] Save error:', err)
-      notifyApp({ title: 'Save failed', message: 'Could not save crypto holding.', tone: 'danger' })
+      notifyApp({ title: 'Save failed', message: 'Could not save holding.', tone: 'danger' })
     }
   }
 
-  async function handleDelete(holding) {
-    const target = holding || editHolding
-    if (!target) return
-
+  async function handleDeleteHolding() {
+    if (!editHolding?._id) return
     const confirmed = await confirmApp({
-      title: `Delete ${target.symbol}?`,
-      message: `Are you sure you want to remove ${target.symbol} (${target.name}) from your portfolio?`,
-      confirmLabel: 'Delete Holding',
+      title: `Delete ${editHolding.symbol}?`,
+      message: `Are you sure you want to remove this ${editHolding.name} holding?`,
+      confirmText: 'Delete',
       danger: true,
     })
     if (!confirmed) return
 
     try {
-      await fsDel(user.uid, 'portfolioHoldings', target._id)
-      notifyApp({ title: 'Holding deleted', message: `${target.symbol} removed.`, tone: 'neutral' })
-      if (showModal) closeModal()
+      await fsDel(user.uid, 'portfolioHoldings', editHolding._id)
+      notifyApp({ title: 'Holding deleted', message: `${editHolding.symbol} removed.`, tone: 'neutral' })
+      closeHoldingModal()
     } catch (err) {
       console.error('[CryptoPortfolio] Delete error:', err)
       notifyApp({ title: 'Delete failed', message: 'Could not delete holding.', tone: 'danger' })
@@ -292,25 +287,14 @@ export default function CryptoPortfolio({
   }
 
   const s = metrics.currencySymbol
-
-  // Format relative updated time
-  const updatedAgo = useMemo(() => {
-    if (!lastUpdated) return 'Syncing...'
-    const diffSec = Math.floor((Date.now() - lastUpdated) / 1000)
-    if (diffSec < 10) return 'Just now'
-    if (diffSec < 60) return `${diffSec}s ago`
-    return `${Math.floor(diffSec / 60)}m ago`
-  }, [lastUpdated, refreshing])
-
-  // Allocation Colors Palette
-  const ALLOCATION_COLORS = ['#f7931a', '#627eea', '#14f195', '#26a17b', '#23292f', '#f3ba2f', '#0033ad', '#e84142', '#375bd2', '#e6007a']
-
-  // Delta states for badges
-  const has24hChange = Math.abs(metrics.total24hChangeAmount) > 0.05
-  const is24hPositive = metrics.total24hChangeAmount > 0
-
   const hasPnl = metrics.totalCostBasis > 0 && Math.abs(metrics.totalPnlAmount) > 0.05
-  const isPnlPositive = metrics.totalPnlAmount > 0
+  const isPnlPositive = metrics.totalPnlAmount >= 0
+
+  const filteredCoins = useMemo(() => {
+    return searchCryptoCoins(searchQuery)
+  }, [searchQuery])
+
+  const ALLOCATION_COLORS = ['#f7931a', '#627eea', '#14f195', '#38ef7d', '#375bd2', '#f4b728', '#ff007a', '#2775ca', '#e84142', '#4da2ff', '#0033ad']
 
   return (
     <div className={styles.wrap}>
@@ -341,12 +325,11 @@ export default function CryptoPortfolio({
 
             <button
               type="button"
-              className={`${styles.refreshBtn} ${refreshing ? styles.refreshing : ''}`}
-              onClick={() => loadPrices(true)}
-              title="Refresh live prices"
-              aria-label="Refresh live crypto prices"
+              className={styles.updatePricesBtn}
+              onClick={openPriceModal}
+              title="Update current asset prices"
             >
-              ↻
+              ⚡ Update Prices
             </button>
           </div>
         </div>
@@ -354,59 +337,18 @@ export default function CryptoPortfolio({
         <div className={styles.heroMain}>
           <div className={styles.heroLabelRow}>
             <span className={styles.heroLabel}>Total Crypto Assets</span>
-            <div className={styles.liveIndicator}>
-              <span className={styles.liveDot} />
-              <span>{refreshing ? 'Syncing...' : `Live · ${updatedAgo}`}</span>
-            </div>
+            <span className={styles.userValuationBadge}>Exact Valuation</span>
           </div>
           <div className={styles.heroValue}>
-            {privacyMode ? '••••' : fmt(metrics.totalCurrentValue, s)}
+            {privacyMode ? '••••' : formatCryptoValue(metrics.totalCurrentValue, s, 2)}
           </div>
 
-          <div className={styles.heroBadges}>
-            {/* 24h P&L Badge */}
-            <div
-              className={`${styles.badge} ${
-                !has24hChange
-                  ? styles.badgeNeutral
-                  : is24hPositive
-                  ? styles.badgePositive
-                  : styles.badgeNegative
-              }`}
-            >
-              <span>{has24hChange ? (is24hPositive ? '▲' : '▼') : '—'}</span>
-              <span>
-                {privacyMode
-                  ? '••••'
-                  : has24hChange
-                  ? `${is24hPositive ? '+' : ''}${fmt(metrics.total24hChangeAmount, s)}`
-                  : '0.00'}
-              </span>
-              <span>({has24hChange ? `${is24hPositive ? '+' : ''}${metrics.total24hPct.toFixed(2)}%` : '0.00%'})</span>
-              <span className={styles.badgeLabel}>24h</span>
-            </div>
-
-            {/* All-Time P&L Badge */}
-            {metrics.totalCostBasis > 0 && (
-              <div
-                className={`${styles.badge} ${
-                  !hasPnl
-                    ? styles.badgeNeutral
-                    : isPnlPositive
-                    ? styles.badgePositive
-                    : styles.badgeNegative
-                }`}
-              >
-                <span>{hasPnl ? (isPnlPositive ? '▲' : '▼') : '—'}</span>
-                <span>
-                  {privacyMode
-                    ? '••••'
-                    : hasPnl
-                    ? `${isPnlPositive ? '+' : ''}${fmt(metrics.totalPnlAmount, s)}`
-                    : '0.00'}
-                </span>
-                <span>({hasPnl ? `${isPnlPositive ? '+' : ''}${metrics.totalPnlPct.toFixed(1)}%` : '0.0%'})</span>
-                <span className={styles.badgeLabel}>All-Time Return</span>
+          <div className={styles.heroPnlRow}>
+            {hasPnl && (
+              <div className={`${styles.pnlBadge} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
+                <span>{isPnlPositive ? '▲ +' : '▼ -'}</span>
+                <span>{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)}</span>
+                <span>({metrics.totalPnlPct.toFixed(1)}%) All-Time Return</span>
               </div>
             )}
           </div>
@@ -429,7 +371,7 @@ export default function CryptoPortfolio({
               ))}
             </div>
             <div className={styles.allocationLegend}>
-              {metrics.holdings.slice(0, 4).map((h, i) => (
+              {metrics.holdings.slice(0, 5).map((h, i) => (
                 <div key={h._id || h.coinId || i} className={styles.legendItem}>
                   <span
                     className={styles.legendDot}
@@ -449,7 +391,7 @@ export default function CryptoPortfolio({
         <div className={styles.sectionTitle}>
           Holdings ({metrics.holdings.length})
         </div>
-        <button type="button" className={styles.addBtn} onClick={openAdd}>
+        <button type="button" className={styles.addBtn} onClick={openAddHolding}>
           <span>+</span>
           <span>Add Holding</span>
         </button>
@@ -461,36 +403,33 @@ export default function CryptoPortfolio({
           <div className={styles.emptyIcon}>🪙</div>
           <div className={styles.emptyTitle}>No crypto holdings yet</div>
           <div className={styles.emptyDesc}>
-            Track your Bitcoin, Ethereum, Solana, and other coins with real-time market prices.
+            Track your Bitcoin, Ethereum, Solana, LINK, HYPE, TAO, and other tokens with exact current prices.
           </div>
-          <button type="button" className={styles.addBtn} onClick={openAdd}>
+          <button type="button" className={styles.addBtn} onClick={openAddHolding}>
             + Add your first coin
           </button>
         </div>
       ) : (
         <div className={styles.holdingsList}>
           {metrics.holdings.map(h => {
-            const hasHolding24h = Math.abs(h.change24hPct) > 0.01
-            const isHolding24hPos = h.change24hPct > 0
-
             const hasHoldingPnl = h.costBasis > 0 && Math.abs(h.pnlAmount) > 0.05
-            const isHoldingPnlPos = h.pnlAmount > 0
-
+            const isHoldingPnlPos = h.pnlAmount >= 0
             const avatarBg = COIN_GRADIENTS[h.coinId] || 'linear-gradient(135deg, #3a3a4c, #222230)'
+            const coinIcon = POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId || c.symbol === h.symbol)?.icon || '🪙'
 
             return (
               <div
                 key={h._id}
                 className={styles.holdingCard}
-                onClick={() => openEdit(h)}
+                onClick={() => openEditHolding(h)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEdit(h)}
+                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEditHolding(h)}
                 aria-label={`Holding ${h.symbol}, tap to edit`}
               >
                 <div className={styles.holdingLeft}>
                   <div className={styles.coinAvatar} style={{ background: avatarBg }}>
-                    {POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId)?.icon || '🪙'}
+                    {coinIcon}
                   </div>
                   <div className={styles.coinInfo}>
                     <div className={styles.coinHeader}>
@@ -499,7 +438,7 @@ export default function CryptoPortfolio({
                     </div>
                     <div className={styles.coinName}>{h.name}</div>
                     <div className={styles.coinSub}>
-                      {h.qty} {h.symbol} · Live: {fmt(h.livePrice, s)}
+                      {h.qty} {h.symbol} · {formatCryptoValue(h.currentPrice, s, 4)} / coin
                     </div>
                   </div>
                 </div>
@@ -507,39 +446,19 @@ export default function CryptoPortfolio({
                 <div className={styles.holdingRight}>
                   <div className={styles.holdingValues}>
                     <div className={styles.holdingTotal}>
-                      {privacyMode ? '••••' : fmt(h.currentValue, s)}
+                      {privacyMode ? '••••' : formatCryptoValue(h.currentValue, s, 2)}
                     </div>
-                    <div
-                      className={`${styles.holdingPnl} ${
-                        !hasHolding24h
-                          ? styles.badgeNeutral
-                          : isHolding24hPos
-                          ? styles.badgePositive
-                          : styles.badgeNegative
-                      }`}
-                    >
-                      {hasHolding24h ? (isHolding24hPos ? '▲ +' : '▼ ') : '— '}
-                      {hasHolding24h ? `${h.change24hPct.toFixed(2)}%` : '0.00%'} (24h)
-                    </div>
-                    {h.costBasis > 0 && (
+                    {hasHoldingPnl && (
                       <div
-                        className={styles.coinSub}
-                        style={{
-                          color: !hasHoldingPnl
-                            ? 'var(--text3)'
-                            : isHoldingPnlPos
-                            ? 'var(--income)'
-                            : 'var(--expense)',
-                        }}
+                        className={`${styles.holdingPnl} ${
+                          isHoldingPnlPos ? styles.badgePositive : styles.badgeNegative
+                        }`}
                       >
-                        {hasHoldingPnl ? (isHoldingPnlPos ? '+' : '') : ''}
-                        {privacyMode ? '••••' : hasHoldingPnl ? fmt(h.pnlAmount, s) : '₱0.00'}{' '}
-                        ({hasHoldingPnl ? `${isHoldingPnlPos ? '+' : ''}${h.pnlPct.toFixed(1)}%` : '0.0%'})
+                        {isHoldingPnlPos ? '+' : '-'}{formatCryptoValue(Math.abs(h.pnlAmount), s, 2)} ({h.pnlPct.toFixed(1)}%)
                       </div>
                     )}
                   </div>
-
-                  <span className={styles.holdingChevron} aria-hidden="true">›</span>
+                  <span className={styles.cardChevron} aria-hidden="true">›</span>
                 </div>
               </div>
             )
@@ -547,159 +466,197 @@ export default function CryptoPortfolio({
         </div>
       )}
 
-      {/* QUICK-ADD & EDIT MODAL */}
-      {showModal && (
-        <div className={styles.modalOverlay} onClick={e => e.target === e.currentTarget && closeModal()}>
-          <div className={styles.modal}>
+      {/* QUICK PRICE UPDATE MODAL */}
+      {showPriceModal && (
+        <div className={styles.modalOverlay} onClick={closePriceModal}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitle}>⚡ Update Asset Prices ({vsCurrency})</div>
+              <button type="button" className={styles.modalClose} onClick={closePriceModal}>✕</button>
+            </div>
+
+            <div className={styles.quickPriceDesc}>
+              Input the current market price for each token from your exchange app.
+            </div>
+
+            <div className={styles.quickPriceList}>
+              {metrics.holdings.map(h => {
+                const key = h.coinId || h.symbol.toLowerCase()
+                const val = priceForm[key] !== undefined ? priceForm[key] : (h.currentPrice || '')
+                const numVal = parseFloat(val) || 0
+                const computedVal = h.qty * numVal
+                const coinIcon = POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId || c.symbol === h.symbol)?.icon || '🪙'
+
+                return (
+                  <div key={h._id || key} className={styles.quickPriceItem}>
+                    <div className={styles.quickPriceCoin}>
+                      <span className={styles.quickPriceIcon}>{coinIcon}</span>
+                      <div>
+                        <div className={styles.quickPriceSymbol}>{h.symbol}</div>
+                        <div className={styles.quickPriceQty}>{h.qty} {h.symbol}</div>
+                      </div>
+                    </div>
+
+                    <div className={styles.quickPriceInputWrap}>
+                      <div className={styles.inputPrefixWrap}>
+                        <span className={styles.inputPrefix}>{s}</span>
+                        <input
+                          type="number"
+                          step="any"
+                          className={styles.quickInput}
+                          value={val}
+                          onChange={e => handlePriceInputChange(key, e.target.value)}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className={styles.quickItemTotal}>
+                        Total: {formatCryptoValue(computedVal, s, 2)}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className={styles.quickModalFooter}>
+              <div className={styles.quickTotalPreview}>
+                <span>Updated Portfolio Total:</span>
+                <strong>{formatCryptoValue(modalLiveTotal, s, 2)}</strong>
+              </div>
+              <div className={styles.modalActions}>
+                <button type="button" className={styles.btnSecondary} onClick={closePriceModal}>Cancel</button>
+                <button type="button" className={styles.btnPrimary} onClick={saveQuickPrices}>Save & Update Portfolio</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADD / EDIT HOLDING MODAL */}
+      {showHoldingModal && (
+        <div className={styles.modalOverlay} onClick={closeHoldingModal}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitle}>
                 {editHolding ? `Edit ${editHolding.symbol}` : 'Add Crypto Holding'}
               </div>
-              <button type="button" className={styles.modalClose} onClick={closeModal} aria-label="Close modal">
-                ✕
-              </button>
+              <button type="button" className={styles.modalClose} onClick={closeHoldingModal}>✕</button>
             </div>
 
-            <div className={styles.modalBody}>
-              {/* Quick Pick Chips */}
-              {!editHolding && (
-                <div className={styles.formGroup}>
-                  <label className={styles.chipsLabel}>Popular Cryptos</label>
-                  <div className={styles.quickChips}>
-                    {POPULAR_CRYPTO_COINS.slice(0, 8).map(c => {
-                      const selected = form.coinId === c.id
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          className={`${styles.chip} ${selected ? styles.chipSelected : ''}`}
-                          onClick={() => selectCoin(c)}
-                        >
-                          <span>{c.icon}</span>
-                          <span>{c.symbol}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Search Altcoins */}
-              {!editHolding && (
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Or Search Any Coin</label>
-                  <input
-                    type="text"
-                    className={styles.input}
-                    placeholder="Search Bitcoin, Solana, XRP..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                  />
-                  {searchQuery.trim() && (
-                    <div className={styles.quickChips} style={{ marginTop: 6 }}>
-                      {searchResults.slice(0, 6).map(c => (
-                        <button
-                          key={c.id}
-                          type="button"
-                          className={`${styles.chip} ${form.coinId === c.id ? styles.chipSelected : ''}`}
-                          onClick={() => selectCoin(c)}
-                        >
-                          <span>{c.icon || '🪙'}</span>
-                          <span>{c.symbol}</span>
-                          <span style={{ opacity: 0.7, fontSize: 11 }}>({c.name})</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Selected Coin Banner */}
+            {/* COIN SELECTOR */}
+            {!editHolding && (
               <div className={styles.formGroup}>
-                <div className={styles.inputHelper}>
-                  Selected: <strong>{form.name} ({form.symbol})</strong> · Live Quote:{' '}
-                  <strong>
-                    {fmt(livePrices[form.coinId]?.[vsCurrency.toLowerCase()] || 0, s)}
-                  </strong>
-                </div>
-              </div>
-
-              {/* Quantity & Buy Price */}
-              <div className={styles.inputRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Quantity Owned *</label>
-                  <input
-                    type="number"
-                    step="any"
-                    className={styles.input}
-                    placeholder="e.g. 0.05"
-                    value={form.quantity}
-                    onChange={e => setForm(p => ({ ...p, quantity: e.target.value }))}
-                    autoFocus={!editHolding}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Buy Price per Coin ({s})</label>
-                  <input
-                    type="number"
-                    step="any"
-                    className={styles.input}
-                    placeholder={`e.g. ${livePrices[form.coinId]?.[vsCurrency.toLowerCase()] || 3800000}`}
-                    value={form.buyPrice}
-                    onChange={e => setForm(p => ({ ...p, buyPrice: e.target.value }))}
-                  />
-                  <span className={styles.inputHelper}>Auto-filled with market price</span>
-                </div>
-              </div>
-
-              {/* Wallet & Storage */}
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Wallet / Exchange</label>
-                <select
-                  className={styles.select}
-                  value={form.wallet}
-                  onChange={e => setForm(p => ({ ...p, wallet: e.target.value }))}
-                >
-                  {CRYPTO_WALLETS.map(w => (
-                    <option key={w} value={w}>
-                      {w}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Notes */}
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Notes (Optional)</label>
+                <label className={styles.label}>Select Cryptocurrency</label>
                 <input
                   type="text"
                   className={styles.input}
-                  placeholder="e.g. DCA on Binance, cold storage"
-                  value={form.notes}
-                  onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
+                  placeholder="Search BTC, ETH, LINK, HYPE, TAO, ZEC, UNI..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                 />
+
+                <div className={styles.coinPillsWrap}>
+                  {filteredCoins.slice(0, 12).map(c => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className={`${styles.coinPill} ${holdingForm.coinId === c.id ? styles.coinPillActive : ''}`}
+                      onClick={() => selectCoin(c)}
+                    >
+                      <span>{c.icon}</span>
+                      <span>{c.symbol}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* QUANTITY */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Quantity Held</label>
+              <input
+                type="number"
+                step="any"
+                className={styles.input}
+                placeholder="e.g. 1.0715"
+                value={holdingForm.quantity}
+                onChange={e => setHoldingForm(prev => ({ ...prev, quantity: e.target.value }))}
+                required
+              />
+            </div>
+
+            {/* BUY PRICE & CURRENCY */}
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Buy Price per Coin</label>
+                <input
+                  type="number"
+                  step="any"
+                  className={styles.input}
+                  placeholder="e.g. 2400.00"
+                  value={holdingForm.buyPrice}
+                  onChange={e => setHoldingForm(prev => ({ ...prev, buyPrice: e.target.value }))}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Buy Currency</label>
+                <select
+                  className={styles.select}
+                  value={holdingForm.buyCurrency}
+                  onChange={e => setHoldingForm(prev => ({ ...prev, buyCurrency: e.target.value }))}
+                >
+                  <option value="USD">$ USD</option>
+                  <option value="PHP">₱ PHP</option>
+                </select>
               </div>
             </div>
 
-            <div className={styles.modalFooter}>
+            {/* CURRENT ASSET PRICE */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Current Asset Price ({holdingForm.buyCurrency})</label>
+              <input
+                type="number"
+                step="any"
+                className={styles.input}
+                placeholder="e.g. 2513.45"
+                value={holdingForm.currentPrice}
+                onChange={e => setHoldingForm(prev => ({ ...prev, currentPrice: e.target.value }))}
+              />
+            </div>
+
+            {/* WALLET */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Wallet / Exchange</label>
+              <select
+                className={styles.select}
+                value={holdingForm.wallet}
+                onChange={e => setHoldingForm(prev => ({ ...prev, wallet: e.target.value }))}
+              >
+                {CRYPTO_WALLETS.map(w => (
+                  <option key={w} value={w}>{w}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* MODAL ACTIONS */}
+            <div className={styles.modalActions}>
               {editHolding && (
                 <button
                   type="button"
-                  className={styles.deleteBtn}
-                  onClick={() => handleDelete(editHolding)}
+                  className={styles.btnDanger}
+                  onClick={handleDeleteHolding}
                 >
-                  Delete Holding
+                  Delete
                 </button>
               )}
-              <div className={styles.footerRight}>
-                <button type="button" className={styles.cancelBtn} onClick={closeModal}>
-                  Cancel
-                </button>
-                <button type="button" className={styles.saveBtn} onClick={handleSave}>
-                  {editHolding ? 'Save Changes' : 'Add to Portfolio'}
-                </button>
-              </div>
+              <div style={{ flex: 1 }} />
+              <button type="button" className={styles.btnSecondary} onClick={closeHoldingModal}>
+                Cancel
+              </button>
+              <button type="button" className={styles.btnPrimary} onClick={handleSaveHolding}>
+                {editHolding ? 'Save Changes' : 'Add Holding'}
+              </button>
             </div>
           </div>
         </div>

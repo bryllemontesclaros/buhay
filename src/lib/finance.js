@@ -221,7 +221,7 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
   let forexRate = 61.718
   if (!prices && typeof window !== 'undefined') {
     try {
-      const raw = localStorage.getItem('buhay_crypto_prices_v6')
+      const raw = localStorage.getItem('buhay_crypto_prices_v7') || localStorage.getItem('buhay_crypto_prices_v6')
       if (raw) {
         const parsed = JSON.parse(raw)
         prices = parsed?.data || null
