@@ -2465,21 +2465,27 @@
 
 .changelogModal {
   background: var(--surface);
-  border: 1px solid var(--glass-border);
-  /* box-shadow flattened */
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
   border-radius: 24px;
-  padding: 32px 24px 24px;
+  padding: 28px 24px 24px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 .changelogIconWrap {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   color: var(--accent);
   display: flex;
   align-items: center;
@@ -2487,40 +2493,41 @@
 }
 
 .changelogSparkle {
-  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 60%, transparent));
+  color: var(--accent);
 }
 
-:global([data-theme="light"]) .changelogSparkle,
-:global(.force-light-theme) .changelogSparkle,
-
-:global([data-theme="light"]) .changelogBadge,
-:global(.force-light-theme) .changelogBadge,
-
 .changelogBadge {
-  /* background: linear-gradient(135deg, var(--accent), var(--purple)); flat */
-  color: white;
-  padding: 6px 12px;
-  border-radius: 99px;
-  font-size: var(--type-overline);
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface2));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .changelogTitle {
   font-family: var(--font-display);
-  font-size: var(--type-heading-md);
-  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 10px;
   color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .changelogContent {
   font-family: var(--font-body);
-  font-size: var(--type-body-md);
+  font-size: 14px;
   color: var(--text2);
   line-height: 1.5;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .changelogActions {
