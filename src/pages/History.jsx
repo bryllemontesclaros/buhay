@@ -20,6 +20,7 @@ import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { formatRecurringDateLabel, isRecurringRecordedOffDueDate } from '../lib/recurrence'
 import { displayValue, fmt, getMonthKey, maskMoney, RECUR_OPTIONS, today, validateAmount } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
+import SwipeableCard from '../components/SwipeableCard'
 import styles from './Page.module.css'
 import hStyles from './History.module.css'
 
@@ -481,63 +482,77 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
                   : hStyles.statusUnpaid
 
                 return (
-                  <div key={tx._id + index} className={`${hStyles.txRow} ${isTransactionPaid(tx) ? '' : hStyles.txRowUnpaid}`}>
-                  <div className={hStyles.txIcon} style={{ background: typeBg[tx.type], color: typeColor[tx.type] }}>
-                    {typeSign[tx.type]}
-                  </div>
-                  <div className={hStyles.txInfo}>
-                    <div className={hStyles.txDesc}>{tx.desc}</div>
-                    <div className={hStyles.txMeta}>
-                      {tx.type === 'transfer' ? (
-                        <span className={hStyles.txCat}>Transfer: {tx.fromAccountName} → {tx.toAccountName}</span>
-                      ) : (
-                        <span className={hStyles.txCat}>{[tx.cat, tx.subcat].filter(Boolean).join(' · ')}</span>
-                      )}
-                      <span className={`${hStyles.statusBadge} ${statusClassName}`}>
-                        {lifecycle.statusLabel}
-                      </span>
-                      {lifecycle.balanceImpactLabel && (
-                        <span className={`${hStyles.statusBadge} ${hStyles.impactBadge} ${impactClassName}`}>
-                          {lifecycle.balanceImpactLabel}
-                        </span>
-                      )}
-                      {tx.accountId && <span className={hStyles.txAccount}>{accountLookup[tx.accountId]?.name || 'Missing account'}</span>}
-                      {tx.recur && (
-                        <span className={hStyles.txRecur}>{RECUR_OPTIONS.find(option => option.value === tx.recur)?.label || tx.recur}</span>
-                      )}
-                      {recurrenceCycleLabel && (
-                        <span className={`${hStyles.statusBadge} ${hStyles.recurringCycleBadge}`}>
-                          Cycle {recurrenceCycleLabel}
-                        </span>
-                      )}
-                      {recordedEarly && (
-                        <span className={`${hStyles.statusBadge} ${hStyles.recurringEarlyBadge}`}>
-                          Recorded off due date
-                        </span>
-                      )}
+                  <SwipeableCard
+                    key={tx._id + index}
+                    onSwipeRight={tx.type !== 'transfer' ? () => handleTogglePaymentStatus(tx) : () => openEdit(tx)}
+                    rightLabel={tx.type !== 'transfer' ? (isTransactionPaid(tx) ? 'Unpaid' : 'Paid') : 'Edit'}
+                    rightIcon={tx.type !== 'transfer' ? (isTransactionPaid(tx) ? '↺' : '✓') : '✎'}
+                    rightTone={isTransactionPaid(tx) ? 'amber' : 'success'}
+                    onSwipeLeft={() => handleDelete(tx)}
+                    leftLabel="Delete"
+                    leftIcon="✕"
+                    leftTone="danger"
+                    onDoubleTap={tx.type !== 'transfer' ? () => openEdit(tx) : null}
+                    style={{ borderRadius: 0 }}
+                  >
+                    <div className={`${hStyles.txRow} ${isTransactionPaid(tx) ? '' : hStyles.txRowUnpaid}`}>
+                      <div className={hStyles.txIcon} style={{ background: typeBg[tx.type], color: typeColor[tx.type] }}>
+                        {typeSign[tx.type]}
+                      </div>
+                      <div className={hStyles.txInfo}>
+                        <div className={hStyles.txDesc}>{tx.desc}</div>
+                        <div className={hStyles.txMeta}>
+                          {tx.type === 'transfer' ? (
+                            <span className={hStyles.txCat}>Transfer: {tx.fromAccountName} → {tx.toAccountName}</span>
+                          ) : (
+                            <span className={hStyles.txCat}>{[tx.cat, tx.subcat].filter(Boolean).join(' · ')}</span>
+                          )}
+                          <span className={`${hStyles.statusBadge} ${statusClassName}`}>
+                            {lifecycle.statusLabel}
+                          </span>
+                          {lifecycle.balanceImpactLabel && (
+                            <span className={`${hStyles.statusBadge} ${hStyles.impactBadge} ${impactClassName}`}>
+                              {lifecycle.balanceImpactLabel}
+                            </span>
+                          )}
+                          {tx.accountId && <span className={hStyles.txAccount}>{accountLookup[tx.accountId]?.name || 'Missing account'}</span>}
+                          {tx.recur && (
+                            <span className={hStyles.txRecur}>{RECUR_OPTIONS.find(option => option.value === tx.recur)?.label || tx.recur}</span>
+                          )}
+                          {recurrenceCycleLabel && (
+                            <span className={`${hStyles.statusBadge} ${hStyles.recurringCycleBadge}`}>
+                              Cycle {recurrenceCycleLabel}
+                            </span>
+                          )}
+                          {recordedEarly && (
+                            <span className={`${hStyles.statusBadge} ${hStyles.recurringEarlyBadge}`}>
+                              Recorded off due date
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className={hStyles.txRight}>
+                        <div className={hStyles.txAmount} style={{ color: typeColor[tx.type] }}>
+                          {displayValue(privacyMode, `${typeSign[tx.type]}${fmt(tx.amount, s)}`, `${typeSign[tx.type]}${maskMoney(s)}`)}
+                        </div>
+                        <div className={hStyles.txActions}>
+                          {tx.type !== 'transfer' && (
+                            <>
+                              <button
+                                type="button"
+                                className={`${hStyles.statusBtn} ${isTransactionPaid(tx) ? hStyles.statusBtnPaid : hStyles.statusBtnUnpaid}`}
+                                onClick={() => handleTogglePaymentStatus(tx)}
+                              >
+                                {isTransactionPaid(tx) ? 'Paid' : 'Unpaid'}
+                              </button>
+                              <button type="button" className={hStyles.editBtn} onClick={() => openEdit(tx)}>Edit</button>
+                            </>
+                          )}
+                          <button type="button" className={hStyles.delBtn} onClick={() => handleDelete(tx)}>Delete</button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className={hStyles.txRight}>
-                    <div className={hStyles.txAmount} style={{ color: typeColor[tx.type] }}>
-                      {displayValue(privacyMode, `${typeSign[tx.type]}${fmt(tx.amount, s)}`, `${typeSign[tx.type]}${maskMoney(s)}`)}
-                    </div>
-                    <div className={hStyles.txActions}>
-                      {tx.type !== 'transfer' && (
-                        <>
-                          <button
-                            type="button"
-                            className={`${hStyles.statusBtn} ${isTransactionPaid(tx) ? hStyles.statusBtnPaid : hStyles.statusBtnUnpaid}`}
-                            onClick={() => handleTogglePaymentStatus(tx)}
-                          >
-                            {isTransactionPaid(tx) ? 'Paid' : 'Unpaid'}
-                          </button>
-                          <button type="button" className={hStyles.editBtn} onClick={() => openEdit(tx)}>Edit</button>
-                        </>
-                      )}
-                      <button type="button" className={hStyles.delBtn} onClick={() => handleDelete(tx)}>Delete</button>
-                    </div>
-                  </div>
-                </div>
+                  </SwipeableCard>
                 )
               })}
             </div>

@@ -35,6 +35,7 @@ import { consumeStartSpaceIntent } from '../lib/startIntent'
 import { useTheme } from '../lib/theme.jsx'
 import NotificationBell from '../components/NotificationBell'
 import GuidedTour from '../components/GuidedTour'
+import { triggerHaptic, playHapticTick } from '../lib/gestures'
 import styles from './AppShell.module.css'
 
 function safeLazy(importFn) {
@@ -921,6 +922,20 @@ export default function AppShell({ user }) {
     })
   }
 
+  const topBarTapRef = useRef(0)
+  function handleTopBarTap(e) {
+    if (e.target.closest('button, a, input, select')) return
+    const now = Date.now()
+    if (now - topBarTapRef.current < 300 && now - topBarTapRef.current > 40) {
+      topBarTapRef.current = 0
+      triggerHaptic('medium')
+      playHapticTick(1050, 0.04)
+      togglePrivacy()
+    } else {
+      topBarTapRef.current = now
+    }
+  }
+
   const netPosition = useMemo(() => {
     const accounts = Array.isArray(data?.accounts) ? data.accounts : []
     return accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
@@ -1788,7 +1803,7 @@ export default function AppShell({ user }) {
         </div>
       </aside>
       <div className={`${styles.mainWrap} ${isCalendarPage ? styles.mainWrapCalendar : ''} ${chromeMode.compact ? styles.mainWrapScrolled : ''} ${chromeMode.hidden ? styles.mainWrapChromeHidden : ''}`}>
-        <header className={styles.topBar}>
+        <header className={styles.topBar} onClick={handleTopBarTap}>
           <div className={styles.topBarLeft}>
             <div className={styles.mobileLogoOnly}>
               <BrandLogo to="/app" />

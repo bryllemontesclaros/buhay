@@ -7,6 +7,7 @@ import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, today, validateAmount } from '../lib/utils'
 import styles from './Page.module.css'
 import accStyles from './Accounts.module.css'
+import SwipeableCard from '../components/SwipeableCard'
 
 const ACCOUNT_TYPES = ['Bank', 'E-wallet', 'Cash', 'Investment', 'Other']
 const ACCOUNT_ICONS = { Bank: '🏦', 'E-wallet': '📱', Cash: '💵', Investment: '📈', Other: '🏷' }
@@ -413,77 +414,89 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       ) : (
         <div className={accStyles.accountsGrid}>
           {accountsWithMeta.map(account => (
-            <div
+            <SwipeableCard
               key={account._id}
-              className={accStyles.accountCard}
-              style={{ '--account-tone': account.tone }}
+              onSwipeRight={() => accounts.length >= 2 ? openQuickTransfer(account) : openQuickAdjust(account)}
+              rightLabel={accounts.length >= 2 ? 'Transfer' : 'Adjust'}
+              rightIcon={accounts.length >= 2 ? '⇄' : '⚡'}
+              rightTone="success"
+              onSwipeLeft={() => openEdit(account)}
+              leftLabel="Edit"
+              leftIcon="✎"
+              leftTone="amber"
+              onDoubleTap={() => openQuickAdjust(account)}
             >
-              <div className={accStyles.accountTop}>
-                <div className={accStyles.accountLeading}>
-                  <div className={accStyles.accountIcon} style={{ background: `color-mix(in srgb, ${account.tone} 18%, var(--surface2))` }}>
-                    {ACCOUNT_ICONS[account.type] || '🏷'}
-                  </div>
-                  <div className={accStyles.accountInfo}>
-                    <div className={accStyles.accountName}>{account.name}</div>
-                    <div className={accStyles.accountType}>
-                      <span className={accStyles.typeDot} style={{ background: account.tone }} />
-                      {account.type}
-                      {account.share > 0 && (
-                        <span className={accStyles.sharePill}>{account.share}% of cash</span>
-                      )}
+              <div
+                className={accStyles.accountCard}
+                style={{ '--account-tone': account.tone }}
+              >
+                <div className={accStyles.accountTop}>
+                  <div className={accStyles.accountLeading}>
+                    <div className={accStyles.accountIcon} style={{ background: `color-mix(in srgb, ${account.tone} 18%, var(--surface2))` }}>
+                      {ACCOUNT_ICONS[account.type] || '🏷'}
+                    </div>
+                    <div className={accStyles.accountInfo}>
+                      <div className={accStyles.accountName}>{account.name}</div>
+                      <div className={accStyles.accountType}>
+                        <span className={accStyles.typeDot} style={{ background: account.tone }} />
+                        {account.type}
+                        {account.share > 0 && (
+                          <span className={accStyles.sharePill}>{account.share}% of cash</span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  <div className={accStyles.accountActions}>
+                    <button
+                      type="button"
+                      className={accStyles.cardActionBtn}
+                      onClick={() => openEdit(account)}
+                      title="Edit account details"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      type="button"
+                      className={`${accStyles.cardActionBtn} ${accStyles.cardActionBtnDanger}`}
+                      onClick={() => handleDel(account._id, account.name)}
+                      title="Delete account"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-                <div className={accStyles.accountActions}>
+
+                <div className={accStyles.accountBalanceBox}>
+                  <div className={accStyles.accountBalanceLabel}>Available Balance</div>
+                  <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
+                    {money(account.signedBalance)}
+                  </div>
+                </div>
+
+                {account.notes && <div className={accStyles.accountNotes}>“{account.notes}”</div>}
+
+                {/* CARD BOTTOM QUICK ACTIONS */}
+                <div className={accStyles.cardFooterActions}>
                   <button
                     type="button"
-                    className={accStyles.cardActionBtn}
-                    onClick={() => openEdit(account)}
-                    title="Edit account details"
+                    className={accStyles.btnCardAction}
+                    onClick={() => openQuickAdjust(account)}
+                    title="Reconcile / adjust current balance"
                   >
-                    ✏️
+                    ⚡ Adjust Balance
                   </button>
                   <button
                     type="button"
-                    className={`${accStyles.cardActionBtn} ${accStyles.cardActionBtnDanger}`}
-                    onClick={() => handleDel(account._id, account.name)}
-                    title="Delete account"
+                    className={accStyles.btnCardActionSecondary}
+                    onClick={() => openQuickTransfer(account)}
+                    disabled={accounts.length < 2}
+                    title="Transfer money from this account"
                   >
-                    🗑️
+                    ⇄ Transfer
                   </button>
                 </div>
               </div>
-
-              <div className={accStyles.accountBalanceBox}>
-                <div className={accStyles.accountBalanceLabel}>Available Balance</div>
-                <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
-                  {money(account.signedBalance)}
-                </div>
-              </div>
-
-              {account.notes && <div className={accStyles.accountNotes}>“{account.notes}”</div>}
-
-              {/* CARD BOTTOM QUICK ACTIONS */}
-              <div className={accStyles.cardFooterActions}>
-                <button
-                  type="button"
-                  className={accStyles.btnCardAction}
-                  onClick={() => openQuickAdjust(account)}
-                  title="Reconcile / adjust current balance"
-                >
-                  ⚡ Adjust Balance
-                </button>
-                <button
-                  type="button"
-                  className={accStyles.btnCardActionSecondary}
-                  onClick={() => openQuickTransfer(account)}
-                  disabled={accounts.length < 2}
-                  title="Transfer money from this account"
-                >
-                  ⇄ Transfer
-                </button>
-              </div>
-            </div>
+            </SwipeableCard>
           ))}
         </div>
       )}
