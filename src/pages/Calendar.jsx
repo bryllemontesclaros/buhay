@@ -475,6 +475,81 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   }
 
+  const lowestBalanceDip = useMemo(() => {
+    let minVal = Infinity
+    let minDate = ''
+    let peakVal = -Infinity
+    let peakDate = ''
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ds = dateStr(d)
+      const forecast = forecastMap[ds]
+      const baseValue = forecast ? forecast.runningBalance : 0
+      const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
+      const displayValue = calendarViewMode === 'netWorth'
+        ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
+        : baseValue
+
+      if (displayValue < minVal) {
+        minVal = displayValue
+        minDate = ds
+      }
+      if (displayValue > peakVal) {
+        peakVal = displayValue
+        peakDate = ds
+      }
+    }
+    return {
+      minVal: minVal === Infinity ? 0 : minVal,
+      minDate,
+      peakVal: peakVal === -Infinity ? 0 : peakVal,
+      peakDate,
+    }
+  }, [daysInMonth, year, month, forecastMap, accountList, data?.debts, incomeList, expenseList, calendarViewMode, totalSavings, totalCryptoAssets])
+
+  const upcomingMonthDeadlines = useMemo(() => {
+    const list = []
+    
+    // Unpaid bills for this month
+    Object.entries(unpaidBillsByDateKey).forEach(([dateKey, bills]) => {
+      bills.forEach(bill => {
+        list.push({
+          id: `bill-${bill._id}-${dateKey}`,
+          type: 'bill',
+          name: bill.name,
+          cat: bill.cat || 'Bills',
+          amount: bill.amount,
+          date: dateKey,
+          billId: bill._id,
+        })
+      })
+    })
+
+    // Due debts for this month
+    Object.entries(dueDebtsByDateKey).forEach(([dateKey, debts]) => {
+      debts.forEach(debt => {
+        list.push({
+          id: `debt-${debt._id}-${dateKey}`,
+          type: 'debt',
+          name: debt.name,
+          cat: debt.type || 'Debt',
+          amount: debt.balance,
+          date: dateKey,
+          debtId: debt._id,
+        })
+      })
+    })
+
+    return list.sort((a, b) => a.date.localeCompare(b.date))
+  }, [unpaidBillsByDateKey, dueDebtsByDateKey])
+
+  function jumpToToday() {
+    playTick()
+    setYear(currentYear)
+    setMonth(currentMonth)
+    setSelected(todayStr)
+  }
+
   function closeSelectedDay() {
     playTick()
     if (dayBalanceSaving || recurringDateSaving) return
@@ -1437,6 +1512,21 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return () => window.removeEventListener('keydown', handleKeyDownGlobal)
   }, [selected, showModal, recurringDateTarget, recurringDateSaving, editingDayBalance, dayBalanceSaving, defaultAccountId, formSaving])
 
+  useEffect(() => {
+    const handleGlobalKey = event => {
+      const tag = document.activeElement?.tagName?.toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return
+      if (showModal || recurringDateTarget || editingDayBalance) return
+
+      if (event.key === 't' || event.key === 'T') {
+        event.preventDefault()
+        jumpToToday()
+      }
+    }
+    window.addEventListener('keydown', handleGlobalKey)
+    return () => window.removeEventListener('keydown', handleGlobalKey)
+  }, [currentYear, currentMonth, todayStr, showModal, recurringDateTarget, editingDayBalance])
+
 
   const renderedDayPanel = (
     <section
@@ -1595,10 +1685,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
           <div className={calStyles.dayPanelBody}>
 
-            {selected === todayStr && (unpaidBillsByDateKey[selected] || []).length > 0 && (
+            {(unpaidBillsByDateKey[selected] || []).length > 0 && (
               <div className={calStyles.daySection}>
                 <div className={calStyles.daySectionHeader}>
-                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Unpaid Bills Due Today</div>
+                  <div className={calStyles.daySectionLabel} style={{ color: 'var(--amber)' }}>Unpaid Bills Due</div>
                   <div className={calStyles.daySectionCount}>{(unpaidBillsByDateKey[selected] || []).length}</div>
                 </div>
                 {(unpaidBillsByDateKey[selected] || []).map((bill, index) => (
@@ -1913,51 +2003,109 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           </div>
         </>
       ) : (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          height: '100%',
-          minHeight: '340px',
-          padding: '24px 20px',
-          gap: '16px'
-        }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
-              Monthly Summary
-            </div>
-            <h3 id="calendar-day-panel-title" style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)' }}>{label}</h3>
-            <p style={{ fontSize: '12px', color: 'var(--text3)', marginTop: '4px' }}>Overview of recorded cashflow for this month.</p>
+        <div className={calStyles.outlookContainer}>
+          <div className={calStyles.outlookHeader}>
+            <div className={calStyles.outlookKicker}>Month Outlook</div>
+            <h3 id="calendar-day-panel-title" className={calStyles.outlookTitle}>{label}</h3>
+            <p className={calStyles.outlookSubtitle}>Predictive financial radar & cashflow overview.</p>
           </div>
 
-          <div style={{ display: 'grid', gap: '10px', marginTop: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Total Incomes</span>
-              <strong style={{ fontSize: '14px', color: '#10b981', fontFamily: 'var(--font-mono)' }}>+{money(monthSummaryTotals.totalInc)}</strong>
+          <div className={calStyles.outlookRadarGrid}>
+            <div className={calStyles.outlookRadarCard}>
+              <span className={calStyles.outlookRadarLabel}>Lowest Dip</span>
+              <strong className={calStyles.outlookRadarValue} style={{ color: lowestBalanceDip.minVal < 0 ? 'var(--red)' : lowestBalanceDip.minVal < 2000 ? 'var(--amber)' : 'var(--text)' }}>
+                {balanceMoney(lowestBalanceDip.minVal)}
+              </strong>
+              <span className={calStyles.outlookRadarSub}>
+                {lowestBalanceDip.minDate ? formatBalanceDate(lowestBalanceDip.minDate) : '—'}
+              </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+
+            <div className={calStyles.outlookRadarCard}>
+              <span className={calStyles.outlookRadarLabel}>Peak Balance</span>
+              <strong className={calStyles.outlookRadarValue} style={{ color: 'var(--accent)' }}>
+                {balanceMoney(lowestBalanceDip.peakVal)}
+              </strong>
+              <span className={calStyles.outlookRadarSub}>
+                {lowestBalanceDip.peakDate ? formatBalanceDate(lowestBalanceDip.peakDate) : '—'}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gap: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Total Income</span>
+              <strong style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>+{money(monthSummaryTotals.totalInc)}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
               <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Total Expenses</span>
-              <strong style={{ fontSize: '14px', color: '#ef4444', fontFamily: 'var(--font-mono)' }}>−{money(monthSummaryTotals.totalExp)}</strong>
+              <strong style={{ fontSize: '13px', color: 'var(--red)', fontFamily: 'var(--font-mono)' }}>−{money(monthSummaryTotals.totalExp)}</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--surface2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
               <span style={{ fontSize: '12px', color: 'var(--text2)' }}>Net Cashflow</span>
-              <strong style={{ fontSize: '14px', color: monthSummaryTotals.net >= 0 ? '#10b981' : '#ef4444', fontFamily: 'var(--font-mono)' }}>
+              <strong style={{ fontSize: '13px', color: monthSummaryTotals.net >= 0 ? 'var(--accent)' : 'var(--red)', fontFamily: 'var(--font-mono)' }}>
                 {monthSummaryTotals.net >= 0 ? '+' : ''}{money(monthSummaryTotals.net)}
               </strong>
             </div>
           </div>
 
+          {upcomingMonthDeadlines.length > 0 && (
+            <div className={calStyles.outlookDeadlinesSection}>
+              <div className={calStyles.outlookDeadlinesHeader}>
+                <span className={calStyles.outlookDeadlinesLabel}>Upcoming Deadlines</span>
+                <span className={calStyles.outlookDeadlinesCount}>{upcomingMonthDeadlines.length}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {upcomingMonthDeadlines.slice(0, 4).map(item => (
+                  <div key={item.id} className={calStyles.outlookDeadlineCard}>
+                    <div className={calStyles.outlookDeadlineLeft}>
+                      <div className={calStyles.outlookDeadlineName}>{item.name}</div>
+                      <div className={calStyles.outlookDeadlineMeta}>
+                        <span>{formatBalanceDate(item.date)}</span>
+                        <span>·</span>
+                        <span>{item.cat}</span>
+                      </div>
+                    </div>
+                    <div className={calStyles.outlookDeadlineRight}>
+                      <span className={calStyles.outlookDeadlineAmount}>−{fmt(item.amount, s)}</span>
+                      {item.type === 'bill' && onPayBill ? (
+                        <button
+                          type="button"
+                          className={calStyles.outlookPayBtn}
+                          onClick={() => onPayBill(item.billId)}
+                          aria-label={`Pay ${item.name} now`}
+                        >
+                          Pay
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className={calStyles.outlookPayBtn}
+                          style={{ background: 'var(--surface3)', color: 'var(--text)' }}
+                          onClick={() => {
+                            playTick()
+                            setSelected(item.date)
+                          }}
+                          aria-label={`View date ${item.date}`}
+                        >
+                          View
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Button
             type="button"
             variant="primary"
             fullWidth
-            onClick={() => {
-              playTick()
-              setSelected(todayStr)
-            }}
-            style={{ marginTop: '12px' }}
+            onClick={jumpToToday}
+            style={{ marginTop: 'auto' }}
           >
-            📅 Select Today ({formatDisplayDate(todayStr)})
+            📅 Select Today ({formatDisplayDate(todayStr)}) <kbd style={{ marginLeft: 6, opacity: 0.6, fontSize: 10, padding: '1px 5px', borderRadius: 4, background: 'rgba(0,0,0,0.2)' }}>T</kbd>
           </Button>
         </div>
       )}
@@ -1999,9 +2147,19 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               />
             </label>
             <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">›</button>
+            <button type="button" className={calStyles.todayNavBtn} onClick={jumpToToday} title="Jump to today (Shortcut: T)">
+              Today
+            </button>
           </div>
 
           <div className={calStyles.headerRightControls}>
+            <div className={calStyles.monthLowestChip} title={`Lowest forecasted balance this month (${formatBalanceDate(lowestBalanceDip.minDate)})`}>
+              <span className={calStyles.monthLowestLabel}>Lowest</span>
+              <strong className={lowestBalanceDip.minVal < 0 ? calStyles.monthLowestNegative : lowestBalanceDip.minVal < 2000 ? calStyles.monthLowestTight : calStyles.monthLowestNormal}>
+                {balanceMoney(lowestBalanceDip.minVal)}
+              </strong>
+            </div>
+
             <div className={calStyles.monthNetChip} title="Net Cashflow for this month">
               <span className={calStyles.monthNetLabel}>Net</span>
               <strong className={monthSummaryTotals.net >= 0 ? calStyles.monthNetPositive : calStyles.monthNetNegative}>
@@ -2056,14 +2214,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts) : baseValue
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
-              const dayVol = dailyVolumes.map[ds] || { income: 0, expense: 0 }
               const dayDueDebts = dueDebtsByDateKey[ds] || []
               const dayStatementDebts = statementDebtsByDateKey[ds] || []
+              const hasUnpaidBill = (unpaidBillsByDateKey[ds] || []).length > 0
+              const isDangerDay = displayValue < 0
+              const isLowestDip = ds === lowestBalanceDip.minDate && !isDangerDay
               return (
                 <button
                   type="button"
                   key={day}
-                  className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''}`}
+                  className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''} ${isDangerDay ? calStyles.cellDanger : ''} ${isLowestDip ? calStyles.cellLowestDip : ''}`}
                   onClick={() => {
                     playTick()
                     setSelected(ds)
@@ -2072,6 +2232,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   aria-label={dayAriaLabel}
                 >
                   <div className={calStyles.cellAlerts}>
+                    {hasUnpaidBill && (
+                      <div className={calStyles.cellDueBadge} title="Unpaid bill due" />
+                    )}
                     {dayDueDebts.map(debt => (
                       <div 
                         key={debt._id} 

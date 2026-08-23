@@ -2323,7 +2323,6 @@
   padding: 3px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  margin-top: 6px;
 }
 .viewToggleBtn {
   flex: 1;
@@ -2345,3 +2344,235 @@
   background: var(--surface);
   color: var(--text);
 }
+
+/* Frictionless Calendar Enhancements */
+.todayNavBtn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.todayNavBtn:hover {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  transform: translateY(-1px);
+}
+
+.monthLowestChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+.monthLowestLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+}
+.monthLowestNegative {
+  color: var(--red, #ff453a);
+  font-family: var(--font-mono);
+}
+.monthLowestTight {
+  color: var(--amber, #ffb347);
+  font-family: var(--font-mono);
+}
+.monthLowestNormal {
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+/* Cell danger and lowest dip highlights */
+.cellDanger {
+  background: color-mix(in srgb, var(--red, #ff453a) 8%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--red, #ff453a) 36%, var(--border)) !important;
+}
+.cellDanger .cellBalance {
+  color: var(--red, #ff453a) !important;
+  font-weight: 700 !important;
+}
+
+.cellLowestDip {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--amber, #ffb347) 40%, transparent);
+}
+
+.cellDueBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--amber, #ffb347);
+  box-shadow: 0 0 6px var(--amber, #ffb347);
+}
+
+/* Upcoming Outlook Container */
+.outlookContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 18px;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.outlookHeader {
+  text-align: left;
+}
+.outlookKicker {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 2px;
+}
+.outlookTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.outlookSubtitle {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.outlookRadarGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.outlookRadarCard {
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.outlookRadarLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+}
+.outlookRadarValue {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+.outlookRadarSub {
+  font-size: 10px;
+  color: var(--text2);
+}
+
+.outlookDeadlinesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.outlookDeadlinesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.outlookDeadlinesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--amber, #ffb347);
+  letter-spacing: 0.06em;
+}
+.outlookDeadlinesCount {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--amber, #ffb347) 14%, transparent);
+  color: var(--amber, #ffb347);
+}
+
+.outlookDeadlineCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: background 0.16s ease, border-color 0.16s ease;
+  gap: 8px;
+}
+.outlookDeadlineCard:hover {
+  background: color-mix(in srgb, var(--surface2) 80%, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+.outlookDeadlineLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.outlookDeadlineName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.outlookDeadlineMeta {
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.outlookDeadlineRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.outlookDeadlineAmount {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--amber, #ffb347);
+}
+.outlookPayBtn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--amber, #ffb347);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.outlookPayBtn:hover {
+  opacity: 0.92;
+  transform: scale(1.04);
+}
+
