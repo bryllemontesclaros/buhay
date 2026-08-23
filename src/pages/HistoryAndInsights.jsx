@@ -49,27 +49,6 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
         <div className={styles.sub}>Review transaction history ledger records and analyze visual cash flow distributions.</div>
       </div>
 
-      <div className={tStyles.summaryStrip}>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Month Income</div>
-          <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-            {privacyMode ? '••••' : fmt(totalIncome, s)}
-          </div>
-        </div>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Month Expenses</div>
-          <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
-            {privacyMode ? '••••' : fmt(totalExpenses, s)}
-          </div>
-        </div>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Month Net Flow</div>
-          <div className={`${tStyles.summaryValue} ${net >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
-            {privacyMode ? '••••' : fmt(net, s)}
-          </div>
-        </div>
-      </div>
-
       <div className={tStyles.tabsWrap}>
         <div className={tStyles.tabs} role="tablist">
           <button
@@ -93,6 +72,29 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
           </button>
         </div>
       </div>
+
+      {activeTab === 'history' && (
+        <div className={tStyles.summaryStrip}>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Month Income</div>
+            <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
+              {privacyMode ? '••••' : fmt(totalIncome, s)}
+            </div>
+          </div>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Month Expenses</div>
+            <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
+              {privacyMode ? '••••' : fmt(totalExpenses, s)}
+            </div>
+          </div>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Month Net Flow</div>
+            <div className={`${tStyles.summaryValue} ${net >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
+              {privacyMode ? '••••' : fmt(net, s)}
+            </div>
+          </div>
+        </div>
+      )}
 
       {activeTab === 'history' ? (
         <History
