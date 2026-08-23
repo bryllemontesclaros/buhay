@@ -979,6 +979,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
       )}
 
       {(activeCategory === 'all' || activeCategory === 'preferences') && (
+      <>
       <div className={settingsCardClass}>
         <CardHeader
           eyebrow="Alerts"
@@ -1103,9 +1104,11 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           Save profile
         </button>
       </div>
+      </>
       )}
 
       {(activeCategory === 'all' || activeCategory === 'data') && (
+      <>
       <div className={settingsWideCardClass}>
         <CardHeader
           eyebrow="Backup"
@@ -1236,20 +1239,20 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
                   type="date"
                   className={styles.dateFieldNative}
                   value={goalForm.date}
-                  onChange={event => setGoalForm(current => ({ ...current, date: event.target.value }))}
+                  onChange={event => setGoalField('date', event.target.value)}
                 />
               </div>
             </div>
           </div>
-          <div className={settStyles.actionRow}>
-            <button className={`${styles.btnAdd} ${settStyles.inlinePrimary}`} style={{ marginBottom: data.goals.length ? '0.25rem' : 0 }} onClick={handleAddGoal}>Add goal</button>
-          </div>
+          <button className={`${styles.btnAdd} ${settStyles.inlinePrimary}`} onClick={handleAddGoal}>
+            Save goal
+          </button>
         </div>
 
         {data.goals.map(goal => {
           const pct = Math.min(100, Math.round(((goal.current || 0) / (goal.target || 1)) * 100))
           return (
-            <div key={goal._id} className={`${styles.goalCard} ${settStyles.goalItem}`}>
+            <div key={goal._id} className={settStyles.goalItemCard}>
               <div className={settStyles.goalItemHeader}>
                 <div>
                   <div className={styles.goalName}>{goal.name}</div>
@@ -1285,6 +1288,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         })}
         {!data.goals.length && <div className={settStyles.emptyCopy} style={{ marginTop: 8 }}>No savings goals yet. Add one here when you are ready.</div>}
       </DisclosureCard>
+      </>
       )}
 
       {(activeCategory === 'all' || activeCategory === 'support') && (

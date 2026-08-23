@@ -2056,7 +2056,7 @@ export default function AppShell({ user }) {
             <div className={styles.changelogBadge}>🎉 Takda Updated</div>
             <h2 className={styles.changelogTitle}>What's New in Takda</h2>
             <div className={styles.changelogContent}>
-              <p>{changelogData.message || 'We\'ve added some exciting new features and improvements!'}</p>
+              <p>{changelogData.message || "We've added some exciting new features and improvements!"}</p>
             </div>
             <div className={styles.changelogActions}>
               <Button type="button" variant="primary" fullWidth onClick={dismissChangelog}>
