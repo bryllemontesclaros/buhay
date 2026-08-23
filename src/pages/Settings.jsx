@@ -18,7 +18,7 @@ import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '..
 import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs } from '../lib/notifications'
 import { generateMonthlyReport } from '../lib/report'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
-import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, today } from '../lib/utils'
+import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from '../lib/utils'
 import styles from './Page.module.css'
 import settStyles from './Settings.module.css'
 
@@ -311,6 +311,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [deleteAccountForm, setDeleteAccountForm] = useState({ password: '', confirmText: '' })
   const [deleteAccountMsg, setDeleteAccountMsg] = useState({ text: '', ok: false })
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false)
+  const [activeCategory, setActiveCategory] = useState('all')
   const [donationMsg, setDonationMsg] = useState({ text: '', ok: false })
   const [legalMsg, setLegalMsg] = useState({ text: '', ok: false })
   const feedbackOverlayRef = useRef(null)
@@ -833,7 +834,55 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         </div>
       </div>
 
+      <div className={settStyles.categoryNavWrap}>
+        <div className={settStyles.categoryNav}>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'all' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('all'); }}
+          >
+            ✦ All
+          </button>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'account' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('account'); }}
+          >
+            👤 Account & Security
+          </button>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'preferences' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('preferences'); }}
+          >
+            ⚙️ Preferences
+          </button>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'data' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('data'); }}
+          >
+            💾 Data & Backups
+          </button>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'support' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('support'); }}
+          >
+            💬 Support & About
+          </button>
+          <button
+            type="button"
+            className={`${settStyles.navTab} ${activeCategory === 'danger' ? settStyles.navTabActive : ''}`}
+            onClick={() => { playTick(); setActiveCategory('danger'); }}
+          >
+            ⚠️ Danger Zone
+          </button>
+        </div>
+      </div>
+
       <div className={settStyles.settingsGrid}>
+      {(activeCategory === 'all' || activeCategory === 'account') && (
       <div className={settingsCardClass}>
         <CardHeader
           eyebrow="Account"
@@ -927,7 +976,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           </div>
         </details>
       </div>
+      )}
 
+      {(activeCategory === 'all' || activeCategory === 'preferences') && (
       <div className={settingsCardClass}>
         <CardHeader
           eyebrow="Alerts"
@@ -1052,7 +1103,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           Save profile
         </button>
       </div>
+      )}
 
+      {(activeCategory === 'all' || activeCategory === 'data') && (
       <div className={settingsWideCardClass}>
         <CardHeader
           eyebrow="Backup"
@@ -1232,7 +1285,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         })}
         {!data.goals.length && <div className={settStyles.emptyCopy} style={{ marginTop: 8 }}>No savings goals yet. Add one here when you are ready.</div>}
       </DisclosureCard>
+      )}
 
+      {(activeCategory === 'all' || activeCategory === 'support') && (
       <DisclosureCard
         className={settingsWideCardClass}
         eyebrow="Support"
@@ -1315,9 +1370,10 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           </details>
         </div>
       </DisclosureCard>
+      )}
 
-
-
+      {(activeCategory === 'all' || activeCategory === 'danger') && (
+      <>
       <div className={settingsDangerCardClass}>
         <CardHeader
           eyebrow="Danger zone"
@@ -1367,6 +1423,8 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           {deleteAccountLoading ? 'Deleting account...' : 'Delete account and all data'}
         </button>
       </div>
+      </>
+      )}
 
       <div className={settingsWideCardClass}>
         <button

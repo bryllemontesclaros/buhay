@@ -49,27 +49,6 @@ export default function SavingsAndBudget({ user, data, profile = {}, symbol, pri
         <div className={styles.sub}>Set category monthly budget limits and plan your savings target goals.</div>
       </div>
 
-      <div className={tStyles.summaryStrip}>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Month Budget Limit</div>
-          <div className={tStyles.summaryValue}>
-            {privacyMode ? '••••' : fmt(totalBudget, s)}
-          </div>
-        </div>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Month Spent</div>
-          <div className={`${tStyles.summaryValue} ${totalExpenses > totalBudget && totalBudget > 0 ? tStyles.summaryValueNegative : ''}`}>
-            {privacyMode ? '••••' : fmt(totalExpenses, s)}
-          </div>
-        </div>
-        <div className={tStyles.summaryCard}>
-          <div className={tStyles.summaryLabel}>Total Goals Saved</div>
-          <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-            {privacyMode ? '••••' : fmt(totalSaved, s)}
-          </div>
-        </div>
-      </div>
-
       <div className={tStyles.tabsWrap}>
         <div className={tStyles.tabs} role="tablist">
           <button
@@ -94,6 +73,29 @@ export default function SavingsAndBudget({ user, data, profile = {}, symbol, pri
           </button>
         </div>
       </div>
+
+      {activeTab === 'savings' && (
+        <div className={tStyles.summaryStrip}>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Total Goals Saved</div>
+            <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
+              {privacyMode ? '••••' : fmt(totalSaved, s)}
+            </div>
+          </div>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Total Target Goal</div>
+            <div className={tStyles.summaryValue}>
+              {privacyMode ? '••••' : fmt(totalTarget, s)}
+            </div>
+          </div>
+          <div className={tStyles.summaryCard}>
+            <div className={tStyles.summaryLabel}>Remaining Target</div>
+            <div className={tStyles.summaryValue}>
+              {privacyMode ? '••••' : fmt(Math.max(0, totalTarget - totalSaved), s)}
+            </div>
+          </div>
+        </div>
+      )}
 
       {activeTab === 'budget' ? (
         <Budget
