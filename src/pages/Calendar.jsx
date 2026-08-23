@@ -2135,37 +2135,23 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
       <div id="takda-calendar" className={`${styles.card} ${calStyles.calendarCard}`}>
         <div className={calStyles.calHeader}>
-          <div className={calStyles.nav}>
-            <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">‹</button>
-            <label className={calStyles.monthJumpWrap} aria-label={`Jump to another date. Currently showing ${label}.`}>
-              <span className={calStyles.monthLabel} id="calendar-month-label">{label} ▾</span>
-              <input
-                type="date"
-                className={calStyles.monthJumpInput}
-                value={selected || balanceFocusDate || todayStr}
-                onChange={handleJumpToDate}
-                aria-label="Jump to any date"
-              />
-            </label>
-            <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">›</button>
-            <button type="button" className={calStyles.todayNavBtn} onClick={jumpToToday} title="Jump to today (Shortcut: T)">
-              Today
-            </button>
-          </div>
-
-          <div className={calStyles.headerRightControls}>
-            <div className={calStyles.monthLowestChip} title={`Lowest forecasted balance this month (${formatBalanceDate(lowestBalanceDip.minDate)})`}>
-              <span className={calStyles.monthLowestLabel}>Lowest</span>
-              <strong className={lowestBalanceDip.minVal < 0 ? calStyles.monthLowestNegative : lowestBalanceDip.minVal < 2000 ? calStyles.monthLowestTight : calStyles.monthLowestNormal}>
-                {balanceMoney(lowestBalanceDip.minVal)}
-              </strong>
-            </div>
-
-            <div className={calStyles.monthNetChip} title="Net Cashflow for this month">
-              <span className={calStyles.monthNetLabel}>Net</span>
-              <strong className={monthSummaryTotals.net >= 0 ? calStyles.monthNetPositive : calStyles.monthNetNegative}>
-                {monthSummaryTotals.net >= 0 ? '+' : '−'}{money(Math.abs(monthSummaryTotals.net))}
-              </strong>
+          <div className={calStyles.calHeaderTop}>
+            <div className={calStyles.nav}>
+              <button type="button" className={calStyles.navBtn} onClick={prev} aria-label="Previous month">‹</button>
+              <label className={calStyles.monthJumpWrap} aria-label={`Jump to another date. Currently showing ${label}.`}>
+                <span className={calStyles.monthLabel} id="calendar-month-label">{label} ▾</span>
+                <input
+                  type="date"
+                  className={calStyles.monthJumpInput}
+                  value={selected || balanceFocusDate || todayStr}
+                  onChange={handleJumpToDate}
+                  aria-label="Jump to any date"
+                />
+              </label>
+              <button type="button" className={calStyles.navBtn} onClick={next} aria-label="Next month">›</button>
+              <button type="button" className={calStyles.todayNavBtn} onClick={jumpToToday} title="Jump to today (Shortcut: T)">
+                Today
+              </button>
             </div>
 
             <div className={calStyles.viewToggleWrap}>
@@ -2179,6 +2165,22 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                 className={`${calStyles.viewToggleBtn} ${calendarViewMode === 'netWorth' ? calStyles.viewToggleActive : ''}`}
                 onClick={() => setCalendarViewMode('netWorth')}
               >Net Worth</button>
+            </div>
+          </div>
+
+          <div className={calStyles.calHeaderBottom}>
+            <div className={calStyles.monthLowestChip} title={`Lowest forecasted balance this month (${formatBalanceDate(lowestBalanceDip.minDate)})`}>
+              <span className={calStyles.monthLowestLabel}>Lowest Dip</span>
+              <strong className={lowestBalanceDip.minVal < 0 ? calStyles.monthLowestNegative : lowestBalanceDip.minVal < 2000 ? calStyles.monthLowestTight : calStyles.monthLowestNormal}>
+                {balanceMoney(lowestBalanceDip.minVal)}
+              </strong>
+            </div>
+
+            <div className={calStyles.monthNetChip} title="Net Cashflow for this month">
+              <span className={calStyles.monthNetLabel}>Net Cashflow</span>
+              <strong className={monthSummaryTotals.net >= 0 ? calStyles.monthNetPositive : calStyles.monthNetNegative}>
+                {monthSummaryTotals.net >= 0 ? '+' : '−'}{money(Math.abs(monthSummaryTotals.net))}
+              </strong>
             </div>
           </div>
         </div>
@@ -2308,16 +2310,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           document.body
         )}
 
-        <div
-          className={calStyles.balanceRail}
-          aria-label={`${balanceRailLabel}. ${formatRoundedBalance(balanceFocusValue, s)}.`}
-        >
-          <div className={calStyles.balanceRailCopy}>
-            <div className={calStyles.balanceRailLabel}>{balanceRailLabel}</div>
-            <div className={calStyles.balanceRailLabelCompact}>{balanceRailCompactLabel}</div>
-          </div>
-          <div className={calStyles.balanceRailValue}>{balanceMoney(balanceFocusValue)}</div>
-        </div>
+
       </div>
 
       {recurringDateTarget && typeof document !== 'undefined'
