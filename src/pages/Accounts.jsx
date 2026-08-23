@@ -1,18 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fsAdd, fsDeleteAccountAndUnlinkTransactions, fsSyncDueLinkedTransactions, fsUpdate } from '../lib/firestore'
+import { createPortal } from 'react-dom'
+import { fsAdd, fsDeleteAccountAndUnlinkTransactions, fsSyncDueLinkedTransactions, fsTransferAccounts, fsUpdate } from '../lib/firestore'
 import { getAccountSignedBalance, shouldAffectCurrentAccountBalance } from '../lib/finance'
 import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { displayValue, fmt, maskMoney, validateAmount } from '../lib/utils'
-import { safeScrollIntoView } from '../lib/ui'
+import { displayValue, fmt, maskMoney, today, validateAmount } from '../lib/utils'
 import styles from './Page.module.css'
 import accStyles from './Accounts.module.css'
 
-const ACCOUNT_TYPES = ['Cash', 'Bank', 'E-wallet', 'Investment', 'Other']
-const ACCOUNT_ICONS = { Cash: '💵', Bank: '🏦', 'E-wallet': '📱', Investment: '📈', Other: '🏷' }
+const ACCOUNT_TYPES = ['Bank', 'E-wallet', 'Cash', 'Investment', 'Other']
+const ACCOUNT_ICONS = { Bank: '🏦', 'E-wallet': '📱', Cash: '💵', Investment: '📈', Other: '🏷' }
+const TYPE_COLORS = {
+  Bank: '#3b82f6',
+  'E-wallet': '#10b981',
+  Cash: '#f59e0b',
+  Investment: '#8b5cf6',
+  Other: '#06b6d4',
+}
+
 const COLORS = [
   { name: 'Green', value: '#22d87a' },
-  { name: 'Blue', value: '#6eb5ff' },
+  { name: 'Blue', value: '#3b82f6' },
   { name: 'Amber', value: '#ffb347' },
   { name: 'Red', value: '#ff5370' },
   { name: 'Purple', value: '#b48eff' },
@@ -21,18 +29,35 @@ const COLORS = [
   { name: 'Gray', value: '#9090b0' },
 ]
 
-const EMPTY_FORM = { name: '', type: 'Cash', balance: '', creditLimit: '', color: '#22d87a', notes: '' }
+const EMPTY_FORM = { name: '', type: 'Bank', balance: '', creditLimit: '', color: '#3b82f6', notes: '' }
 
 export default function Accounts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, hideHeader = false }) {
   const s = symbol || '₱'
   const accounts = (data.accounts || []).filter(a => a.type !== 'Credit Card')
+  const allAccounts = data.accounts || []
+  
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [editAccount, setEditAccount] = useState(null)
   const [showModal, setShowModal] = useState(false)
-  const editorRef = useRef(null)
 
-  function set(key, value) {
+  // 1-Click Quick Adjust Balance State
+  const [adjustTarget, setAdjustTarget] = useState(null)
+  const [adjustNewBalance, setAdjustNewBalance] = useState('')
+  const [adjustSaving, setAdjustSaving] = useState(false)
+
+  // 1-Click Inter-Account Transfer State
+  const [showTransferModal, setShowTransferModal] = useState(false)
+  const [transferSaving, setTransferSaving] = useState(false)
+  const [transferForm, setTransferForm] = useState({
+    fromAccountId: '',
+    toAccountId: '',
+    amount: '',
+    date: today(),
+    desc: 'Transfer',
+  })
+
+  function setField(key, value) {
     setForm(current => ({ ...current, [key]: value }))
   }
 
@@ -46,11 +71,11 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     setEditAccount(account)
     setForm({
       name: account.name,
-      type: account.type,
+      type: account.type || 'Bank',
       balance: account.balance,
       creditLimit: account.creditLimit || '',
-      color: account.color || '#22d87a',
-      notes: account.notes || ''
+      color: account.color || TYPE_COLORS[account.type] || '#3b82f6',
+      notes: account.notes || '',
     })
     setShowModal(true)
   }
@@ -61,7 +86,37 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     setForm(EMPTY_FORM)
   }
 
-  async function handleSave() {
+  // Quick Adjust Modal Open/Close
+  function openQuickAdjust(account) {
+    setAdjustTarget(account)
+    setAdjustNewBalance(String(account.balance ?? ''))
+  }
+
+  function closeQuickAdjust() {
+    setAdjustTarget(null)
+    setAdjustNewBalance('')
+  }
+
+  // Quick Transfer Modal Open/Close
+  function openQuickTransfer(sourceAccount = null) {
+    const fromId = sourceAccount?._id || (accounts[0]?._id || '')
+    const toId = accounts.find(a => a._id !== fromId)?._id || ''
+    setTransferForm({
+      fromAccountId: fromId,
+      toAccountId: toId,
+      amount: '',
+      date: today(),
+      desc: 'Transfer',
+    })
+    setShowTransferModal(true)
+  }
+
+  function closeQuickTransfer() {
+    setShowTransferModal(false)
+    setTransferSaving(false)
+  }
+
+  async function handleSaveAccount() {
     if (!form.name || form.balance === '') {
       notifyApp({ title: 'Account needs details', message: 'Add an account name and balance before saving.', tone: 'warning' })
       return
@@ -71,27 +126,83 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
       notifyApp({ title: 'Check balance', message: amountError, tone: 'warning' })
       return
     }
-    if (form.type === 'Credit Card' && form.creditLimit !== '') {
-      const limitError = validateAmount(Number(form.creditLimit) || 0, 'Credit Limit')
-      if (limitError && Number(form.creditLimit) !== 0) {
-        notifyApp({ title: 'Check credit limit', message: limitError, tone: 'warning' })
-        return
-      }
-    }
     const payload = {
-      name: form.name,
+      name: form.name.trim(),
       type: form.type,
       balance: parseFloat(form.balance) || 0,
-      creditLimit: form.type === 'Credit Card' ? (parseFloat(form.creditLimit) || 0) : 0,
-      color: form.color,
-      notes: form.notes
+      color: form.color || TYPE_COLORS[form.type] || '#3b82f6',
+      notes: form.notes ? form.notes.trim() : '',
     }
-    if (editAccount) {
-      await fsUpdate(user.uid, 'accounts', editAccount._id, payload)
-    } else {
-      await fsAdd(user.uid, 'accounts', payload)
+    try {
+      if (editAccount) {
+        await fsUpdate(user.uid, 'accounts', editAccount._id, payload)
+        notifyApp({ title: 'Account updated', message: `${payload.name} saved successfully.`, tone: 'success' })
+      } else {
+        await fsAdd(user.uid, 'accounts', payload)
+        notifyApp({ title: 'Account created', message: `${payload.name} added to your accounts.`, tone: 'success' })
+      }
+      closeEditor()
+    } catch (err) {
+      notifyApp({ title: 'Save failed', message: err.message || 'Could not save account.', tone: 'error' })
     }
-    closeEditor()
+  }
+
+  async function handleAdjustSubmit(e) {
+    if (e) e.preventDefault()
+    if (!adjustTarget) return
+    const newBal = parseFloat(adjustNewBalance)
+    if (isNaN(newBal)) {
+      notifyApp({ title: 'Check balance', message: 'Enter a valid number for the balance.', tone: 'warning' })
+      return
+    }
+    setAdjustSaving(true)
+    try {
+      await fsUpdate(user.uid, 'accounts', adjustTarget._id, { balance: newBal })
+      const diff = newBal - (Number(adjustTarget.balance) || 0)
+      notifyApp({
+        title: 'Balance updated',
+        message: `${adjustTarget.name} adjusted to ${fmt(newBal, s)} (${diff >= 0 ? '+' : ''}${fmt(diff, s)} difference).`,
+        tone: 'success',
+      })
+      closeQuickAdjust()
+    } catch (err) {
+      notifyApp({ title: 'Update failed', message: err.message || 'Could not update balance.', tone: 'error' })
+    } finally {
+      setAdjustSaving(false)
+    }
+  }
+
+  async function handleTransferSubmit(e) {
+    if (e) e.preventDefault()
+    const amount = Number(transferForm.amount) || 0
+    if (amount <= 0) {
+      notifyApp({ title: 'Check amount', message: 'Enter a transfer amount greater than zero.', tone: 'warning' })
+      return
+    }
+    if (!transferForm.fromAccountId || !transferForm.toAccountId) {
+      notifyApp({ title: 'Select accounts', message: 'Both source and destination accounts are required.', tone: 'warning' })
+      return
+    }
+    if (transferForm.fromAccountId === transferForm.toAccountId) {
+      notifyApp({ title: 'Invalid accounts', message: 'Source and destination accounts must be different.', tone: 'warning' })
+      return
+    }
+    setTransferSaving(true)
+    try {
+      await fsTransferAccounts(user.uid, transferForm, allAccounts)
+      const fromAcc = accounts.find(a => a._id === transferForm.fromAccountId)
+      const toAcc = accounts.find(a => a._id === transferForm.toAccountId)
+      notifyApp({
+        title: 'Transfer successful',
+        message: `Transferred ${fmt(amount, s)} from ${fromAcc?.name || 'account'} to ${toAcc?.name || 'account'}.`,
+        tone: 'success',
+      })
+      closeQuickTransfer()
+    } catch (err) {
+      notifyApp({ title: 'Transfer failed', message: err.message || 'Could not process transfer.', tone: 'error' })
+    } finally {
+      setTransferSaving(false)
+    }
   }
 
   async function handleDel(id, name) {
@@ -109,65 +220,63 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     if (!confirmed) return
     try {
       await fsDeleteAccountAndUnlinkTransactions(user.uid, id, data)
-      if (linkedCount) {
-        notifyApp({
-          title: 'Account deleted',
-          message: `${linkedCount} transaction${linkedCount === 1 ? '' : 's'} stayed in history without the old account link.`,
-          tone: 'success',
-        })
-      }
+      notifyApp({
+        title: 'Account deleted',
+        message: `${name} has been removed.`,
+        tone: 'success',
+      })
     } catch {
-      notifyApp({ title: 'Account not deleted', message: 'Could not delete this account right now. Check your connection and try again.', tone: 'error' })
+      notifyApp({ title: 'Account not deleted', message: 'Could not delete this account right now.', tone: 'error' })
     }
   }
 
-  const accountsWithMeta = accounts.map(account => {
-    const signedBalance = getAccountSignedBalance(account)
-    const tone = account.color || '#22d87a'
-    const limitVal = Number(account.creditLimit) || 0
-    const available = account.type === 'Credit Card' ? Math.max(0, limitVal - Math.abs(signedBalance)) : 0
-    const utilizationRate = account.type === 'Credit Card' && limitVal > 0
-      ? Math.min(100, Math.round((Math.abs(signedBalance) / limitVal) * 100))
-      : 0
-    return {
-      ...account,
-      signedBalance,
-      tone,
-      isDebt: signedBalance < 0,
-      availableCredit: available,
-      utilization: utilizationRate,
-    }
-  })
-  const allAccounts = data.accounts || []
+  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   const totalBalance = getTakdaTotalBalanceNow(allAccounts, data.debts || [])
-  const liquidTotal = allAccounts
+
+  const liquidTotal = accounts
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
     .reduce((sum, account) => sum + Math.max(0, Number(account.balance) || 0), 0)
 
-  const ccDebts = allAccounts
-    .filter(account => account.type === 'Credit Card')
-    .reduce((sum, account) => sum + Math.abs(Number(account.balance) || 0), 0)
+  const investmentTotal = accounts
+    .filter(account => account.type === 'Investment')
+    .reduce((sum, account) => sum + Math.max(0, Number(account.balance) || 0), 0)
 
-  const allAccountIds = new Set(allAccounts.map(a => a._id))
-  const unlinkedDebtsList = (data.debts || []).filter(d => !d.accountId || !allAccountIds.has(d.accountId))
-  const otherDebts = unlinkedDebtsList.reduce((sum, d) => sum + Math.abs(Number(d.balance) || 0), 0)
+  const accountsWithMeta = useMemo(() => {
+    return accounts.map(account => {
+      const signedBalance = getAccountSignedBalance(account)
+      const tone = account.color || TYPE_COLORS[account.type] || '#3b82f6'
+      const share = liquidTotal > 0 && signedBalance > 0
+        ? Math.round((signedBalance / liquidTotal) * 100)
+        : 0
+      return {
+        ...account,
+        signedBalance,
+        tone,
+        share,
+        isDebt: signedBalance < 0,
+      }
+    })
+  }, [accounts, liquidTotal])
 
-  const negativeAssetTotal = allAccounts
-    .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type) && Number(account.balance) < 0)
-    .reduce((sum, account) => sum + Math.abs(Number(account.balance)), 0)
-
-  const debtTotal = ccDebts + otherDebts + negativeAssetTotal
-  const accountTypeCount = new Set(accountsWithMeta.map(account => account.type)).size
-  const primaryAccount = [...accountsWithMeta]
-    .sort((a, b) => Math.abs(b.signedBalance) - Math.abs(a.signedBalance))[0] || null
-  const portfolioBase = accountsWithMeta.reduce((sum, account) => sum + Math.abs(account.signedBalance), 0)
-  const primaryShare = primaryAccount && portfolioBase > 0
-    ? Math.max(8, Math.min(100, Math.round((Math.abs(primaryAccount.signedBalance) / portfolioBase) * 100)))
-    : 0
-  const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
-  const balanceFieldLabel = form.type === 'Credit Card' ? `Current amount owed (${s})` : `Balance now (${s})`
-  const privacyHint = privacyMode ? 'Privacy mode on. Tap to reveal values.' : 'Tap to hide values on this page.'
-  const accountCountLabel = `${accounts.length} account${accounts.length !== 1 ? 's' : ''} right now`
+  // Liquidity distribution segments
+  const allocationSegments = useMemo(() => {
+    if (!liquidTotal && !investmentTotal) return []
+    const base = liquidTotal + investmentTotal
+    const types = ['Bank', 'E-wallet', 'Cash', 'Investment']
+    return types.map(t => {
+      const total = accounts
+        .filter(a => a.type === t)
+        .reduce((sum, a) => sum + Math.max(0, Number(a.balance) || 0), 0)
+      const pct = base > 0 ? (total / base) * 100 : 0
+      return {
+        type: t,
+        total,
+        pct: Math.round(pct),
+        color: TYPE_COLORS[t] || '#3b82f6',
+        icon: ACCOUNT_ICONS[t] || '🏷',
+      }
+    }).filter(s => s.total > 0)
+  }, [accounts, liquidTotal, investmentTotal])
 
   const dueLinkedEntries = useMemo(() => {
     if (!user?.uid || !accounts.length) return []
@@ -194,19 +303,13 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     } catch {
       notifyApp({
         title: 'Could not sync balances',
-        message: 'Buhay could not apply due linked entries right now. Check your connection and try again.',
+        message: 'Could not apply due linked entries right now.',
         tone: 'error',
       })
     } finally {
       setSyncingDueEntries(false)
     }
   }
-
-  useEffect(() => {
-    if (showModal && editorRef.current) {
-      safeScrollIntoView(editorRef.current, { behavior: 'smooth', block: 'start' })
-    }
-  }, [showModal, editAccount?._id])
 
   const mainContent = (
     <>
@@ -216,37 +319,61 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
             <div className={styles.pageEyebrow}>Accounts</div>
             <div className={styles.pageTitle}>Keep each account clear and current.</div>
             <div className={styles.pageSub}>
-              Cash, bank, wallet, and credit balances work best when each account has a clear role and only reflects real activity.
-            </div>
-          </div>
-
-          <div
-            className={accStyles.heroAside}
-            style={{ '--account-tone': primaryAccount?.tone || 'var(--accent)' }}
-          >
-            <div className={accStyles.heroAsideLabel}>{primaryAccount ? 'Largest account' : 'Accounts snapshot'}</div>
-            <div className={accStyles.heroAsideValue}>
-              {primaryAccount ? primaryAccount.name : 'No accounts yet'}
-            </div>
-            <div className={accStyles.heroAsideTrack}>
-              <div className={accStyles.heroAsideFill} style={{ width: `${primaryShare}%` }} />
-            </div>
-            <div className={accStyles.heroAsideMeta}>
-              {primaryAccount
-                ? `${primaryAccount.type} · ${money(primaryAccount.signedBalance)} · ${displayValue(privacyMode, `${primaryShare}% of balances`, 'Share hidden')}`
-                : 'Add your first real balance below'}
+              Cash, bank, and wallet balances work best when every account has an accurate real-world balance.
             </div>
           </div>
         </div>
       )}
 
-      {!hideHeader && (
-        <div className={accStyles.totalCard}>
-          <div className={accStyles.totalLabel}>Total balance now</div>
-          <div className={accStyles.totalVal}>{money(totalBalance)}</div>
-          <div className={accStyles.totalSub}>{accountCountLabel}</div>
+      {/* LIQUIDITY RADAR HERO CARD */}
+      <div className={accStyles.radarHeroCard}>
+        <div className={accStyles.radarHeroTop}>
+          <div className={accStyles.radarHeroCopy}>
+            <span className={accStyles.radarHeroLabel}>Total Liquid Balance</span>
+            <div className={accStyles.radarHeroVal}>{money(liquidTotal)}</div>
+          </div>
+          <div className={accStyles.radarHeroActions}>
+            <button
+              type="button"
+              className={accStyles.btnHeroSecondary}
+              onClick={() => openQuickTransfer()}
+              disabled={accounts.length < 2}
+              title={accounts.length < 2 ? 'Need at least 2 accounts to transfer' : 'Transfer between accounts'}
+            >
+              ⇄ Transfer
+            </button>
+            <button type="button" className={accStyles.btnHeroPrimary} onClick={openAdd}>
+              + Add Account
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* ALLOCATION PROGRESS STRIP */}
+        {allocationSegments.length > 0 && (
+          <div className={accStyles.allocationSection}>
+            <div className={accStyles.allocationTrack}>
+              {allocationSegments.map(seg => (
+                <div
+                  key={seg.type}
+                  className={accStyles.allocationFill}
+                  style={{ width: `${seg.pct}%`, background: seg.color }}
+                  title={`${seg.type}: ${fmt(seg.total, s)} (${seg.pct}%)`}
+                />
+              ))}
+            </div>
+            <div className={accStyles.allocationLegend}>
+              {allocationSegments.map(seg => (
+                <div key={seg.type} className={accStyles.allocationPill}>
+                  <span className={accStyles.allocationDot} style={{ background: seg.color }} />
+                  <span className={accStyles.allocationType}>{seg.icon} {seg.type}</span>
+                  <strong className={accStyles.allocationAmount}>{money(seg.total)}</strong>
+                  <span className={accStyles.allocationPct}>{seg.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {dueLinkedEntries.length > 0 && (
         <div className={accStyles.syncNotice} role="status" aria-live="polite">
@@ -267,133 +394,338 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      <div className={accStyles.summaryGrid}>
-        <div className={accStyles.summaryCard}>
-          <div className={accStyles.summaryLabel}>Liquid funds</div>
-          <div className={`${accStyles.summaryValue} ${accStyles.summaryValueAccent}`}>{money(liquidTotal)}</div>
-          <div className={accStyles.summaryMeta}>Cash, bank, and wallet balances</div>
-        </div>
-        <div className={accStyles.summaryCard}>
-          <div className={accStyles.summaryLabel}>Debt to cover</div>
-          <div className={`${accStyles.summaryValue} ${accStyles.summaryValueRed}`}>{money(debtTotal)}</div>
-          <div className={accStyles.summaryMeta}>
-            {debtTotal > 0 ? 'Negative or credit balances' : 'No debt balances right now'}
-          </div>
-        </div>
-        <div className={accStyles.summaryCard}>
-          <div className={accStyles.summaryLabel}>Account mix</div>
-          <div className={accStyles.summaryValue}>{accountTypeCount}</div>
-          <div className={accStyles.summaryMeta}>
-            {accountTypeCount ? `${accountTypeCount} type${accountTypeCount !== 1 ? 's' : ''} in use` : 'No account types yet'}
-          </div>
-        </div>
-      </div>
-
+      {/* ACCOUNT CARDS GRID */}
       <div className={accStyles.toolbar}>
-        <div className={accStyles.toolbarCopy}>
-          <div className={accStyles.toolbarTitle}>Account list</div>
-          <div className={accStyles.toolbarMeta}>
-            {accounts.length
-              ? 'Edit balances carefully. Account changes affect the baseline Takda uses across balances, history, and forecasts.'
-              : 'Start with the account you use most so Takda begins from a real balance, not a guess.'}
-          </div>
+        <div className={accStyles.toolbarTitle}>
+          Active Accounts ({accounts.length})
         </div>
-        <button type="button" className={accStyles.primaryButton} onClick={openAdd}>Add account</button>
       </div>
 
-      {showModal && (
-        <div ref={editorRef} className={accStyles.editorCard}>
-          <div className={accStyles.editorHeader}>
-            <div>
-              <div className={accStyles.editorEyebrow}>{editAccount ? 'Editing account' : 'New account'}</div>
-              <div className={accStyles.editorTitle}>{editAccount ? 'Update this account' : 'Add an account'}</div>
-              <div className={accStyles.editorSub}>
-                {editAccount ? `Updating ${editAccount.name}` : 'Create an account without leaving this page.'}
+      {!accounts.length ? (
+        <div className={accStyles.emptyCard}>
+          <div className={accStyles.emptyIcon}>🏦</div>
+          <div className={accStyles.emptyTitle}>No accounts yet</div>
+          <div className={accStyles.emptyBody}>Add your bank, e-wallet, or physical cash balance to start tracking with real numbers.</div>
+          <button type="button" className={accStyles.btnHeroPrimary} onClick={openAdd} style={{ marginTop: 12 }}>
+            + Add Your First Account
+          </button>
+        </div>
+      ) : (
+        <div className={accStyles.accountsGrid}>
+          {accountsWithMeta.map(account => (
+            <div
+              key={account._id}
+              className={accStyles.accountCard}
+              style={{ '--account-tone': account.tone }}
+            >
+              <div className={accStyles.accountTop}>
+                <div className={accStyles.accountLeading}>
+                  <div className={accStyles.accountIcon} style={{ background: `color-mix(in srgb, ${account.tone} 18%, var(--surface2))` }}>
+                    {ACCOUNT_ICONS[account.type] || '🏷'}
+                  </div>
+                  <div className={accStyles.accountInfo}>
+                    <div className={accStyles.accountName}>{account.name}</div>
+                    <div className={accStyles.accountType}>
+                      <span className={accStyles.typeDot} style={{ background: account.tone }} />
+                      {account.type}
+                      {account.share > 0 && (
+                        <span className={accStyles.sharePill}>{account.share}% of cash</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className={accStyles.accountActions}>
+                  <button
+                    type="button"
+                    className={accStyles.cardActionBtn}
+                    onClick={() => openEdit(account)}
+                    title="Edit account details"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    className={`${accStyles.cardActionBtn} ${accStyles.cardActionBtnDanger}`}
+                    onClick={() => handleDel(account._id, account.name)}
+                    title="Delete account"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+
+              <div className={accStyles.accountBalanceBox}>
+                <div className={accStyles.accountBalanceLabel}>Available Balance</div>
+                <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
+                  {money(account.signedBalance)}
+                </div>
+              </div>
+
+              {account.notes && <div className={accStyles.accountNotes}>“{account.notes}”</div>}
+
+              {/* CARD BOTTOM QUICK ACTIONS */}
+              <div className={accStyles.cardFooterActions}>
+                <button
+                  type="button"
+                  className={accStyles.btnCardAction}
+                  onClick={() => openQuickAdjust(account)}
+                  title="Reconcile / adjust current balance"
+                >
+                  ⚡ Adjust Balance
+                </button>
+                <button
+                  type="button"
+                  className={accStyles.btnCardActionSecondary}
+                  onClick={() => openQuickTransfer(account)}
+                  disabled={accounts.length < 2}
+                  title="Transfer money from this account"
+                >
+                  ⇄ Transfer
+                </button>
               </div>
             </div>
-            <button type="button" onClick={closeEditor} className={accStyles.editorClose}>Close</button>
-          </div>
+          ))}
+        </div>
+      )}
 
-          <div className={accStyles.editorGrid}>
-            <div className={accStyles.field}>
-              <label className={accStyles.fieldLabel} htmlFor="account-name">Account name</label>
-              <input
-                id="account-name"
-                className={accStyles.fieldInput}
-                placeholder="e.g. BDO Savings"
-                value={form.name}
-                onChange={event => set('name', event.target.value)}
-              />
+      {/* 1-CLICK QUICK ADJUST BALANCE MODAL */}
+      {adjustTarget && typeof document !== 'undefined' && createPortal(
+        <div className={accStyles.modalOverlay} onClick={closeQuickAdjust}>
+          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+            <div className={accStyles.modalHeader}>
+              <div>
+                <div className={accStyles.modalEyebrow}>⚡ Quick Reconcile</div>
+                <div className={accStyles.modalTitle}>Adjust {adjustTarget.name}</div>
+              </div>
+              <button type="button" className={accStyles.modalClose} onClick={closeQuickAdjust}>✕</button>
             </div>
 
-            <div className={accStyles.field}>
-              <label className={accStyles.fieldLabel} htmlFor="account-type">Type</label>
-              <select
-                id="account-type"
-                className={accStyles.fieldInput}
-                value={form.type}
-                onChange={event => set('type', event.target.value)}
-              >
-                {ACCOUNT_TYPES.map(type => <option key={type}>{type}</option>)}
-              </select>
-            </div>
+            <form onSubmit={handleAdjustSubmit} className={accStyles.modalBody}>
+              <div className={accStyles.adjustCurrentStrip}>
+                <span className={accStyles.adjustCurrentLabel}>Current recorded balance:</span>
+                <strong className={accStyles.adjustCurrentVal}>{money(adjustTarget.balance)}</strong>
+              </div>
 
-            <div className={accStyles.field}>
-              <label className={accStyles.fieldLabel} htmlFor="account-balance">{balanceFieldLabel}</label>
-              <input
-                id="account-balance"
-                className={accStyles.fieldInput}
-                type="number"
-                min="0"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.balance}
-                onChange={event => set('balance', event.target.value)}
-              />
-            </div>
-
-            {form.type === 'Credit Card' && (
               <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-limit">Credit Limit ({s})</label>
+                <label className={accStyles.fieldLabel} htmlFor="adjust-bal-input">
+                  Actual current balance in real life ({s})
+                </label>
                 <input
-                  id="account-limit"
-                  className={accStyles.fieldInput}
+                  id="adjust-bal-input"
                   type="number"
-                  min="0"
-                  inputMode="decimal"
+                  step="any"
+                  className={accStyles.fieldInputBig}
                   placeholder="0.00"
-                  value={form.creditLimit}
-                  onChange={event => set('creditLimit', event.target.value)}
+                  value={adjustNewBalance}
+                  onChange={e => setAdjustNewBalance(e.target.value)}
+                  autoFocus
                 />
               </div>
-            )}
-          </div>
 
-          <details className={accStyles.advancedBox}>
-            <summary className={accStyles.advancedSummary}>
-              <span>More options</span>
-              <small>Notes and card color</small>
-            </summary>
-            <div className={accStyles.advancedBody}>
+              {adjustNewBalance !== '' && !isNaN(parseFloat(adjustNewBalance)) && (
+                <div className={accStyles.adjustDiffStrip}>
+                  <span>Difference:</span>
+                  <strong className={parseFloat(adjustNewBalance) - Number(adjustTarget.balance) >= 0 ? accStyles.diffPositive : accStyles.diffNegative}>
+                    {parseFloat(adjustNewBalance) - Number(adjustTarget.balance) >= 0 ? '+' : ''}
+                    {fmt(parseFloat(adjustNewBalance) - Number(adjustTarget.balance), s)}
+                  </strong>
+                </div>
+              )}
+
+              <div className={accStyles.modalActions}>
+                <button type="button" className={accStyles.btnSecondary} onClick={closeQuickAdjust}>
+                  Cancel
+                </button>
+                <button type="submit" className={accStyles.btnPrimary} disabled={adjustSaving}>
+                  {adjustSaving ? 'Updating…' : 'Save Balance'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* 1-CLICK INTER-ACCOUNT TRANSFER MODAL */}
+      {showTransferModal && typeof document !== 'undefined' && createPortal(
+        <div className={accStyles.modalOverlay} onClick={closeQuickTransfer}>
+          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+            <div className={accStyles.modalHeader}>
+              <div>
+                <div className={accStyles.modalEyebrow}>⇄ Inter-Account Transfer</div>
+                <div className={accStyles.modalTitle}>Move Money</div>
+              </div>
+              <button type="button" className={accStyles.modalClose} onClick={closeQuickTransfer}>✕</button>
+            </div>
+
+            <form onSubmit={handleTransferSubmit} className={accStyles.modalBody}>
+              <div className={accStyles.transferGrid}>
+                <div className={accStyles.field}>
+                  <label className={accStyles.fieldLabel} htmlFor="transfer-from">From Account</label>
+                  <select
+                    id="transfer-from"
+                    className={accStyles.fieldInput}
+                    value={transferForm.fromAccountId}
+                    onChange={e => setTransferForm(prev => ({ ...prev, fromAccountId: e.target.value }))}
+                  >
+                    {accounts.map(a => (
+                      <option key={a._id} value={a._id} disabled={a._id === transferForm.toAccountId}>
+                        {ACCOUNT_ICONS[a.type] || '🏷'} {a.name} ({fmt(a.balance, s)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={accStyles.transferArrowWrap}>➔</div>
+
+                <div className={accStyles.field}>
+                  <label className={accStyles.fieldLabel} htmlFor="transfer-to">To Account</label>
+                  <select
+                    id="transfer-to"
+                    className={accStyles.fieldInput}
+                    value={transferForm.toAccountId}
+                    onChange={e => setTransferForm(prev => ({ ...prev, toAccountId: e.target.value }))}
+                  >
+                    {accounts.map(a => (
+                      <option key={a._id} value={a._id} disabled={a._id === transferForm.fromAccountId}>
+                        {ACCOUNT_ICONS[a.type] || '🏷'} {a.name} ({fmt(a.balance, s)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-notes">Notes</label>
+                <label className={accStyles.fieldLabel} htmlFor="transfer-amount">Amount ({s})</label>
+                <input
+                  id="transfer-amount"
+                  type="number"
+                  step="any"
+                  min="0.01"
+                  className={accStyles.fieldInputBig}
+                  placeholder="0.00"
+                  value={transferForm.amount}
+                  onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
+                  autoFocus
+                />
+              </div>
+
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="transfer-date">Date</label>
+                <input
+                  id="transfer-date"
+                  type="date"
+                  className={accStyles.fieldInput}
+                  value={transferForm.date}
+                  onChange={e => setTransferForm(prev => ({ ...prev, date: e.target.value }))}
+                />
+              </div>
+
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="transfer-desc">Note (Optional)</label>
+                <input
+                  id="transfer-desc"
+                  type="text"
+                  className={accStyles.fieldInput}
+                  placeholder="e.g. ATM cash withdrawal, wallet reload"
+                  value={transferForm.desc}
+                  onChange={e => setTransferForm(prev => ({ ...prev, desc: e.target.value }))}
+                />
+              </div>
+
+              <div className={accStyles.modalActions}>
+                <button type="button" className={accStyles.btnSecondary} onClick={closeQuickTransfer}>
+                  Cancel
+                </button>
+                <button type="submit" className={accStyles.btnPrimary} disabled={transferSaving}>
+                  {transferSaving ? 'Transferring…' : 'Complete Transfer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* NEW / EDIT ACCOUNT MODAL */}
+      {showModal && typeof document !== 'undefined' && createPortal(
+        <div className={accStyles.modalOverlay} onClick={closeEditor}>
+          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+            <div className={accStyles.modalHeader}>
+              <div>
+                <div className={accStyles.modalEyebrow}>{editAccount ? 'Editing Account' : 'New Account'}</div>
+                <div className={accStyles.modalTitle}>{editAccount ? `Update ${editAccount.name}` : 'Add New Account'}</div>
+              </div>
+              <button type="button" className={accStyles.modalClose} onClick={closeEditor}>✕</button>
+            </div>
+
+            <div className={accStyles.modalBody}>
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="account-name">Account Name</label>
+                <input
+                  id="account-name"
+                  className={accStyles.fieldInput}
+                  placeholder="e.g. BDO Savings, GCash, Physical Wallet"
+                  value={form.name}
+                  onChange={e => setField('name', e.target.value)}
+                  autoFocus
+                />
+              </div>
+
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="account-type">Account Type</label>
+                <select
+                  id="account-type"
+                  className={accStyles.fieldInput}
+                  value={form.type}
+                  onChange={e => {
+                    const newType = e.target.value
+                    setField('type', newType)
+                    if (!editAccount) {
+                      setField('color', TYPE_COLORS[newType] || '#3b82f6')
+                    }
+                  }}
+                >
+                  {ACCOUNT_TYPES.map(type => (
+                    <option key={type} value={type}>
+                      {ACCOUNT_ICONS[type] || '🏷'} {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="account-balance">Starting Balance ({s})</label>
+                <input
+                  id="account-balance"
+                  className={accStyles.fieldInputBig}
+                  type="number"
+                  step="any"
+                  placeholder="0.00"
+                  value={form.balance}
+                  onChange={e => setField('balance', e.target.value)}
+                />
+              </div>
+
+              <div className={accStyles.field}>
+                <label className={accStyles.fieldLabel} htmlFor="account-notes">Notes / Purpose</label>
                 <input
                   id="account-notes"
                   className={accStyles.fieldInput}
-                  placeholder="e.g. Emergency only"
+                  placeholder="e.g. Payroll account, Daily spending"
                   value={form.notes}
-                  onChange={event => set('notes', event.target.value)}
+                  onChange={e => setField('notes', e.target.value)}
                 />
               </div>
 
               <div className={accStyles.colorSection}>
-                <div className={accStyles.fieldLabel}>Color</div>
+                <div className={accStyles.fieldLabel}>Theme Color</div>
                 <div className={accStyles.colorGrid}>
                   {COLORS.map(color => (
                     <button
                       key={color.value}
                       type="button"
-                      onClick={() => set('color', color.value)}
+                      onClick={() => setField('color', color.value)}
                       className={`${accStyles.colorBtn} ${form.color === color.value ? accStyles.colorBtnActive : ''}`}
                       style={{ '--swatch': color.value }}
                       title={color.name}
@@ -402,89 +734,19 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                   ))}
                 </div>
               </div>
-            </div>
-          </details>
 
-          <div className={accStyles.editorActions}>
-            <button type="button" onClick={closeEditor} className={accStyles.secondaryButton}>Cancel</button>
-            <button type="button" onClick={handleSave} className={accStyles.primaryButton}>
-              {editAccount ? 'Save changes' : 'Add account'}
-            </button>
+              <div className={accStyles.modalActions}>
+                <button type="button" className={accStyles.btnSecondary} onClick={closeEditor}>
+                  Cancel
+                </button>
+                <button type="button" className={accStyles.btnPrimary} onClick={handleSaveAccount}>
+                  {editAccount ? 'Save Changes' : 'Create Account'}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-
-      {!accounts.length ? (
-        <div className={accStyles.emptyCard}>
-          <div className={accStyles.emptyTitle}>No accounts yet</div>
-          <div className={accStyles.emptyBody}>Add one above so Buhay starts from a real balance and the rest of Takda stays easier to trust.</div>
-        </div>
-      ) : (
-        <div className={accStyles.accountsGrid}>
-          {accountsWithMeta.map(account => (
-            <div
-              key={account._id}
-              className={`${accStyles.accountCard} ${editAccount?._id === account._id ? accStyles.accountCardEditing : ''}`}
-              style={{ '--account-tone': account.tone }}
-            >
-              <div className={accStyles.accountTop}>
-                <div className={accStyles.accountLeading}>
-                  <div className={accStyles.accountIcon}>
-                    {ACCOUNT_ICONS[account.type] || '🏷'}
-                  </div>
-                  <div className={accStyles.accountInfo}>
-                    <div className={accStyles.accountName}>{account.name}</div>
-                    <div className={accStyles.accountType}>
-                      <span className={accStyles.typeDot} />
-                      {account.type}
-                    </div>
-                  </div>
-                </div>
-                <div className={accStyles.accountActions}>
-                  <button type="button" className={accStyles.cardAction} onClick={() => openEdit(account)}>Edit</button>
-                  <button type="button" className={`${accStyles.cardAction} ${accStyles.cardActionDanger}`} onClick={() => handleDel(account._id, account.name)}>Delete</button>
-                </div>
-              </div>
-
-              <div className={accStyles.accountBalanceLabel}>{account.isDebt ? 'Current owed' : 'Available balance'}</div>
-              <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
-                {money(account.signedBalance)}
-              </div>
-
-              {account.type === 'Credit Card' && (Number(account.creditLimit) || 0) > 0 && (
-                <div className={accStyles.creditCardMeta}>
-                  <div className={accStyles.creditLimitRow}>
-                    <span>Limit: {money(account.creditLimit)}</span>
-                    <span>Available: {money(account.availableCredit)}</span>
-                  </div>
-                  <div className={accStyles.creditGaugeTrack}>
-                    <div
-                      className={`${accStyles.creditGaugeFill} ${account.utilization > 80 ? accStyles.gaugeCritical : account.utilization > 40 ? accStyles.gaugeWarning : ''}`}
-                      style={{ width: `${account.utilization}%` }}
-                    />
-                  </div>
-                  <div className={accStyles.creditUtilizationRow}>
-                    <span>Utilization: {account.utilization}%</span>
-                    {account.utilization > 30 && (
-                      <span className={accStyles.utilizationWarningBadge} style={{ color: 'var(--amber)', fontSize: '0.75rem', fontWeight: 'bold' }}>
-                        ⚠️ High Utilization (&gt;30%)
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className={accStyles.accountFooter}>
-                <div className={accStyles.accountState}>
-                  {account.isDebt ? 'Debt account' : 'Asset account'}
-                </div>
-                {editAccount?._id === account._id && <div className={accStyles.editingPill}>Editing</div>}
-              </div>
-
-              {account.notes && <div className={accStyles.accountNotes}>{account.notes}</div>}
-            </div>
-          ))}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
