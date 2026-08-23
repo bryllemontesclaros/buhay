@@ -1,96 +1,90 @@
 import LegalPageLayout from './LegalPageLayout'
 
 const SUMMARY_POINTS = [
-  'Covers account, money, fitness, reflection, settings, and legacy media attachments.',
-  'Explains manual data entry, exports, deletion, and privacy requests.',
-  'Shows which providers help run Buhay and how your data is protected, handled, and removed.',
+  'Covers your account, multi-account balances, income & expense logs, bills, budgets, and savings goals.',
+  'Zero bank credentials stored — Buhay never requests, stores, or accesses your bank logins, PINs, or OTPs.',
+  'Explains manual tracking, client-side privacy, CSV/JSON backups, and account deletion rights.',
 ]
 
 const SECTIONS = [
   {
     title: 'What this policy covers',
     paragraphs: [
-      'This Privacy Policy explains how Buhay handles information when you visit the website, create an account, and use the app for money, fitness, reflection, and planning.',
-      'It is written to match the product as it exists today: a life tracker built with Filipino clarity and warmth, designed for everyday use anywhere.',
+      'This Privacy Policy explains how Buhay handles information when you visit the website, create an account, and use the web application for personal financial tracking, cashflow forecasting, bills management, and net worth calculations.',
+      'It is written to match the product as it exists today: a private, calm personal finance cockpit designed for intentional everyday money management.',
     ],
   },
   {
     title: 'Information Buhay collects',
-    paragraphs: ['Depending on how you use the product, Buhay may collect:'],
+    paragraphs: ['Depending on how you use the product, Buhay may store the following information under your authenticated account:'],
     bullets: [
-      'Account and profile information such as your name, email address, password-based authentication details, and email-verification status.',
-      'Financial data such as accounts, balances, transactions, recurring settings, bills, budgets, savings goals, and manual calendar balance overrides.',
-      'Fitness and activity data such as workouts, routines, exercises, sets, reps, weight, duration, meals, body logs, habits, activity, reminders, and fitness goals.',
-      'Reflection and everyday-life data such as daily check-ins, journal entries, mood logs, tasks, life goals, tags, triggers, notes, and calendar dates.',
-      'App configuration such as your currency, notification preferences, privacy-mode preference, and other product settings tied to your account.',
-      'Support or feedback information if you contact Buhay directly.',
+      'Account and profile information such as your name, email address, password-based authentication credentials, and email-verification status.',
+      'Financial records including manual cash & bank account balances, income logs, expense entries, recurring bills, subscriptions, debt records, envelope budget limits, savings goals, and crypto holdings.',
+      'Forecast settings such as manual calendar balance adjustments and recurring transaction schedules.',
+      'App preferences including currency symbol, in-app notification preferences, and privacy-mode display toggle.',
+      'Feedback or support messages submitted directly through the application.',
     ],
   },
   {
-    title: 'Image uploads and media',
+    title: 'Zero bank credentials policy',
     paragraphs: [
-      'Buhay does not require or support photo or image uploads for any active tracking features across money, fitness, or reflection.',
-      'Any legacy image attachments saved in older versions of the app remain securely stored under your account until you delete the associated record or use the account deletion tools.',
+      'Buhay does not connect to your bank accounts through screen-scraping, third-party data aggregators, or automated credential storage.',
+      'We never ask for, collect, or store your online banking passwords, credit card PINs, SMS OTPs, or API credentials. Your financial institutions remain strictly private and untouched.',
     ],
   },
   {
-    title: 'How Buhay uses information',
+    title: 'How Buhay uses your information',
     bullets: [
-      'To create and secure your account, keep you signed in, and support password reset or email-verification flows.',
-      'To run the app itself, including money, fitness, reflection, calendar, history, and settings views.',
-      'To sync your data across supported devices connected to your account.',
-      'To display in-app notifications and alerts that you explicitly enable.',
-      'To troubleshoot issues, maintain service reliability, and respond to support requests.',
+      'To securely authenticate your account, maintain your login session, and enable password recovery or email verification flows.',
+      'To provide core financial calculations, including 30-day cashflow forecasts, multi-account net worth aggregation, bill due alerts, and budget pacing.',
+      'To sync your saved records seamlessly across your devices signed in to your account.',
+      'To display customizable in-app alerts and notifications that you explicitly turn on.',
+      'To troubleshoot technical bugs and maintain platform reliability.',
     ],
   },
   {
     title: 'When information is shared',
-    paragraphs: ['Buhay does not sell your personal data. Information may still be processed by service providers that help run the product.'],
+    paragraphs: ['Buhay does not sell, rent, or monetize your personal data or financial logs with advertisers or data brokers. Information is processed only by essential infrastructure providers:'],
     bullets: [
-      'Firebase, for authentication and app data storage.',
-      'Vercel or similar hosting infrastructure used to serve the site or app.',
-      'Law enforcement, regulators, or professional advisers when disclosure is required by law, needed for safety, or necessary to protect the service.',
+      'Google Firebase, for encrypted cloud database storage and authentication.',
+      'Vercel, for hosting and serving the web application.',
+      'Law enforcement or regulatory authorities only when strictly required by applicable law or court order.',
     ],
   },
   {
-    title: 'Retention, export, and deletion',
+    title: 'Data retention, export, and deletion',
     bullets: [
-      'Buhay keeps account data while your account remains active or as long as needed to provide the product and handle support, security, or legal obligations.',
-      'The app includes export and backup features so you can keep your own copy of your data.',
-      'If you delete data in the app or request account deletion, Buhay will delete or de-identify the corresponding information unless retention is required for security, fraud prevention, backup, or legal reasons.',
-      'Backups or exports you save on your own device remain under your control after export.',
+      'Your financial records are retained only while your account remains active.',
+      'You can download a complete CSV transaction ledger or export an encrypted JSON backup file directly from the Settings page at any time.',
+      'You can delete specific transactions, accounts, or reset all financial data with 1-click in Settings.',
+      'If you choose to delete your account, all associated records, profile data, and logs are permanently and irreversibly purged from our database.',
     ],
   },
   {
     title: 'Your choices and privacy rights',
     paragraphs: [
-      'You can review, correct, export, and delete much of your information directly inside the app.',
-      'Depending on where you live, privacy laws may give you rights such as access, correction, deletion, objection, restriction, complaint, and data portability, including rights available under Philippine law where relevant.',
+      'You have complete control over the data you enter into Buhay.',
+      'Under applicable data privacy laws, including the Philippine Data Privacy Act of 2012 (Republic Act No. 10173) and international standards, you have rights to access, rectify, port, and erase your personal data.',
     ],
     bullets: [
-      'Update profile and account settings in the app.',
-      'Use export and backup tools before making major changes or deletion requests.',
-      'Contact Buhay if you need help with access, correction, deletion, or a privacy concern.',
+      'Toggle Privacy Mode at any time to blur financial figures for screen sharing or public use.',
+      'Update account details, currency preferences, and notification toggles directly in Settings.',
+      'Export your entire data ledger before making major changes or closing your account.',
+      'Contact our support team for any privacy inquiries or assistance.',
     ],
   },
   {
-    title: 'Security and international processing',
+    title: 'Security and encryption',
     paragraphs: [
-      'Buhay uses reasonable technical and organizational measures to protect account, money, fitness, and personal reflection data, but no online service can promise absolute security.',
-      'Because Buhay relies on third-party infrastructure, your information may be processed or stored outside your home country, including the Philippines or other regions where providers operate. When that happens, Buhay expects those providers to apply appropriate safeguards for the service they provide.',
-    ],
-  },
-  {
-    title: 'Children’s privacy',
-    paragraphs: [
-      'Buhay is not directed to children under 18. If you believe a child has provided personal data without appropriate permission, contact Buhay so the situation can be reviewed and addressed.',
+      'All data transmitted to and from Buhay is encrypted in transit using industry-standard TLS/SSL protocols. Stored database records are protected with authenticated Firebase access control rules.',
+      'While we implement rigorous security safeguards, no internet-based platform is completely infallible. We encourage users to maintain strong, unique passwords.',
     ],
   },
   {
     title: 'Updates and contact',
     paragraphs: [
-      'Buhay may update this policy as the product, infrastructure, or legal requirements change. If a material update is made, the revised version will be posted on this page with an updated effective date.',
-      'For privacy questions, data requests, or complaints, use the contact details listed on this page.',
+      'We may update this Privacy Policy to reflect improvements in our architecture or changes in legal requirements. Material updates will be published on this page with a revised date.',
+      'For privacy-related questions or data requests, please contact our support team at support@takda.app.',
     ],
   },
 ]
@@ -99,10 +93,10 @@ export default function PrivacyPolicy() {
   return (
     <LegalPageLayout
       eyebrow="Privacy Policy"
-      title="How Buhay handles your account and personal tracking data."
-      intro="This page explains what Buhay collects, why it is used, which providers help run the product, and how you can access, export, or delete information tied to your account."
+      title="How Buhay protects your account and personal financial data."
+      intro="This page explains what information Buhay stores, why it is used, how zero bank passwords are required, and how you can export or delete your financial data at any time."
       metaTitle="Privacy Policy — Buhay"
-      metaDescription="Read how Buhay handles account, money, fitness, reflection, and legacy media, and how you can access, export, or delete it."
+      metaDescription="Read how Buhay handles your personal finance data, cashflow logs, privacy mode, and universal CSV/JSON data export."
       metaPath="/privacy"
       summaryPoints={SUMMARY_POINTS}
       sections={SECTIONS}

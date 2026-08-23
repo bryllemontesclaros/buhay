@@ -14,7 +14,7 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
   const navigate = useNavigate()
   const isSignedIn = Boolean(auth.currentUser)
   const primaryHref = isSignedIn ? '/app' : '/login'
-  const primaryLabel = isSignedIn ? 'Open App' : 'Join Beta'
+  const primaryLabel = isSignedIn ? 'Open App' : 'Get Started Free'
 
   return (
     <div className={`${styles.page} neo`}>

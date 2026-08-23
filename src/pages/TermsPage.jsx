@@ -1,86 +1,85 @@
 import LegalPageLayout from './LegalPageLayout'
 
 const SUMMARY_POINTS = [
-  'Buhay is a tracking tool, not a bank, clinic, coach, or advice service.',
-  'You remain responsible for reviewing what you log or import before relying on it.',
-  'These terms explain access, acceptable use, backups, service changes, and account closure.',
+  'Buhay is a personal financial planning and cashflow tracking software, not a bank, broker, or licensed financial advisor.',
+  'You remain responsible for verifying your manual transaction logs, bill schedules, and financial decisions.',
+  'These terms outline account responsibilities, acceptable use, data backups, and service availability.',
 ]
 
 const SECTIONS = [
   {
     title: 'Using Buhay',
     paragraphs: [
-      'These Terms of Use govern your access to the Buhay website, signup flow, and app. By using Buhay, you agree to these terms and to the Privacy Policy.',
-      'Buhay is designed to help you track money, fitness, reflection, and planning in one app.',
+      'These Terms of Use govern your access to the Buhay website, applications, and services. By accessing or using Buhay, you agree to be bound by these Terms and our Privacy Policy.',
+      'Buhay is designed to help individuals track their daily cashflow, plan upcoming bills, monitor envelope budgets, and visualize multi-account net worth with total privacy.',
     ],
   },
   {
-    title: 'Eligibility and accounts',
+    title: 'Eligibility and account security',
     bullets: [
-      'You must provide accurate account information and keep your login credentials secure.',
-      'You are responsible for activity that happens through your account unless caused by Buhay’s own failure to protect it.',
-      'If you suspect unauthorized access, reset your password and contact Buhay as soon as possible.',
+      'You must provide accurate account registration details and maintain the security and confidentiality of your login credentials.',
+      'You are solely responsible for all activities and entries that occur under your account.',
+      'If you detect unauthorized access or suspect a security breach, reset your password and notify us immediately.',
     ],
   },
   {
     title: 'What Buhay is and is not',
     bullets: [
-      'Buhay is a personal tracking and planning tool for money, fitness, reflection, and everyday life.',
-      'Buhay is not a bank, e-wallet, lender, insurer, brokerage, or regulated investment service.',
-      'Buhay is not a doctor, dietitian, therapist, coach, or emergency-support service.',
-      'Buhay does not provide financial, investment, legal, tax, accounting, medical, mental-health, nutrition, or fitness advice.',
-      'Forecasts, bills, recurring schedules, budgets, goals, fitness logs, and mood insights are informational tools. You remain responsible for verifying your own finances, health decisions, and personal decisions.',
+      'Buhay is a self-directed personal tracking tool for manual financial bookkeeping, cashflow calendar projection, and debt payoff planning.',
+      'Buhay is not a bank, depository institution, payment processor, lender, insurance broker, or registered investment advisory service.',
+      'Buhay does not provide legal, tax, accounting, or formal financial investment advice.',
+      'All automated calculations, including 30-day cash projections, lowest dip calculations, savings timelines, and debt payoff dates, are informational projections based on user-entered data. You remain responsible for all financial decisions.',
     ],
   },
   {
-    title: 'Your data and responsibilities',
+    title: 'Your data ownership and responsibilities',
     paragraphs: [
-      'You keep ownership of the content and information you add to Buhay. You give Buhay the limited rights needed to host, process, back up, transmit, and display that information in order to operate the product.',
+      'You retain full and exclusive ownership of all financial transactions, account names, and notes you enter into Buhay. You grant Buhay only the limited rights necessary to host, process, calculate, and display your data to provide the service.',
     ],
     bullets: [
-      'Review manual entries before saving them.',
-      'Do not upload or submit unlawful, abusive, infringing, or harmful material.',
-      'Do not interfere with the service, abuse automated flows, or attempt unauthorized access to Buhay or other users’ data.',
+      'Ensure manual entries and transaction amounts are accurate before relying on forecasting models.',
+      'Do not submit unlawful, harmful, or malicious code through the application.',
+      'Do not attempt to reverse engineer, disrupt, or gain unauthorized access to our infrastructure or other users\' data.',
     ],
   },
   {
-    title: 'Third-party services',
+    title: 'Third-party infrastructure',
     paragraphs: [
-      'Buhay depends on third-party providers for infrastructure and certain features. Those providers may have their own terms and privacy practices.',
+      'Buhay utilizes trusted third-party infrastructure providers to deliver reliable, high-speed hosting and encrypted data persistence.',
     ],
     bullets: [
-      'Firebase may be used for authentication and app data storage.',
-      'Vercel or similar infrastructure may be used to host the site or app.',
+      'Google Firebase for authentication and database management.',
+      'Vercel for web hosting and content delivery.',
     ],
   },
   {
-    title: 'Availability, updates, and product changes',
+    title: 'Service availability and product evolution',
     bullets: [
-      'Buhay may add, remove, pause, or change features to improve the service, address risk, or comply with law.',
-      'The service may be unavailable from time to time for maintenance, bugs, provider outages, or security issues.',
-      'Buhay may update these terms when the product or legal environment changes. Continued use after an update means you accept the revised terms.',
+      'We continuously improve Buhay by adding new tools, enhancing algorithms, and optimizing performance.',
+      'While we strive for 99.9% uptime, services may occasionally experience temporary interruptions for maintenance, system updates, or infrastructure outages.',
+      'We reserve the right to modify or update these Terms as the application evolves. Continued use following an update constitutes acceptance of the revised Terms.',
     ],
   },
   {
-    title: 'Backups, exports, and deletion',
+    title: 'Data exports, backups, and termination',
     bullets: [
-      'Buhay may offer export, backup, or restore tools, but you should keep your own copies of important records.',
-      'You may stop using the product at any time and may request account deletion where that feature is available.',
-      'Buhay may suspend or terminate access if the service is misused, if legal compliance requires it, or if continued access creates security or fraud risk.',
+      'Buhay provides 1-click CSV spreadsheet exports and encrypted JSON backup downloads in the Settings page. Users are encouraged to maintain local backup copies of their records.',
+      'You may discontinue use of the service or permanently delete your account and all associated data at any time.',
+      'We reserve the right to suspend or terminate accounts that violate these Terms or engage in abusive, fraudulent behavior.',
     ],
   },
   {
-    title: 'Disclaimers and limits',
+    title: 'Disclaimers and limitation of liability',
     paragraphs: [
-      'Buhay is provided on an as-is and as-available basis to the extent allowed by applicable law. Buhay works to make the product useful and reliable, but cannot guarantee uninterrupted service, perfectly accurate manual entries, or error-free forecasts.',
-      'To the fullest extent allowed by law, Buhay is not liable for indirect, incidental, special, consequential, or punitive damages, or for losses caused by reliance on inaccurate entries or forecasts that you did not review.',
+      'Buhay is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, whether express or implied. While we strive to maintain accurate forecasting engines, we cannot guarantee zero errors in user-entered projections or system calculations.',
+      'To the maximum extent permitted by law, Buhay and its operators shall not be liable for any direct, indirect, incidental, consequential, or punitive damages resulting from reliance on forecast projections or data loss.',
     ],
   },
   {
     title: 'Applicable law and contact',
     paragraphs: [
-      'These terms should be read together with the laws that apply where you use the product, including Philippine law where relevant to Buhay’s operation.',
-      'Questions about these terms can be sent to the contact details listed on this page.',
+      'These Terms shall be governed by and construed in accordance with applicable laws, including the laws of the Republic of the Philippines where relevant to Buhay\'s operation.',
+      'For any questions or concerns regarding these Terms, please contact support@takda.app.',
     ],
   },
 ]
@@ -89,10 +88,10 @@ export default function TermsPage() {
   return (
     <LegalPageLayout
       eyebrow="Terms of Use"
-      title="The rules for using Buhay."
-      intro="These terms explain what Buhay provides, what it does not provide, what you remain responsible for, and how account access, third-party providers, backups, and service changes are handled."
+      title="The terms and standards for using Buhay."
+      intro="These terms explain what Buhay provides, our zero bank password policy, your responsibilities regarding data accuracy, and our guidelines for data portability and service access."
       metaTitle="Terms of Use — Buhay"
-      metaDescription="Read the terms for using Buhay, including account responsibilities, manual tracking, third-party services, forecasts, backups, and service changes."
+      metaDescription="Read the terms of use for Buhay, covering self-directed personal finance tracking, data ownership, third-party infrastructure, and forecasting disclaimers."
       metaPath="/terms"
       summaryPoints={SUMMARY_POINTS}
       sections={SECTIONS}
