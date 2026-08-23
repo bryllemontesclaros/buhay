@@ -2179,7 +2179,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             <div className={calStyles.monthNetChip} title="Net Cashflow for this month">
               <span className={calStyles.monthNetLabel}>Net Cashflow</span>
               <strong className={monthSummaryTotals.net >= 0 ? calStyles.monthNetPositive : calStyles.monthNetNegative}>
-                {monthSummaryTotals.net >= 0 ? '+' : '−'}{money(Math.abs(monthSummaryTotals.net))}
+                {monthSummaryTotals.net >= 0 ? '+' : '−'}{balanceMoney(Math.abs(monthSummaryTotals.net))}
               </strong>
             </div>
           </div>
