@@ -665,7 +665,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 <input
                   id="account-name"
                   className={accStyles.fieldInput}
-                  placeholder="e.g. BDO Savings, GCash, Physical Wallet"
+                  placeholder="e.g. BDO Savings, GCash"
                   value={form.name}
                   onChange={e => setField('name', e.target.value)}
                   autoFocus
@@ -712,7 +712,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 <input
                   id="account-notes"
                   className={accStyles.fieldInput}
-                  placeholder="e.g. Payroll account, Daily spending"
+                  placeholder="e.g. Daily spending, Payroll"
                   value={form.notes}
                   onChange={e => setField('notes', e.target.value)}
                 />

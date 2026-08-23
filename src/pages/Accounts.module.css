@@ -57,7 +57,7 @@
   border-radius: 12px;
   border: none;
   background: var(--accent);
-  color: #05160e;
+  color: var(--bg);
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
@@ -463,7 +463,7 @@
   border-radius: 8px;
   border: none;
   background: var(--accent);
-  color: #05160e;
+  color: var(--bg);
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -669,13 +669,13 @@
 }
 
 .colorBtn {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--swatch);
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .colorBtn:hover {
@@ -683,8 +683,8 @@
 }
 
 .colorBtnActive {
-  border-color: white;
-  box-shadow: 0 0 8px var(--swatch);
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 10px var(--swatch);
 }
 
 /* MODAL ACTIONS */
@@ -697,19 +697,23 @@
 }
 
 .btnPrimary {
-  padding: 10px 18px;
-  font-size: 13px;
+  padding: 11px 20px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: 12px;
   border: none;
   background: var(--accent);
-  color: #05160e;
+  color: var(--bg);
   cursor: pointer;
   transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btnPrimary:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.15);
+  transform: translateY(-1px);
 }
 
 .btnPrimary:disabled {
@@ -718,15 +722,18 @@
 }
 
 .btnSecondary {
-  padding: 10px 16px;
-  font-size: 13px;
+  padding: 11px 18px;
+  font-size: 14px;
   font-weight: 600;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--surface2);
-  color: var(--text2);
+  color: var(--text);
   cursor: pointer;
   transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btnSecondary:hover {
