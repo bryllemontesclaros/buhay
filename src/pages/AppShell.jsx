@@ -1790,7 +1790,12 @@ export default function AppShell({ user }) {
       <div className={`${styles.mainWrap} ${isCalendarPage ? styles.mainWrapCalendar : ''} ${chromeMode.compact ? styles.mainWrapScrolled : ''} ${chromeMode.hidden ? styles.mainWrapChromeHidden : ''}`}>
         <header className={styles.topBar}>
           <div className={styles.topBarLeft}>
-            <BrandLogo to="/app" />
+            <div className={styles.mobileLogoOnly}>
+              <BrandLogo to="/app" />
+            </div>
+            <div className={styles.desktopTitleOnly}>
+              <span className={styles.desktopTitleText}>{currentNavItem?.label || 'Buhay'}</span>
+            </div>
           </div>
           <div className={styles.topBarRight}>
 
