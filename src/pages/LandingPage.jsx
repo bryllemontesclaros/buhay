@@ -14,7 +14,7 @@ function LiveAppMockup() {
     { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
     { id: 2, name: 'S&R Supermarket Haul', date: 'Today · 1:15 PM', amount: -3450, icon: '🛒', pos: false },
     { id: 3, name: 'Meralco Power Bill', date: 'Yesterday', amount: -3100, icon: '⚡', pos: false },
-    { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false }
+    { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false },
   ])
 
   const handleSalary = () => {
@@ -22,7 +22,7 @@ function LiveAppMockup() {
     setLiquidCash(prev => prev + 35000)
     setTxList(prev => [
       { id: Date.now(), name: 'Salary / Consulting Payout', date: 'Just now', amount: 35000, icon: '💰', pos: true },
-      ...prev.slice(0, 4)
+      ...prev.slice(0, 4),
     ])
   }
 
@@ -33,7 +33,7 @@ function LiveAppMockup() {
     setBudgetSpent(prev => Math.min(budgetLimit, prev + 2400))
     setTxList(prev => [
       { id: Date.now(), name: 'Weekly Market Run', date: 'Just now', amount: -2400, icon: '🥦', pos: false },
-      ...prev.slice(0, 4)
+      ...prev.slice(0, 4),
     ])
   }
 
@@ -44,7 +44,7 @@ function LiveAppMockup() {
     setBudgetSpent(prev => Math.min(budgetLimit, prev + 380))
     setTxList(prev => [
       { id: Date.now(), name: 'Matcha Latte & Bagel', date: 'Just now', amount: -380, icon: '🍵', pos: false },
-      ...prev.slice(0, 4)
+      ...prev.slice(0, 4),
     ])
   }
 
@@ -56,7 +56,7 @@ function LiveAppMockup() {
       { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
       { id: 2, name: 'S&R Supermarket Haul', date: 'Today · 1:15 PM', amount: -3450, icon: '🛒', pos: false },
       { id: 3, name: 'Meralco Power Bill', date: 'Yesterday', amount: -3100, icon: '⚡', pos: false },
-      { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false }
+      { id: 4, name: 'Specialty Coffee & Snack', date: 'Yesterday', amount: -420, icon: '☕', pos: false },
     ])
   }
 
@@ -74,7 +74,7 @@ function LiveAppMockup() {
           <span>🔒</span> buhay.app/takda
         </div>
         <div className={styles.mockupWindowMeta}>
-          <span>●</span> Live Demo
+          <span>●</span> Live Financial Simulator
         </div>
       </div>
 
@@ -108,7 +108,7 @@ function LiveAppMockup() {
             <div className={styles.metricCardValue}>
               ₱{netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div className={styles.metricCardSub}>+14.2% YoY growth</div>
+            <div className={styles.metricCardSub}>Cash, Crypto & Assets</div>
           </div>
 
           <div className={styles.metricCard}>
@@ -116,21 +116,21 @@ function LiveAppMockup() {
             <div className={styles.metricCardValue} style={{ color: '#059669' }}>
               ₱{liquidCash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div className={styles.metricCardSub}>Available across 4 accounts</div>
+            <div className={styles.metricCardSub}>Across Banks & E-Wallets</div>
           </div>
 
           <div className={styles.metricCard}>
-            <div className={styles.metricCardLabel}>Bills (Next 7 Days)</div>
+            <div className={styles.metricCardLabel}>Upcoming Fixed Bills</div>
             <div className={styles.metricCardValue} style={{ color: '#d97706' }}>
               ₱4,999.00
             </div>
-            <div className={styles.metricCardSub} style={{ color: '#d97706' }}>2 bills approaching</div>
+            <div className={styles.metricCardSub} style={{ color: '#d97706' }}>⚡ 2 due in next 7 days</div>
           </div>
 
           <div className={styles.metricCard}>
-            <div className={styles.metricCardLabel}>Monthly Budget Target</div>
+            <div className={styles.metricCardLabel}>Safe Daily Spend</div>
             <div className={styles.metricCardValue}>
-              {budgetPct}%
+              ₱920<span style={{ fontSize: 13, color: '#64748b', fontWeight: 600 }}>/day</span>
             </div>
             <div style={{ height: 6, background: '#e2e8f0', borderRadius: 99, marginTop: 8, overflow: 'hidden' }}>
               <div style={{ width: `${budgetPct}%`, height: '100%', background: budgetPct > 85 ? '#ef4444' : '#10b981', transition: 'width 0.3s ease' }}></div>
@@ -212,7 +212,7 @@ function CalendarWidget() {
     17: { balance: 80750, note: '🟢 Current active day · Safe cashflow (+₱58.4k projection)' },
     18: { balance: 79250, note: 'Internet subscription recurring (-₱1,500)' },
     19: { balance: 78600, note: 'Scheduled savings transfer to Emergency Fund (-₱650)' },
-    20: { balance: 77900, note: 'Planned grocery replenishment' }
+    20: { balance: 77900, note: 'Planned grocery replenishment' },
   }
 
   const activeInfo = dayForecasts[selectedDay] || dayForecasts[17]
@@ -225,10 +225,10 @@ function CalendarWidget() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, textAlign: 'center', marginBottom: 12 }}>
-        {['S','M','T','W','T','F','S'].map((d, i) => (
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
           <div key={i} style={{ fontSize: 10, fontWeight: 700, color: '#64748b' }}>{d}</div>
         ))}
-        {[14,15,16,17,18,19,20].map((d) => (
+        {[14, 15, 16, 17, 18, 19, 20].map((d) => (
           <button
             key={d}
             type="button"
@@ -243,7 +243,7 @@ function CalendarWidget() {
               fontSize: 12,
               cursor: 'pointer',
               boxShadow: d === selectedDay ? '0 2px 8px rgba(16,185,129,0.2)' : 'none',
-              transition: 'all 0.18s ease'
+              transition: 'all 0.18s ease',
             }}
           >
             {d}
@@ -266,8 +266,8 @@ function AccountsWidget() {
     { name: '🏦 BDO Savings Account', cat: 'liquid', balance: 48720, type: 'Bank' },
     { name: '📱 GCash Wallet', cat: 'liquid', balance: 12450, type: 'E-Wallet' },
     { name: '⚡ Maya Personal', cat: 'liquid', balance: 7070, type: 'E-Wallet' },
-    { name: '📈 Global Stock Index ETF', cat: 'invest', balance: 320400, type: 'Investment' },
-    { name: '💳 Titanium Credit Card', cat: 'credit', balance: -8400, type: 'Credit' }
+    { name: '🪙 BTC & ETH Holdings', cat: 'invest', balance: 420400, type: 'Crypto' },
+    { name: '💳 Platinum Credit Card', cat: 'credit', balance: -8400, type: 'Debt' },
   ]
 
   const filtered = activeTab === 'all'
@@ -291,10 +291,10 @@ function AccountsWidget() {
               fontSize: 11,
               fontWeight: 700,
               textTransform: 'capitalize',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
-            {tab === 'all' ? 'All Accounts' : tab === 'liquid' ? 'Liquid Cash' : 'Invest & Debt'}
+            {tab === 'all' ? 'All Accounts' : tab === 'liquid' ? 'Liquid Cash' : 'Crypto & Debt'}
           </button>
         ))}
       </div>
@@ -317,7 +317,7 @@ function BillsWidget() {
   const [bills, setBills] = useState([
     { id: 1, name: 'Meralco Electricity', amount: 3100, due: 'Due in 2 days', paid: false, urgent: true },
     { id: 2, name: 'Globe Fiber WiFi 200Mbps', amount: 1899, due: 'Due in 6 days', paid: false, urgent: false },
-    { id: 3, name: 'Netflix Premium HD', amount: 549, due: 'Auto-debit on 24th', paid: true, urgent: false }
+    { id: 3, name: 'Netflix Premium HD', amount: 549, due: 'Auto-debit on 24th', paid: true, urgent: false },
   ])
 
   const togglePaid = (id) => {
@@ -343,7 +343,7 @@ function BillsWidget() {
               padding: '10px 14px',
               borderRadius: 10,
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -357,7 +357,7 @@ function BillsWidget() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 12,
-                color: '#ffffff'
+                color: '#ffffff',
               }}>
                 {bill.paid ? '✓' : ''}
               </div>
@@ -406,7 +406,7 @@ function BudgetGoalsWidget() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', background: '#ffffff', border: '1px solid #e2e8f0', padding: '8px 12px', borderRadius: 8, fontSize: 11, color: '#64748b' }}>
           <span>Monthly Safe-to-Spend Envelope</span>
-          <strong style={{ color: '#059669' }}>₱1,250 / day</strong>
+          <strong style={{ color: '#059669' }}>₱920 / day remaining</strong>
         </div>
       </div>
     </div>
@@ -414,58 +414,58 @@ function BudgetGoalsWidget() {
 }
 
 const COMPARISON_ROWS = [
-  { feature: 'Data Privacy & Security', buhay: '100% Client-Side. No data selling', banks: 'Shared with marketing & credit networks', sheets: 'Vulnerable cloud sharing' },
-  { feature: 'Bank Login Requirements', buhay: 'Zero bank logins or passwords needed', banks: 'Mandatory passwords & SMS OTP friction', sheets: 'Manual formulas only' },
-  { feature: 'Visual Cashflow Forecasting', buhay: '30-Day interactive calendar forecast', banks: 'Past statement histories only', sheets: 'Complex custom macros' },
-  { feature: 'Multi-Account Net Worth', buhay: 'Auto-aggregated cash, debt & investments', banks: 'Locked to single institution accounts', sheets: 'Prone to broken formulas' },
-  { feature: 'Subscription & Bill Radar', buhay: 'Automated recurrence & paid checkoffs', banks: 'Surprise auto-debits without alert', sheets: 'No recurring trigger alerts' },
-  { feature: 'Cost / Pricing', buhay: '100% Free Forever', banks: 'Hidden fees & minimum balance penalties', sheets: 'Free (but high maintenance)' }
+  { feature: 'Data Privacy & Security', buhay: '100% Client-Side. Zero data selling', banks: 'Shared with marketing & credit networks', sheets: 'Vulnerable cloud sharing' },
+  { feature: 'Bank Login Credentials', buhay: 'Zero passwords, OTPs, or API logins needed', banks: 'Mandatory passwords & SMS OTP friction', sheets: 'Manual formulas only' },
+  { feature: 'Visual Cashflow Forecasting', buhay: '30-Day interactive calendar & dip radar', banks: 'Past statement histories only', sheets: 'Complex custom macros' },
+  { feature: 'Multi-Account Liquidity', buhay: 'Auto-aggregated cash, e-wallets, crypto & debt', banks: 'Locked to single institution accounts', sheets: 'Prone to broken formulas' },
+  { feature: 'Subscription & Bill Radar', buhay: 'Automated recurrence & 1-tap checkoffs', banks: 'Surprise auto-debits without alert', sheets: 'No recurring trigger alerts' },
+  { feature: 'Cost / Pricing', buhay: '100% Free Forever', banks: 'Hidden fees & minimum balance penalties', sheets: 'Free (but high maintenance)' },
 ]
 
 const TRUST_POINTS = [
   {
     icon: '🛡️',
     title: 'Zero Bank Credentials Stored',
-    desc: 'Buhay never asks for your bank passwords, OTPs, or API logins. Your accounts stay strictly yours.'
+    desc: 'Buhay never asks for your bank passwords, OTPs, or API logins. Your accounts stay strictly in your hands.',
   },
   {
     icon: '⚡',
     title: '100% Free Forever',
-    desc: 'No credit card required, no 14-day trial tricks, and zero features locked behind paywalls.'
+    desc: 'No credit card required, no 14-day trial tricks, and zero features locked behind paywalls.',
   },
   {
     icon: '🔒',
     title: 'Encrypted & Private',
-    desc: 'All financial logs belong exclusively to your user ID with optional Privacy Mode to blur monetary values.'
+    desc: 'All financial logs belong exclusively to your account with optional Privacy Mode to blur values in public.',
   },
   {
     icon: '📥',
     title: 'Universal Data Export',
-    desc: 'Export your entire transaction ledger to CSV spreadsheets or full JSON snapshots anytime.'
-  }
+    desc: 'Export your entire transaction ledger to CSV spreadsheets or full JSON snapshots anytime.',
+  },
 ]
 
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay / Takda?',
-    answer: 'Buhay is an ultra-fast, private personal finance web app designed to map your daily cashflow, aggregate multi-account net worth, forecast upcoming bills, and guide your savings goals without complexity.'
+    answer: 'Buhay is an ultra-fast, private personal finance web app designed to map your daily cashflow, aggregate multi-account net worth, forecast upcoming bills, and guide your savings goals without friction.',
   },
   {
     question: 'Why do you not connect directly to banks?',
-    answer: 'Traditional finance apps connect to banks by requesting your online banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never exposed.'
+    answer: 'Traditional finance apps connect to banks by requesting your online banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never exposed.',
   },
   {
     question: 'Can I use Buhay on my mobile phone?',
-    answer: 'Yes! Buhay is fully responsive and installable as a Progressive Web App (PWA) on iOS and Android. You can add it directly to your home screen for lightning-fast 1-tap tracking.'
+    answer: 'Yes! Buhay is fully responsive and installable as a Progressive Web App (PWA) on iOS and Android. You can add it directly to your home screen for lightning-fast 1-tap tracking.',
   },
   {
     question: 'Is there a limit on how many transactions or accounts I can add?',
-    answer: 'No! You can track unlimited cash wallets, bank accounts, credit cards, bills, and savings goals without hitting any limits.'
+    answer: 'No! You can track unlimited cash wallets, bank accounts, credit cards, bills, crypto holdings, and savings goals without hitting any limits.',
   },
   {
     question: 'How do I backup my financial data?',
-    answer: 'Inside the Settings page, you can download a full CSV transaction ledger or export an encrypted JSON backup snapshot to restore anytime.'
-  }
+    answer: 'Inside the Settings page, you can download a full CSV transaction ledger or export an encrypted JSON backup snapshot to restore anytime.',
+  },
 ]
 
 export default function LandingPage() {
@@ -501,7 +501,7 @@ export default function LandingPage() {
         path="/"
       />
 
-      {/* Atmospheric Background Lights (Subtle Light Mode Emerald) */}
+      {/* Atmospheric Background Lights */}
       <div className={styles.bgGlowTop}></div>
       <div className={styles.bgGridPattern}></div>
 
@@ -529,7 +529,7 @@ export default function LandingPage() {
         <section className={styles.hero}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            <span>Buhay 2.0 · Personal Finance Simplified</span>
+            <span>Buhay · Personal Finance & Cash Flow Calendar</span>
           </div>
 
           <h1 className={styles.heroTitle}>
@@ -570,7 +570,7 @@ export default function LandingPage() {
         <section className={styles.features}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionEyebrow}>Core Architecture</div>
-            <h2 className={styles.sectionTitle}>Four Flagship Tools In Perfect Sync</h2>
+            <h2 className={styles.sectionTitle}>Everything for Your Money In Perfect Sync</h2>
             <p className={styles.sectionSub}>
               Everything you need to manage your personal finances effortlessly in one unified platform.
             </p>
@@ -582,7 +582,7 @@ export default function LandingPage() {
               <div className={styles.bentoCardTop}>
                 <div className={styles.bentoIcon}>📅</div>
                 <div>
-                  <div className={styles.bentoTag}>Takda Engine</div>
+                  <div className={styles.bentoTag}>Cashflow Forecast</div>
                   <h3 className={styles.bentoCardTitle}>Interactive Cashflow Calendar</h3>
                 </div>
               </div>
@@ -597,12 +597,12 @@ export default function LandingPage() {
               <div className={styles.bentoCardTop}>
                 <div className={styles.bentoIcon}>💳</div>
                 <div>
-                  <div className={styles.bentoTag}>Net Worth Engine</div>
-                  <h3 className={styles.bentoCardTitle}>Multi-Account Balance Hub</h3>
+                  <div className={styles.bentoTag}>Liquidity Radar</div>
+                  <h3 className={styles.bentoCardTitle}>Multi-Account & Net Worth Hub</h3>
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Consolidate bank accounts, e-wallets, credit cards, and investments into one real-time liquidity and net worth view.
+                Consolidate bank accounts, e-wallets, cash, crypto, and credit cards into one real-time liquidity and net worth view with 1-click balance adjust.
               </p>
               <AccountsWidget />
             </div>
@@ -612,8 +612,8 @@ export default function LandingPage() {
               <div className={styles.bentoCardTop}>
                 <div className={styles.bentoIcon}>⚡</div>
                 <div>
-                  <div className={styles.bentoTag}>Recurring Radar</div>
-                  <h3 className={styles.bentoCardTitle}>Smart Bills & Subscriptions</h3>
+                  <div className={styles.bentoTag}>Fixed Commitments</div>
+                  <h3 className={styles.bentoCardTitle}>Smart Bills & Recurring Radar</h3>
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
@@ -627,12 +627,12 @@ export default function LandingPage() {
               <div className={styles.bentoCardTop}>
                 <div className={styles.bentoIcon}>🎯</div>
                 <div>
-                  <div className={styles.bentoTag}>Growth & Freedom</div>
-                  <h3 className={styles.bentoCardTitle}>Envelope Budgets & Debt Freedom</h3>
+                  <div className={styles.bentoTag}>Growth & Envelope</div>
+                  <h3 className={styles.bentoCardTitle}>Safe Daily Spend & Debt Freedom</h3>
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Build emergency funds with milestone tracking and calculate your exact debt payoff date with structured payoff simulations.
+                Calculate your real-time daily spending allowance, build emergency savings goals, and accelerate debt payoff with structured snowball plans.
               </p>
               <BudgetGoalsWidget />
             </div>
