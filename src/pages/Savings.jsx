@@ -5,6 +5,7 @@ import { displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import sStyles from './Savings.module.css'
+import SwipeableCard from '../components/SwipeableCard'
 
 export default function Savings({ user, data, profile = {}, symbol, privacyMode = false, actionRequest = null, onActionHandled = () => {}, hideHeader = false }) {
   const s = symbol || '₱'
@@ -320,80 +321,108 @@ export default function Savings({ user, data, profile = {}, symbol, privacyMode 
       ) : (
         <div className={sStyles.goalList}>
           {goals.map(goal => (
-            <div key={goal._id} className={sStyles.goalCard}>
-              <div className={sStyles.goalCardTop}>
-                <div className={sStyles.goalCopy}>
-                  <div className={sStyles.goalNameRow}>
-                    <div className={sStyles.goalName}>{goal.name}</div>
-                    {goal.date && <span className={sStyles.goalDateChip}>Target {formatDisplayDate(goal.date)}</span>}
-                    {goal.accountId && (
-                      <span className={sStyles.goalLinkChip}>
-                        🔗 {accounts.find(a => a._id === goal.accountId)?.name || 'Linked Account'}
-                      </span>
-                    )}
+            <SwipeableCard
+              key={goal._id}
+              onSwipeRight={() => {
+                playTick()
+                if (contributionInputRefs.current[goal._id]) {
+                  contributionInputRefs.current[goal._id].focus()
+                }
+              }}
+              rightLabel="Deposit"
+              rightIcon="💰"
+              rightTone="success"
+              onSwipeLeft={async () => {
+                playTick()
+                if (await confirmDeleteApp(goal.name)) {
+                  await fsDel(user.uid, 'goals', goal._id)
+                }
+              }}
+              leftLabel="Delete"
+              leftIcon="✕"
+              leftTone="danger"
+              onDoubleTap={() => {
+                playTick()
+                if (contributionInputRefs.current[goal._id]) {
+                  contributionInputRefs.current[goal._id].focus()
+                }
+              }}
+            >
+              <div className={sStyles.goalCard}>
+                <div className={sStyles.goalCardTop}>
+                  <div className={sStyles.goalCopy}>
+                    <div className={sStyles.goalNameRow}>
+                      <div className={sStyles.goalName}>{goal.name}</div>
+                      {goal.date && <span className={sStyles.goalDateChip}>Target {formatDisplayDate(goal.date)}</span>}
+                      {goal.accountId && (
+                        <span className={sStyles.goalLinkChip}>
+                          🔗 {accounts.find(a => a._id === goal.accountId)?.name || 'Linked Account'}
+                        </span>
+                      )}
+                    </div>
+                    <div className={sStyles.goalValueRow}>
+                      <span className={sStyles.goalSaved}>{displayValue(privacyMode, `${fmt(goal.current, s)} saved`, `${maskMoney(s)} saved`)}</span>
+                      <span className={sStyles.goalTarget}>of {money(goal.target)}</span>
+                    </div>
                   </div>
-                  <div className={sStyles.goalValueRow}>
-                    <span className={sStyles.goalSaved}>{displayValue(privacyMode, `${fmt(goal.current, s)} saved`, `${maskMoney(s)} saved`)}</span>
-                    <span className={sStyles.goalTarget}>of {money(goal.target)}</span>
+
+                  <div className={sStyles.goalActions}>
+                    <span className={sStyles.goalPct}>{displayValue(privacyMode, `${goal.pct}%`, '•••')}</span>
+                    <button
+                      type="button"
+                      className={sStyles.goalDelete}
+                      onClick={async () => {
+                        playTick()
+                        if (await confirmDeleteApp(goal.name)) {
+                          await fsDel(user.uid, 'goals', goal._id)
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
 
-                <div className={sStyles.goalActions}>
-                  <span className={sStyles.goalPct}>{displayValue(privacyMode, `${goal.pct}%`, '•••')}</span>
+                <div className={sStyles.goalTrack}>
+                  <div
+                    className={`${sStyles.goalTrackFill} ${goal.pct >= 100 ? sStyles.goalTrackFillComplete : ''}`}
+                    style={{ width: `${goal.pct}%` }}
+                  />
+                </div>
+
+                <div className={sStyles.goalMetaRow}>
+                  <span className={sStyles.goalRemaining}>{displayValue(privacyMode, `${fmt(goal.remaining, s)} left`, `${maskMoney(s)} left`)}</span>
+                  <span className={sStyles.goalState}>
+                    {goal.pct >= 100 ? 'Completed' : goal.date ? `Finish by ${formatDisplayDate(goal.date)}` : 'No target date set'}
+                  </span>
+                </div>
+
+                <div className={sStyles.contributionRow}>
+                  <input
+                    ref={node => {
+                      contributionInputRefs.current[goal._id] = node
+                    }}
+                    className={sStyles.contributionInput}
+                    type="number"
+                    min="0"
+                    inputMode="decimal"
+                    placeholder={`Add contribution (${s})`}
+                    value={contribs[goal._id] || ''}
+                    onChange={event => setContribs(current => ({ ...current, [goal._id]: event.target.value }))}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') handleContrib(goal)
+                    }}
+                  />
                   <button
                     type="button"
-                    className={sStyles.goalDelete}
-                    onClick={async () => {
-                      playTick()
-                      if (await confirmDeleteApp(goal.name)) {
-                        await fsDel(user.uid, 'goals', goal._id)
-                      }
-                    }}
+                    className={sStyles.contributionBtn}
+                    onClick={() => { playTick(); handleContrib(goal); }}
                   >
-                    Delete
+                    Add funds
                   </button>
                 </div>
               </div>
-
-              <div className={sStyles.goalTrack}>
-                <div
-                  className={`${sStyles.goalTrackFill} ${goal.pct >= 100 ? sStyles.goalTrackFillComplete : ''}`}
-                  style={{ width: `${goal.pct}%` }}
-                />
-              </div>
-
-              <div className={sStyles.goalMetaRow}>
-                <span className={sStyles.goalRemaining}>{displayValue(privacyMode, `${fmt(goal.remaining, s)} left`, `${maskMoney(s)} left`)}</span>
-                <span className={sStyles.goalState}>
-                  {goal.pct >= 100 ? 'Completed' : goal.date ? `Finish by ${formatDisplayDate(goal.date)}` : 'No target date set'}
-                </span>
-              </div>
-
-              <div className={sStyles.contributionRow}>
-                <input
-                  ref={node => {
-                    contributionInputRefs.current[goal._id] = node
-                  }}
-                  className={sStyles.contributionInput}
-                  type="number"
-                  min="0"
-                  inputMode="decimal"
-                  placeholder={`Add contribution (${s})`}
-                  value={contribs[goal._id] || ''}
-                  onChange={event => setContribs(current => ({ ...current, [goal._id]: event.target.value }))}
-                  onKeyDown={event => {
-                    if (event.key === 'Enter') handleContrib(goal)
-                  }}
-                />
-                <button
-                  type="button"
-                  className={sStyles.contributionBtn}
-                  onClick={() => { playTick(); handleContrib(goal); }}
-                >
-                  Add funds
-                </button>
-              </div>
-            </div>
+            </SwipeableCard>
           ))}
         </div>
       )}

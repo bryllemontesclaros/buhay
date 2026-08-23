@@ -15,6 +15,7 @@ import {
   setCachedPrices,
 } from '../lib/crypto'
 import styles from './CryptoPortfolio.module.css'
+import SwipeableCard from '../components/SwipeableCard'
 
 const EMPTY_FORM = {
   coinId: 'bitcoin',
@@ -482,49 +483,75 @@ export default function CryptoPortfolio({
             const coinIcon = POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId || c.symbol === h.symbol)?.icon || '🪙'
 
             return (
-              <div
+              <SwipeableCard
                 key={h._id || h.id || h.symbol}
-                className={styles.holdingCard}
-                onClick={() => openEditHolding(h)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEditHolding(h)}
-                aria-label={`Holding ${h.symbol}, tap to edit`}
+                onSwipeRight={() => openEditHolding(h)}
+                rightLabel="Edit"
+                rightIcon="✎"
+                rightTone="success"
+                onSwipeLeft={async () => {
+                  playTick()
+                  const confirmed = await confirmApp({
+                    title: 'Delete holding?',
+                    message: `Remove ${h.name} (${h.symbol}) from portfolio?`,
+                    confirmLabel: 'Delete',
+                    cancelLabel: 'Cancel',
+                    tone: 'danger',
+                  })
+                  if (confirmed) {
+                    await fsDel(user.uid, 'portfolioHoldings', h._id || h.id)
+                    notifyApp({ title: 'Holding deleted', tone: 'success' })
+                  }
+                }}
+                leftLabel="Delete"
+                leftIcon="✕"
+                leftTone="danger"
+                onDoubleTap={() => openEditHolding(h)}
+                style={{ borderRadius: 18 }}
               >
-                <div className={styles.holdingLeft}>
-                  <div className={styles.coinAvatar} style={{ background: avatarBg }}>
-                    {coinIcon}
-                  </div>
-                  <div className={styles.coinInfo}>
-                    <div className={styles.coinHeader}>
-                      <span className={styles.coinSymbol}>{h.symbol}</span>
-                      <span className={styles.walletBadge}>{h.wallet}</span>
+                <div
+                  className={styles.holdingCard}
+                  onClick={() => openEditHolding(h)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEditHolding(h)}
+                  aria-label={`Holding ${h.symbol}, tap to edit`}
+                >
+                  <div className={styles.holdingLeft}>
+                    <div className={styles.coinAvatar} style={{ background: avatarBg }}>
+                      {coinIcon}
                     </div>
-                    <div className={styles.coinName}>{h.name}</div>
-                    <div className={styles.coinSub}>
-                      {h.qty} {h.symbol} · {formatCryptoValue(h.currentPrice, s, 4)} / coin
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.holdingRight}>
-                  <div className={styles.holdingValues}>
-                    <div className={styles.holdingTotal}>
-                      {privacyMode ? '••••' : formatCryptoValue(h.currentValue, s, 2)}
-                    </div>
-                    {hasHoldingPnl && (
-                      <div
-                        className={`${styles.holdingPnl} ${
-                          isHoldingPnlPos ? styles.badgePositive : styles.badgeNegative
-                        }`}
-                      >
-                        {isHoldingPnlPos ? '+' : '-'}{formatCryptoValue(Math.abs(h.pnlAmount), s, 2)} ({h.pnlPct.toFixed(1)}%)
+                    <div className={styles.coinInfo}>
+                      <div className={styles.coinHeader}>
+                        <span className={styles.coinSymbol}>{h.symbol}</span>
+                        <span className={styles.walletBadge}>{h.wallet}</span>
                       </div>
-                    )}
+                      <div className={styles.coinName}>{h.name}</div>
+                      <div className={styles.coinSub}>
+                        {h.qty} {h.symbol} · {formatCryptoValue(h.currentPrice, s, 4)} / coin
+                      </div>
+                    </div>
                   </div>
-                  <span className={styles.cardChevron} aria-hidden="true">›</span>
+
+                  <div className={styles.holdingRight}>
+                    <div className={styles.holdingValues}>
+                      <div className={styles.holdingTotal}>
+                        {privacyMode ? '••••' : formatCryptoValue(h.currentValue, s, 2)}
+                      </div>
+                      {hasHoldingPnl && (
+                        <div
+                          className={`${styles.holdingPnl} ${
+                            isHoldingPnlPos ? styles.badgePositive : styles.badgeNegative
+                          }`}
+                        >
+                          {isHoldingPnlPos ? '+' : '-'}{formatCryptoValue(Math.abs(h.pnlAmount), s, 2)} ({h.pnlPct.toFixed(1)}%)
+                        </div>
+                      )}
+                    </div>
+                    <span className={styles.cardChevron} aria-hidden="true">›</span>
+                  </div>
                 </div>
-              </div>
+              </SwipeableCard>
             )
           })}
         </div>

@@ -6,6 +6,7 @@ import { isTransactionPaid } from '../lib/finance'
 import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 import bStyles from './Budget.module.css'
+import SwipeableCard from '../components/SwipeableCard'
 
 const BUDGET_PRESETS = [10000, 15000, 20000, 30000, 50000]
 
@@ -226,21 +227,44 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
 
           <div className={bStyles.categoryList}>
             {categoryBreakdown.map(item => (
-              <div key={item.cat} className={bStyles.categoryRow}>
-                <div className={bStyles.categoryRowHeader}>
-                  <span className={bStyles.categoryName}>{item.cat}</span>
-                  <div className={bStyles.categoryAmounts}>
-                    <span className={bStyles.categoryVal}>{money(item.amount)}</span>
-                    <span className={bStyles.categoryPct}>{item.pct}%</span>
+              <SwipeableCard
+                key={item.cat}
+                onSwipeRight={() => {
+                  playTick()
+                  setShowAdjustModal(true)
+                }}
+                rightLabel="Adjust Budget"
+                rightIcon="⚡"
+                rightTone="success"
+                onSwipeLeft={() => {
+                  playTick()
+                  setShowAdjustModal(true)
+                }}
+                leftLabel="Edit"
+                leftIcon="✎"
+                leftTone="amber"
+                onDoubleTap={() => {
+                  playTick()
+                  setShowAdjustModal(true)
+                }}
+                style={{ borderRadius: 12, marginBottom: 8 }}
+              >
+                <div className={bStyles.categoryRow}>
+                  <div className={bStyles.categoryRowHeader}>
+                    <span className={bStyles.categoryName}>{item.cat}</span>
+                    <div className={bStyles.categoryAmounts}>
+                      <span className={bStyles.categoryVal}>{money(item.amount)}</span>
+                      <span className={bStyles.categoryPct}>{item.pct}%</span>
+                    </div>
+                  </div>
+                  <div className={bStyles.categoryTrack}>
+                    <div
+                      className={bStyles.categoryFill}
+                      style={{ width: `${item.pct}%` }}
+                    />
                   </div>
                 </div>
-                <div className={bStyles.categoryTrack}>
-                  <div
-                    className={bStyles.categoryFill}
-                    style={{ width: `${item.pct}%` }}
-                  />
-                </div>
-              </div>
+              </SwipeableCard>
             ))}
           </div>
         </div>
