@@ -8,6 +8,7 @@ import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBill
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick, displayValue, maskMoney } from '../lib/utils'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import { Button } from '../components/ui/Button'
+import SwipeableCard from '../components/SwipeableCard'
 import styles from './Page.module.css'
 import bStyles from './Bills.module.css'
 
@@ -413,62 +414,75 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
     const dueLabel = getBillDueLabel(row)
     
     return (
-      <div key={row._id} className={`${bStyles.billCard} ${isPaid ? bStyles.billCardPaid : ''}`}>
-        <div className={bStyles.billCardHeader}>
-          <div>
-            <h4 className={bStyles.billCardTitle}>{row.name}</h4>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2 }}>
-              <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
-              {row.autoDeduct && (
-                <span style={{ background: 'var(--amber-glow)', color: 'var(--amber)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
-                  ⚡ Auto-Deduct
-                </span>
+      <SwipeableCard
+        key={row._id}
+        onSwipeRight={isPaid ? () => handleUndoPaid(row) : () => openPayment(row)}
+        rightLabel={isPaid ? 'Undo' : 'Mark Paid'}
+        rightIcon={isPaid ? '↺' : '✓'}
+        rightTone={isPaid ? 'amber' : 'success'}
+        onSwipeLeft={!row.isVirtual ? async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) } : null}
+        leftLabel="Delete"
+        leftIcon="✕"
+        leftTone="danger"
+        onDoubleTap={() => !isPaid && openPayment(row)}
+      >
+        <div className={`${bStyles.billCard} ${isPaid ? bStyles.billCardPaid : ''}`}>
+          <div className={bStyles.billCardHeader}>
+            <div>
+              <h4 className={bStyles.billCardTitle}>{row.name}</h4>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2 }}>
+                <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
+                {row.autoDeduct && (
+                  <span style={{ background: 'var(--amber-glow)', color: 'var(--amber)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
+                    ⚡ Auto-Deduct
+                  </span>
+                )}
+              </div>
+            </div>
+            <span style={{ ...statusStyle, borderRadius: 20, padding: '4px 10px', fontSize: 10, fontWeight: 700 }}>
+              {statusPeriod.label}
+            </span>
+          </div>
+          <div className={bStyles.billCardBody}>
+            <div className={bStyles.billCardDetail}>
+              <span className={bStyles.detailLabel}>Account</span>
+              <span className={bStyles.detailValue}>
+                {row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}
+              </span>
+            </div>
+            <div className={bStyles.billCardDetail}>
+              <span className={bStyles.detailLabel}>Due Date</span>
+              <span className={bStyles.detailValue}>
+                {dueLabel} ({formatDisplayDate(statusPeriod.dueDate)})
+              </span>
+            </div>
+            <div className={bStyles.billCardDetail}>
+              <span className={bStyles.detailLabel}>Frequency</span>
+              <span className={bStyles.detailValue}>
+                {BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}
+              </span>
+            </div>
+          </div>
+          <div className={bStyles.billCardFooter}>
+            <div className={bStyles.billCardPrice}>
+              <span className={bStyles.detailLabel}>Amount</span>
+              <strong className={bStyles.billCardAmount}>{money(row.amount)}</strong>
+            </div>
+            <div className={bStyles.billCardActions}>
+              {isPaid ? (
+                <button type="button" className={bStyles.undoBtn} onClick={() => handleUndoPaid(row)}>Undo</button>
+              ) : (
+                <button type="button" className={bStyles.payBtn} onClick={() => openPayment(row)}>
+                  {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
+                </button>
+              )}
+              {!row.isVirtual && (
+                <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
               )}
             </div>
           </div>
-          <span style={{ ...statusStyle, borderRadius: 20, padding: '4px 10px', fontSize: 10, fontWeight: 700 }}>
-            {statusPeriod.label}
-          </span>
         </div>
-        <div className={bStyles.billCardBody}>
-          <div className={bStyles.billCardDetail}>
-            <span className={bStyles.detailLabel}>Account</span>
-            <span className={bStyles.detailValue}>
-              {row.accountId ? (accountNameById.get(row.accountId) || 'Missing account') : 'Choose when paying'}
-            </span>
-          </div>
-          <div className={bStyles.billCardDetail}>
-            <span className={bStyles.detailLabel}>Due Date</span>
-            <span className={bStyles.detailValue}>
-              {dueLabel} ({formatDisplayDate(statusPeriod.dueDate)})
-            </span>
-          </div>
-          <div className={bStyles.billCardDetail}>
-            <span className={bStyles.detailLabel}>Frequency</span>
-            <span className={bStyles.detailValue}>
-              {BILL_FREQS.find(option => option.value === row.freq)?.label || row.freq}
-            </span>
-          </div>
-        </div>
-        <div className={bStyles.billCardFooter}>
-          <div className={bStyles.billCardPrice}>
-            <span className={bStyles.detailLabel}>Amount</span>
-            <strong className={bStyles.billCardAmount}>{money(row.amount)}</strong>
-          </div>
-          <div className={bStyles.billCardActions}>
-            {isPaid ? (
-              <button type="button" className={bStyles.undoBtn} onClick={() => handleUndoPaid(row)}>Undo</button>
-            ) : (
-              <button type="button" className={bStyles.payBtn} onClick={() => openPayment(row)}>
-                {statusPeriod.status === 'overdue' ? 'Pay overdue' : 'Mark paid'}
-              </button>
-            )}
-            {!row.isVirtual && (
-              <button type="button" className={bStyles.delBtn} onClick={async () => { if (await confirmDeleteApp(row.name)) await fsDel(user.uid, 'bills', row._id) }}>×</button>
-            )}
-          </div>
-        </div>
-      </div>
+      </SwipeableCard>
     )
   }
 

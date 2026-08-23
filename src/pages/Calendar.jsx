@@ -44,6 +44,7 @@ import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
+import { triggerHaptic, playHapticTick } from '../lib/gestures'
 
 function normalizeAmountInput(value) {
   const cleaned = value.replace(/[^\d.]/g, '')
@@ -600,6 +601,47 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     }
     setPendingComposerAction({ type, date: targetDate, token: Date.now() })
     setSelected(targetDate)
+  }
+
+  const calTouchStartRef = useRef({ x: 0, y: 0 })
+  const lastDayTapRef = useRef({ ds: '', time: 0 })
+
+  function handleGridTouchStart(e) {
+    if (!e.touches?.[0]) return
+    const t = e.touches[0]
+    calTouchStartRef.current = { x: t.clientX, y: t.clientY }
+  }
+
+  function handleGridTouchEnd(e) {
+    if (!e.changedTouches?.[0]) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - calTouchStartRef.current.x
+    const dy = t.clientY - calTouchStartRef.current.y
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      if (dx < 0) {
+        triggerHaptic('light')
+        playHapticTick(900, 0.03)
+        next()
+      } else {
+        triggerHaptic('light')
+        playHapticTick(750, 0.03)
+        prev()
+      }
+    }
+  }
+
+  function handleDayCellClick(ds) {
+    playTick()
+    const now = Date.now()
+    if (lastDayTapRef.current.ds === ds && now - lastDayTapRef.current.time < 300) {
+      lastDayTapRef.current = { ds: '', time: 0 }
+      triggerHaptic('medium')
+      playHapticTick(1100, 0.04)
+      openComposerForDate('expense', ds)
+    } else {
+      lastDayTapRef.current = { ds, time: now }
+      setSelected(ds)
+    }
   }
 
   function clearComposerPreset(nextType = modalType, nextCat = 'Other', nextSubcat = 'Miscellaneous') {
@@ -2195,6 +2237,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
             key={`${year}-${month}`}
             className={`${calStyles.grid} ${calStyles.gridAnimated}`}
             aria-label={`${label} calendar`}
+            onTouchStart={handleGridTouchStart}
+            onTouchEnd={handleGridTouchEnd}
           >
             {Array.from({ length: firstDay }, (_, index) => (
               <div key={`p${index}`} className={`${calStyles.cell} ${calStyles.otherMonth}`} aria-hidden="true">
@@ -2227,10 +2271,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   type="button"
                   key={day}
                   className={`${calStyles.cell} ${isToday ? calStyles.today : ''} ${isSelected ? calStyles.selectedCell : ''} ${(hasIncome || hasExpense || hasTransfer) ? calStyles.hasData : ''} ${isDangerDay ? calStyles.cellDanger : ''} ${isLowestDip ? calStyles.cellLowestDip : ''}`}
-                  onClick={() => {
-                    playTick()
-                    setSelected(ds)
-                  }}
+                  onClick={() => handleDayCellClick(ds)}
                   aria-pressed={isSelected}
                   aria-label={dayAriaLabel}
                 >

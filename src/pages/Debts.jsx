@@ -9,6 +9,7 @@ import { displayValue, fmt, maskMoney, playTick, today, getMonthKey, formatDispl
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
 import dStyles from './Debts.module.css'
+import SwipeableCard from '../components/SwipeableCard'
 
 const DEBT_TYPES = ['Credit Card', 'Loan', 'Informal']
 const DEBT_ICONS = { 'Credit Card': '💳', Loan: '🏦', Informal: '🏷' }
@@ -701,11 +702,27 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const debtTx = getDebtTransactions(debt)
 
     return (
-      <div
+      <SwipeableCard
         key={debt._id}
-        className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
-        style={{ '--debt-tone': debt.color || 'var(--red)' }}
+        onSwipeRight={!isCleared ? () => {
+          playTick()
+          const minAmt = Number(debt.minPayment) || 0
+          if (minAmt > 0) setPayments(p => ({ ...p, [debt._id]: String(minAmt) }))
+          handlePayment(debt)
+        } : null}
+        rightLabel="Pay Min"
+        rightIcon="💳"
+        rightTone="success"
+        onSwipeLeft={() => { playTick(); openEdit(debt); }}
+        leftLabel="Edit"
+        leftIcon="✎"
+        leftTone="amber"
+        onDoubleTap={() => { playTick(); openEdit(debt); }}
       >
+        <div
+          className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
+          style={{ '--debt-tone': debt.color || 'var(--red)' }}
+        >
         <div className={dStyles.debtTop}>
           <div className={dStyles.debtLeading}>
             <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
@@ -970,6 +987,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           )}
         </div>
       </div>
+      </SwipeableCard>
     )
   }
   const mainContent = (
