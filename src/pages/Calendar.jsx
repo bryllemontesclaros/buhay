@@ -156,6 +156,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const totalSavings = useMemo(() => getTakdaTotalSavings(data?.savings), [data?.savings])
   const totalDebts = useMemo(() => getTakdaTotalDebts(data?.accounts, data?.debts), [data?.accounts, data?.debts])
+  const totalCryptoAssets = useMemo(() => {
+    const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
+    return getTakdaTotalAssets([], holdings)
+  }, [data?.portfolioHoldings])
 
   const navLock = useRef(false)
   const feedbackTimerRef = useRef(null)
@@ -1234,10 +1238,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayRawBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, balanceOverrides))
     : 0
-  const totalCryptoAssets = useMemo(() => {
-    const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
-    return getTakdaTotalAssets([], holdings)
-  }, [data?.portfolioHoldings])
+
 
   const selectedDayTotalDebts = getTakdaTotalDebts(accountList, data?.debts, selected, incomeList, expenseList)
   const selectedDayBalance = calendarViewMode === 'netWorth'
