@@ -69,6 +69,7 @@
   --red-dim: rgba(255, 69, 58, 0.13);
   --amber: #ffd60a;
   --amber-dim: rgba(255, 214, 10, 0.12);
+  --amber-ink: #fbbf24;
   --blue: #0a84ff;
   --blue-dim: rgba(10, 132, 255, 0.14);
   --purple: #c084fc;
@@ -246,6 +247,7 @@
   --red-dim: rgba(255, 59, 48, 0.12);
   --amber: #ffcc00;
   --amber-dim: rgba(255, 204, 0, 0.12);
+  --amber-ink: #b45309;
   --blue: #007aff;
   --blue-dim: rgba(0, 122, 255, 0.12);
   --purple: #af52de;

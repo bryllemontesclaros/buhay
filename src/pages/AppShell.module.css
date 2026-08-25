@@ -694,12 +694,7 @@
 }
 
 .mainWrap::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--surface);
-  opacity: 0.85;
+  display: none !important;
 }
 
 .topBar {
@@ -1273,6 +1268,8 @@
   color: var(--text2);
 }
 .verifyBannerWrap {
+  position: relative;
+  z-index: 2;
   padding: 16px 22px 0;
 }
 .verifyBanner {
@@ -1280,24 +1277,23 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 15px 16px;
-  border-radius: 24px;
-  border: 1px solid var(--glass-border);
-  background: var(--surface);
-  /* box-shadow flattened */
-
+  padding: 16px 20px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--amber) 30%, var(--border2));
+  background: color-mix(in srgb, var(--amber) 8%, var(--surface));
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
 }
 .verifyBannerEyebrow {
   font-size: var(--type-overline);
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--amber);
+  color: var(--amber-ink, #b45309);
   margin-bottom: 4px;
 }
 .verifyBannerTitle {
   font-size: var(--type-title-sm);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
   margin-bottom: 4px;
 }
@@ -1308,7 +1304,7 @@
 }
 .verifyBannerStatus {
   margin-top: 10px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   font-size: var(--type-support);
   font-weight: 600;
@@ -1320,7 +1316,7 @@
 }
 .verifyBannerStatusWarn {
   background: var(--amber-dim);
-  color: var(--amber);
+  color: var(--amber-ink, #b45309);
   border: 1px solid var(--glass-border);
 }
 .verifyBannerActions {
@@ -1332,26 +1328,38 @@
 .verifyBannerGhost,
 .verifyBannerPrimary {
   min-height: 40px;
-  padding: 10px 14px;
-  border-radius: 16px;
+  padding: 10px 18px;
+  border-radius: 14px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 .verifyBannerGhost {
-  background: color-mix(in srgb, var(--glass-1) 78%, var(--surface2) 22%);
-  border: 1px solid var(--glass-border);
-  color: var(--text2);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+}
+.verifyBannerGhost:hover {
+  background: var(--surface2);
+  border-color: var(--accent);
 }
 .verifyBannerPrimary {
-  /* background: linear-gradient(180deg, color-mix(in srgb, var(--amber) 82%, white 18%), color-mix(in srgb, var(--amber) 88%, black 12%)); flat */
-  border: 1px solid var(--glass-border);
+  background: var(--accent);
+  color: var(--accent-contrast, var(--bg)) !important;
+  border: 1px solid var(--accent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.verifyBannerPrimary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 .verifyBannerGhost:disabled,
 .verifyBannerPrimary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 .fabBackdrop {
   position: fixed;
