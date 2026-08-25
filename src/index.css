@@ -14,15 +14,15 @@
 
   --border: #333333;
   --border2: #444444;
-  --glass-1: transparent;
-  --glass-2: transparent;
-  --glass-3: transparent;
-  --glass-bg: transparent;
+  --glass-1: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.07);
+  --glass-3: rgba(255, 255, 255, 0.11);
+  --glass-bg: rgba(18, 18, 18, 0.75);
   --glass-border: #333333;
-  --glass-highlight: transparent;
-  --glass-shadow-soft: 0 4px 12px rgba(255, 255, 255, 0.02);
-  --glass-shadow: 0 12px 40px rgba(255, 255, 255, 0.05);
-  --glass-shadow-strong: 0 24px 80px rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.10);
+  --glass-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --glass-shadow-strong: 0 24px 80px rgba(0, 0, 0, 0.50);
   --glass-blur-sm: 6px;
   --glass-blur-md: 12px;
   --glass-blur-lg: 20px;
@@ -142,11 +142,11 @@
   --type-body-lg: 15px;
   --type-title-sm: 16px;
   --type-title-md: 18px;
-  --type-title-xl: 20px;
-  --type-title-lg: 22px;
+  --type-title-lg: 20px;
+  --type-title-xl: 22px;
   --type-heading-xs: 24px;
-  --type-heading-md: 26px;
-  --type-heading-sm: 28px;
+  --type-heading-sm: 26px;
+  --type-heading-md: 28px;
   --type-lead: clamp(15px, 2vw, 18px);
   --type-display-sm: clamp(26px, 3vw, 38px);
   --type-display-card: clamp(28px, 4vw, 42px);
@@ -506,32 +506,21 @@ input, select, textarea {
 /* 1. Prevent iOS Auto-Zoom on form inputs */
 @media (max-width: 768px) {
   input, select, textarea {
-    font-size: 16px !important;
+    font-size: 16px;
   }
 }
 
-/* 2. Premium glowing focus outlines */
-input:focus, select:focus, textarea:focus {
-  outline: none !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #10b981) 24%, transparent) !important;
-  border-color: var(--accent, #10b981) !important;
+/* 2. Premium glowing focus outlines (low specificity so components can customize without !important) */
+:where(input, select, textarea):focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #10b981) 24%, transparent);
+  border-color: var(--accent, #10b981);
 }
 
-/* 3. Tactile Micro-active compressions */
-button:active, 
-.interactive-pill:active,
-a:active {
-  transform: scale(0.96) !important;
-  transition: transform 0.1s ease !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* 3. Tactile Micro-active compressions (low specificity fallback) */
+:where(button, .interactive-pill, a):active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
 }
 
 /* Prevent iOS WebKit auto-zoom on input focus */

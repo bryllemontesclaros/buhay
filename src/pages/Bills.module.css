@@ -1,8 +1,13 @@
+/* ==========================================================================
+   BILLS & SUBSCRIPTIONS - DESIGN SYSTEM V2
+   High-Density Bill Cards, Mobile Safe Grid & Portaled Drawers
+   ========================================================================== */
+
 .prioritySections {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-top: 24px;
+  gap: 24px;
+  margin-top: 16px;
 }
 
 .prioritySection {
@@ -12,50 +17,60 @@
 }
 
 .sectionHeader {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .billsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
 }
 
+/* HIGH-DENSITY BILL CARD */
 .billCard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  border-radius: 24px;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
   border: 1px solid var(--border2);
   background: var(--surface);
-  /* box-shadow flattened */
-  transition: transform 0.2s var(--motion-ease-out), box-shadow 0.2s var(--motion-ease-standard);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   position: relative;
   overflow: hidden;
 }
 
+.billCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border2));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
 .billCardPaid {
-  opacity: 0.75;
-  border-color: color-mix(in srgb, var(--accent) 20%, var(--border2));
+  opacity: 0.8;
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
+  background: color-mix(in srgb, var(--surface) 96%, var(--accent) 4%);
 }
 
 .billCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
 }
 
 .billCardTitle {
   margin: 0;
   color: var(--text);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.2;
 }
 
@@ -68,11 +83,11 @@
 .billCardBody {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--glass-1) 50%, var(--surface2) 50%);
-  border: 1px solid var(--border2);
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
 }
 
 .billCardDetail {
@@ -84,15 +99,15 @@
 
 .detailLabel {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
   color: var(--text3);
 }
 
 .detailValue {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text2);
 }
 
@@ -100,247 +115,165 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-top: 4px;
+  gap: 10px;
+  padding-top: 4px;
 }
 
 .billCardPrice {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .billCardAmount {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--amber);
+  font-family: var(--font-mono, monospace);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .billCardActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .payBtn {
-  min-height: 38px;
-  padding: 8px 16px;
+  padding: 6px 14px;
   font-size: 12px;
-  font-weight: 600;
-  border-radius: 12px;
+  font-weight: 700;
+  border-radius: 8px;
   border: none;
   background: var(--accent);
-  color: #ffffff !important;
+  color: #000 !important;
   cursor: pointer;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 28%, transparent);
-  transition: transform 0.22s var(--ease-spring-snap), box-shadow 0.22s var(--ease-spring-smooth);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+  transition: filter 0.15s ease;
 }
 
-.payBtn:active {
-  transform: scale(0.96);
+.payBtn:hover {
+  filter: brightness(1.1);
 }
 
 .undoBtn {
-  min-height: 38px;
-  padding: 8px 16px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--glass-1) 76%, var(--surface2) 24%);
+  background: var(--surface2);
   color: var(--text2);
   cursor: pointer;
 }
 
 .delBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--glass-1) 70%, var(--surface2) 30%);
+  background: transparent;
   color: var(--text3);
-  cursor: pointer;
   font-size: 14px;
-  transition: color 0.16s ease, border-color 0.16s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delBtn:hover {
+  border-color: var(--red);
   color: var(--red);
-  border-color: color-mix(in srgb, var(--red) 40%, var(--border2));
 }
 
 .stopBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  color: var(--text2);
   padding: 6px 12px;
-  border-radius: 9px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.16s ease;
-}
-
-.stopBtn:hover {
-  background: var(--red-dim);
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--red) 40%, transparent);
+  background: color-mix(in srgb, var(--red) 10%, transparent);
   color: var(--red);
-  border-color: color-mix(in srgb, var(--red) 30%, var(--border2));
+  cursor: pointer;
 }
 
-/* Slide-over Form Drawer */
+.emptyState {
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  border-radius: 20px;
+  padding: 40px 24px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* DRAWER / MODAL */
 .drawerOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(8, 12, 18, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 10000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
   display: flex;
   justify-content: flex-end;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
 }
 
-.drawerModal {
+.drawerContent {
   width: 100%;
-  max-width: 460px;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
+  max-width: 440px;
   height: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--border2);
   display: flex;
   flex-direction: column;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.25s var(--motion-ease-out) forwards;
-  overscroll-behavior: contain;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.3);
+  animation: slideLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .drawerHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 24px;
+  padding: 20px;
   border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
 }
 
-.drawerHeader h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+.drawerTitle {
+  font-size: 18px;
+  font-weight: 700;
   color: var(--text);
 }
 
 .drawerClose {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: var(--surface2);
   border: 1px solid var(--border2);
   color: var(--text2);
-  font-size: 14px;
-  font-weight: 700;
   cursor: pointer;
-  width: 32px;
-  height: 32px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  flex-shrink: 0;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-.drawerClose:hover {
-  background: var(--surface);
-  color: var(--text);
-  transform: scale(1.08);
 }
 
 .drawerBody {
-  flex: 1;
+  padding: 20px;
   overflow-y: auto;
-  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  -webkit-overflow-scrolling: touch;
+  gap: 16px;
+  flex: 1;
 }
 
 .drawerFooter {
-  padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 16px 20px;
   border-top: 1px solid var(--border);
-  background: var(--surface);
   display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 640px) {
-  .drawerOverlay {
-    align-items: flex-end;
-  }
-
-  .drawerModal {
-    max-width: 100%;
-    height: 90vh;
-    border-radius: 20px 20px 0 0;
-    border-left: none;
-    border-top: 1px solid var(--border);
-    animation: slideUp 0.3s ease forwards;
-  }
-
-  .drawerHeader {
-    padding: 16px 20px;
-  }
-
-  .drawerBody {
-    padding: 20px;
-  }
-
-  .drawerFooter {
-    padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-  text-align: center;
-  background: var(--surface);
-  border: 1px dashed var(--border2);
-  border-radius: 24px;
-  margin-top: 16px;
-}
-
-.emptyState h4 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.emptyState p {
-  margin: 0 0 16px 0;
-  font-size: 14px;
-  color: var(--text3);
-  max-width: 320px;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@media (max-width: 600px) {
-  .drawerModal {
-    max-width: 100%;
-  }
+  justify-content: flex-end;
+  gap: 10px;
 }

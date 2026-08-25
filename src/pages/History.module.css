@@ -903,9 +903,7 @@
     font-size: 24px;
   }
 
-  .searchRow,
-  .txRow,
-  .txRight {
+  .searchRow {
     flex-direction: column;
     align-items: stretch;
   }
@@ -915,22 +913,12 @@
     top: 23px;
   }
 
-  .filterBtn,
-  .editBtn,
-  .statusBtn,
-  .delBtn {
+  .filterBtn {
     width: 100%;
   }
 
-  .editBtn,
-  .statusBtn,
-  .delBtn {
-    min-height: 44px;
-    padding: 0 16px;
-    font-size: 11px;
-  }
-
-  .txActions {
-    width: 100%;
+  .txRow {
+    padding: 10px 12px;
+    gap: 8px;
   }
 }

@@ -548,22 +548,23 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     }
   }, [upcomingCcTxMap])
 
-  const [stackFilter, setStackFilter] = useState('all')
+  const [stackFilter, setStackFilter] = useState('active')
 
   const filteredMappedDebts = useMemo(() => {
-    const todayStr = today()
     if (stackFilter === 'active') {
-      return mappedDebts.filter(d => !d.startDate || d.startDate <= todayStr)
+      return mappedDebts.filter(d => (Number(d.balance) || 0) > 0)
     }
-    if (stackFilter === 'upcoming') {
-      return mappedDebts.filter(d => {
-        const isFutureDebt = d.startDate && d.startDate > todayStr
-        const hasUpcomingCcTx = getUpcomingTxForDebt(d).length > 0
-        return isFutureDebt || hasUpcomingCcTx
-      })
+    if (stackFilter === 'cleared') {
+      return mappedDebts.filter(d => (Number(d.balance) || 0) === 0)
+    }
+    if (stackFilter === 'cc') {
+      return mappedDebts.filter(d => d.type === 'Credit Card')
+    }
+    if (stackFilter === 'loans') {
+      return mappedDebts.filter(d => d.type !== 'Credit Card')
     }
     return mappedDebts
-  }, [mappedDebts, stackFilter, getUpcomingTxForDebt])
+  }, [mappedDebts, stackFilter])
 
   const creditCards = useMemo(() => filteredMappedDebts.filter(d => d.type === 'Credit Card'), [filteredMappedDebts])
   const loansAndOthers = useMemo(() => filteredMappedDebts.filter(d => d.type !== 'Credit Card'), [filteredMappedDebts])
@@ -700,6 +701,9 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const pctPaid = original > 0 ? Math.min(100, Math.round(((original - balance) / original) * 100)) : 0
     const isCleared = balance === 0
     const debtTx = getDebtTransactions(debt)
+    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
+    const creditLimit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
+    const utilization = creditLimit > 0 ? Math.min(100, Math.round((balance / creditLimit) * 100)) : 0
 
     return (
       <SwipeableCard
@@ -720,248 +724,152 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
         onDoubleTap={() => { playTick(); openEdit(debt); }}
       >
         <div
+          id={`debt-card-${debt._id}`}
           className={`${dStyles.debtCard} ${editDebt?._id === debt._id ? dStyles.debtCardEditing : ''} ${isCleared ? dStyles.debtCardCleared : ''}`}
           style={{ '--debt-tone': debt.color || 'var(--red)' }}
         >
-        <div className={dStyles.debtTop}>
-          <div className={dStyles.debtLeading}>
-            <div className={dStyles.debtIcon}>{DEBT_ICONS[debt.type] || '🏷'}</div>
-            <div className={dStyles.debtInfo}>
-              <div className={dStyles.debtName}>
-                {debt.name}
-                {debt.accountId && (
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--accent) 30%, var(--border2))', background: 'color-mix(in srgb, var(--accent) 8%, var(--surface2))' }}>
-                    🔗 Linked
-                  </span>
-                )}
-                {debt.startDate && debt.startDate > today() && (
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'var(--amber)', marginLeft: 8, padding: '2px 6px', borderRadius: 999, border: '1px solid color-mix(in srgb, var(--amber) 30%, var(--border2))', background: 'color-mix(in srgb, var(--amber) 8%, var(--surface2))' }}>
-                    📅 Starts {debt.startDate}
-                  </span>
-                )}
+          <div className={dStyles.debtCardMain}>
+            <div className={dStyles.debtLeading}>
+              <div className={dStyles.debtIcon} style={{ background: `color-mix(in srgb, ${debt.color || 'var(--red)'} 18%, var(--surface2))` }}>
+                {DEBT_ICONS[debt.type] || '🏷'}
               </div>
-              <div className={dStyles.debtMeta}>
-                {debt.type} {Number(debt.interestRate) > 0 ? `· ${debt.interestRate}% APR` : ''}
-                {debt.contactName && ` · Contact: ${debt.contactName}`}
+              <div className={dStyles.debtInfo}>
+                <div className={dStyles.debtNameRow}>
+                  <span className={dStyles.debtName}>{debt.name}</span>
+                  {debt.accountId && (
+                    <span className={dStyles.linkedPill}>🔗 Linked Card</span>
+                  )}
+                  {isCleared && (
+                    <span className={dStyles.clearedPill}>🎉 Paid Off</span>
+                  )}
+                </div>
+                <div className={dStyles.debtMeta}>
+                  <span>{debt.type}</span>
+                  {Number(debt.interestRate) > 0 && <span>· {debt.interestRate}% APR</span>}
+                  {debt.dueDate && <span>· Due Day {debt.dueDate}</span>}
+                  {debt.contactName && <span>· {debt.contactName}</span>}
+                </div>
               </div>
             </div>
-          </div>
-          <div className={dStyles.debtActions}>
-            <button type="button" className={dStyles.cardAction} onClick={() => openEdit(debt)}>Edit</button>
-            <button type="button" className={`${dStyles.cardAction} ${dStyles.cardActionDanger}`} onClick={() => handleDel(debt._id, debt.name)}>Delete</button>
-          </div>
-        </div>
 
-        <div className={dStyles.debtDetails}>
-          <div className={dStyles.debtCol}>
-            <div className={dStyles.detailsLabel}>Remaining</div>
-            <div className={dStyles.detailsValue}>{money(balance)}</div>
-          </div>
-          <div className={dStyles.debtCol}>
-            <div className={dStyles.detailsLabel}>Min Payment</div>
-            <div className={dStyles.detailsValue}>{money(debt.minPayment)}</div>
-          </div>
-          <div className={dStyles.debtCol}>
-            <div className={dStyles.detailsLabel}>Statement Day</div>
-            <div className={dStyles.detailsValue}>{debt.statementDate ? `Day ${debt.statementDate}` : '—'}</div>
-          </div>
-          <div className={dStyles.debtCol}>
-            <div className={dStyles.detailsLabel}>Due Day</div>
-            <div className={dStyles.detailsValue}>{debt.dueDate ? `Day ${debt.dueDate}` : '—'}</div>
+            <div className={dStyles.debtTrailing}>
+              <div className={`${dStyles.debtBalance} ${isCleared ? dStyles.debtBalanceCleared : ''}`}>
+                {money(balance)}
+              </div>
+              <span className={dStyles.debtBalanceSub}>
+                {isCleared ? 'Cleared' : `Min: ${money(debt.minPayment)}/mo`}
+              </span>
+            </div>
           </div>
 
-          {debt.type === 'Credit Card' && (
-            <>
-              <div className={dStyles.debtCol}>
-                <div className={dStyles.detailsLabel}>Limit</div>
-                <div className={dStyles.detailsValue}>
-                  {(() => {
-                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                    return money(limit)
-                  })()}
-                </div>
+          {/* Progress / Utilization Track */}
+          {!isCleared && (
+            <div className={dStyles.progressContainer}>
+              <div className={dStyles.progressMetaRow}>
+                <span className={dStyles.progressLabel}>
+                  {debt.type === 'Credit Card' ? `Utilization (${utilization}%)` : `Paid off (${pctPaid}%)`}
+                </span>
+                <span className={dStyles.progressVal}>
+                  {debt.type === 'Credit Card' && creditLimit > 0
+                    ? `${money(balance)} / ${money(creditLimit)} limit`
+                    : `${money(Math.max(0, original - balance))} paid of ${money(original)}`}
+                </span>
               </div>
-              <div className={dStyles.debtCol}>
-                <div className={dStyles.detailsLabel}>Available</div>
-                <div className={dStyles.detailsValue}>
-                  {(() => {
-                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                    return money(Math.max(0, limit - balance))
-                  })()}
-                </div>
+              <div className={dStyles.progressBar}>
+                <div
+                  className={dStyles.progressFill}
+                  style={{
+                    width: `${debt.type === 'Credit Card' ? utilization : pctPaid}%`,
+                    background: debt.type === 'Credit Card'
+                      ? (utilization > 70 ? 'var(--red)' : utilization > 30 ? 'var(--amber)' : 'var(--accent)')
+                      : 'var(--accent)',
+                  }}
+                />
               </div>
-              <div className={dStyles.debtCol}>
-                <div className={dStyles.detailsLabel}>Utilization</div>
-                <div className={dStyles.detailsValue}>
-                  {(() => {
-                    const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-                    const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-                    const util = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
-                    return `${util}%`
-                  })()}
-                </div>
-              </div>
-            </>
+            </div>
           )}
-        </div>
 
-        {(() => {
-          const upcomingList = getUpcomingTxForDebt(debt)
-          if (upcomingList.length === 0) return null
-          const upcomingSum = upcomingList.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
-
-          return (
-            <div style={{
-              marginTop: 12,
-              marginBottom: 12,
-              padding: '12px 14px',
-              borderRadius: 14,
-              background: 'var(--surface)',
-              border: '1px solid color-mix(in srgb, var(--amber) 35%, var(--border2))',
-              borderLeft: '4px solid var(--amber)',
-              position: 'relative',
-              zIndex: 1,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  ⚡ Upcoming Credit Card Charges ({upcomingList.length})
-                </span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>
-                  +{money(upcomingSum)}
-                </span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {upcomingList.map(tx => (
-                  <div key={tx._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text2)', textDecoration: 'none' }}>
-                    <span style={{ textDecoration: 'none' }}>{tx.desc || tx.cat} ({formatDisplayDate(tx.date)})</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text)', textDecoration: 'none' }}>{money(tx.amount)}</span>
-                  </div>
-                ))}
+          {/* Inline Quick Payment Section */}
+          {!isCleared && (
+            <div className={dStyles.quickPayRow}>
+              {debt.accountId && (
+                <select
+                  className={dStyles.paySourceSelect}
+                  value={paymentSources[debt._id] || ''}
+                  onChange={event => setPaymentSources(current => ({ ...current, [debt._id]: event.target.value }))}
+                >
+                  <option value="">Pay from Account...</option>
+                  {(data.accounts || []).filter(a => a.type !== 'Credit Card').map(a => (
+                    <option key={a._id} value={a._id}>{a.name} ({fmt(a.balance, s)})</option>
+                  ))}
+                </select>
+              )}
+              <div className={dStyles.payInputGroup}>
+                <input
+                  type="number"
+                  className={dStyles.payAmountInput}
+                  min="0"
+                  inputMode="decimal"
+                  placeholder={`Pay amount (${s})`}
+                  value={payments[debt._id] || ''}
+                  onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter') handlePayment(debt)
+                  }}
+                />
+                <button
+                  type="button"
+                  className={dStyles.btnPaySubmit}
+                  onClick={() => { playTick(); handlePayment(debt); }}
+                >
+                  Pay
+                </button>
               </div>
             </div>
-          )
-        })()}
+          )}
 
-        {/* Progress bar / Utilization Bar */}
-        {!isCleared && (
-          debt.type === 'Credit Card' ? (
-            (() => {
-              const linkedAcc = debt.accountId ? accounts.find(a => a._id === debt.accountId) : null
-              const limit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
-              const utilization = limit > 0 ? Math.min(100, Math.round((balance / limit) * 100)) : 0
-              
-              const barColor = utilization < 30
-                ? 'var(--accent)'
-                : utilization <= 70
-                  ? 'var(--amber)'
-                  : 'var(--red)'
-                  
-              return (
-                <div className={dStyles.progressBlock}>
-                  <div className={dStyles.progressMeta}>
-                    <span>Credit Utilization</span>
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      {utilization > 30 && (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--amber)', fontWeight: 'bold' }}>⚠️ High</span>
-                      )}
-                      <span style={{ color: barColor, fontWeight: 700 }}>{utilization}%</span>
-                    </div>
-                  </div>
-                  <div className={dStyles.progressBar}>
-                    <div
-                      className={dStyles.progressFill}
-                      style={{ width: `${utilization}%`, background: barColor }}
-                    />
-                  </div>
-                </div>
-              )
-            })()
-          ) : (
-            original > 0 && (
-              <div className={dStyles.progressBlock}>
-                <div className={dStyles.progressMeta}>
-                  <span>{pctPaid}% paid off</span>
-                  <span>{money(original - balance)} paid</span>
-                </div>
-                <div className={dStyles.progressBar}>
-                  <div className={dStyles.progressFill} style={{ width: `${pctPaid}%` }} />
-                </div>
-              </div>
-            )
-          )
-        )}
-
-        {/* Payment actions */}
-        {!isCleared && (
-          <div className={dStyles.paymentActions} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
-            {debt.accountId && (
-              <select
-                className={dStyles.paymentInput}
-                value={paymentSources[debt._id] || ''}
-                onChange={event => setPaymentSources(current => ({ ...current, [debt._id]: event.target.value }))}
-              >
-                <option value="">Pay from account...</option>
-                {(data.accounts || []).filter(a => a.type !== 'Credit Card').map(a => (
-                  <option key={a._id} value={a._id}>{a.name} ({fmt(a.balance, s)})</option>
-                ))}
-              </select>
-            )}
-            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-              <input
-                type="number"
-                className={dStyles.paymentInput}
-                min="0"
-                inputMode="decimal"
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={`Amount (${s})`}
-                value={payments[debt._id] || ''}
-                onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
-                onKeyDown={event => {
-                  if (event.key === 'Enter') handlePayment(debt)
-                }}
-              />
+          {/* Micro-actions & History Toggle */}
+          <div className={dStyles.cardFooterRow}>
+            <div className={dStyles.microActions}>
               <button
                 type="button"
-                className={dStyles.payBtn}
-                style={{ width: 'auto', flexShrink: 0 }}
-                onClick={() => { playTick(); handlePayment(debt); }}
+                className={dStyles.btnMini}
+                onClick={() => openEdit(debt)}
+                title="Edit debt terms"
               >
-                Pay
+                ✎ Edit
+              </button>
+              <button
+                type="button"
+                className={`${dStyles.btnMini} ${dStyles.btnMiniDanger}`}
+                onClick={() => handleDel(debt._id, debt.name)}
+                title="Delete debt"
+              >
+                🗑
               </button>
             </div>
+
+            <button
+              type="button"
+              className={dStyles.btnHistoryToggle}
+              onClick={() => {
+                playTick()
+                setExpandedHistory(prev => ({ ...prev, [debt._id]: !prev[debt._id] }))
+              }}
+            >
+              <span>{expandedHistory[debt._id] ? 'Hide History ▴' : 'History ▸'}</span>
+              <span className={dStyles.historyCountBadge}>{debtTx.length}</span>
+            </button>
           </div>
-        )}
 
-        {isCleared && (
-          <div className={dStyles.clearedBanner}>
-            <span>🎉 This debt is completely paid off!</span>
-          </div>
-        )}
-
-        {/* Transaction History Section */}
-        <div className={dStyles.historySection}>
-          <button
-            type="button"
-            className={dStyles.historyToggle}
-            onClick={() => {
-              playTick()
-              setExpandedHistory(prev => ({ ...prev, [debt._id]: !prev[debt._id] }))
-            }}
-          >
-            <span>{expandedHistory[debt._id] ? '▼ Hide Transaction History' : '▶ Show Transaction History'}</span>
-            <span className={dStyles.historyBadge}>{debtTx.length}</span>
-          </button>
-
+          {/* Collapsible History Table */}
           {expandedHistory[debt._id] && (
-            <div className={dStyles.historyList}>
+            <div className={dStyles.historyDrawer}>
               {debtTx.length === 0 ? (
-                <div className={dStyles.emptyHistory}>No recorded transactions for this debt.</div>
+                <div className={dStyles.emptyHistory}>No recorded payment transactions yet.</div>
               ) : (
                 <div className={dStyles.historyTable}>
-                  {debtTx.map(tx => {
+                  {debtTx.slice(0, 10).map(tx => {
                     const isPayment = (tx.type === 'transfer' && tx.toAccountId === debt.accountId) || 
                                       (tx.type === 'income' && tx.accountId === debt.accountId) ||
                                       (tx.desc && tx.desc.toLowerCase().includes('payment'))
@@ -972,8 +880,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                       <div key={tx._id} className={dStyles.historyRow}>
                         <div className={dStyles.historyMetaCol}>
                           <div className={dStyles.historyDate}>{tx.date}</div>
-                          <div className={dStyles.historyDesc}>{tx.desc}</div>
-                          {tx.cat && <div className={dStyles.historyCategory}>{tx.cat} {tx.subcat ? `› ${tx.subcat}` : ''}</div>}
+                          <div className={dStyles.historyDesc}>{tx.desc || tx.cat}</div>
                         </div>
                         <div className={dStyles.historyAmountCol} style={{ color: amtColor }}>
                           {amtSign}{money(tx.amount)}
@@ -986,10 +893,10 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
             </div>
           )}
         </div>
-      </div>
       </SwipeableCard>
     )
   }
+
   const mainContent = (
     <>
       {!hideHeader && (
@@ -1001,300 +908,335 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
               Visualize payoff dates, simulate Snowball vs. Avalanche strategies, and see exactly when you will reach complete freedom.
             </div>
           </div>
+        </div>
+      )}
 
-          <div
-            className={dStyles.heroAside}
-            style={{ '--debt-tone': editDebt?.color || 'var(--red)' }}
-          >
-            <div className={dStyles.heroAsideLabel}>Weighted Avg Interest</div>
-            <div className={dStyles.heroAsideValue}>
-              {weightedAvgRate}% <small style={{ fontSize: 13, color: 'var(--text3)' }}>APR</small>
+      {/* 1. PAYOFF STRATEGY OPTIMIZER COMMAND BANNER */}
+      {mappedDebts.length > 0 && (
+        <div className={dStyles.optimizerBanner}>
+          <div className={dStyles.optimizerTop}>
+            <div className={dStyles.optimizerSummary}>
+              <span className={dStyles.optimizerEyebrow}>Payoff Strategy Optimizer</span>
+              <div className={dStyles.optimizerTarget}>
+                {schedule.payoffDate ? (
+                  <>
+                    Debt-Free by <strong>{formatPayoffDate(schedule.payoffDate, { month: 'short', year: 'numeric' })}</strong>
+                    <span className={dStyles.optimizerMonthsBadge}>{schedule.months} mo</span>
+                  </>
+                ) : (
+                  <span>Projected Freedom Target</span>
+                )}
+              </div>
+              {interestSaved > 0 && (
+                <div className={dStyles.optimizerSavingsPill}>
+                  ⚡ Saves <strong>{money(interestSaved)}</strong> & {monthsSaved} months with extra payments
+                </div>
+              )}
             </div>
-            <div className={dStyles.heroAsideMeta}>
-              Across {activeDebtsCount} active loan{activeDebtsCount === 1 ? '' : 's'}
+
+            <div className={dStyles.strategyToggleGroup}>
+              <button
+                type="button"
+                className={`${dStyles.btnStrategy} ${strategy === 'avalanche' ? dStyles.btnStrategyActive : ''}`}
+                onClick={() => handleStrategyChange('avalanche')}
+                title="Pay highest interest rate first (saves most money)"
+              >
+                🏔️ Avalanche
+              </button>
+              <button
+                type="button"
+                className={`${dStyles.btnStrategy} ${strategy === 'snowball' ? dStyles.btnStrategyActive : ''}`}
+                onClick={() => handleStrategyChange('snowball')}
+                title="Pay lowest balance first (fastest psychological wins)"
+              >
+                ☃️ Snowball
+              </button>
+            </div>
+          </div>
+
+          <div className={dStyles.sliderRow}>
+            <div className={dStyles.sliderLabelWrap}>
+              <span className={dStyles.sliderLabel}>Extra Monthly Payoff Allocation:</span>
+              <strong className={dStyles.sliderValue}>{money(extraBudget)}/mo</strong>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max={Math.max(25000, Math.ceil(totalDebtOwed / 10))}
+              step="500"
+              value={extraBudget}
+              onChange={e => handleExtraBudgetChange(Number(e.target.value))}
+              className={dStyles.sliderRange}
+            />
+            <div className={dStyles.sliderTicks}>
+              <span>₱0 (Min only)</span>
+              <span>+₱5,000</span>
+              <span>+₱10,000</span>
+              <span>+₱25,000+</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Main Totals */}
-      {!hideHeader && (
-        <div id="takda-debts-summary" className={dStyles.totalCard}>
-          <div className={dStyles.totalLabel}>Total Outstanding Debt</div>
-          <div className={dStyles.totalVal}>{money(totalDebtOwed)}</div>
-          <div className={dStyles.totalSub}>
-            {schedule.error ? (
-              <span className={dStyles.growWarning}>⚠️ {schedule.error}</span>
-            ) : schedule.payoffDate ? (
-              `Projected Debt-Free: ${formatPayoffDate(schedule.payoffDate, { month: 'long', year: 'numeric' })} (${schedule.months} months)`
-            ) : (
-              'Add outstanding balances to simulate payoff targets.'
-            )}
-          </div>
-        </div>
-      )}
-
-
-
-      {/* Toolbar */}
+      {/* 2. TOOLBAR & CLEAN STACK FILTERS */}
       <div className={dStyles.toolbar}>
-        <div className={dStyles.toolbarCopy}>
-          <div className={dStyles.toolbarTitle}>Payoff Stack</div>
-          <div className={dStyles.toolbarMeta}>
-            Keep track of individual accounts, interest rates, and log payments directly below.
-          </div>
+        <div className={dStyles.filterPills}>
+          <button
+            type="button"
+            className={`${dStyles.filterPill} ${stackFilter === 'active' ? dStyles.filterPillActive : ''}`}
+            onClick={() => setStackFilter('active')}
+          >
+            Active ({mappedDebts.filter(d => (Number(d.balance) || 0) > 0).length})
+          </button>
+          <button
+            type="button"
+            className={`${dStyles.filterPill} ${stackFilter === 'all' ? dStyles.filterPillActive : ''}`}
+            onClick={() => setStackFilter('all')}
+          >
+            All ({mappedDebts.length})
+          </button>
+          <button
+            type="button"
+            className={`${dStyles.filterPill} ${stackFilter === 'cc' ? dStyles.filterPillActive : ''}`}
+            onClick={() => setStackFilter('cc')}
+          >
+            💳 Cards ({mappedDebts.filter(d => d.type === 'Credit Card').length})
+          </button>
+          <button
+            type="button"
+            className={`${dStyles.filterPill} ${stackFilter === 'loans' ? dStyles.filterPillActive : ''}`}
+            onClick={() => setStackFilter('loans')}
+          >
+            🏦 Loans ({mappedDebts.filter(d => d.type !== 'Credit Card').length})
+          </button>
+          {mappedDebts.some(d => (Number(d.balance) || 0) === 0) && (
+            <button
+              type="button"
+              className={`${dStyles.filterPill} ${stackFilter === 'cleared' ? dStyles.filterPillActive : ''}`}
+              onClick={() => setStackFilter('cleared')}
+            >
+              🎉 Paid Off ({mappedDebts.filter(d => (Number(d.balance) || 0) === 0).length})
+            </button>
+          )}
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'inline-flex', background: 'var(--surface2)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border2)' }}>
-            <button
-              type="button"
-              onClick={() => setStackFilter('all')}
-              style={{
-                border: 'none',
-                background: stackFilter === 'all' ? 'var(--surface)' : 'transparent',
-                color: stackFilter === 'all' ? 'var(--text)' : 'var(--text3)',
-                padding: '6px 12px',
-                borderRadius: '7px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: stackFilter === 'all' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-              }}
-            >All ({mappedDebts.length})</button>
-            <button
-              type="button"
-              onClick={() => setStackFilter('active')}
-              style={{
-                border: 'none',
-                background: stackFilter === 'active' ? 'var(--surface)' : 'transparent',
-                color: stackFilter === 'active' ? 'var(--text)' : 'var(--text3)',
-                padding: '6px 12px',
-                borderRadius: '7px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: stackFilter === 'active' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-              }}
-            >Active ({mappedDebts.filter(d => !d.startDate || d.startDate <= today()).length})</button>
-            <button
-              type="button"
-              onClick={() => setStackFilter('upcoming')}
-              style={{
-                border: 'none',
-                background: stackFilter === 'upcoming' ? 'var(--surface)' : 'transparent',
-                color: stackFilter === 'upcoming' ? 'var(--text)' : 'var(--text3)',
-                padding: '6px 12px',
-                borderRadius: '7px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: stackFilter === 'upcoming' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-              }}
-            >Upcoming ({mappedDebts.filter(d => (d.startDate && d.startDate > today()) || getUpcomingTxForDebt(d).length > 0).length})</button>
-          </div>
-          <button type="button" className={dStyles.primaryButton} onClick={openAdd}>Add debt</button>
-        </div>
+
+        <button type="button" className={dStyles.btnAddDebt} onClick={openAdd}>
+          + Add Debt
+        </button>
       </div>
 
-      {/* Debt Add/Edit Modal */}
-      {showModal && (
-        <div ref={editorRef} className={dStyles.editorCard}>
-          <div className={dStyles.editorHeader}>
-            <div>
-              <div className={dStyles.editorEyebrow}>{editDebt ? 'Editing Debt' : 'New Debt'}</div>
-              <div className={dStyles.editorTitle}>{editDebt ? 'Update debt record' : 'Add to your stack'}</div>
-            </div>
-            <button type="button" onClick={closeEditor} className={dStyles.editorClose}>Close</button>
+      {/* 3. DEBT LIST / CARDS */}
+      {!filteredMappedDebts.length ? (
+        <div className={dStyles.emptyCard}>
+          <div className={dStyles.emptyIcon}>🎉</div>
+          <div className={dStyles.emptyTitle}>
+            {stackFilter === 'active' ? 'No active debts remaining!' : 'No debts found'}
           </div>
+          <div className={dStyles.emptyBody}>
+            {stackFilter === 'active'
+              ? 'You have zero outstanding debt balances in this view. Keep building your wealth!'
+              : 'Add loans, mortgages, or credit card balances to simulate optimal payoff plans.'}
+          </div>
+          <button type="button" className={dStyles.btnAddDebt} onClick={openAdd} style={{ marginTop: 12 }}>
+            + Add New Debt
+          </button>
+        </div>
+      ) : (
+        <div className={dStyles.debtsContainer}>
+          {creditCards.length > 0 && (
+            <div className={dStyles.groupSection}>
+              <div className={dStyles.groupHeader}>
+                <span className={dStyles.groupTitle}>💳 Credit Cards</span>
+                <span className={dStyles.groupSubtotal}>
+                  Total Owed: <strong>{money(creditCards.reduce((sum, d) => sum + (Number(d.balance) || 0), 0))}</strong>
+                </span>
+              </div>
+              <div className={dStyles.debtsGrid}>
+                {creditCards.map(renderCard)}
+              </div>
+            </div>
+          )}
 
-          <div className={dStyles.editorGrid}>
-            <div className={dStyles.formRowFull}>
+          {loansAndOthers.length > 0 && (
+            <div className={dStyles.groupSection}>
+              <div className={dStyles.groupHeader}>
+                <span className={dStyles.groupTitle}>🏦 Loans & Structured Debts</span>
+                <span className={dStyles.groupSubtotal}>
+                  Total Owed: <strong>{money(loansAndOthers.reduce((sum, d) => sum + (Number(d.balance) || 0), 0))}</strong>
+                </span>
+              </div>
+              <div className={dStyles.debtsGrid}>
+                {loansAndOthers.map(renderCard)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. PORTALED ADD/EDIT DEBT MODAL */}
+      {showModal && typeof document !== 'undefined' && createPortal(
+        <div className={dStyles.modalOverlay} onClick={closeEditor}>
+          <div className={dStyles.modalCard} onClick={e => e.stopPropagation()}>
+            <div className={dStyles.modalHeader}>
+              <div>
+                <div className={dStyles.modalEyebrow}>{editDebt ? 'Editing Debt' : 'New Debt Entry'}</div>
+                <div className={dStyles.modalTitle}>{editDebt ? `Update ${editDebt.name}` : 'Add Debt to Payoff Stack'}</div>
+              </div>
+              <button type="button" className={dStyles.modalClose} onClick={closeEditor}>✕</button>
+            </div>
+
+            <form onSubmit={e => { e.preventDefault(); handleSave(); }} className={dStyles.modalBody}>
               <div className={dStyles.field}>
                 <label className={dStyles.fieldLabel} htmlFor="debt-name">Debt Name</label>
                 <input
                   id="debt-name"
                   className={dStyles.fieldInput}
-                  placeholder="e.g. UnionBank Credit Card"
+                  placeholder="e.g. BPI Credit Card, Personal Auto Loan"
                   value={form.name}
                   onChange={event => set('name', event.target.value)}
+                  autoFocus
                 />
               </div>
-            </div>
 
-            <div className={dStyles.formRowTwoCol}>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-type">Debt Type</label>
-                <select
-                  id="debt-type"
-                  className={dStyles.fieldInput}
-                  value={form.type}
-                  onChange={event => {
-                    set('type', event.target.value)
-                    if (event.target.value !== 'Credit Card') {
-                      set('accountId', '')
-                    }
-                  }}
-                >
-                  {DEBT_TYPES.map(type => <option key={type}>{type}</option>)}
-                </select>
+              <div className={dStyles.formRowTwoCol}>
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-type">Debt Type</label>
+                  <select
+                    id="debt-type"
+                    className={dStyles.fieldInput}
+                    value={form.type}
+                    onChange={event => {
+                      set('type', event.target.value)
+                      if (event.target.value !== 'Credit Card') {
+                        set('accountId', '')
+                      }
+                    }}
+                  >
+                    {DEBT_TYPES.map(type => <option key={type}>{type}</option>)}
+                  </select>
+                </div>
+
+                {form.type === 'Credit Card' ? (
+                  <div className={dStyles.field}>
+                    <label className={dStyles.fieldLabel} htmlFor="debt-limit">Credit Limit ({s})</label>
+                    <input
+                      id="debt-limit"
+                      className={dStyles.fieldInput}
+                      type="number"
+                      min="0"
+                      step="any"
+                      placeholder="0.00"
+                      value={form.creditLimit}
+                      onChange={event => set('creditLimit', event.target.value)}
+                    />
+                  </div>
+                ) : (
+                  <div className={dStyles.field}>
+                    <label className={dStyles.fieldLabel} htmlFor="debt-contact">Contact / Lender (Optional)</label>
+                    <input
+                      id="debt-contact"
+                      className={dStyles.fieldInput}
+                      placeholder="e.g. Pag-IBIG, Bank"
+                      value={form.contactName}
+                      onChange={event => set('contactName', event.target.value)}
+                    />
+                  </div>
+                )}
               </div>
 
-              {form.type === 'Credit Card' ? (
+              <div className={dStyles.formRowTwoCol}>
                 <div className={dStyles.field}>
-                  <label className={dStyles.fieldLabel} htmlFor="debt-limit">Credit Limit ({s})</label>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-balance">
+                    {form.type === 'Credit Card' ? `Current Amount Owed (${s})` : `Current Balance (${s})`}
+                  </label>
                   <input
-                    id="debt-limit"
+                    id="debt-balance"
+                    className={dStyles.fieldInputBig}
+                    type="number"
+                    min="0"
+                    step="any"
+                    placeholder="0.00"
+                    value={form.balance}
+                    onChange={event => set('balance', event.target.value)}
+                  />
+                </div>
+
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-original">Original Amount ({s})</label>
+                  <input
+                    id="debt-original"
+                    className={dStyles.fieldInputBig}
+                    type="number"
+                    min="0"
+                    step="any"
+                    placeholder="Defaults to balance"
+                    value={form.originalAmount}
+                    onChange={event => set('originalAmount', event.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className={dStyles.formRowTwoCol}>
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR)</label>
+                  <input
+                    id="debt-rate"
                     className={dStyles.fieldInput}
                     type="number"
                     min="0"
-                    inputMode="decimal"
-                    placeholder="0.00"
-                    value={form.creditLimit}
-                    onChange={event => set('creditLimit', event.target.value)}
+                    step="0.01"
+                    placeholder="e.g. 24.0"
+                    value={form.interestRate}
+                    onChange={event => set('interestRate', event.target.value)}
                   />
                 </div>
-              ) : form.type === 'Informal' ? (
+
                 <div className={dStyles.field}>
-                  <label className={dStyles.fieldLabel} htmlFor="debt-contact">Contact Name</label>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-min">Min Monthly Due ({s})</label>
                   <input
-                    id="debt-contact"
+                    id="debt-min"
                     className={dStyles.fieldInput}
-                    placeholder="e.g. John Doe"
-                    value={form.contactName}
-                    onChange={event => set('contactName', event.target.value)}
+                    type="number"
+                    min="0"
+                    step="any"
+                    placeholder="0.00"
+                    value={form.minPayment}
+                    onChange={event => set('minPayment', event.target.value)}
                   />
                 </div>
-              ) : (
-                <div className={dStyles.fieldEmptyPlaceholder} />
-              )}
-            </div>
-
-            <div className={dStyles.formRowTwoCol}>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-balance">
-                  {form.type === 'Credit Card' ? `Current Amount Owed (${s})` : `Current Balance (${s})`}
-                </label>
-                <input
-                  id="debt-balance"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="0"
-                  inputMode="decimal"
-                  placeholder="0.00"
-                  value={form.balance}
-                  onChange={event => set('balance', event.target.value)}
-                />
               </div>
 
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-original">Original Loan Amount ({s})</label>
-                <input
-                  id="debt-original"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="0"
-                  inputMode="decimal"
-                  placeholder="Defaults to current balance"
-                  value={form.originalAmount}
-                  onChange={event => set('originalAmount', event.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className={dStyles.formRowTwoCol}>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR) - Optional</label>
-                <input
-                  id="debt-rate"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  placeholder="0.00"
-                  value={form.interestRate}
-                  onChange={event => set('interestRate', event.target.value)}
-                />
-              </div>
-
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-min">Minimum Monthly Payment ({s})</label>
-                <input
-                  id="debt-min"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="0"
-                  inputMode="decimal"
-                  placeholder="0.00"
-                  value={form.minPayment}
-                  onChange={event => set('minPayment', event.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className={dStyles.formRowTwoCol}>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-due">Due Day of Month</label>
-                <input
-                  id="debt-due"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="1"
-                  max="31"
-                  placeholder="e.g. 15"
-                  value={form.dueDate}
-                  onChange={event => set('dueDate', event.target.value)}
-                />
-              </div>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-statement">Statement Day</label>
-                <input
-                  id="debt-statement"
-                  className={dStyles.fieldInput}
-                  type="number"
-                  min="1"
-                  max="31"
-                  placeholder="e.g. 5"
-                  value={form.statementDate}
-                  onChange={event => set('statementDate', event.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className={dStyles.field} style={{ marginTop: '12px' }}>
-              <label className={dStyles.fieldLabel} htmlFor="debt-start-date">Debt Start Date (Effective Date)</label>
-              <input
-                id="debt-start-date"
-                className={dStyles.fieldInput}
-                type="date"
-                value={form.startDate || today()}
-                onChange={event => set('startDate', event.target.value)}
-              />
-              <small style={{ color: 'var(--text3)', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>
-                Select a future date if this is an upcoming / planned debt.
-              </small>
-            </div>
-          </div>
-
-          <details className={dStyles.advancedBox}>
-            <summary className={dStyles.advancedSummary}>
-              <span>More options</span>
-              <small>Notes and color selection</small>
-            </summary>
-            <div className={dStyles.advancedBody}>
-              <div className={dStyles.field}>
-                <label className={dStyles.fieldLabel} htmlFor="debt-notes">Notes</label>
-                <input
-                  id="debt-notes"
-                  className={dStyles.fieldInput}
-                  placeholder="Additional context..."
-                  value={form.notes}
-                  onChange={event => set('notes', event.target.value)}
-                />
+              <div className={dStyles.formRowTwoCol}>
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-due">Due Day of Month</label>
+                  <input
+                    id="debt-due"
+                    className={dStyles.fieldInput}
+                    type="number"
+                    min="1"
+                    max="31"
+                    placeholder="e.g. 15"
+                    value={form.dueDate}
+                    onChange={event => set('dueDate', event.target.value)}
+                  />
+                </div>
+                <div className={dStyles.field}>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-statement">Statement Day</label>
+                  <input
+                    id="debt-statement"
+                    className={dStyles.fieldInput}
+                    type="number"
+                    min="1"
+                    max="31"
+                    placeholder="e.g. 5"
+                    value={form.statementDate}
+                    onChange={event => set('statementDate', event.target.value)}
+                  />
+                </div>
               </div>
 
               <div className={dStyles.colorSection}>
-                <div className={dStyles.fieldLabel}>Card Theme Color</div>
+                <div className={dStyles.fieldLabel}>Card Accent Color</div>
                 <div className={dStyles.colorGrid}>
                   {COLORS.map(color => (
                     <button
@@ -1309,45 +1251,19 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                   ))}
                 </div>
               </div>
-            </div>
-          </details>
 
-          <div className={dStyles.editorActions}>
-            <button type="button" onClick={closeEditor} className={dStyles.secondaryButton}>Cancel</button>
-            <button type="button" onClick={handleSave} className={dStyles.primaryButton}>
-              {editDebt ? 'Save changes' : 'Add debt'}
-            </button>
-          </div>
-        </div>
-      )}
-        {/* Debt List / Cards */}
-      {!debts.length ? (
-        <div className={dStyles.emptyCard}>
-          <div className={dStyles.emptyTitle}>No active debts entered</div>
-          <div className={dStyles.emptyBody}>
-            Add credit cards or loans above to activate simulations and see your optimal path to financial freedom.
-          </div>
-        </div>
-      ) : (
-        <div className={dStyles.sectionsWrapper}>
-          {creditCards.length > 0 && (
-            <div className={dStyles.sectionBlock}>
-              <h3 className={dStyles.listSectionTitle}>💳 Credit Cards</h3>
-              <div className={dStyles.debtsGrid}>
-                {creditCards.map(renderCard)}
+              <div className={dStyles.modalActions}>
+                <button type="button" className={dStyles.btnSecondary} onClick={closeEditor}>
+                  Cancel
+                </button>
+                <button type="submit" className={dStyles.btnPrimary}>
+                  {editDebt ? 'Save Changes' : 'Add Debt'}
+                </button>
               </div>
-            </div>
-          )}
-
-          {loansAndOthers.length > 0 && (
-            <div className={dStyles.sectionBlock}>
-              <h3 className={dStyles.listSectionTitle}>📁 Loans & Debts</h3>
-              <div className={dStyles.debtsGrid}>
-                {loansAndOthers.map(renderCard)}
-              </div>
-            </div>
-          )}
-        </div>
+            </form>
+          </div>
+        </div>,
+        document.body
       )}
 
       {activeMilestone && typeof document !== 'undefined' && createPortal(

@@ -1,23 +1,197 @@
+/* ==========================================================================
+   CRYPTO PORTFOLIO - DESIGN SYSTEM V2
+   High-Density Cards, Tactical Command Bar & Portaled Modals
+   ========================================================================== */
+
 .wrap {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
-  padding-bottom: 128px;
 }
 
-/* HERO CARD */
-.heroCard {
+/* 1. COMPACT COMMAND BAR (When in tab hub) */
+.commandBar {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: 18px;
-  padding: 18px 20px;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.commandMetrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.commandMetricGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.commandLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text3);
+}
+
+.commandValueRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.commandValue {
+  font-family: var(--font-mono, monospace);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.pnlBadgeMini {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.currencyToggle {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.currencyBtn {
+  background: transparent;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.currencyBtnActive {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Allocation Track in Command Bar */
+.commandAllocation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.allocationBar {
+  display: flex;
+  height: 6px;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface2);
+  gap: 2px;
+}
+
+.allocationSegment {
+  height: 100%;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.allocationLegendCompact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.legendItemCompact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.legendItemCompact strong {
+  color: var(--text);
+}
+
+.legendDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.commandActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.btnSecondarySmall {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnSecondarySmall:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.btnPrimarySmall {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btnPrimarySmall:hover {
+  filter: brightness(1.1);
+}
+
+/* 2. STANDALONE HERO CARD */
+.heroCard {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .heroTop {
@@ -34,36 +208,9 @@
 }
 
 .heroTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.currencyToggle {
-  display: flex;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 2px;
-}
-
-.currencyBtn {
-  background: transparent;
-  border: none;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text3);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.currencyBtnActive {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .heroMain {
@@ -82,29 +229,26 @@
 .heroLabel {
   font-size: 11px;
   color: var(--text3);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .userValuationBadge {
   font-size: 10px;
   font-weight: 700;
-  color: var(--income);
-  background: rgba(56, 239, 125, 0.12);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   padding: 2px 8px;
   border-radius: 999px;
-  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .heroValue {
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.03em;
-  line-height: 1.1;
-  font-family: inherit;
+  font-family: var(--font-mono, monospace);
 }
 
 .heroBottomRow {
@@ -113,82 +257,50 @@
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 2px;
-}
-
-.heroPnlWrap {
-  display: flex;
-  align-items: center;
 }
 
 .pnlBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 4px 9px;
+  padding: 4px 10px;
   border-radius: 999px;
 }
 
 .badgePositive {
-  background: rgba(56, 239, 125, 0.12);
-  color: var(--income);
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  color: var(--accent);
 }
 
 .badgeNegative {
-  background: rgba(255, 75, 75, 0.12);
-  color: var(--expense);
+  background: color-mix(in srgb, var(--red) 15%, var(--surface2));
+  color: var(--red);
 }
 
 .updatePricesBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: linear-gradient(135deg, rgba(56, 239, 125, 0.14), rgba(17, 153, 142, 0.14));
-  border: 1px solid rgba(56, 239, 125, 0.3);
-  color: var(--income);
-  font-size: 11px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border2));
+  color: var(--accent);
+  font-size: 12px;
   font-weight: 700;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.15s ease;
-  white-space: nowrap;
 }
 
 .updatePricesBtn:hover {
-  background: linear-gradient(135deg, rgba(56, 239, 125, 0.22), rgba(17, 153, 142, 0.22));
-  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
 
-.updatePricesBtn:active {
-  transform: scale(0.96);
-}
-
-/* ALLOCATION BAR */
 .allocationSection {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 4px;
   border-top: 1px solid var(--border);
   padding-top: 12px;
-}
-
-.allocationBar {
-  display: flex;
-  height: 6px;
-  width: 100%;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--surface2);
-  gap: 2px;
-}
-
-.allocationSegment {
-  height: 100%;
-  transition: width 0.3s ease;
 }
 
 .allocationLegend {
@@ -201,106 +313,65 @@
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 11px;
   color: var(--text2);
-  font-weight: 600;
-}
-
-.legendDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
 }
 
 .legendPct {
-  color: var(--text3);
-  font-weight: 500;
-}
-
-/* SECTION HEADER */
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.sectionTitle {
-  font-size: 14px;
   font-weight: 700;
   color: var(--text);
 }
 
-.addBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.addBtn:hover {
-  background: var(--surface2);
-  border-color: var(--text3);
-}
-
-/* HOLDINGS LIST */
-.holdingsList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* 3. HOLDINGS GRID & CARDS */
+.holdingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 12px;
 }
 
 .holdingCard {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 13px 16px;
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 14px 16px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .holdingCard:hover {
-  border-color: var(--text3);
-  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border2));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.holdingCard:active {
-  transform: scale(0.99);
+.holdingCardMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .holdingLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .coinAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 999px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #ffffff;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .coinInfo {
@@ -325,11 +396,20 @@
 .walletBadge {
   font-size: 10px;
   font-weight: 600;
-  color: var(--text3);
-  background: var(--surface2);
   padding: 1px 6px;
-  border-radius: 5px;
+  border-radius: 999px;
+  background: var(--surface2);
+  color: var(--text3);
   border: 1px solid var(--border);
+}
+
+.shareBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  color: var(--accent);
 }
 
 .coinName {
@@ -343,62 +423,84 @@
 .coinSub {
   font-size: 11px;
   color: var(--text3);
-  font-weight: 500;
+  font-family: var(--font-mono, monospace);
 }
 
 .holdingRight {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: right;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
   flex-shrink: 0;
 }
 
-.holdingValues {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: flex-end;
-}
-
 .holdingTotal {
-  font-size: 15px;
+  font-family: var(--font-mono, monospace);
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .holdingPnl {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
-.cardChevron {
-  font-size: 18px;
-  color: var(--text3);
-  margin-left: 2px;
+/* Micro Action Buttons */
+.cardQuickActionsBar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
 }
 
-/* EMPTY STATE */
+.cardMicroAction {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cardMicroAction:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.cardMicroActionDanger:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* 4. EMPTY STATE */
 .emptyState {
   background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  padding: 40px 20px;
+  border: 1px dashed var(--border2);
+  border-radius: 20px;
+  padding: 40px 24px;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 10px;
+  gap: 8px;
+  max-width: 440px;
+  margin: 20px auto;
 }
 
 .emptyIcon {
-  font-size: 40px;
+  font-size: 36px;
 }
 
 .emptyTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
 }
@@ -406,111 +508,119 @@
 .emptyDesc {
   font-size: 13px;
   color: var(--text2);
-  max-width: 320px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-/* MODAL STYLES */
+.addBtn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: filter 0.15s ease;
+}
+
+.addBtn:hover {
+  filter: brightness(1.1);
+}
+
+/* 5. PORTALED MODALS */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100dvh;
-  background: rgba(0, 0, 0, 0.75);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 999999;
-  overscroll-behavior: contain;
-  box-sizing: border-box;
 }
 
 .modalContent {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
+  border: 1px solid var(--border2);
+  border-radius: 22px;
   width: 100%;
-  max-width: 440px;
-  max-height: calc(100dvh - 32px);
+  max-width: 500px;
+  max-height: 90vh;
   overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  box-sizing: border-box;
-  position: relative;
-  z-index: 1000000;
+  padding: 24px;
+  gap: 16px;
 }
 
 .modalHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .modalTitle {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text);
 }
 
 .modalClose {
   background: var(--surface2);
-  border: none;
+  border: 1px solid var(--border2);
   color: var(--text2);
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   cursor: pointer;
+  font-size: 14px;
 }
 
-/* QUICK PRICE UPDATE MODAL SPECIFIC */
+.modalClose:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
 .quickPriceDesc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text2);
-  line-height: 1.4;
 }
 
 .quickPriceList {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 340px;
+  max-height: 280px;
   overflow-y: auto;
   padding-right: 4px;
 }
 
 .quickPriceItem {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
   background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
   padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  gap: 12px;
 }
 
 .quickPriceCoin {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .quickPriceIcon {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .quickPriceSymbol {
@@ -535,104 +645,102 @@
   display: flex;
   align-items: center;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   border-radius: 8px;
-  padding: 4px 8px;
-  width: 130px;
+  padding: 0 8px;
 }
 
 .inputPrefix {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
   color: var(--text3);
-  margin-right: 4px;
+  font-weight: 700;
 }
 
 .quickInput {
-  width: 100%;
-  border: none;
   background: transparent;
+  border: none;
   color: var(--text);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  padding: 6px 4px;
+  width: 90px;
   text-align: right;
+}
+
+.quickInput:focus {
   outline: none;
 }
 
 .quickItemTotal {
   font-size: 10px;
-  color: var(--text2);
-  font-weight: 600;
+  color: var(--text3);
+  font-family: var(--font-mono, monospace);
 }
 
 .quickModalFooter {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   border-top: 1px solid var(--border);
-  padding-top: 14px;
+  padding-top: 12px;
 }
 
 .quickTotalPreview {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   font-size: 13px;
   color: var(--text2);
 }
 
 .quickTotalPreview strong {
-  font-size: 18px;
-  color: var(--income);
-  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: var(--accent);
+  font-size: 15px;
 }
 
-/* FORM FIELDS */
+/* Add / Edit Form */
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.formRow {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 10px;
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+.input,
+.select {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
 }
 
 .formRow2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
-.label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text2);
-}
-
-.input, .select {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 11px;
-  font-size: 13px;
-  color: var(--text);
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.input:focus, .select:focus {
-  border-color: var(--income);
+@media (max-width: 480px) {
+  .formRow2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 .coinPillsWrap {
   display: flex;
   gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  flex-wrap: wrap;
+  max-height: 90px;
+  overflow-y: auto;
   margin-top: 4px;
 }
 
@@ -641,83 +749,64 @@
   align-items: center;
   gap: 4px;
   background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 4px 8px;
   font-size: 11px;
   font-weight: 600;
   color: var(--text2);
   cursor: pointer;
-  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.coinPill:hover {
+  color: var(--text);
+  border-color: var(--accent);
 }
 
 .coinPillActive {
-  background: var(--income);
-  color: #000000;
-  border-color: var(--income);
+  background: var(--accent);
+  color: #000 !important;
+  border-color: var(--accent);
   font-weight: 700;
 }
 
 .modalActions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.btnPrimary {
-  background: var(--income);
-  color: #000000;
-  border: none;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 9px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btnPrimary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .btnSecondary {
   background: var(--surface2);
   color: var(--text2);
-  border: 1px solid var(--border);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 9px 14px;
+  border: 1px solid var(--border2);
   border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .btnDanger {
-  background: rgba(255, 75, 75, 0.12);
-  color: var(--expense);
-  border: 1px solid rgba(255, 75, 75, 0.25);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 9px 12px;
+  background: color-mix(in srgb, var(--red) 15%, transparent);
+  color: var(--red);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-}
-
-@media (max-width: 480px) {
-  .modalOverlay {
-    padding: 12px;
-    align-items: center;
-  }
-  .modalContent {
-    padding: 16px;
-    gap: 10px;
-    border-radius: 16px;
-  }
-  .formGroup {
-    gap: 3px;
-  }
-  .label {
-    font-size: 10px;
-  }
 }

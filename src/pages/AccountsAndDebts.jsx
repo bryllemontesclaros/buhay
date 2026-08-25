@@ -142,6 +142,7 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
           profile={profile}
           privacyMode={privacyMode}
           onTogglePrivacy={onTogglePrivacy}
+          hideHeader={true}
         />
       ) : (
         <Debts

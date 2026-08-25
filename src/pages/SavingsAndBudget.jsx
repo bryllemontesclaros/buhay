@@ -74,28 +74,6 @@ export default function SavingsAndBudget({ user, data, profile = {}, symbol, pri
         </div>
       </div>
 
-      {activeTab === 'savings' && (
-        <div className={tStyles.summaryStrip}>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Total Goals Saved</div>
-            <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-              {privacyMode ? '••••' : fmt(totalSaved, s)}
-            </div>
-          </div>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Total Target Goal</div>
-            <div className={tStyles.summaryValue}>
-              {privacyMode ? '••••' : fmt(totalTarget, s)}
-            </div>
-          </div>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Remaining Target</div>
-            <div className={tStyles.summaryValue}>
-              {privacyMode ? '••••' : fmt(Math.max(0, totalTarget - totalSaved), s)}
-            </div>
-          </div>
-        </div>
-      )}
 
       {activeTab === 'budget' ? (
         <Budget

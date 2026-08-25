@@ -1,114 +1,55 @@
-/* ACCOUNTS LIQUIDITY RADAR HERO */
-.radarHeroCard {
-  position: relative;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
+/* ACCOUNTS REDESIGNED STYLESHEET */
 
-.radarHeroTop {
+/* 1. TOP COMMAND BAR (CLEAN & SLEEK) */
+.commandBar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--radius-lg, 20px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-.radarHeroCopy {
+.commandBarInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  min-width: 140px;
 }
 
-.radarHeroLabel {
+.commandBarLabel {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text3);
 }
 
-.radarHeroVal {
+.commandBarBalance {
   font-family: var(--font-display);
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   color: var(--accent);
 }
 
-.radarHeroActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btnHeroPrimary {
-  padding: 9px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: none;
-  background: var(--accent);
-  color: var(--bg);
-  cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btnHeroPrimary:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.08);
-}
-
-.btnHeroSecondary {
-  padding: 9px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btnHeroSecondary:hover:not(:disabled) {
-  background: var(--surface3);
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-
-.btnHeroSecondary:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-/* ALLOCATION STRIP */
-.allocationSection {
+.commandBarAllocation {
+  flex: 1;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+  gap: 6px;
 }
 
 .allocationTrack {
-  height: 8px;
+  height: 6px;
   width: 100%;
   border-radius: 999px;
   background: var(--surface2);
@@ -123,124 +64,236 @@
   min-width: 4px;
 }
 
-.allocationLegend {
+.allocationLegendCompact {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.allocationPill {
+.allocationPillCompact {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 11px;
   color: var(--text2);
 }
 
 .allocationDot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.allocationType {
-  color: var(--text3);
+.commandBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.allocationAmount {
-  font-family: var(--font-mono);
-  color: var(--text);
+.btnHeroPrimary {
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent);
+  color: var(--bg);
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
 }
 
-.allocationPct {
-  color: var(--text3);
-  font-size: 10px;
+.btnHeroPrimary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
 
-/* TOOLBAR */
-.toolbar {
+.btnHeroSecondary {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+}
+
+.btnHeroSecondary:hover:not(:disabled) {
+  background: var(--surface3);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btnHeroSecondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 2. ASSET GROUPS CONTAINER */
+.groupsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.groupSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 12px;
+  padding: 0 4px;
 }
 
-.toolbarTitle {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.groupTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.groupIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.groupText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.groupTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.groupDesc {
+  font-size: 11px;
   color: var(--text3);
 }
 
-/* ACCOUNTS GRID */
+.groupSubtotalBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+.groupSubtotalLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.groupSubtotalVal {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* 3. ACCOUNTS GRID & HIGH-DENSITY CARD */
 .accountsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* ACCOUNT CARD */
 .accountCard {
   --account-tone: var(--accent);
   position: relative;
-  background: color-mix(in srgb, var(--surface) 90%, var(--surface2));
-  border: 1px solid color-mix(in srgb, var(--account-tone) 24%, var(--border));
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--account-tone) 26%, var(--border));
   border-radius: 18px;
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 10px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
 .accountCard:hover {
   transform: translateY(-2px);
   border-color: var(--account-tone);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--account-tone) 12%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--account-tone) 14%, transparent);
 }
 
-.accountTop {
+.accountCardMain {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
 }
 
 .accountLeading {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
+  flex: 1;
 }
 
 .accountIcon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--account-tone) 20%, transparent);
 }
 
 .accountInfo {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accountNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   min-width: 0;
 }
 
 .accountName {
   font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 750;
   color: var(--text);
   line-height: 1.2;
   white-space: nowrap;
@@ -248,13 +301,26 @@
   text-overflow: ellipsis;
 }
 
-.accountType {
+.sharePill {
+  background: color-mix(in srgb, var(--account-tone) 16%, var(--surface2));
+  color: var(--account-tone);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.accountMeta {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 11px;
   color: var(--text3);
-  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .typeDot {
@@ -264,68 +330,25 @@
   flex-shrink: 0;
 }
 
-.sharePill {
-  background: var(--surface2);
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text2);
+.accountNotes {
+  font-style: italic;
+  color: var(--text3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
 }
 
-.accountActions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0.7;
-  transition: opacity 0.15s ease;
-}
-
-.accountCard:hover .accountActions {
-  opacity: 1;
-}
-
-.cardActionBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  color: var(--text2);
-  transition: background 0.15s ease;
-}
-
-.cardActionBtn:hover {
-  background: var(--surface2);
-}
-
-.cardActionBtnDanger:hover {
-  background: color-mix(in srgb, var(--red) 16%, transparent);
-}
-
-/* BALANCE BOX */
-.accountBalanceBox {
+.accountTrailing {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 10px 12px;
-  background: var(--surface);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.accountBalanceLabel {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text3);
+  align-items: flex-end;
+  gap: 1px;
+  flex-shrink: 0;
 }
 
 .accountBalance {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text);
@@ -336,46 +359,26 @@
   color: var(--red);
 }
 
-.accountNotes {
-  font-size: 11px;
-  font-style: italic;
+.accountBalanceSub {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--text3);
-  padding: 0 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* CARD QUICK ACTIONS */
-.cardFooterActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* 4. SLEEK CARD HOVER / QUICK ACTIONS BAR */
+.cardQuickActionsBar {
+  display: flex;
+  align-items: center;
   gap: 6px;
-  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
 }
 
-.btnCardAction {
-  padding: 7px 10px;
-  font-size: 11.5px;
-  font-weight: 700;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--accent);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.btnCardAction:hover {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  transform: translateY(-1px);
-}
-
-.btnCardActionSecondary {
-  padding: 7px 10px;
-  font-size: 11.5px;
+.btnMiniAction {
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 700;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -383,22 +386,31 @@
   color: var(--text2);
   cursor: pointer;
   transition: all 0.15s ease;
-  text-align: center;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.btnCardActionSecondary:hover:not(:disabled) {
+.btnMiniAction:hover:not(:disabled) {
   background: var(--surface3);
   color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
   transform: translateY(-1px);
 }
 
-.btnCardActionSecondary:disabled {
+.btnMiniAction:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* EMPTY STATE */
+.btnMiniActionDanger:hover {
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+  color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 40%, transparent);
+}
+
+/* 5. EMPTY STATE */
 .emptyCard {
   text-align: center;
   padding: 3rem 1.5rem;
@@ -431,7 +443,7 @@
   line-height: 1.5;
 }
 
-/* SYNC NOTICE */
+/* 6. SYNC NOTICE */
 .syncNotice {
   display: flex;
   align-items: center;
@@ -468,14 +480,14 @@
   transition: all 0.15s ease;
 }
 
-/* MODALS */
+/* 7. MODALS (PORTALED) */
 .modalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,7 +608,7 @@
   border-color: var(--accent);
 }
 
-/* ADJUST STRIPS */
+/* ADJUST STRIPS & RECONCILE CHECKBOX */
 .adjustCurrentStrip {
   display: flex;
   align-items: center;
@@ -640,7 +652,74 @@
   font-weight: 700;
 }
 
-/* TRANSFER GRID */
+.reconcileLedgerCheck {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  cursor: pointer;
+}
+
+.reconcileCheckbox {
+  margin-top: 3px;
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.reconcileCheckCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reconcileCheckTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reconcileCheckSub {
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.3;
+}
+
+/* TRANSFER GRID & SWAP BUTTON */
+.transferTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.transferTopNotice {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 600;
+}
+
+.btnSwapDirection {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnSwapDirection:hover {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  transform: translateY(-1px);
+}
+
 .transferGrid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -651,8 +730,17 @@
 .transferArrowWrap {
   font-size: 18px;
   color: var(--accent);
-  padding-top: 18px;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
   text-align: center;
+  user-select: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.transferArrowWrap:hover {
+  background: var(--surface2);
+  transform: scale(1.15);
 }
 
 /* COLOR GRID */
@@ -765,17 +853,18 @@
 }
 
 /* RESPONSIVE */
-@media (max-width: 640px) {
-  .radarHeroCard {
-    padding: 16px;
-    border-radius: 18px;
-  }
-  .radarHeroTop {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 768px) {
+  .commandBar {
+    padding: 14px 16px;
     gap: 12px;
   }
-  .radarHeroActions {
+  .commandBarInfo {
+    width: 100%;
+  }
+  .commandBarAllocation {
+    width: 100%;
+  }
+  .commandBarActions {
     width: 100%;
   }
   .btnHeroPrimary,
@@ -783,7 +872,6 @@
     flex: 1;
     text-align: center;
     justify-content: center;
-    padding: 10px 12px;
   }
   .accountsGrid {
     grid-template-columns: 1fr;

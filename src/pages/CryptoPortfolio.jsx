@@ -10,6 +10,7 @@ import {
   DEFAULT_FOREX_RATE,
   formatCryptoValue,
   getCachedPrices,
+  getHoldingQuote,
   POPULAR_CRYPTO_COINS,
   searchCryptoCoins,
   setCachedPrices,
@@ -36,6 +37,7 @@ export default function CryptoPortfolio({
   profile = {},
   privacyMode = false,
   onPricesUpdated = null,
+  hideHeader = false,
 }) {
   const holdings = useMemo(() => {
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
@@ -361,108 +363,292 @@ export default function CryptoPortfolio({
 
   const ALLOCATION_COLORS = ['#f7931a', '#627eea', '#14f195', '#38ef7d', '#375bd2', '#f4b728', '#ff007a', '#2775ca', '#e84142', '#4da2ff', '#0033ad']
 
-  return (
-    <div className={styles.wrap}>
-      {/* HERO PORTFOLIO PERFORMANCE CARD */}
-      <div className={styles.heroCard}>
-        <div className={styles.heroTop}>
-          <div className={styles.heroTag}>
-            <span className={styles.heroTitle}>🪙 Crypto Portfolio</span>
-          </div>
+  const renderCard = (h) => {
+    const hasHoldingPnl = h.costBasis > 0 && Math.abs(h.pnlAmount) > 0.05
+    const isHoldingPnlPos = h.pnlAmount >= 0
+    const avatarBg = COIN_GRADIENTS[h.coinId] || 'linear-gradient(135deg, #3a3a4c, #222230)'
+    const coinIcon = POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId || c.symbol === h.symbol)?.icon || '🪙'
 
-          <div className={styles.currencyToggle} role="group" aria-label="Quote Currency">
-            <button
-              type="button"
-              className={`${styles.currencyBtn} ${vsCurrency === 'PHP' ? styles.currencyBtnActive : ''}`}
-              onClick={() => handleCurrencyToggle('PHP')}
-            >
-              ₱ PHP
-            </button>
-            <button
-              type="button"
-              className={`${styles.currencyBtn} ${vsCurrency === 'USD' ? styles.currencyBtnActive : ''}`}
-              onClick={() => handleCurrencyToggle('USD')}
-            >
-              $ USD
-            </button>
-          </div>
-        </div>
+    return (
+      <SwipeableCard
+        key={h._id || h.id || h.symbol}
+        onSwipeRight={() => openEditHolding(h)}
+        rightLabel="Edit"
+        rightIcon="✎"
+        rightTone="success"
+        onSwipeLeft={async () => {
+          playTick()
+          const confirmed = await confirmApp({
+            title: 'Delete holding?',
+            message: `Remove ${h.name} (${h.symbol}) from portfolio?`,
+            confirmLabel: 'Delete',
+            cancelLabel: 'Cancel',
+            tone: 'danger',
+          })
+          if (confirmed) {
+            await fsDel(user.uid, 'portfolioHoldings', h._id || h.id)
+            notifyApp({ title: 'Holding deleted', tone: 'success' })
+          }
+        }}
+        leftLabel="Delete"
+        leftIcon="✕"
+        leftTone="danger"
+        onDoubleTap={() => openEditHolding(h)}
+      >
+        <div className={styles.holdingCard}>
+          <div className={styles.holdingCardMain}>
+            <div className={styles.holdingLeft}>
+              <div className={styles.coinAvatar} style={{ background: avatarBg }}>
+                {coinIcon}
+              </div>
+              <div className={styles.coinInfo}>
+                <div className={styles.coinHeader}>
+                  <span className={styles.coinSymbol}>{h.symbol}</span>
+                  <span className={styles.walletBadge}>{h.wallet}</span>
+                  <span className={styles.shareBadge}>{h.allocationPct.toFixed(0)}%</span>
+                </div>
+                <div className={styles.coinName}>{h.name}</div>
+                <div className={styles.coinSub}>
+                  {h.qty} {h.symbol} · {formatCryptoValue(h.currentPrice, s, 4)}/coin
+                </div>
+              </div>
+            </div>
 
-        <div className={styles.heroMain}>
-          <div className={styles.heroLabelRow}>
-            <span className={styles.heroLabel}>Total Crypto Assets</span>
-            <span className={styles.userValuationBadge}>Exact Valuation</span>
-          </div>
-          <div className={styles.heroValue}>
-            {privacyMode ? '••••' : formatCryptoValue(metrics.totalCurrentValue, s, 2)}
-          </div>
-
-          <div className={styles.heroBottomRow}>
-            <div className={styles.heroPnlWrap}>
-              {hasPnl && (
-                <div className={`${styles.pnlBadge} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
-                  <span>{isPnlPositive ? '▲ +' : '▼ -'}</span>
-                  <span>{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)}</span>
-                  <span>({metrics.totalPnlPct.toFixed(1)}%) All-Time</span>
+            <div className={styles.holdingRight}>
+              <div className={styles.holdingTotal}>
+                {privacyMode ? '••••' : formatCryptoValue(h.currentValue, s, 2)}
+              </div>
+              {hasHoldingPnl && (
+                <div
+                  className={`${styles.holdingPnl} ${
+                    isHoldingPnlPos ? styles.badgePositive : styles.badgeNegative
+                  }`}
+                >
+                  {isHoldingPnlPos ? '▲ +' : '▼ -'}{formatCryptoValue(Math.abs(h.pnlAmount), s, 2)} ({h.pnlPct.toFixed(1)}%)
                 </div>
               )}
             </div>
+          </div>
 
+          <div className={styles.cardQuickActionsBar}>
             <button
               type="button"
-              className={styles.updatePricesBtn}
-              onClick={openPriceModal}
-              title="Update current asset prices"
+              className={styles.cardMicroAction}
+              onClick={(e) => { e.stopPropagation(); openPriceModal(); }}
+              title="Update price"
             >
-              ⚡ Update Prices
+              ⚡ Price
+            </button>
+            <button
+              type="button"
+              className={styles.cardMicroAction}
+              onClick={(e) => { e.stopPropagation(); openEditHolding(h); }}
+              title="Edit holding"
+            >
+              ✎ Edit
+            </button>
+            <button
+              type="button"
+              className={`${styles.cardMicroAction} ${styles.cardMicroActionDanger}`}
+              onClick={async (e) => {
+                e.stopPropagation()
+                const confirmed = await confirmApp({
+                  title: 'Delete holding?',
+                  message: `Remove ${h.name} (${h.symbol}) from portfolio?`,
+                  confirmLabel: 'Delete',
+                  cancelLabel: 'Cancel',
+                  tone: 'danger',
+                })
+                if (confirmed) {
+                  await fsDel(user.uid, 'portfolioHoldings', h._id || h.id)
+                  notifyApp({ title: 'Holding deleted', tone: 'success' })
+                }
+              }}
+              title="Delete holding"
+            >
+              🗑
             </button>
           </div>
         </div>
+      </SwipeableCard>
+    )
+  }
 
-        {/* ASSET ALLOCATION BAR */}
-        {metrics.holdings.length > 0 && (
-          <div className={styles.allocationSection}>
-            <div className={styles.allocationBar}>
-              {metrics.holdings.map((h, i) => (
-                <div
-                  key={h._id || h.coinId || i}
-                  className={styles.allocationSegment}
-                  style={{
-                    width: `${Math.max(2, h.allocationPct)}%`,
-                    backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length],
-                  }}
-                  title={`${h.symbol}: ${h.allocationPct.toFixed(1)}%`}
-                />
-              ))}
+  return (
+    <div className={styles.wrap}>
+      {/* 1. COMMAND BAR (When inside tab hub) OR FULL HERO */}
+      {hideHeader ? (
+        <div className={styles.commandBar}>
+          <div className={styles.commandMetrics}>
+            <div className={styles.commandMetricGroup}>
+              <span className={styles.commandLabel}>Total Crypto Assets</span>
+              <div className={styles.commandValueRow}>
+                <span className={styles.commandValue}>
+                  {privacyMode ? '••••' : formatCryptoValue(metrics.totalCurrentValue, s, 2)}
+                </span>
+                {hasPnl && (
+                  <span className={`${styles.pnlBadgeMini} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
+                    {isPnlPositive ? '▲ +' : '▼ -'}{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)} ({metrics.totalPnlPct.toFixed(1)}%)
+                  </span>
+                )}
+              </div>
             </div>
-            <div className={styles.allocationLegend}>
-              {metrics.holdings.slice(0, 5).map((h, i) => (
-                <div key={h._id || h.coinId || i} className={styles.legendItem}>
-                  <span
-                    className={styles.legendDot}
-                    style={{ backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length] }}
-                  />
-                  <span>{h.symbol}</span>
-                  <span className={styles.legendPct}>{h.allocationPct.toFixed(0)}%</span>
-                </div>
-              ))}
+
+            <div className={styles.currencyToggle} role="group" aria-label="Quote Currency">
+              <button
+                type="button"
+                className={`${styles.currencyBtn} ${vsCurrency === 'PHP' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('PHP')}
+              >
+                ₱ PHP
+              </button>
+              <button
+                type="button"
+                className={`${styles.currencyBtn} ${vsCurrency === 'USD' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('USD')}
+              >
+                $ USD
+              </button>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* SECTION HEADER & ADD BUTTON */}
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionTitle}>
-          Holdings ({metrics.holdings.length})
+          {/* Inline Allocation Bar */}
+          {metrics.holdings.length > 0 && (
+            <div className={styles.commandAllocation}>
+              <div className={styles.allocationBar}>
+                {metrics.holdings.map((h, i) => (
+                  <div
+                    key={h._id || h.coinId || i}
+                    className={styles.allocationSegment}
+                    style={{
+                      width: `${Math.max(2, h.allocationPct)}%`,
+                      backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length],
+                    }}
+                    title={`${h.symbol}: ${h.allocationPct.toFixed(1)}%`}
+                  />
+                ))}
+              </div>
+              <div className={styles.allocationLegendCompact}>
+                {metrics.holdings.slice(0, 5).map((h, i) => (
+                  <span key={h._id || h.coinId || i} className={styles.legendItemCompact}>
+                    <span
+                      className={styles.legendDot}
+                      style={{ backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length] }}
+                    />
+                    <strong>{h.symbol}</strong> {h.allocationPct.toFixed(0)}%
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className={styles.commandActions}>
+            <button
+              type="button"
+              className={styles.btnSecondarySmall}
+              onClick={openPriceModal}
+            >
+              ⚡ Update Prices
+            </button>
+            <button
+              type="button"
+              className={styles.btnPrimarySmall}
+              onClick={openAddHolding}
+            >
+              + Add Coin
+            </button>
+          </div>
         </div>
-        <button type="button" className={styles.addBtn} onClick={openAddHolding}>
-          <span>+</span>
-          <span>Add Holding</span>
-        </button>
-      </div>
+      ) : (
+        <div className={styles.heroCard}>
+          <div className={styles.heroTop}>
+            <div className={styles.heroTag}>
+              <span className={styles.heroTitle}>🪙 Crypto Portfolio</span>
+            </div>
 
-      {/* HOLDINGS LIST */}
+            <div className={styles.currencyToggle} role="group" aria-label="Quote Currency">
+              <button
+                type="button"
+                className={`${styles.currencyBtn} ${vsCurrency === 'PHP' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('PHP')}
+              >
+                ₱ PHP
+              </button>
+              <button
+                type="button"
+                className={`${styles.currencyBtn} ${vsCurrency === 'USD' ? styles.currencyBtnActive : ''}`}
+                onClick={() => handleCurrencyToggle('USD')}
+              >
+                $ USD
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.heroMain}>
+            <div className={styles.heroLabelRow}>
+              <span className={styles.heroLabel}>Total Crypto Assets</span>
+              <span className={styles.userValuationBadge}>Exact Valuation</span>
+            </div>
+            <div className={styles.heroValue}>
+              {privacyMode ? '••••' : formatCryptoValue(metrics.totalCurrentValue, s, 2)}
+            </div>
+
+            <div className={styles.heroBottomRow}>
+              <div className={styles.heroPnlWrap}>
+                {hasPnl && (
+                  <div className={`${styles.pnlBadge} ${isPnlPositive ? styles.badgePositive : styles.badgeNegative}`}>
+                    <span>{isPnlPositive ? '▲ +' : '▼ -'}</span>
+                    <span>{formatCryptoValue(Math.abs(metrics.totalPnlAmount), s, 2)}</span>
+                    <span>({metrics.totalPnlPct.toFixed(1)}%) All-Time</span>
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="button"
+                className={styles.updatePricesBtn}
+                onClick={openPriceModal}
+                title="Update current asset prices"
+              >
+                ⚡ Update Prices
+              </button>
+            </div>
+          </div>
+
+          {/* ASSET ALLOCATION BAR */}
+          {metrics.holdings.length > 0 && (
+            <div className={styles.allocationSection}>
+              <div className={styles.allocationBar}>
+                {metrics.holdings.map((h, i) => (
+                  <div
+                    key={h._id || h.coinId || i}
+                    className={styles.allocationSegment}
+                    style={{
+                      width: `${Math.max(2, h.allocationPct)}%`,
+                      backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length],
+                    }}
+                    title={`${h.symbol}: ${h.allocationPct.toFixed(1)}%`}
+                  />
+                ))}
+              </div>
+              <div className={styles.allocationLegend}>
+                {metrics.holdings.slice(0, 5).map((h, i) => (
+                  <div key={h._id || h.coinId || i} className={styles.legendItem}>
+                    <span
+                      className={styles.legendDot}
+                      style={{ backgroundColor: ALLOCATION_COLORS[i % ALLOCATION_COLORS.length] }}
+                    />
+                    <span>{h.symbol}</span>
+                    <span className={styles.legendPct}>{h.allocationPct.toFixed(0)}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2. HOLDINGS GRID / LIST */}
       {metrics.holdings.length === 0 ? (
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>🪙</div>
@@ -475,89 +661,12 @@ export default function CryptoPortfolio({
           </button>
         </div>
       ) : (
-        <div className={styles.holdingsList}>
-          {metrics.holdings.map(h => {
-            const hasHoldingPnl = h.costBasis > 0 && Math.abs(h.pnlAmount) > 0.05
-            const isHoldingPnlPos = h.pnlAmount >= 0
-            const avatarBg = COIN_GRADIENTS[h.coinId] || 'linear-gradient(135deg, #3a3a4c, #222230)'
-            const coinIcon = POPULAR_CRYPTO_COINS.find(c => c.id === h.coinId || c.symbol === h.symbol)?.icon || '🪙'
-
-            return (
-              <SwipeableCard
-                key={h._id || h.id || h.symbol}
-                onSwipeRight={() => openEditHolding(h)}
-                rightLabel="Edit"
-                rightIcon="✎"
-                rightTone="success"
-                onSwipeLeft={async () => {
-                  playTick()
-                  const confirmed = await confirmApp({
-                    title: 'Delete holding?',
-                    message: `Remove ${h.name} (${h.symbol}) from portfolio?`,
-                    confirmLabel: 'Delete',
-                    cancelLabel: 'Cancel',
-                    tone: 'danger',
-                  })
-                  if (confirmed) {
-                    await fsDel(user.uid, 'portfolioHoldings', h._id || h.id)
-                    notifyApp({ title: 'Holding deleted', tone: 'success' })
-                  }
-                }}
-                leftLabel="Delete"
-                leftIcon="✕"
-                leftTone="danger"
-                onDoubleTap={() => openEditHolding(h)}
-                style={{ borderRadius: 18 }}
-              >
-                <div
-                  className={styles.holdingCard}
-                  onClick={() => openEditHolding(h)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && openEditHolding(h)}
-                  aria-label={`Holding ${h.symbol}, tap to edit`}
-                >
-                  <div className={styles.holdingLeft}>
-                    <div className={styles.coinAvatar} style={{ background: avatarBg }}>
-                      {coinIcon}
-                    </div>
-                    <div className={styles.coinInfo}>
-                      <div className={styles.coinHeader}>
-                        <span className={styles.coinSymbol}>{h.symbol}</span>
-                        <span className={styles.walletBadge}>{h.wallet}</span>
-                      </div>
-                      <div className={styles.coinName}>{h.name}</div>
-                      <div className={styles.coinSub}>
-                        {h.qty} {h.symbol} · {formatCryptoValue(h.currentPrice, s, 4)} / coin
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.holdingRight}>
-                    <div className={styles.holdingValues}>
-                      <div className={styles.holdingTotal}>
-                        {privacyMode ? '••••' : formatCryptoValue(h.currentValue, s, 2)}
-                      </div>
-                      {hasHoldingPnl && (
-                        <div
-                          className={`${styles.holdingPnl} ${
-                            isHoldingPnlPos ? styles.badgePositive : styles.badgeNegative
-                          }`}
-                        >
-                          {isHoldingPnlPos ? '+' : '-'}{formatCryptoValue(Math.abs(h.pnlAmount), s, 2)} ({h.pnlPct.toFixed(1)}%)
-                        </div>
-                      )}
-                    </div>
-                    <span className={styles.cardChevron} aria-hidden="true">›</span>
-                  </div>
-                </div>
-              </SwipeableCard>
-            )
-          })}
+        <div className={styles.holdingsGrid}>
+          {metrics.holdings.map(renderCard)}
         </div>
       )}
 
-      {/* QUICK PRICE UPDATE MODAL */}
+      {/* 3. QUICK PRICE UPDATE MODAL */}
       {showPriceModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closePriceModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -567,7 +676,7 @@ export default function CryptoPortfolio({
             </div>
 
             <div className={styles.quickPriceDesc}>
-              Input the current market price for each token from your exchange app.
+              Input current market price for each token from your exchange.
             </div>
 
             <div className={styles.quickPriceList}>
@@ -611,12 +720,12 @@ export default function CryptoPortfolio({
 
             <div className={styles.quickModalFooter}>
               <div className={styles.quickTotalPreview}>
-                <span>Updated Portfolio Total:</span>
+                <span>Updated Total:</span>
                 <strong>{formatCryptoValue(modalLiveTotal, s, 2)}</strong>
               </div>
               <div className={styles.modalActions}>
                 <button type="button" className={styles.btnSecondary} onClick={closePriceModal}>Cancel</button>
-                <button type="button" className={styles.btnPrimary} onClick={saveQuickPrices}>Save & Update Portfolio</button>
+                <button type="button" className={styles.btnPrimary} onClick={saveQuickPrices}>Save Prices</button>
               </div>
             </div>
           </div>
@@ -624,7 +733,7 @@ export default function CryptoPortfolio({
         document.body
       )}
 
-      {/* ADD / EDIT HOLDING MODAL */}
+      {/* 4. ADD / EDIT HOLDING MODAL */}
       {showHoldingModal && typeof document !== 'undefined' && createPortal(
         <div className={styles.modalOverlay} onClick={closeHoldingModal}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -642,7 +751,7 @@ export default function CryptoPortfolio({
                 <input
                   type="text"
                   className={styles.input}
-                  placeholder="Search BTC, ETH, LINK, HYPE, TAO, ZEC, UNI..."
+                  placeholder="Search BTC, ETH, LINK, HYPE, TAO, SOL..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                 />

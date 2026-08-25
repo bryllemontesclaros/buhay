@@ -1,202 +1,504 @@
-.heroAside,
-.summaryCard,
-.composerCard,
-.goalCard,
-.emptyCard {
-  position: relative;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 18px;
-  /* box-shadow flattened */
+/* ==========================================================================
+   SAVINGS GOALS - DESIGN SYSTEM V2
+   High-Density Cards, Tactical Command Bar & Portaled Modals
+   ========================================================================== */
 
-}
-
-.heroAside {
-  padding: 1rem 1.05rem;
+.wrap {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 16px;
+  width: 100%;
 }
 
-.heroAsideLabel,
-.summaryLabel,
-.sectionTitle {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.heroAsideLabel,
-.summaryLabel {
-  color: var(--text3);
-}
-
-.heroAsideValue {
-  font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 0.98;
-  color: var(--text);
-  letter-spacing: -0.03em;
-  overflow-wrap: anywhere;
-}
-
-.heroAsideTrack {
-  height: 6px;
-  border-radius: 999px;
-  overflow: visible !important;
-  background: var(--surface3);
-}
-
-.heroAsideFill {
-  position: relative;
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, white 38%));
-  transition: width 0.45s ease;
-}
-.heroAsideFill::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ffffff;
-  /* box-shadow flattened */
-  opacity: 0.95;
-}
-
-.heroAsideMeta {
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--text3);
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 0.85rem;
-}
-
-.summaryCard {
-  padding: 0.95rem 1rem;
-}
-
-.quickContributionCard {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  padding: 1rem 1.05rem;
-  margin-bottom: 0.85rem;
+/* 1. COMMAND ACTION BAR */
+.commandBar {
+  background: var(--surface);
+  border: 1px solid var(--border2);
   border-radius: 18px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
-
-}
-
-.quickContributionCopy {
-  min-width: 0;
-}
-
-.quickContributionTitle {
-  margin-top: 6px;
-  font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
-  color: var(--text);
-}
-
-.quickContributionMeta {
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--text3);
-}
-
-.quickContributionActions {
+  padding: 18px 20px;
   display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.commandMetrics {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.quickContributionInput {
-  min-width: min(220px, 44vw);
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: 14px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
-  color: var(--text);
-  font-size: 16px;
-  font-family: var(--font-body);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+.commandMetricGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.quickContributionInput:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  /* box-shadow flattened */
-  background: var(--surface);
-}
-
-.summaryValue {
-  margin-top: 8px;
-  font-family: var(--font-display);
-  font-size: 28px;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  color: var(--text);
-}
-
-.summaryValueAccent {
-  color: var(--accent);
-}
-
-.summaryValueBlue {
-  color: var(--blue);
-}
-
-.summaryMeta {
-  margin-top: 6px;
+.commandLabel {
   font-size: 11px;
-  line-height: 1.5;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text3);
 }
 
-.composerCard {
-  padding: 1rem 1.05rem;
-  margin-bottom: 0.85rem;
+.commandValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.sectionHeader {
-  margin-bottom: 14px;
+.commandValue {
+  font-family: var(--font-mono, monospace);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
-.sectionTitle {
-  color: var(--text3);
-  margin-bottom: 6px;
-}
-
-.sectionSub {
-  font-size: 12px;
-  line-height: 1.55;
+.commandTargetSub {
+  font-size: 13px;
   color: var(--text2);
 }
 
-.composerGrid {
+.overallPctBadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.commandProgressTrack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trackBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface2);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.trackFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--teal, #00e5ff));
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trackMetaRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* 2. GOALS GRID & HIGH-DENSITY CARDS */
+.goalsGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.goalCard {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.goalCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border2));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.goalCardComplete {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border2));
+  background: color-mix(in srgb, var(--surface) 96%, var(--accent) 4%);
+}
+
+.goalCardMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.goalLeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.goalIconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.goalInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.goalNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.goalName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linkedPill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--surface2);
+  color: var(--text3);
+  border: 1px solid var(--border);
+}
+
+.datePill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--amber) 12%, var(--surface2));
+  color: var(--amber);
+  border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+}
+
+.goalMeta {
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  color: var(--accent);
+  display: flex;
+  gap: 4px;
+}
+
+.goalTargetMeta {
+  color: var(--text3);
+  font-weight: normal;
+}
+
+.goalTrailing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.goalPctBadge {
+  font-family: var(--font-mono, monospace);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.pctComplete {
+  color: var(--accent);
+}
+
+.goalRemainingText {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* Progress Track */
+.goalProgressBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface2);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.goalProgressFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progressFillComplete {
+  background: linear-gradient(90deg, var(--accent), #00e5ff);
+}
+
+/* Quick Deposit Preset Row */
+.depositPresetRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btnPreset {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnPreset:hover {
+  background: var(--surface);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btnPresetActive {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Custom Deposit Input Row */
+.customDepositInputRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--surface2);
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.depositInput {
+  flex: 1;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+}
+
+.btnDepositSubmit {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Card Footer Row */
+.cardFooterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.microActions {
+  display: flex;
+  gap: 6px;
+}
+
+.btnMini {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnMini:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.btnMiniDanger:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.cardSubStatus {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* 3. EMPTY STATE */
+.emptyCard {
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  border-radius: 20px;
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 440px;
+  margin: 20px auto;
+}
+
+.emptyIcon {
+  font-size: 36px;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.emptyBody {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.btnPrimary {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.1);
+}
+
+/* 4. PORTALED MODAL */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modalCard {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 22px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modalEyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modalClose {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modalClose:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.modalBody {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .field {
@@ -205,536 +507,55 @@
   gap: 6px;
 }
 
-.advancedBox {
-  margin-top: 10px;
-  border: 1px solid var(--border2);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--glass-1) 74%, var(--surface2) 26%);
-  /* box-shadow flattened */
-  overflow: hidden;
-}
-
-.advancedSummary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 46px;
-  padding: 10px 12px;
-  color: var(--text2);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-}
-
-.advancedSummary::-webkit-details-marker {
-  display: none;
-}
-
-.advancedSummary::after {
-  content: '+';
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface2) 78%, white 22%);
-  color: var(--text3);
-  font-family: var(--font-mono);
-  font-size: 16px;
-  line-height: 1;
-}
-
-.advancedBox[open] .advancedSummary::after {
-  content: '-';
-}
-
-.advancedSummary small {
-  color: var(--text3);
-  font-size: 11px;
-  font-weight: 650;
-}
-
-.advancedGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 0 12px 12px;
-}
-
-.fieldLabelRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 .fieldLabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.02em;
   color: var(--text2);
-}
-
-.fieldNote {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text3);
 }
 
 .fieldInput,
-.dateFieldDisplay {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 48px;
-  padding: 12px 14px;
-  border-radius: 14px;
+.fieldInputBig {
+  background: var(--surface2);
   border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
+  border-radius: 10px;
   color: var(--text);
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.fieldInputBig {
   font-size: 16px;
-  font-family: var(--font-body);
-  line-height: 1.2;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
-.fieldInput:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  /* box-shadow flattened */
-  background: var(--surface);
-}
-
-.dateFieldWrap {
-  position: relative;
-}
-
-.dateFieldWrap:focus-within .dateFieldDisplay {
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  /* box-shadow flattened */
-  background: var(--surface);
-}
-
-.dateFieldDisplay {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding-right: 46px;
-  pointer-events: none;
-}
-
-.dateFieldDisplay::after {
-  content: '';
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  transform: translateY(-50%);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Crect x='2.25' y='3.25' width='11.5' height='10.5' rx='2' stroke='%236d7196' stroke-width='1.5'/%3E%3Cpath d='M5 1.75V4.25' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M11 1.75V4.25' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M2.25 6.25H13.75' stroke='%236d7196' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-}
-
-.dateFieldPlaceholder {
-  color: var(--text3);
-}
-
-.dateFieldNative {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  color: transparent;
-  z-index: 2;
-}
-
-.dateFieldNative::-webkit-date-and-time-value {
-  opacity: 0;
-}
-
-.dateFieldNative::-webkit-calendar-picker-indicator {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.composerFooter {
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.composerHint {
-  max-width: 52ch;
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--text3);
-}
-
-.primaryButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--border2);
-  border-radius: 999px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), color-mix(in srgb, var(--accent) 90%, black 10%));
-  color: #07110d;
-  font-size: 13px;
-  font-weight: 700;
-  font-family: var(--font-body);
-  cursor: pointer;
-  /* box-shadow flattened */
-  transition: border-color 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
-  flex-shrink: 0;
-}
-
-.primaryButton:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
-}
-
-.gamificationWrap {
-  margin-bottom: 0.85rem;
-}
-
-.goalList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.goalCard {
-  padding: 1rem 1.05rem;
-}
-
-.goalCardTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.goalCopy {
-  flex: 1;
-  min-width: 0;
-}
-
-.goalNameRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-
-.goalName {
-  font-family: var(--font-display);
-  font-size: 22px;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
-  color: var(--text);
-}
-
-.goalDateChip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border2);
-  background: color-mix(in srgb, var(--surface2) 88%, transparent);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text3);
-}
-
-.goalLinkChip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border2));
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface2));
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.goalValueRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 12px;
-  color: var(--text3);
-}
-
-.goalSaved {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.goalTarget {
-  color: var(--text2);
-}
-
-.goalActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.goalPct {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text2);
-}
-
-.goalDelete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  color: var(--text3);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-family: var(--font-body);
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-
-.goalDelete:hover {
-  border-color: color-mix(in srgb, var(--red) 24%, var(--border));
-  color: var(--red);
-  background: color-mix(in srgb, var(--red) 7%, transparent);
-}
-
-.goalTrack {
-  height: 6px;
-  border-radius: 999px;
-  overflow: visible !important;
-  background: color-mix(in srgb, var(--glass-2) 44%, var(--surface3));
-}
-
-.goalTrackFill {
-  position: relative;
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--blue), color-mix(in srgb, var(--blue) 62%, white 38%));
-  transition: width 0.45s ease;
-}
-.goalTrackFill::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ffffff;
-  /* box-shadow flattened */
-  opacity: 0.95;
-}
-
-.goalTrackFillComplete {
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, white 38%));
-}
-
-.goalMetaRow {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.goalRemaining {
-  font-size: 12px;
-  color: var(--text2);
-}
-
-.goalState {
-  font-size: 11px;
   font-weight: 600;
-  color: var(--text3);
+  font-family: var(--font-mono, monospace);
 }
 
-.contributionRow {
-  margin-top: 12px;
+.formRowTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .formRowTwoCol {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modalActions {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-.contributionInput {
-  flex: 1;
-  min-width: 0;
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: 14px;
+.btnSecondary {
+  background: var(--surface2);
+  color: var(--text2);
   border: 1px solid var(--border2);
-  background: var(--surface);
-  /* box-shadow flattened */
-  color: var(--text);
-  font-size: 16px;
-  font-family: var(--font-body);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
-.contributionInput:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--glass-border));
-  /* box-shadow flattened */
-  background: var(--surface);
-}
-
-.contributionBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border2);
-  background: var(--surface);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  font-family: var(--font-body);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  flex-shrink: 0;
-}
-
-.contributionBtn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.emptyCard {
-  padding: 1.05rem;
-}
-
-.emptyTitle {
-  font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.emptyBody {
-  max-width: 48ch;
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--text3);
-}
-
-@media (max-width: 1024px) {
-  .heroSection {
-    grid-template-columns: 1fr;
-  }
-
-  .quickContributionCard {
-    grid-template-columns: 1fr;
-  }
-
-  .quickContributionActions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .quickContributionInput {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .composerGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .summaryGrid,
-  .composerGrid,
-  .advancedGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .heroCopy,
-  .heroAside,
-  .summaryCard,
-  .composerCard,
-  .goalCard,
-  .emptyCard {
-    border-radius: 16px;
-    padding: 0.95rem;
-  }
-
-  .pageTitle {
-    font-size: 24px;
-  }
-
-  .heroAsideValue,
-  .summaryValue,
-  .goalName,
-  .emptyTitle {
-    font-size: 20px;
-  }
-
-  .composerFooter,
-  .goalCardTop,
-  .contributionRow {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .goalActions {
-    justify-content: space-between;
-  }
-
-  .primaryButton,
-  .contributionBtn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .goalMetaRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }

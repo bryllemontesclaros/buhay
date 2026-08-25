@@ -45,6 +45,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   // 1-Click Quick Adjust Balance State
   const [adjustTarget, setAdjustTarget] = useState(null)
   const [adjustNewBalance, setAdjustNewBalance] = useState('')
+  const [adjustLogToHistory, setAdjustLogToHistory] = useState(true)
   const [adjustSaving, setAdjustSaving] = useState(false)
 
   // 1-Click Inter-Account Transfer State
@@ -91,11 +92,13 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   function openQuickAdjust(account) {
     setAdjustTarget(account)
     setAdjustNewBalance(String(account.balance ?? ''))
+    setAdjustLogToHistory(true)
   }
 
   function closeQuickAdjust() {
     setAdjustTarget(null)
     setAdjustNewBalance('')
+    setAdjustLogToHistory(true)
   }
 
   // Quick Transfer Modal Open/Close
@@ -115,6 +118,14 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   function closeQuickTransfer() {
     setShowTransferModal(false)
     setTransferSaving(false)
+  }
+
+  function swapTransferDirection() {
+    setTransferForm(prev => ({
+      ...prev,
+      fromAccountId: prev.toAccountId,
+      toAccountId: prev.fromAccountId,
+    }))
   }
 
   async function handleSaveAccount() {
@@ -158,8 +169,25 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     }
     setAdjustSaving(true)
     try {
-      await fsUpdate(user.uid, 'accounts', adjustTarget._id, { balance: newBal })
       const diff = newBal - (Number(adjustTarget.balance) || 0)
+      await fsUpdate(user.uid, 'accounts', adjustTarget._id, { balance: newBal })
+
+      // Optional smart reconciliation transaction logging
+      if (adjustLogToHistory && diff !== 0) {
+        const isPositive = diff > 0
+        const col = isPositive ? 'income' : 'expenses'
+        await fsAdd(user.uid, col, {
+          name: `${adjustTarget.name} Reconcile Adjustment`,
+          amount: Math.abs(diff),
+          category: 'Adjustment',
+          date: today(),
+          accountId: adjustTarget._id,
+          accountBalanceLinked: true,
+          accountBalanceApplied: true,
+          notes: `Automatic ledger adjustment from balance reconciliation (${fmt(adjustTarget.balance, s)} → ${fmt(newBal, s)})`,
+        })
+      }
+
       notifyApp({
         title: 'Balance updated',
         message: `${adjustTarget.name} adjusted to ${fmt(newBal, s)} (${diff >= 0 ? '+' : ''}${fmt(diff, s)} difference).`,
@@ -259,6 +287,39 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
     })
   }, [accounts, liquidTotal])
 
+  // Asset class groupings with sub-totals
+  const accountGroups = useMemo(() => {
+    const rawGroups = [
+      {
+        id: 'wallets',
+        title: 'Digital Wallets & Cash',
+        icon: '📱',
+        desc: 'Daily pocket money & instant e-wallets',
+        accounts: accountsWithMeta.filter(a => ['E-wallet', 'Cash'].includes(a.type)),
+      },
+      {
+        id: 'banks',
+        title: 'Bank Accounts & Savings',
+        icon: '🏦',
+        desc: 'Checking, savings & depository accounts',
+        accounts: accountsWithMeta.filter(a => a.type === 'Bank'),
+      },
+      {
+        id: 'investments',
+        title: 'Investments & Assets',
+        icon: '📈',
+        desc: 'Stocks, funds & long-term capital',
+        accounts: accountsWithMeta.filter(a => ['Investment', 'Other'].includes(a.type) || !['Bank', 'E-wallet', 'Cash'].includes(a.type)),
+      },
+    ]
+
+    return rawGroups
+      .filter(g => g.accounts.length > 0)
+      .map(g => {
+        const subtotal = g.accounts.reduce((sum, a) => sum + (Number(a.signedBalance) || 0), 0)
+        return { ...g, subtotal }
+      })
+  }, [accountsWithMeta])
   // Liquidity distribution segments
   const allocationSegments = useMemo(() => {
     if (!liquidTotal && !investmentTotal) return []
@@ -314,7 +375,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
 
   const mainContent = (
     <>
-      {!hideHeader && (
+      {!hideHeader ? (
         <div className={styles.pageHero}>
           <div className={styles.pageHeader}>
             <div className={styles.pageEyebrow}>Accounts</div>
@@ -324,34 +385,17 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
-      {/* LIQUIDITY RADAR HERO CARD */}
-      <div className={accStyles.radarHeroCard}>
-        <div className={accStyles.radarHeroTop}>
-          <div className={accStyles.radarHeroCopy}>
-            <span className={accStyles.radarHeroLabel}>Total Liquid Balance</span>
-            <div className={accStyles.radarHeroVal}>{money(liquidTotal)}</div>
-          </div>
-          <div className={accStyles.radarHeroActions}>
-            <button
-              type="button"
-              className={accStyles.btnHeroSecondary}
-              onClick={() => openQuickTransfer()}
-              disabled={accounts.length < 2}
-              title={accounts.length < 2 ? 'Need at least 2 accounts to transfer' : 'Transfer between accounts'}
-            >
-              ⇄ Transfer
-            </button>
-            <button type="button" className={accStyles.btnHeroPrimary} onClick={openAdd}>
-              + Add Account
-            </button>
-          </div>
+      {/* TOP COMMAND BAR (CLEAN & UN-DUPLICATED) */}
+      <div className={accStyles.commandBar}>
+        <div className={accStyles.commandBarInfo}>
+          <div className={accStyles.commandBarLabel}>Liquid Cash Assets</div>
+          <div className={accStyles.commandBarBalance}>{money(liquidTotal)}</div>
         </div>
 
-        {/* ALLOCATION PROGRESS STRIP */}
         {allocationSegments.length > 0 && (
-          <div className={accStyles.allocationSection}>
+          <div className={accStyles.commandBarAllocation}>
             <div className={accStyles.allocationTrack}>
               {allocationSegments.map(seg => (
                 <div
@@ -362,18 +406,31 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 />
               ))}
             </div>
-            <div className={accStyles.allocationLegend}>
+            <div className={accStyles.allocationLegendCompact}>
               {allocationSegments.map(seg => (
-                <div key={seg.type} className={accStyles.allocationPill}>
+                <span key={seg.type} className={accStyles.allocationPillCompact}>
                   <span className={accStyles.allocationDot} style={{ background: seg.color }} />
-                  <span className={accStyles.allocationType}>{seg.icon} {seg.type}</span>
-                  <strong className={accStyles.allocationAmount}>{money(seg.total)}</strong>
-                  <span className={accStyles.allocationPct}>{seg.pct}%</span>
-                </div>
+                  {seg.type}: <strong>{seg.pct}%</strong>
+                </span>
               ))}
             </div>
           </div>
         )}
+
+        <div className={accStyles.commandBarActions}>
+          <button
+            type="button"
+            className={accStyles.btnHeroSecondary}
+            onClick={() => openQuickTransfer()}
+            disabled={accounts.length < 2}
+            title={accounts.length < 2 ? 'Need at least 2 accounts to transfer' : 'Transfer between accounts'}
+          >
+            ⇄ Transfer
+          </button>
+          <button type="button" className={accStyles.btnHeroPrimary} onClick={openAdd}>
+            + Add Account
+          </button>
+        </div>
       </div>
 
       {dueLinkedEntries.length > 0 && (
@@ -395,13 +452,6 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      {/* ACCOUNT CARDS GRID */}
-      <div className={accStyles.toolbar}>
-        <div className={accStyles.toolbarTitle}>
-          Active Accounts ({accounts.length})
-        </div>
-      </div>
-
       {!accounts.length ? (
         <div className={accStyles.emptyCard}>
           <div className={accStyles.emptyIcon}>🏦</div>
@@ -412,91 +462,110 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
           </button>
         </div>
       ) : (
-        <div className={accStyles.accountsGrid}>
-          {accountsWithMeta.map(account => (
-            <SwipeableCard
-              key={account._id}
-              onSwipeRight={() => accounts.length >= 2 ? openQuickTransfer(account) : openQuickAdjust(account)}
-              rightLabel={accounts.length >= 2 ? 'Transfer' : 'Adjust'}
-              rightIcon={accounts.length >= 2 ? '⇄' : '⚡'}
-              rightTone="success"
-              onSwipeLeft={() => openEdit(account)}
-              leftLabel="Edit"
-              leftIcon="✎"
-              leftTone="amber"
-              onDoubleTap={() => openQuickAdjust(account)}
-            >
-              <div
-                className={accStyles.accountCard}
-                style={{ '--account-tone': account.tone }}
-              >
-                <div className={accStyles.accountTop}>
-                  <div className={accStyles.accountLeading}>
-                    <div className={accStyles.accountIcon} style={{ background: `color-mix(in srgb, ${account.tone} 18%, var(--surface2))` }}>
-                      {ACCOUNT_ICONS[account.type] || '🏷'}
-                    </div>
-                    <div className={accStyles.accountInfo}>
-                      <div className={accStyles.accountName}>{account.name}</div>
-                      <div className={accStyles.accountType}>
-                        <span className={accStyles.typeDot} style={{ background: account.tone }} />
-                        {account.type}
-                        {account.share > 0 && (
-                          <span className={accStyles.sharePill}>{account.share}% of cash</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className={accStyles.accountActions}>
-                    <button
-                      type="button"
-                      className={accStyles.cardActionBtn}
-                      onClick={() => openEdit(account)}
-                      title="Edit account details"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      type="button"
-                      className={`${accStyles.cardActionBtn} ${accStyles.cardActionBtnDanger}`}
-                      onClick={() => handleDel(account._id, account.name)}
-                      title="Delete account"
-                    >
-                      🗑️
-                    </button>
+        <div className={accStyles.groupsContainer}>
+          {accountGroups.map(group => (
+            <div key={group.id} className={accStyles.groupSection}>
+              <div className={accStyles.groupHeader}>
+                <div className={accStyles.groupTitleWrap}>
+                  <span className={accStyles.groupIcon}>{group.icon}</span>
+                  <div className={accStyles.groupText}>
+                    <h3 className={accStyles.groupTitle}>{group.title}</h3>
+                    <span className={accStyles.groupDesc}>{group.desc}</span>
                   </div>
                 </div>
-
-                <div className={accStyles.accountBalanceBox}>
-                  <div className={accStyles.accountBalanceLabel}>Available Balance</div>
-                  <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
-                    {money(account.signedBalance)}
-                  </div>
-                </div>
-
-                {account.notes && <div className={accStyles.accountNotes}>“{account.notes}”</div>}
-
-                {/* CARD BOTTOM QUICK ACTIONS */}
-                <div className={accStyles.cardFooterActions}>
-                  <button
-                    type="button"
-                    className={accStyles.btnCardAction}
-                    onClick={() => openQuickAdjust(account)}
-                    title="Reconcile / adjust current balance"
-                  >
-                    ⚡ Adjust Balance
-                  </button>
-                  <button
-                    type="button"
-                    className={accStyles.btnCardActionSecondary}
-                    onClick={() => openQuickTransfer(account)}
-                    disabled={accounts.length < 2}
-                    title="Transfer money from this account"
-                  >
-                    ⇄ Transfer
-                  </button>
+                <div className={accStyles.groupSubtotalBadge}>
+                  <span className={accStyles.groupSubtotalLabel}>Subtotal</span>
+                  <strong className={accStyles.groupSubtotalVal}>{money(group.subtotal)}</strong>
                 </div>
               </div>
-            </SwipeableCard>
+
+              <div className={accStyles.accountsGrid}>
+                {group.accounts.map(account => (
+                  <SwipeableCard
+                    key={account._id}
+                    onSwipeRight={() => accounts.length >= 2 ? openQuickTransfer(account) : openQuickAdjust(account)}
+                    rightLabel={accounts.length >= 2 ? 'Transfer' : 'Adjust'}
+                    rightIcon={accounts.length >= 2 ? '⇄' : '⚡'}
+                    rightTone="success"
+                    onSwipeLeft={() => openEdit(account)}
+                    leftLabel="Edit"
+                    leftIcon="✎"
+                    leftTone="amber"
+                    onDoubleTap={() => openQuickAdjust(account)}
+                  >
+                    <div
+                      className={accStyles.accountCard}
+                      style={{ '--account-tone': account.tone }}
+                    >
+                      <div className={accStyles.accountCardMain}>
+                        <div className={accStyles.accountLeading}>
+                          <div className={accStyles.accountIcon} style={{ background: `color-mix(in srgb, ${account.tone} 18%, var(--surface2))` }}>
+                            {ACCOUNT_ICONS[account.type] || '🏷'}
+                          </div>
+                          <div className={accStyles.accountInfo}>
+                            <div className={accStyles.accountNameRow}>
+                              <span className={accStyles.accountName}>{account.name}</span>
+                              {account.share > 0 && (
+                                <span className={accStyles.sharePill}>{account.share}%</span>
+                              )}
+                            </div>
+                            <div className={accStyles.accountMeta}>
+                              <span className={accStyles.typeDot} style={{ background: account.tone }} />
+                              <span>{account.type}</span>
+                              {account.notes && <span className={accStyles.accountNotes}>· “{account.notes}”</span>}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={accStyles.accountTrailing}>
+                          <div className={`${accStyles.accountBalance} ${account.isDebt ? accStyles.accountBalanceDebt : ''}`}>
+                            {money(account.signedBalance)}
+                          </div>
+                          <span className={accStyles.accountBalanceSub}>Available</span>
+                        </div>
+                      </div>
+
+                      {/* SLEEK CARD HOVER / QUICK ACTIONS BAR */}
+                      <div className={accStyles.cardQuickActionsBar}>
+                        <button
+                          type="button"
+                          className={accStyles.btnMiniAction}
+                          onClick={() => openQuickAdjust(account)}
+                          title="Quick reconcile balance"
+                        >
+                          ⚡ Reconcile
+                        </button>
+                        <button
+                          type="button"
+                          className={accStyles.btnMiniAction}
+                          onClick={() => openQuickTransfer(account)}
+                          disabled={accounts.length < 2}
+                          title="Transfer funds"
+                        >
+                          ⇄ Transfer
+                        </button>
+                        <button
+                          type="button"
+                          className={accStyles.btnMiniAction}
+                          onClick={() => openEdit(account)}
+                          title="Edit details"
+                        >
+                          ✎ Edit
+                        </button>
+                        <button
+                          type="button"
+                          className={`${accStyles.btnMiniAction} ${accStyles.btnMiniActionDanger}`}
+                          onClick={() => handleDel(account._id, account.name)}
+                          title="Delete account"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </div>
+                  </SwipeableCard>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -545,6 +614,23 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 </div>
               )}
 
+              {adjustNewBalance !== '' && !isNaN(parseFloat(adjustNewBalance)) && (parseFloat(adjustNewBalance) - Number(adjustTarget.balance) !== 0) && (
+                <label className={accStyles.reconcileLedgerCheck}>
+                  <input
+                    type="checkbox"
+                    className={accStyles.reconcileCheckbox}
+                    checked={adjustLogToHistory}
+                    onChange={e => setAdjustLogToHistory(e.target.checked)}
+                  />
+                  <div className={accStyles.reconcileCheckCopy}>
+                    <span className={accStyles.reconcileCheckTitle}>Log difference in Transaction History</span>
+                    <span className={accStyles.reconcileCheckSub}>
+                      Automatically logs an adjustment entry so cashflow reports stay balanced
+                    </span>
+                  </div>
+                </label>
+              )}
+
               <div className={accStyles.modalActions}>
                 <button type="button" className={accStyles.btnSecondary} onClick={closeQuickAdjust}>
                   Cancel
@@ -572,6 +658,18 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
             </div>
 
             <form onSubmit={handleTransferSubmit} className={accStyles.modalBody}>
+              <div className={accStyles.transferTopBar}>
+                <span className={accStyles.transferTopNotice}>Select source & target accounts:</span>
+                <button
+                  type="button"
+                  className={accStyles.btnSwapDirection}
+                  onClick={swapTransferDirection}
+                  title="Reverse transfer direction"
+                >
+                  ⇄ Swap
+                </button>
+              </div>
+
               <div className={accStyles.transferGrid}>
                 <div className={accStyles.field}>
                   <label className={accStyles.fieldLabel} htmlFor="transfer-from">From Account</label>
@@ -589,7 +687,9 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                   </select>
                 </div>
 
-                <div className={accStyles.transferArrowWrap}>➔</div>
+                <div className={accStyles.transferArrowWrap} onClick={swapTransferDirection} title="Swap direction" role="button" tabIndex={0}>
+                  ⇄
+                </div>
 
                 <div className={accStyles.field}>
                   <label className={accStyles.fieldLabel} htmlFor="transfer-to">To Account</label>
