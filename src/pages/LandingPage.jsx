@@ -220,7 +220,9 @@ function CalendarWidget() {
   return (
     <div className={styles.bentoWidgetArea}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>📅 August 2026 Interactive Calendar</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+          📅 {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })} Interactive Calendar
+        </div>
         <div style={{ fontSize: 12, color: '#059669', fontWeight: 800 }}>₱{activeInfo.balance.toLocaleString()} balance</div>
       </div>
 
