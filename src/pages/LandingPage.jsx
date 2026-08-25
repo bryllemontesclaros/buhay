@@ -449,8 +449,8 @@ const TRUST_POINTS = [
 
 const FAQ_ITEMS = [
   {
-    question: 'What is Buhay / Takda?',
-    answer: 'Buhay is an ultra-fast, private personal finance web app designed to map your daily cashflow, aggregate multi-account net worth, forecast upcoming bills, and guide your savings goals without friction.',
+    question: 'What is Buhay?',
+    answer: 'Buhay is a private, all-in-one life operating system built with Filipino clarity and warmth. It unites Takda (Personal Finance, Cashflow Forecast & Net Worth), Lakas (Fitness & Gym Routine Tracker), and Tala (Mindfulness, Habits & Journaling) into one private, lightning-fast dashboard.',
   },
   {
     question: 'Why do you not connect directly to banks?',
@@ -459,6 +459,10 @@ const FAQ_ITEMS = [
   {
     question: 'Can I use Buhay on my mobile phone?',
     answer: 'Yes! Buhay is fully responsive and installable as a Progressive Web App (PWA) on iOS and Android. You can add it directly to your home screen for lightning-fast 1-tap tracking.',
+  },
+  {
+    question: 'Can I track fitness and habits in Buhay too?',
+    answer: 'Yes! Alongside Takda’s financial cockpit, Buhay includes Lakas (workout logging, strength PRs, and exercise routines) and Tala (daily reflections, mood tracking, and habit consistency) with zero paywalls.',
   },
   {
     question: 'Is there a limit on how many transactions or accounts I can add?',
