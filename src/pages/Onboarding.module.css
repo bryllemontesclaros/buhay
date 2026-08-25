@@ -113,7 +113,7 @@
 
 .stepItemActive .stepBadge {
   background: var(--accent);
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
 }
 
 .stepItemDone .stepBadge {
@@ -501,12 +501,13 @@
   appearance: none;
   background: var(--accent);
   border: none;
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
   border-radius: 999px;
   padding: 12px 24px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
   transition: all 0.18s ease;
 }
 
@@ -519,7 +520,7 @@
   appearance: none;
   background: var(--accent);
   border: none;
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
   border-radius: 999px;
   padding: 14px 32px;
   font-size: 15px;

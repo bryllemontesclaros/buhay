@@ -3077,7 +3077,7 @@
   content: '✕';
   transform: rotate(90deg);
   background: var(--accent);
-  color: #ffffff !important;
+  color: var(--accent-contrast, var(--bg)) !important;
 }
 
 .advancedSummary small {
@@ -4759,7 +4759,7 @@
 
 .focusModeBtnActive {
   background: var(--accent);
-  color: var(--space-fitness-ink, #101010);
+  color: var(--accent-contrast, var(--bg)) !important;
   border-color: var(--accent);
 }
 
@@ -5753,7 +5753,7 @@
   align-self: flex-start;
   font-size: var(--type-support);
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast, var(--bg)) !important;
   border: none;
   padding: 4px 10px;
   border-radius: 4px;

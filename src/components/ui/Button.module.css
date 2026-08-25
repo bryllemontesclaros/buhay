@@ -46,7 +46,7 @@
 }
 
 .primaryBtn {
-  color: #ffffff;
+  color: var(--accent-contrast, var(--bg)) !important;
   background: var(--accent);
   border-color: transparent;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent);
@@ -55,7 +55,7 @@
 .primaryBtn:hover,
 .primaryBtn:focus-visible {
   transform: translateY(-2px) scale(1.015);
-  background: color-mix(in srgb, var(--accent) 90%, #ffffff);
+  background: color-mix(in srgb, var(--accent) 90%, var(--accent-contrast));
   border-color: transparent;
   box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 38%, transparent);
 }

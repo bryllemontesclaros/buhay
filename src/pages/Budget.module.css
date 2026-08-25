@@ -82,8 +82,9 @@
   border-radius: 12px;
   border: none;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
   cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
   transition: all 0.18s ease;
   white-space: nowrap;
   display: inline-flex;
@@ -549,7 +550,7 @@
 
 .presetBtnActive {
   background: var(--accent);
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
   border-color: var(--accent);
 }
 
@@ -570,8 +571,9 @@
   border-radius: 12px;
   border: none;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--accent-contrast, var(--bg)) !important;
   cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
   transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;

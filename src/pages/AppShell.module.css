@@ -1490,12 +1490,12 @@
   border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast, var(--bg)) !important;
   font-size: 34px;
   line-height: 1;
   font-weight: 500;
   cursor: pointer;
-  /* box-shadow flattened */
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 35%, transparent);
   transition:
     transform var(--motion-duration-slow) var(--motion-ease-out),
     box-shadow var(--motion-duration) var(--motion-ease-standard),

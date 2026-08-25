@@ -2383,7 +2383,7 @@
 
 .mockActionBtn:hover {
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast, var(--bg)) !important;
   border-color: var(--accent);
 }
 
@@ -2522,7 +2522,7 @@
 
 .bentoWidgetBtnActive {
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast, var(--bg)) !important;
   border-color: var(--accent);
 }
 

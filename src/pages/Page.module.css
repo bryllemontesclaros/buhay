@@ -668,7 +668,7 @@
   content: '✕';
   transform: rotate(90deg);
   background: var(--accent);
-  color: #ffffff !important;
+  color: var(--accent-contrast, var(--bg)) !important;
 }
 
 .advancedSummary small {
@@ -732,7 +732,7 @@
   border: none;
   border-radius: 12px;
   background: var(--accent);
-  color: #ffffff !important;
+  color: var(--accent-contrast, var(--bg)) !important;
   font-size: 13px;
   font-weight: 650;
   cursor: pointer;

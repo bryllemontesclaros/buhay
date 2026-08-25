@@ -276,7 +276,7 @@ select.fieldControl {
 .receiptToggleActive {
   border-color: var(--accent);
   background: var(--accent);
-  color: #0a0a0f;
+  color: var(--accent-contrast, var(--bg)) !important;
 }
 
 .presetHint {
