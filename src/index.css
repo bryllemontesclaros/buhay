@@ -540,19 +540,11 @@ input, select, textarea {
     min-height: 44px;
   }
 
-  /* CRITICAL GLOBAL RULE: Prevent touchscreen min-height from distorting circular/close/icon buttons into ovals */
-  button[class*="close"], button[class*="Close"],
-  button[class*="dismiss"], button[class*="Dismiss"],
-  button[class*="icon"], button[class*="Icon"],
-  button[class*="avatar"], button[class*="Avatar"],
-  button[class*="btnIcon"], button[class*="iconBtn"],
-  button[class*="dayPanel"], button[class*="drawer"],
-  button[class*="editor"], button[class*="modal"],
-  button[class*="feedback"], button[class*="quickAdd"],
-  button[class*="gymMode"], button[class*="runTracker"],
-  button[class*="toast"] {
+  /* Touchscreen button safety */
+  button[class*="iconOnly"], button[class*="circleBtn"],
+  button[class*="closeBtn"], button[class*="CloseBtn"],
+  button[class*="iconBtn"], button[class*="btnIcon"] {
     min-height: unset;
-    aspect-ratio: 1 / 1;
   }
 }
 

@@ -1304,21 +1304,33 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           <div className={settStyles.subsectionTitle}>Feedback</div>
           <p className={settStyles.subsectionCopy}>Share ideas, report issues, rate the app, or leave a testimonial if you want to support the landing page.</p>
           <div className={settStyles.feedbackGrid}>
-            <button className={settStyles.feedbackAction} onClick={() => openFeedback('feedback')}>
-              <strong>Send Feedback</strong>
-              <span>Suggestions and product ideas</span>
+            <button type="button" className={settStyles.feedbackAction} onClick={() => openFeedback('feedback')}>
+              <div className={settStyles.feedbackIconWrap}>💡</div>
+              <div className={settStyles.feedbackTextWrap}>
+                <strong>Send Feedback</strong>
+                <span>Suggestions and product ideas</span>
+              </div>
             </button>
-            <button className={settStyles.feedbackAction} onClick={() => openFeedback('bug')}>
-              <strong>Report a Bug</strong>
-              <span>Keep support messages organized</span>
+            <button type="button" className={settStyles.feedbackAction} onClick={() => openFeedback('bug')}>
+              <div className={settStyles.feedbackIconWrap}>🐛</div>
+              <div className={settStyles.feedbackTextWrap}>
+                <strong>Report a Bug</strong>
+                <span>Report an issue or glitch</span>
+              </div>
             </button>
-            <button className={settStyles.feedbackAction} onClick={() => openFeedback('rating')}>
-              <strong>Rate Your Experience</strong>
-              <span>1-5 stars stored inside Buhay</span>
+            <button type="button" className={settStyles.feedbackAction} onClick={() => openFeedback('rating')}>
+              <div className={settStyles.feedbackIconWrap}>⭐</div>
+              <div className={settStyles.feedbackTextWrap}>
+                <strong>Rate Buhay</strong>
+                <span>1–5 stars stored in your account</span>
+              </div>
             </button>
-            <button className={settStyles.feedbackAction} onClick={() => openFeedback('testimonial')}>
-              <strong>Share a Testimonial</strong>
-              <span>Only featured with your consent</span>
+            <button type="button" className={settStyles.feedbackAction} onClick={() => openFeedback('testimonial')}>
+              <div className={settStyles.feedbackIconWrap}>💬</div>
+              <div className={settStyles.feedbackTextWrap}>
+                <strong>Share a Testimonial</strong>
+                <span>Words of support for the landing page</span>
+              </div>
             </button>
           </div>
         </div>
@@ -1349,10 +1361,10 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           <details className={settStyles.inlineDisclosure}>
             <summary className={settStyles.inlineDisclosureSummary}>
               <span>View support options</span>
-              <small>Wallets stay tucked away unless you want them.</small>
+              <small>Optional tip & crypto options to fuel development.</small>
             </summary>
             <div className={settStyles.inlineDisclosureBody}>
-              <p className={settStyles.subsectionCopy}>If Buhay helps, you can support the app with a coffee using the wallets below.</p>
+              <p className={settStyles.subsectionCopy}>If Buhay helps your daily workflow, you can support development with a coffee or crypto tip below.</p>
               <StatusBanner message={donationMsg} />
               <div className={settStyles.donateGrid}>
                 {DONATION_WALLETS.map(wallet => (
