@@ -16,7 +16,8 @@ import { auth, getEmailActionSettings, getVerificationEmailErrorMessage, sendVer
 import { fsAdd, fsDel, fsDeleteAccountData, fsResetFinancialData, fsRestoreBackup, fsSetProfile, fsUpdate } from '../lib/firestore'
 import { LEGAL_CONTACT_EMAIL, LEGAL_CONTACT_HREF, LEGAL_OPERATOR_NAME } from '../lib/legal'
 import { DEFAULT_NOTIFICATION_PREFS, getNotificationPrefs } from '../lib/notifications'
-import { generateMonthlyReport } from '../lib/report'
+import { generateStructuredCSV, generateCleanJSONBackup, parseAndValidateBackup } from '../lib/exportEngine'
+import FinancialStatementModal from '../components/FinancialStatementModal'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from '../lib/utils'
 import styles from './Page.module.css'
@@ -286,6 +287,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [resetDone, setResetDone] = useState(false)
   const [exportDone, setExportDone] = useState(false)
   const [jsonExportDone, setJsonExportDone] = useState(false)
+  const [showStatementModal, setShowStatementModal] = useState(false)
   const [rates, setRates] = useState(null)
   const [ratesLoading, setRatesLoading] = useState(false)
 
@@ -535,73 +537,37 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   }
 
   function exportCSV() {
-    const escapeCsvCell = value => `"${String(value ?? '').replace(/"/g, '""')}"`
-    const classify = tx => [tx.cat, tx.subcat].filter(Boolean).join(' · ')
-    const rows = [
-      ['Type', 'Description', 'Category / Subcategory', 'Amount', 'Date', 'Recurring'],
-      ...data.income.map(tx => ['Income', tx.desc, classify(tx), tx.amount, tx.date, tx.recur || '']),
-      ...data.expenses.map(tx => ['Expense', tx.desc, classify(tx), tx.amount, tx.date, tx.recur || '']),
-      ...data.bills.map(tx => ['Bill', tx.name, tx.subcat || tx.cat, tx.amount, `Day ${tx.due}`, tx.freq]),
-      ...(data.transfers || []).map(tx => ['Transfer', `${tx.fromAccountName || 'From account'} to ${tx.toAccountName || 'To account'}`, '', tx.amount, tx.date, '']),
-      ...(data.lakasRoutines || []).map(row => ['Lakas routine', row.name, `${row.exerciseCount || 0} exercises / ${row.setCount || 0} sets`, row.focus || '', row.duration || '', '']),
-      ...(data.lakasWorkouts || []).map(row => ['Lakas workout', row.title, `${row.exerciseCount || 0} exercises`, row.duration || '', row.date, '']),
-      ...(data.lakasMeals || []).map(row => ['Lakas meal', row.name, row.mealType || '', row.calories || '', row.date, '']),
-      ...(data.lakasBodyLogs || []).map(row => ['Lakas body', row.notes || 'Body log', `Weight ${row.weight || 0} kg / Waist ${row.waist || 0} cm / BMI ${row.bmi || 0}`, '', row.date, '']),
-      ...(data.lakasActivities || []).map(row => ['Lakas activity', row.type || 'Activity', `${row.steps || 0} steps / ${row.activeMinutes || 0} active min / ${row.cardioMinutes || 0} cardio min`, row.distance || '', row.date, '']),
-      ...(data.lakasHabits || []).map(row => ['Lakas habit', row.notes || 'Habit check-in', `${row.score || 0} habits completed`, '', row.date, '']),
-      ...(data.lakasReminders || []).map(row => ['Lakas reminder', row.title, row.type || '', row.time || '', row.date, row.frequency || '']),
-      ...(data.lakasGoals || []).map(row => ['Lakas goal', row.name, row.type || '', row.target || '', '', row.unit || '']),
-    ]
-    const csv = rows.map(row => row.map(escapeCsvCell).join(',')).join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = `buhay-export-${today()}.csv`
-    anchor.click()
-    URL.revokeObjectURL(url)
-    setExportDone(true)
-    window.setTimeout(() => setExportDone(false), 3000)
+    try {
+      const csv = generateStructuredCSV(data, profile, s)
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = `buhay-financial-ledger-${today()}.csv`
+      anchor.click()
+      URL.revokeObjectURL(url)
+      setExportDone(true)
+      window.setTimeout(() => setExportDone(false), 3000)
+    } catch {
+      notifyApp({ title: 'Export failed', message: 'Could not generate CSV ledger.', tone: 'error' })
+    }
   }
 
   function exportJSON() {
-    const payload = {
-      version: 2,
-      exportedAt: new Date().toISOString(),
-      income: data.income,
-      expenses: data.expenses,
-      bills: data.bills,
-      goals: data.goals,
-      accounts: data.accounts,
-      budgets: data.budgets,
-      receipts: data.receipts,
-      transfers: data.transfers || [],
-      calendarEvents: data.calendarEvents || [],
-      portfolioHoldings: data.portfolioHoldings || [],
-      lakasRoutines: data.lakasRoutines || [],
-      lakasWorkouts: data.lakasWorkouts || [],
-      lakasBodyLogs: data.lakasBodyLogs || [],
-      lakasActivities: data.lakasActivities || [],
-      lakasHabits: data.lakasHabits || [],
-      lakasReminders: data.lakasReminders || [],
-      lakasMeals: data.lakasMeals || [],
-      lakasGoals: data.lakasGoals || [],
-      talaCheckins: data.talaCheckins || [],
-      talaJournal: data.talaJournal || [],
-      talaMoods: data.talaMoods || [],
-      talaTasks: data.talaTasks || [],
-      talaGoals: data.talaGoals || [],
-      profile: sanitizeProfileBackup(profile),
+    try {
+      const payload = generateCleanJSONBackup(data, profile)
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = `buhay-backup-${today()}.json`
+      anchor.click()
+      URL.revokeObjectURL(url)
+      setJsonExportDone(true)
+      window.setTimeout(() => setJsonExportDone(false), 3000)
+    } catch {
+      notifyApp({ title: 'Backup failed', message: 'Could not export JSON backup.', tone: 'error' })
     }
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = `buhay-backup-${today()}.json`
-    anchor.click()
-    URL.revokeObjectURL(url)
-    setJsonExportDone(true)
-    window.setTimeout(() => setJsonExportDone(false), 3000)
   }
 
   async function handleRestoreFile(event) {
@@ -611,14 +577,14 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     setRestoreMsg({ text: '', ok: false })
     try {
       const text = await file.text()
-      const parsed = parseBackupPayload(JSON.parse(text))
+      const parsed = parseAndValidateBackup(text)
       setRestorePreview({
         fileName: file.name,
         exportedAt: parsed.exportedAt,
-        summary: buildBackupSummary(parsed),
-        backup: parsed,
+        summary: `${parsed.totalRecords} financial records ready to restore (Backup Schema v${parsed.version})`,
+        backup: parsed.normalized,
       })
-      setRestoreMsg({ text: 'Backup file loaded. Review it before restoring.', ok: true })
+      setRestoreMsg({ text: 'Backup file loaded and verified. Review before restoring.', ok: true })
     } catch (error) {
       setRestorePreview(null)
       setRestoreMsg({ text: error.message || 'Could not read that backup file.', ok: false })
@@ -1111,21 +1077,19 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
       <>
       <div className={settingsWideCardClass}>
         <CardHeader
-          eyebrow="Backup"
-          title="Export, backup & restore"
-          description="Download a copy of your records or bring one back later when you need it."
+          eyebrow="Reports & Backup"
+          title="Financial Reports & Backups"
+          description="Generate comprehensive financial statements, download structured spreadsheets, or create portable backups."
         />
         <div className={settStyles.actionCluster}>
-          <button className={settStyles.btnExport} onClick={exportCSV}>{exportDone ? '✓ Downloaded' : 'Download transactions CSV'}</button>
-          <button className={settStyles.btnExport} onClick={exportJSON}>{jsonExportDone ? '✓ Downloaded' : 'Download JSON backup'}</button>
-          <button
-            className={settStyles.btnExport}
-            onClick={() => {
-              const nowDate = new Date()
-              generateMonthlyReport(data, profile, nowDate.getFullYear(), nowDate.getMonth(), s)
-            }}
-          >
-            Create monthly PDF
+          <button type="button" className={settStyles.btnReportPrimary} onClick={() => setShowStatementModal(true)}>
+            📄 View Financial Statement (Print / PDF)
+          </button>
+          <button type="button" className={settStyles.btnExport} onClick={exportCSV}>
+            {exportDone ? '✓ CSV Downloaded' : '📊 Download Structured CSV'}
+          </button>
+          <button type="button" className={settStyles.btnExport} onClick={exportJSON}>
+            {jsonExportDone ? '✓ JSON Saved' : '💾 Export JSON Backup'}
           </button>
         </div>
 
@@ -1512,6 +1476,15 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
           </div>
         </div>,
         document.body
+      )}
+
+      {showStatementModal && (
+        <FinancialStatementModal
+          data={data}
+          profile={profile}
+          symbol={s}
+          onClose={() => setShowStatementModal(false)}
+        />
       )}
     </div>
   )

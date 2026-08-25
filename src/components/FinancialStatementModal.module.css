@@ -1,0 +1,368 @@
+/* FinancialStatementModal.module.css - Clean, Executive Print-Ready Styling */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overscroll-behavior: contain;
+}
+
+.modal {
+  width: min(880px, 100%);
+  max-height: calc(100dvh - 32px);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+/* Modal Top Control Bar (Hidden during print) */
+.controlBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  flex-wrap: wrap;
+}
+
+.rangePills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+.pillActive {
+  background: var(--accent);
+  color: var(--accent-contrast, var(--bg)) !important;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnPrint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--accent-contrast, var(--bg)) !important;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: all 0.15s ease;
+}
+
+.btnPrint:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btnClose {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btnClose:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+/* Document Content Body */
+.statementBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 36px;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+/* Statement Letterhead */
+.statementHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statementBrand {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  color: #0f172a;
+}
+
+.statementTagline {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.statementMetaCol {
+  text-align: right;
+  font-size: 12px;
+  color: #475569;
+}
+
+.statementTitle {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Executive Summary KPI Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.kpiCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.kpiLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.kpiValue {
+  font-size: 18px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  color: #0f172a;
+}
+
+.valPos {
+  color: #059669;
+}
+
+.valNeg {
+  color: #dc2626;
+}
+
+.valNeutral {
+  color: #0284c7;
+}
+
+/* Statement Sections */
+.sectionBlock {
+  margin-bottom: 28px;
+}
+
+.sectionHeading {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Standard Statement Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table th.amtCol,
+.table td.amtCol {
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-weight: 600;
+}
+
+.categoryMeterTrack {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.categoryMeterFill {
+  height: 100%;
+  background: #0f172a;
+  border-radius: 999px;
+}
+
+.twoColGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.statementFooter {
+  margin-top: 36px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   NATIVE PRINT STYLESHEET (@media print)
+   ========================================================================== */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .statementBody,
+  .statementBody * {
+    visibility: visible;
+  }
+
+  .statementBody {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: visible !important;
+  }
+
+  .controlBar,
+  .overlay {
+    background: none !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+
+  .modal {
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    width: 100% !important;
+  }
+
+  .sectionBlock {
+    page-break-inside: avoid;
+  }
+
+  .kpiGrid {
+    page-break-inside: avoid;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 680px) {
+  .controlBar {
+    padding: 12px 16px;
+  }
+
+  .statementBody {
+    padding: 20px 16px;
+  }
+
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .twoColGrid {
+    grid-template-columns: 1fr;
+  }
+}
