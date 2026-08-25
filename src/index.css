@@ -50,6 +50,8 @@
   --z-toast: 11000;
 
   --accent: #ffffff;
+  --accent-contrast: #000000;
+  --accent-fg: #000000;
   --accent-dim: rgba(255, 255, 255, 0.12);
   --accent-glow: rgba(255, 255, 255, 0.16);
   --income: #30d158;
@@ -231,6 +233,8 @@
   --text3: #555555;
 
   --accent: #111111;
+  --accent-contrast: #ffffff;
+  --accent-fg: #ffffff;
   --accent-dim: rgba(17, 17, 17, 0.08);
   --accent-glow: rgba(17, 17, 17, 0.12);
   --income: #28cd41;

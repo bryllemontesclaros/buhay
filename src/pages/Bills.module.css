@@ -145,7 +145,7 @@
   border-radius: 8px;
   border: none;
   background: var(--accent);
-  color: #000 !important;
+  color: var(--accent-contrast, var(--bg)) !important;
   cursor: pointer;
   box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
   transition: filter 0.15s ease;

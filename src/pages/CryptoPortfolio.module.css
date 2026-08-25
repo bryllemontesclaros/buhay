@@ -168,13 +168,14 @@
 
 .btnPrimarySmall {
   background: var(--accent);
-  color: #000;
+  color: var(--accent-contrast, var(--bg)) !important;
   border: none;
   border-radius: 8px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 25%, transparent);
   transition: filter 0.15s ease;
 }
 
@@ -513,7 +514,7 @@
 
 .addBtn {
   background: var(--accent);
-  color: #000;
+  color: var(--accent-contrast, var(--bg)) !important;
   border: none;
   padding: 8px 16px;
   border-radius: 10px;
@@ -521,6 +522,7 @@
   font-weight: 700;
   cursor: pointer;
   margin-top: 8px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
   transition: filter 0.15s ease;
 }
 
@@ -766,7 +768,7 @@
 
 .coinPillActive {
   background: var(--accent);
-  color: #000 !important;
+  color: var(--accent-contrast, var(--bg)) !important;
   border-color: var(--accent);
   font-weight: 700;
 }
@@ -791,13 +793,20 @@
 
 .btnPrimary {
   background: var(--accent);
-  color: #000;
+  color: var(--accent-contrast, var(--bg)) !important;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: all 0.15s ease;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .btnDanger {
