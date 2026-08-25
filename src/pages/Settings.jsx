@@ -660,8 +660,8 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
 
   async function handleReset() {
     const confirmed = await confirmApp({
-      title: 'Reset Takda and Lakas records?',
-      message: 'This permanently deletes Takda finance records, receipts, calendar events, and Lakas fitness records while keeping Tala entries and your login active. This cannot be undone.',
+      title: 'Reset financial records?',
+      message: 'This permanently deletes your transactions, receipts, accounts, bills, budgets, and savings records while keeping your account login active. This cannot be undone.',
       confirmLabel: 'Reset data',
       cancelLabel: 'Keep data',
       tone: 'danger',
@@ -695,7 +695,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
 
     const confirmed = await confirmApp({
       title: 'Delete Buhay account?',
-      message: 'This removes your Takda, Lakas, and Tala data, saved receipt records, any legacy fitness photos, profile, feedback, and login. This cannot be undone.',
+      message: 'This permanently removes your account, all financial data, saved receipts, profile, feedback, and login. This cannot be undone.',
       confirmLabel: 'Delete account',
       cancelLabel: 'Keep account',
       tone: 'danger',
@@ -1348,7 +1348,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
                 <div className={settStyles.aboutTagline}>Bawat araw, mas malinaw.</div>
                 <div className={settStyles.aboutMeta}>Version {VERSION}</div>
                 <div className={settStyles.aboutDesc}>
-                  A calm life app built with Filipino clarity and warmth for everyday use anywhere. Keep up with money, fitness, and reflection in one private account.
+                  A private, calm personal finance and cashflow cockpit built with clarity and warmth. Master your accounts, forecast daily balances, crush debt, and reach your savings goals.
                 </div>
                 <div className={settStyles.aboutUser}>Logged in as <strong>{currentDisplayName || user.email}</strong></div>
               </div>
@@ -1393,17 +1393,17 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
       <div className={settingsDangerCardClass}>
         <CardHeader
           eyebrow="Danger zone"
-          title="Delete Takda and Lakas records"
-          description="This removes Takda records, receipts, calendar items, and Lakas logs. Your account and Tala entries stay."
+          title="Reset all financial records"
+          description="This permanently deletes your transactions, receipts, accounts, bills, budgets, and savings goals. Your account login stays active."
           badge="Irreversible"
         />
         {resetDone && (
           <div className={`${settStyles.statusBanner} ${settStyles.statusBannerOk}`}>
-            ✓ Takda and Lakas records have been reset successfully.
+            ✓ Financial records have been reset successfully.
           </div>
         )}
         <button className={`${settStyles.btnReset} ${settStyles.btnResetWide}`} onClick={handleReset} disabled={resetting}>
-          {resetting ? 'Resetting...' : 'Reset Takda and Lakas data'}
+          {resetting ? 'Resetting...' : 'Reset all financial data'}
         </button>
       </div>
 
