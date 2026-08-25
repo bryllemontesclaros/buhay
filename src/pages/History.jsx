@@ -18,7 +18,7 @@ import {
 } from '../lib/transactionOptions'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { formatRecurringDateLabel, isRecurringRecordedOffDueDate } from '../lib/recurrence'
-import { displayValue, fmt, getMonthKey, maskMoney, RECUR_OPTIONS, today, validateAmount } from '../lib/utils'
+import { displayValue, fmt, formatDisplayDate, getMonthKey, maskMoney, RECUR_OPTIONS, today, validateAmount } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
 import SwipeableCard from '../components/SwipeableCard'
 import styles from './Page.module.css'
@@ -26,6 +26,31 @@ import hStyles from './History.module.css'
 
 const ALL_CATS = ['All categories', ...new Set([...getTransactionCategories('income'), ...getTransactionCategories('expense')])]
 const TYPES = ['All types', 'Income', 'Expense', 'Transfer']
+
+const CAT_EMOJIS = {
+  'Food & Dining': '🍔',
+  'Transport': '🚗',
+  'Shopping': '🛍️',
+  'Health': '💊',
+  'Entertainment': '🍿',
+  'Personal Care': '✨',
+  'Education': '📚',
+  'Bills': '💡',
+  'Salary': '💰',
+  'Freelance': '💻',
+  'Business': '🏢',
+  'Investment': '📈',
+  '13th Month': '🎁',
+  'Bonus': '🎉',
+  'Transfer': '⇄',
+  'Other': '🏷️',
+}
+
+function getCategoryEmoji(cat, type) {
+  if (type === 'transfer') return '⇄'
+  return CAT_EMOJIS[cat] || (type === 'income' ? '💰' : '🏷️')
+}
+
 export default function History({ user, data, symbol, privacyMode = false, hideHeader = false }) {
   const s = symbol || '₱'
   const [search, setSearch] = useState('')
@@ -61,8 +86,8 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
   )
 
   const allTx = useMemo(() => {
-    const income = data.income.map(tx => ({ ...tx, type: 'income' }))
-    const expenses = data.expenses.map(tx => ({ ...tx, type: 'expense' }))
+    const income = (data.income || []).map(tx => ({ ...tx, type: 'income' }))
+    const expenses = (data.expenses || []).map(tx => ({ ...tx, type: 'expense' }))
     const transfers = (data.transfers || []).map(tx => ({ ...tx, type: 'transfer' }))
     return [...income, ...expenses, ...transfers]
   }, [data.expenses, data.income, data.transfers])
@@ -270,7 +295,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
     }
   }
 
-  const typeColor = { income: 'var(--income)', expense: 'var(--expense)', transfer: 'var(--text2)' }
+  const typeColor = { income: 'var(--income)', expense: 'var(--expense, #ef4444)', transfer: 'var(--blue, #3b82f6)' }
   const typeBg = { income: 'var(--income-dim)', expense: 'var(--expense-dim)', transfer: 'var(--border)' }
   const typeSign = { income: '+', expense: '−', transfer: '' }
   const editCats = editTx ? getTransactionCategories(editTx.type) : []
@@ -315,34 +340,33 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
   }
 
   const mainContent = (
-    <>
+    <div className={hStyles.historyPage}>
       {!hideHeader && (
         <div className={hStyles.heroSection}>
           <div className={hStyles.heroCopy}>
             <div className={hStyles.pageEyebrow}>History</div>
-            <div className={hStyles.pageTitle}>Keep the ledger easy to review.</div>
+            <div className={hStyles.pageTitle}>Transaction Ledger</div>
             <div className={hStyles.pageSub}>
-              Search, filter, edit, and clean up entries from one place so reports, forecasts, and balances stay understandable.
+              Search, filter, and inspect your financial records.
             </div>
           </div>
 
           <div className={hStyles.heroAside}>
-            <div className={hStyles.heroAsideLabel}>View scope</div>
+            <div className={hStyles.heroAsideLabel}>Scope</div>
             <div className={hStyles.heroAsideValue}>{transactionCountLabel}</div>
             <div className={hStyles.heroAsideTrack}>
               <div className={hStyles.heroAsideFill} style={{ width: `${incomeShare}%` }} />
             </div>
             <div className={hStyles.heroAsideMeta}>
               {unpaidCount > 0
-                ? `${unpaidCount} unpaid entr${unpaidCount === 1 ? 'y stays' : 'ies stay'} visible, but totals only count paid ones.`
-                : hasActiveFilters || search
-                  ? 'Filters are shaping this view.'
-                  : 'Showing all recorded transaction activity.'}
+                ? `${unpaidCount} unpaid entries visible.`
+                : 'All entries accounted for.'}
             </div>
           </div>
         </div>
       )}
 
+      {/* SUMMARY GRID CARDS */}
       <div className={hStyles.summaryGrid}>
         <button type="button" className={`${hStyles.summaryCard} ${hStyles.summaryCardButton}`} onClick={() => setDetailsMode('in-view')}>
           <div className={hStyles.summaryLabel}>In view</div>
@@ -354,35 +378,52 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
           <div className={`${hStyles.summaryValue} ${hStyles.summaryValueAccent}`}>
             {displayValue(privacyMode, `+${fmt(totalIncome, s)}`, `+${maskMoney(s)}`)}
           </div>
-          <div className={hStyles.summaryMeta}>Paid income entries in this view</div>
+          <div className={hStyles.summaryMeta}>Paid income</div>
         </button>
         <button type="button" className={`${hStyles.summaryCard} ${hStyles.summaryCardButton}`} onClick={() => setDetailsMode('expenses')}>
           <div className={hStyles.summaryLabel}>Expenses</div>
           <div className={`${hStyles.summaryValue} ${hStyles.summaryValueRed}`}>
             {displayValue(privacyMode, `−${fmt(totalExpense, s)}`, `−${maskMoney(s)}`)}
           </div>
-          <div className={hStyles.summaryMeta}>Paid spending in this view</div>
+          <div className={hStyles.summaryMeta}>Paid spending</div>
         </button>
         <button type="button" className={`${hStyles.summaryCard} ${hStyles.summaryCardButton}`} onClick={() => setDetailsMode('net')}>
-          <div className={hStyles.summaryLabel}>Net</div>
+          <div className={hStyles.summaryLabel}>Net Flow</div>
           <div className={`${hStyles.summaryValue} ${net >= 0 ? hStyles.summaryValueBlue : hStyles.summaryValueRed}`}>
-            {displayValue(privacyMode, `${net >= 0 ? '+' : ''}${fmt(net, s)}`, `${net >= 0 ? '+' : ''}${maskMoney(s)}`)}
+            {displayValue(privacyMode, `${net < 0 ? '−' : '+'}${fmt(Math.abs(net), s)}`, maskMoney(s))}
           </div>
-          <div className={hStyles.summaryMeta}>{net >= 0 ? 'Net result is positive in this view' : 'Net result is negative in this view'}</div>
+          <div className={hStyles.summaryMeta}>{net >= 0 ? 'Surplus' : 'Deficit'}</div>
         </button>
       </div>
 
-
-
+      {/* SEARCH & FILTERS BAR */}
       <div className={hStyles.searchShell}>
         <div className={hStyles.searchRow}>
-          <input className={hStyles.searchInput} placeholder="Search note, category, or subcategory" value={search} onChange={event => setSearch(event.target.value)} />
-          {search && <button type="button" className={hStyles.clearSearch} onClick={() => setSearch('')}>✕</button>}
-          <button type="button" className={`${hStyles.filterBtn} ${hasActiveFilters ? hStyles.filterBtnActive : ''}`} onClick={() => setShowFilters(value => !value)}>
-            {hasActiveFilters ? 'Filters on' : 'Filters'}
+          <div className={hStyles.searchInputWrap}>
+            <span className={hStyles.searchIcon}>🔍</span>
+            <input
+              className={hStyles.searchInput}
+              placeholder="Search note, category, or subcategory..."
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+            />
+            {search && (
+              <button type="button" className={hStyles.clearSearch} onClick={() => setSearch('')}>
+                ✕
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className={`${hStyles.filterBtn} ${hasActiveFilters ? hStyles.filterBtnActive : ''}`}
+            onClick={() => setShowFilters(value => !value)}
+          >
+            {hasActiveFilters ? '⚙️ Filters (Active)' : '⚙️ Filters'}
           </button>
         </div>
 
+        {/* TYPE PILLS */}
         <div className={hStyles.typePillsRow}>
           {TYPES.map(t => {
             const isActive = filterType === t
@@ -391,7 +432,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
                 key={t}
                 type="button"
                 className={`${hStyles.typePill} ${isActive ? hStyles.typePillActive : ''}`}
-                onClick={() => setFilterType(isActive ? 'All types' : t)}
+                onClick={() => setFilterType(isActive && t !== 'All types' ? 'All types' : t)}
               >
                 {t}
               </button>
@@ -399,6 +440,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
           })}
         </div>
 
+        {/* EXPANDABLE FILTER DRAWER */}
         {showFilters && (
           <div className={hStyles.filterPanel}>
             <div className={hStyles.filterGrid}>
@@ -410,9 +452,13 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
               </div>
               <div className={hStyles.filterGroup}>
                 <label>Month</label>
-                <input type="month" value={filterMonth} onChange={event => setFilterMonth(event.target.value || getMonthKey(today()))} />
+                <input
+                  type="month"
+                  value={filterMonth}
+                  onChange={event => setFilterMonth(event.target.value || getMonthKey(today()))}
+                />
               </div>
-              <div className={hStyles.filterGroup} style={{ gridColumn: 'span 2' }}>
+              <div className={hStyles.filterGroup}>
                 <label>Sort by</label>
                 <select value={sortBy} onChange={event => setSortBy(event.target.value)}>
                   <option value="date-desc">Newest first</option>
@@ -423,21 +469,25 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
               </div>
             </div>
             {hasActiveFilters && (
-              <button type="button" className={hStyles.clearFiltersBtn} onClick={clearFilters}>Clear all filters</button>
+              <button type="button" className={hStyles.clearFiltersBtn} onClick={clearFilters}>
+                Reset all filters
+              </button>
             )}
           </div>
         )}
       </div>
 
+      {/* TRANSACTION LIST */}
       {!filtered.length ? (
         <div className={hStyles.emptyCard}>
+          <div className={hStyles.emptyIcon}>📜</div>
           <div className={hStyles.emptyTitle}>
             {hasActiveFilters || search ? 'No entries match this view' : 'No transactions yet'}
           </div>
           <div className={hStyles.emptyBody}>
             {hasActiveFilters || search
-              ? 'Clear the filters or widen the search to bring more entries back into view.'
-              : 'Add your first income or expense and this page becomes your running ledger.'}
+              ? 'Clear your filters or adjust the search keyword to view other records.'
+              : 'Record income or expenses using QuickAdd to populate your ledger.'}
           </div>
           {(hasActiveFilters || search) && (
             <button
@@ -449,265 +499,263 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
             </button>
           )}
         </div>
-      ) : grouped.map(([date, txs]) => {
-        const paidTxs = txs.filter(isTransactionPaid)
-        const dayIncome = paidTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + (tx.amount || 0), 0)
-        const dayExpense = paidTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + (tx.amount || 0), 0)
-        const dayNet = dayIncome - dayExpense
+      ) : (
+        grouped.map(([date, txs]) => {
+          const paidTxs = txs.filter(isTransactionPaid)
+          const dayIncome = paidTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + (tx.amount || 0), 0)
+          const dayExpense = paidTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + (tx.amount || 0), 0)
+          const dayNet = dayIncome - dayExpense
 
-        return (
-          <div key={date} className={hStyles.dateGroup}>
-            <div className={hStyles.dateHeader}>
-              <span className={hStyles.dateLabel}>{date}</span>
-              <span className={hStyles.dateSummary} style={{ color: dayNet >= 0 ? 'var(--accent)' : 'var(--red)' }}>
-                {displayValue(privacyMode, `${dayNet >= 0 ? '+' : ''}${fmt(dayNet, s)}`, `${dayNet >= 0 ? '+' : ''}${maskMoney(s)}`)}
-              </span>
-            </div>
-            <div className={hStyles.dateGroupCard}>
-              {(txs || []).filter(Boolean).map((tx, index) => {
-                const lifecycle = getTakdaTransactionLifecycle(tx || {}, today())
-                const recurrenceCycleLabel = tx?.recurrenceOccurrenceKey ? formatRecurringDateLabel(tx.recurrenceOccurrenceKey) : ''
-                const recordedEarly = isRecurringRecordedOffDueDate(tx || {})
-                const impactClassName = {
-                  [TAKDA_BALANCE_IMPACT.NONE]: hStyles.impactOff,
-                  [TAKDA_BALANCE_IMPACT.IN_ACCOUNT]: hStyles.impactOn,
-                  [TAKDA_BALANCE_IMPACT.DUE_TO_SYNC]: hStyles.impactDue,
-                  [TAKDA_BALANCE_IMPACT.APPLIES_ON_DATE]: hStyles.impactFuture,
-                  [TAKDA_BALANCE_IMPACT.LINKED]: hStyles.impactLinked,
-                  [TAKDA_BALANCE_IMPACT.REFERENCE_ONLY]: hStyles.impactLinked,
-                  [TAKDA_BALANCE_IMPACT.LEDGER_ONLY]: hStyles.impactLinked,
-                }[lifecycle.balanceImpactKey]
-                const statusClassName = lifecycle.statusKey === TAKDA_TRANSACTION_STATUS.PAID
-                  ? hStyles.statusPaid
-                  : hStyles.statusUnpaid
+          return (
+            <div key={date} className={hStyles.dateGroup}>
+              {/* DATE HEADER */}
+              <div className={hStyles.dateHeader}>
+                <div className={hStyles.dateHeaderLeft}>
+                  <span className={hStyles.dateLabel}>{formatDisplayDate(date)}</span>
+                  <span className={hStyles.dateCountBadge}>{txs.length}</span>
+                </div>
+                <span
+                  className={hStyles.dateSummary}
+                  style={{
+                    color: dayNet > 0 ? 'var(--income)' : dayNet < 0 ? 'var(--expense, #ef4444)' : 'var(--text3)',
+                  }}
+                >
+                  {displayValue(
+                    privacyMode,
+                    `${dayNet < 0 ? '−' : dayNet > 0 ? '+' : ''}${fmt(Math.abs(dayNet), s)}`,
+                    maskMoney(s)
+                  )}
+                </span>
+              </div>
 
-                return (
-                  <SwipeableCard
-                    key={tx._id + index}
-                    onSwipeRight={tx.type !== 'transfer' ? () => handleTogglePaymentStatus(tx) : () => openEdit(tx)}
-                    rightLabel={tx.type !== 'transfer' ? (isTransactionPaid(tx) ? 'Unpaid' : 'Paid') : 'Edit'}
-                    rightIcon={tx.type !== 'transfer' ? (isTransactionPaid(tx) ? '↺' : '✓') : '✎'}
-                    rightTone={isTransactionPaid(tx) ? 'amber' : 'success'}
-                    onSwipeLeft={() => handleDelete(tx)}
-                    leftLabel="Delete"
-                    leftIcon="✕"
-                    leftTone="danger"
-                    onDoubleTap={tx.type !== 'transfer' ? () => openEdit(tx) : null}
-                    style={{ borderRadius: 0 }}
-                  >
-                    <div className={`${hStyles.txRow} ${isTransactionPaid(tx) ? '' : hStyles.txRowUnpaid}`}>
-                      <div className={hStyles.txIcon} style={{ background: typeBg[tx.type], color: typeColor[tx.type] }}>
-                        {typeSign[tx.type]}
-                      </div>
-                      <div className={hStyles.txInfo}>
-                        <div className={hStyles.txDesc}>{tx.desc}</div>
-                        <div className={hStyles.txMeta}>
-                          {tx.type === 'transfer' ? (
-                            <span className={hStyles.txCat}>Transfer: {tx.fromAccountName} → {tx.toAccountName}</span>
-                          ) : (
-                            <span className={hStyles.txCat}>{[tx.cat, tx.subcat].filter(Boolean).join(' · ')}</span>
-                          )}
-                          <span className={`${hStyles.statusBadge} ${statusClassName}`}>
-                            {lifecycle.statusLabel}
-                          </span>
-                          {lifecycle.balanceImpactLabel && (
-                            <span className={`${hStyles.statusBadge} ${hStyles.impactBadge} ${impactClassName}`}>
-                              {lifecycle.balanceImpactLabel}
-                            </span>
-                          )}
-                          {tx.accountId && <span className={hStyles.txAccount}>{accountLookup[tx.accountId]?.name || 'Missing account'}</span>}
-                          {tx.recur && (
-                            <span className={hStyles.txRecur}>{RECUR_OPTIONS.find(option => option.value === tx.recur)?.label || tx.recur}</span>
-                          )}
-                          {recurrenceCycleLabel && (
-                            <span className={`${hStyles.statusBadge} ${hStyles.recurringCycleBadge}`}>
-                              Cycle {recurrenceCycleLabel}
-                            </span>
-                          )}
-                          {recordedEarly && (
-                            <span className={`${hStyles.statusBadge} ${hStyles.recurringEarlyBadge}`}>
-                              Recorded off due date
-                            </span>
-                          )}
+              {/* DATE CARD */}
+              <div className={hStyles.dateGroupCard}>
+                {(txs || []).filter(Boolean).map((tx, index) => {
+                  const isPaid = isTransactionPaid(tx)
+                  const emoji = getCategoryEmoji(tx.cat, tx.type)
+                  const acc = tx.accountId ? accountLookup[tx.accountId] : null
+
+                  return (
+                    <SwipeableCard
+                      key={tx._id + index}
+                      onSwipeRight={tx.type !== 'transfer' ? () => handleTogglePaymentStatus(tx) : () => openEdit(tx)}
+                      rightLabel={tx.type !== 'transfer' ? (isPaid ? 'Unpaid' : 'Paid') : 'Edit'}
+                      rightIcon={tx.type !== 'transfer' ? (isPaid ? '↺' : '✓') : '✎'}
+                      rightTone={isPaid ? 'amber' : 'success'}
+                      onSwipeLeft={() => handleDelete(tx)}
+                      leftLabel="Delete"
+                      leftIcon="✕"
+                      leftTone="danger"
+                      onDoubleTap={() => openEdit(tx)}
+                    >
+                      <div
+                        className={`${hStyles.txRow} ${isPaid ? '' : hStyles.txRowUnpaid}`}
+                        onClick={() => openEdit(tx)}
+                      >
+                        {/* 1. Leading Icon */}
+                        <div
+                          className={hStyles.txIcon}
+                          style={{
+                            background: typeBg[tx.type] || 'var(--surface2)',
+                            color: typeColor[tx.type] || 'var(--text)',
+                          }}
+                        >
+                          {emoji}
                         </div>
-                      </div>
-                      <div className={hStyles.txRight}>
-                        <div className={hStyles.txAmount} style={{ color: typeColor[tx.type] }}>
-                          {displayValue(privacyMode, `${typeSign[tx.type]}${fmt(tx.amount, s)}`, `${typeSign[tx.type]}${maskMoney(s)}`)}
+
+                        {/* 2. Middle Details */}
+                        <div className={hStyles.txInfo}>
+                          <div className={hStyles.txTitleRow}>
+                            <span className={hStyles.txDesc}>
+                              {tx.desc || tx.cat || 'Transaction'}
+                            </span>
+                            {tx.recur && <span className={hStyles.txRecurPill} title={`Recurring ${tx.recur}`}>🔄</span>}
+                          </div>
+
+                          <div className={hStyles.txMetaRow}>
+                            <span className={hStyles.txCat}>
+                              {tx.type === 'transfer'
+                                ? `${tx.fromAccountName || 'Account'} → ${tx.toAccountName || 'Account'}`
+                                : [tx.cat, tx.subcat].filter(Boolean).join(' · ')}
+                            </span>
+                            {acc && (
+                              <span className={hStyles.txAccountPill}>
+                                💳 {acc.name}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className={hStyles.txActions}>
-                          {tx.type !== 'transfer' && (
-                            <>
+
+                        {/* 3. Trailing Amount & Status */}
+                        <div className={hStyles.txRight}>
+                          <div
+                            className={hStyles.txAmount}
+                            style={{ color: typeColor[tx.type] || 'var(--text)' }}
+                          >
+                            {displayValue(
+                              privacyMode,
+                              `${tx.type === 'expense' ? '−' : tx.type === 'income' ? '+' : ''}${fmt(tx.amount, s)}`,
+                              `${tx.type === 'expense' ? '−' : tx.type === 'income' ? '+' : ''}${maskMoney(s)}`
+                            )}
+                          </div>
+
+                          <div className={hStyles.txStatusRow}>
+                            {tx.type !== 'transfer' && (
                               <button
                                 type="button"
-                                className={`${hStyles.statusBtn} ${isTransactionPaid(tx) ? hStyles.statusBtnPaid : hStyles.statusBtnUnpaid}`}
-                                onClick={() => handleTogglePaymentStatus(tx)}
+                                className={`${hStyles.statusPill} ${isPaid ? hStyles.statusPillPaid : hStyles.statusPillUnpaid}`}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleTogglePaymentStatus(tx)
+                                }}
+                                title="Click to toggle paid/unpaid status"
                               >
-                                {isTransactionPaid(tx) ? 'Paid' : 'Unpaid'}
+                                {isPaid ? 'Paid ✓' : 'Unpaid ⏳'}
                               </button>
-                              <button type="button" className={hStyles.editBtn} onClick={() => openEdit(tx)}>Edit</button>
-                            </>
-                          )}
-                          <button type="button" className={hStyles.delBtn} onClick={() => handleDelete(tx)}>Delete</button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </SwipeableCard>
-                )
-              })}
+                    </SwipeableCard>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })
+      )}
 
+      {/* EDIT TRANSACTION MODAL */}
       {editTx && typeof document !== 'undefined' && createPortal(
         <div className={hStyles.modalOverlay} onClick={event => { if (event.target === event.currentTarget) setEditTx(null) }}>
           <div className={hStyles.modal}>
             <div className={hStyles.modalHeader}>
-              <div className={hStyles.modalTitle}>Edit transaction</div>
+              <div>
+                <div className={hStyles.modalEyebrow}>Record Details</div>
+                <div className={hStyles.modalTitle}>Edit Transaction</div>
+              </div>
               <button onClick={() => setEditTx(null)} className={hStyles.modalClose}>✕</button>
             </div>
-            <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label>Description</label>
-              <input value={editForm.desc} onChange={event => setEditForm(current => ({ ...current, desc: event.target.value }))} placeholder="Merchant, payer, or note" />
-            </div>
-            <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label>Preset</label>
-              <select value={editForm.presetKey || 'other-custom'} onChange={event => {
-                if (event.target.value === 'other-custom') clearEditPreset()
-                else applyEditPreset(event.target.value)
-              }}>
-                {editPresetGroups.map(group => (
-                  <optgroup key={group.label} label={group.label}>
-                    {group.items.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
-                  </optgroup>
-                ))}
-                <option value="other-custom">Other / custom</option>
-              </select>
-              <div className={styles.helper} style={{ marginTop: 8 }}>
-                {editSelectedPreset
-                  ? `${editSelectedPreset.label} maps to ${editSelectedPreset.cat} → ${editSelectedPreset.subcat}.`
-                  : 'No preset selected. This transaction will stay as a custom entry.'}
-              </div>
-            </div>
-            <div className={`${styles.formRow} ${styles.col2}`} style={{ marginBottom: 12 }}>
+
+            <div className={hStyles.modalBody}>
               <div className={styles.formGroup}>
-                <label>Amount ({s})</label>
-                <input type="number" min="0" value={editForm.amount} onChange={event => setEditForm(current => ({ ...current, amount: event.target.value }))} />
+                <label className={hStyles.fieldLabel}>Description</label>
+                <input
+                  className={hStyles.fieldInput}
+                  value={editForm.desc}
+                  onChange={e => setEditForm(f => ({ ...f, desc: e.target.value }))}
+                  placeholder="Note or merchant"
+                  autoFocus
+                />
               </div>
+
+              <div className={styles.formRowTwoCol}>
+                <div className={styles.formGroup}>
+                  <label className={hStyles.fieldLabel}>Amount ({s})</label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    className={hStyles.fieldInputBig}
+                    value={editForm.amount}
+                    onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={hStyles.fieldLabel}>Payment Status</label>
+                  <select
+                    className={hStyles.fieldInput}
+                    value={editForm.paymentStatus}
+                    onChange={e => setEditForm(f => ({ ...f, paymentStatus: e.target.value }))}
+                  >
+                    <option value="paid">Paid ✓</option>
+                    <option value="unpaid">Unpaid ⏳</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formRowTwoCol}>
+                <div className={styles.formGroup}>
+                  <label className={hStyles.fieldLabel}>Category</label>
+                  <select
+                    className={hStyles.fieldInput}
+                    value={editForm.cat}
+                    onChange={e => handleEditCategoryChange(e.target.value)}
+                  >
+                    {editCats.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={hStyles.fieldLabel}>Subcategory</label>
+                  <select
+                    className={hStyles.fieldInput}
+                    value={editForm.subcat}
+                    onChange={e => handleEditSubcategoryChange(e.target.value)}
+                  >
+                    {editSubcats.map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className={styles.formGroup}>
-                <label>Category</label>
-                <select value={editForm.cat} onChange={event => handleEditCategoryChange(event.target.value)}>
-                  {editCats.map(cat => <option key={cat}>{cat}</option>)}
+                <label className={hStyles.fieldLabel}>Account</label>
+                <select
+                  className={hStyles.fieldInput}
+                  value={editForm.accountId}
+                  onChange={e => setEditForm(f => ({ ...f, accountId: e.target.value }))}
+                >
+                  <option value="">No account (Virtual ledger only)</option>
+                  {(data.accounts || []).map(acc => (
+                    <option key={acc._id} value={acc._id}>
+                      {acc.name} ({acc.type})
+                    </option>
+                  ))}
                 </select>
               </div>
-            </div>
-            <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label>Subcategory</label>
-              <select value={editForm.subcat} onChange={event => handleEditSubcategoryChange(event.target.value)}>
-                {editSubcats.map(subcat => <option key={subcat}>{subcat}</option>)}
-              </select>
-            </div>
-            <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label>Account</label>
-              <select value={editForm.accountId} onChange={event => setEditForm(current => ({ ...current, accountId: event.target.value }))}>
-                <option value="">No account selected</option>
-                {data.accounts.map(account => (
-                  <option key={account._id} value={account._id}>
-                    {account.name} · {account.type}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label>Payment status</label>
-              <select value={editForm.paymentStatus} onChange={event => setEditForm(current => ({ ...current, paymentStatus: event.target.value }))}>
-                <option value="paid">Paid</option>
-                <option value="unpaid">Unpaid</option>
-              </select>
-            </div>
-            {editTx && !editTx.accountBalanceLinked && editForm.accountId && (
-              <div className={hStyles.accountNote}>
-                Older unlinked entries can store an account here for reference, but they do not rewrite today&apos;s balances automatically.
+
+              <div className={hStyles.modalActions}>
+                <button
+                  type="button"
+                  className={hStyles.btnDeleteModal}
+                  onClick={() => {
+                    setEditTx(null)
+                    handleDelete(editTx)
+                  }}
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  className={hStyles.btnSaveModal}
+                  onClick={handleSaveEdit}
+                >
+                  Save Changes
+                </button>
               </div>
-            )}
-            {editForm.paymentStatus === 'unpaid' && (
-              <div className={hStyles.accountNote}>
-                Unpaid transactions stay visible in History, but they do not affect balances or totals until you mark them paid.
-              </div>
-            )}
-            {editTx?.recurrenceOccurrenceKey && (
-              <div className={hStyles.accountNote}>
-                This entry settles the {formatRecurringDateLabel(editTx.recurrenceOccurrenceKey)} recurring cycle.
-                {editTx.date && editTx.date !== editTx.recurrenceOccurrenceKey ? ` It was recorded on ${formatRecurringDateLabel(editTx.date)} instead of the scheduled date.` : ''}
-                {' '}Editing keeps that cycle settled. Deleting it can let the forecast cycle appear again.
-              </div>
-            )}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setEditTx(null)} className={hStyles.btnCancel}>Cancel</button>
-              <button onClick={handleSaveEdit} className={styles.btnAdd} style={{ flex: 2 }}>Save changes</button>
             </div>
           </div>
         </div>,
         document.body
       )}
 
+      {/* DETAILS MODAL */}
       <DetailsModal
         open={detailsConfig.open}
         title={detailsConfig.title}
         subtitle={detailsConfig.subtitle}
+        sections={detailsConfig.sections}
         onClose={detailsConfig.close}
-      >
-        <div className={hStyles.detailsPills}>
-          <span className={hStyles.detailsPill}>Paid totals only</span>
-          {filtered.length !== paidFiltered.length ? (
-            <span className={hStyles.detailsPillMuted}>{filtered.length - paidFiltered.length} unpaid excluded</span>
-          ) : (
-            <span className={hStyles.detailsPillMuted}>All paid</span>
-          )}
-        </div>
-
-        {detailsConfig.sections.map(section => (
-          <div key={section.label} className={hStyles.detailsSection}>
-            <div className={hStyles.detailsSectionHeader}>
-              <div className={hStyles.detailsSectionTitle}>{section.label}</div>
-            </div>
-            {!section.list.length ? (
-              <div className={hStyles.detailsEmpty}>Nothing to show yet.</div>
-            ) : (
-              <div className={hStyles.detailsList}>
-                {section.list.map(([day, list]) => (
-                  <div key={day} className={hStyles.detailsDay}>
-                    <div className={hStyles.detailsDayLabel}>{day}</div>
-                    {list.map((tx, index) => {
-                      const recurrenceCycleLabel = tx.recurrenceOccurrenceKey ? formatRecurringDateLabel(tx.recurrenceOccurrenceKey) : ''
-                      const recordedEarly = isRecurringRecordedOffDueDate(tx)
-                      return (
-                      <div key={(tx._id || tx.id || 'tx') + index} className={`${hStyles.detailsRow} ${isTransactionPaid(tx) ? '' : hStyles.detailsRowUnpaid}`}>
-                        <div className={hStyles.detailsRowMain}>
-                          <div className={hStyles.detailsRowDesc}>{tx.desc || 'Untitled'}</div>
-                          <div className={hStyles.detailsRowMeta}>
-                            <span>{[tx.cat, tx.subcat].filter(Boolean).join(' · ') || 'Other'}</span>
-                            {tx.accountId ? <span>· {accountLookup[tx.accountId]?.name || 'Missing account'}</span> : null}
-                            {!isTransactionPaid(tx) ? <span className={hStyles.detailsBadge}>Unpaid</span> : null}
-                            {recurrenceCycleLabel ? <span className={`${hStyles.detailsBadge} ${hStyles.detailsCycleBadge}`}>Cycle {recurrenceCycleLabel}</span> : null}
-                            {recordedEarly ? <span className={`${hStyles.detailsBadge} ${hStyles.detailsCycleEarlyBadge}`}>Recorded off due date</span> : null}
-                          </div>
-                        </div>
-                        <div className={hStyles.detailsRowAmount} style={{ color: typeColor[tx.type] }}>
-                          {displayValue(privacyMode, `${typeSign[tx.type]}${fmt(tx.amount, s)}`, `${typeSign[tx.type]}${maskMoney(s)}`)}
-                        </div>
-                      </div>
-                    )})}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </DetailsModal>
-    </>
+        symbol={s}
+        privacyMode={privacyMode}
+      />
+    </div>
   )
 
-  return hideHeader ? mainContent : <div className={`${styles.page} ${hStyles.historyPage}`}>{mainContent}</div>
+  return hideHeader ? mainContent : <div className={styles.page}>{mainContent}</div>
 }

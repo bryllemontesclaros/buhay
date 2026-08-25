@@ -73,28 +73,6 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
         </div>
       </div>
 
-      {activeTab === 'history' && (
-        <div className={tStyles.summaryStrip}>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Month Income</div>
-            <div className={`${tStyles.summaryValue} ${tStyles.summaryValuePositive}`}>
-              {privacyMode ? '••••' : fmt(totalIncome, s)}
-            </div>
-          </div>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Month Expenses</div>
-            <div className={`${tStyles.summaryValue} ${tStyles.summaryValueNegative}`}>
-              {privacyMode ? '••••' : fmt(totalExpenses, s)}
-            </div>
-          </div>
-          <div className={tStyles.summaryCard}>
-            <div className={tStyles.summaryLabel}>Month Net Flow</div>
-            <div className={`${tStyles.summaryValue} ${net >= 0 ? tStyles.summaryValuePositive : tStyles.summaryValueNegative}`}>
-              {privacyMode ? '••••' : fmt(net, s)}
-            </div>
-          </div>
-        </div>
-      )}
 
       {activeTab === 'history' ? (
         <History
