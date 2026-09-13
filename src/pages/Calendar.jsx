@@ -2420,7 +2420,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      <div id="takda-calendar" className={`${styles.card} ${calStyles.calendarCard}`}>
+      <div id="takda-calendar" className={calStyles.calendarCard}>
         <div className={calStyles.calHeader}>
           <div className={calStyles.calHeaderTop}>
             <div className={calStyles.nav}>
@@ -2600,7 +2600,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       </div>
 
       {/* MONTHLY SCHEDULE & UPCOMING EVENTS FEED */}
-      <div className={`${styles.card} ${calStyles.scheduleCard}`}>
+      <div className={calStyles.scheduleCard}>
         <div className={calStyles.scheduleHeader}>
           <div className={calStyles.scheduleHeaderLeft}>
             <div className={calStyles.scheduleKicker}>Predictive Timeline</div>

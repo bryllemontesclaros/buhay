@@ -167,6 +167,8 @@
   border: 1px solid var(--border);
   width: 100%;
   box-sizing: border-box;
+  content-visibility: visible !important;
+  contain: none !important;
 }
 
 /* CALENDAR HEADER */
@@ -1514,13 +1516,17 @@
 /* MOBILE */
 @media (max-width: 1024px) {
   .page {
-    flex: 1;
-    min-height: 0;
-    height: auto;
-    overflow: visible;
-    padding: 10px 12px;
-    padding-bottom: calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom) + 32px);
-    gap: 8px;
+    flex: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 10px 12px calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom, 20px) + 60px) !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
   }
   .pageHeader {
     display: none;
@@ -2460,6 +2466,10 @@
   border-radius: var(--radius-lg, 18px);
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  content-visibility: visible !important;
+  contain: none !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .scheduleHeader {
