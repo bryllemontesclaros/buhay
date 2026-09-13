@@ -1,5 +1,5 @@
 import { formatDisplayDate, getMonthKey, normalizeDate, today } from './utils'
-import { getCreditCardCycleDetails } from './billingCycles'
+import { getCreditCardCycleDetails, parseDayOfMonth } from './billingCycles'
 
 function toLocalDate(value = new Date()) {
   if (value instanceof Date) return new Date(value.getFullYear(), value.getMonth(), value.getDate())
@@ -13,6 +13,9 @@ function clampDueDay(year, monthIndex, dueDay) {
 }
 
 export function getBillDueDate(bill = {}, referenceDate = new Date()) {
+  if (bill.dueDateOverride) {
+    return normalizeDate(bill.dueDateOverride)
+  }
   const base = toLocalDate(referenceDate)
   const freq = bill.freq || 'monthly'
   const due = Number(bill.due) || 1
@@ -27,11 +30,11 @@ export function getBillDueDate(bill = {}, referenceDate = new Date()) {
   if (freq === 'yearly') {
     const targetMonth = Number(bill.dueMonth) || 0
     const d = clampDueDay(base.getFullYear(), targetMonth, due)
-    return normalizeDate(`${base.getFullYear()}-${targetMonth + 1}-${d}`)
+    return normalizeDate(`${base.getFullYear()}-${String(targetMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`)
   }
 
   const d = clampDueDay(base.getFullYear(), base.getMonth(), due)
-  return normalizeDate(`${base.getFullYear()}-${base.getMonth() + 1}-${d}`)
+  return normalizeDate(`${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`)
 }
 
 export function getBillOccurrencesForMonth(bill = {}, year, month) {
@@ -102,8 +105,31 @@ export function getBillPeriodPayment(bill = {}, referenceDate = new Date()) {
   }
 
   const dueDate = getBillDueDate(bill, referenceDate)
+  const dueMonthKey = getMonthKey(dueDate)
+
+  if (dueMonthKey && periods[dueMonthKey]) {
+    return { key, payment: periods[dueMonthKey] }
+  }
+
+  const refMonthKey = getMonthKey(referenceDate)
+  if (refMonthKey && periods[refMonthKey]) {
+    return { key, payment: periods[refMonthKey] }
+  }
+
+  const matchedEntry = Object.entries(periods).find(([pKey, pVal]) => {
+    if (!pVal) return false
+    if (pKey === dueMonthKey || pKey === `monthly_${dueDate}`) return true
+    if (pVal.date && getMonthKey(pVal.date) === dueMonthKey) return true
+    if (pVal.dueDate && (pVal.dueDate === dueDate || getMonthKey(pVal.dueDate) === dueMonthKey)) return true
+    if (pVal.paidAt && getMonthKey(new Date(Number(pVal.paidAt))) === dueMonthKey) return true
+    return false
+  })
+  if (matchedEntry) {
+    return { key, payment: matchedEntry[1] }
+  }
+
   const paidMonth = bill.paidAt ? getMonthKey(new Date(Number(bill.paidAt))) : ''
-  if (bill?.paid && paidMonth && paidMonth === getMonthKey(dueDate)) {
+  if (bill?.paid && paidMonth && (paidMonth === dueMonthKey || paidMonth === refMonthKey)) {
     return {
       key,
       payment: {
@@ -219,22 +245,55 @@ export function getVirtualBills(data = {}) {
     let paymentAmount = Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance
 
     // If this is a credit card with billing cycle info
-    const cycleDetails = getCreditCardCycleDetails(
-      { ...debt, balance },
-      expenses,
-      payments,
-      today()
-    )
+    if (debt.type === 'Credit Card') {
+      const cycleDetails = getCreditCardCycleDetails(
+        { ...debt, balance },
+        expenses,
+        payments,
+        today()
+      )
 
-    if (cycleDetails.hasCycle && cycleDetails.isPaid && cycleDetails.unbilledAmount > 0) {
-      // Past statement is paid, upcoming cycle has new unbilled transactions
-      paymentAmount = cycleDetails.unbilledAmount
-    } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
-      paymentAmount = cycleDetails.billedAmount
+      if (cycleDetails.hasCycle) {
+        const isClosedCyclePaid = cycleDetails.isPaid
+        const hasUnbilledOnly = isClosedCyclePaid && cycleDetails.unbilledAmount > 0
+
+        const targetDueDate = hasUnbilledOnly
+          ? cycleDetails.nextDueDate
+          : cycleDetails.dueDate
+
+        const targetAmount = hasUnbilledOnly
+          ? cycleDetails.unbilledAmount
+          : (cycleDetails.billedAmount > 0 ? cycleDetails.billedAmount : (Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance))
+
+        const targetPeriodKey = `monthly_${targetDueDate}`
+        const paidPeriods = getBillPaidPeriods(debt)
+
+        if (isClosedCyclePaid && !hasUnbilledOnly) {
+          paidPeriods[targetPeriodKey] = { paid: true, date: today(), amount: targetAmount }
+        }
+
+        virtualBills.push({
+          _id: `virtual-debt-${debt._id}`,
+          name: `${debt.name} (Credit Card)`,
+          amount: targetAmount,
+          due: parseDayOfMonth(targetDueDate) || dueDay,
+          dueDateOverride: targetDueDate,
+          freq: 'monthly',
+          cat: 'Bills',
+          subcat: 'Credit Card',
+          accountId: debt.accountId || '',
+          isVirtual: true,
+          isCreditCard: true,
+          statementDate: debt.statementDate,
+          originalDebtId: debt._id,
+          paidPeriods,
+        })
+        return
+      }
     }
 
     const currentPeriodKey = getBillPeriodKey({ due: dueDay, freq: 'monthly' }, today())
-    const isDebtPaid = (cycleDetails.hasCycle && cycleDetails.isPaid) || Boolean(debt.paidPeriods && debt.paidPeriods[currentPeriodKey])
+    const isDebtPaid = Boolean(debt.paidPeriods && (debt.paidPeriods[currentPeriodKey] || debt.paidPeriods[getMonthKey(today())]))
 
     virtualBills.push({
       _id: `virtual-debt-${debt._id}`,
@@ -243,7 +302,7 @@ export function getVirtualBills(data = {}) {
       due: dueDay,
       freq: 'monthly',
       cat: 'Bills',
-      subcat: debt.type === 'Credit Card' ? 'Credit Card' : 'Debt',
+      subcat: debt.type || 'Debt',
       accountId: debt.accountId || '',
       isVirtual: true,
       originalDebtId: debt._id,
@@ -279,20 +338,50 @@ export function getVirtualBills(data = {}) {
       today()
     )
 
-    let billAmount = balance
-    if (cycleDetails.hasCycle && cycleDetails.isPaid && cycleDetails.unbilledAmount > 0) {
-      billAmount = cycleDetails.unbilledAmount
-    } else if (cycleDetails.hasCycle && cycleDetails.billedAmount > 0) {
-      billAmount = cycleDetails.billedAmount
+    if (cycleDetails.hasCycle) {
+      const isClosedCyclePaid = cycleDetails.isPaid
+      const hasUnbilledOnly = isClosedCyclePaid && cycleDetails.unbilledAmount > 0
+
+      const targetDueDate = hasUnbilledOnly
+        ? cycleDetails.nextDueDate
+        : cycleDetails.dueDate
+
+      const targetAmount = hasUnbilledOnly
+        ? cycleDetails.unbilledAmount
+        : (cycleDetails.billedAmount > 0 ? cycleDetails.billedAmount : balance)
+
+      const targetPeriodKey = `monthly_${targetDueDate}`
+      const paidPeriods = getBillPaidPeriods(acc)
+
+      if (isClosedCyclePaid && !hasUnbilledOnly) {
+        paidPeriods[targetPeriodKey] = { paid: true, date: today(), amount: targetAmount }
+      }
+
+      virtualBills.push({
+        _id: `virtual-acc-${acc._id}`,
+        name: `${acc.name} (Credit Card)`,
+        amount: targetAmount,
+        due: parseDayOfMonth(targetDueDate) || dueDay,
+        dueDateOverride: targetDueDate,
+        freq: 'monthly',
+        cat: 'Bills',
+        subcat: 'Credit Card',
+        accountId: acc._id,
+        isVirtual: true,
+        isCreditCard: true,
+        statementDate: acc.statementDate,
+        paidPeriods,
+      })
+      return
     }
 
     const currentPeriodKey = getBillPeriodKey({ due: dueDay, freq: 'monthly' }, today())
-    const isCardPaid = (cycleDetails.hasCycle && cycleDetails.isPaid) || Boolean(acc.paidPeriods && acc.paidPeriods[currentPeriodKey])
+    const isCardPaid = Boolean(acc.paidPeriods && (acc.paidPeriods[currentPeriodKey] || acc.paidPeriods[getMonthKey(today())]))
 
     virtualBills.push({
       _id: `virtual-acc-${acc._id}`,
       name: `${acc.name} (Credit Card)`,
-      amount: billAmount,
+      amount: balance,
       due: dueDay,
       freq: 'monthly',
       cat: 'Bills',

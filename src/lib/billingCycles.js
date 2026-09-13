@@ -139,8 +139,35 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
 
   // Filter expenses and payments belonging to this card
   const cardAccountId = cardOrDebt.accountId || cardOrDebt._id
-  const relevantExpenses = expenses.filter(tx => tx && (tx.accountId === cardAccountId || tx.debtId === cardOrDebt._id))
-  const relevantPayments = payments.filter(tx => tx && (tx.toAccountId === cardAccountId || tx.accountId === cardAccountId || tx.debtId === cardOrDebt._id))
+  const debtId = cardOrDebt._id || ''
+  const cleanDebtId = String(debtId).replace('synth_', '')
+  const cardNameLower = String(cardOrDebt.name || '').toLowerCase().trim()
+
+  const relevantExpenses = expenses.filter(tx => {
+    if (!tx) return false
+    if (tx.accountId === cardAccountId || tx.debtId === debtId || tx.debtId === cleanDebtId) return true
+    return false
+  })
+
+  const relevantPayments = payments.filter(tx => {
+    if (!tx) return false
+    if (tx.toAccountId === cardAccountId || tx.accountId === cardAccountId || tx.debtId === debtId || tx.debtId === cleanDebtId) return true
+    if (cardNameLower && tx.desc && tx.desc.toLowerCase().includes(cardNameLower)) {
+      if (tx.type === 'transfer' || tx.cat === 'Debts' || tx.cat === 'Debt' || tx.desc.toLowerCase().includes('payment')) return true
+    }
+    return false
+  })
+
+  // Check if debt or account has recorded paid periods for this closed cycle
+  const paidPeriodsMap = cardOrDebt.paidPeriods && typeof cardOrDebt.paidPeriods === 'object' ? cardOrDebt.paidPeriods : {}
+  const closedDueMonth = getMonthKey(closedCycle.dueDate)
+  const closedStmtMonth = getMonthKey(closedCycle.statementDate)
+  const hasExplicitPaidPeriod = Boolean(
+    paidPeriodsMap[closedDueMonth] ||
+    paidPeriodsMap[closedStmtMonth] ||
+    paidPeriodsMap[`monthly_${closedCycle.dueDate}`] ||
+    paidPeriodsMap[closedCycle.dueDate]
+  )
 
   // Sum transactions in closed cycle
   let closedCycleCharges = 0
@@ -158,13 +185,13 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     }
   })
 
-  // Sum payments made towards closed cycle (payments made after closed statement date)
+  // Sum payments made towards closed cycle (payments made after closed cycle start date)
   let paymentsForClosedCycle = 0
   relevantPayments.forEach(tx => {
     const txDate = normalizeDate(tx.date)
     if (!txDate) return
     const amt = Math.abs(Number(tx.amount) || 0)
-    if (txDate > closedCycle.statementDate) {
+    if (txDate > closedCycleStartDate) {
       paymentsForClosedCycle += amt
     }
   })
@@ -173,11 +200,12 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
   let billedAmount = closedCycleCharges > 0 ? Math.max(0, closedCycleCharges - paymentsForClosedCycle) : 0
   let unbilledAmount = unbilledCharges
 
-  if (relevantExpenses.length === 0 && currentTotalBalance > 0) {
+  if (hasExplicitPaidPeriod) {
+    billedAmount = 0
+  } else if (relevantExpenses.length === 0 && currentTotalBalance > 0) {
     // If user hasn't logged individual expenses, check if today is past due date or if paid
     const isPastDue = refNorm > closedCycle.dueDate
     if (isPastDue) {
-      // Past due date is treated as paid if card was used recently
       billedAmount = 0
       unbilledAmount = currentTotalBalance
     } else {
@@ -186,7 +214,7 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     }
   }
 
-  const isClosedCyclePaid = billedAmount <= 0
+  const isClosedCyclePaid = hasExplicitPaidPeriod || (billedAmount <= 0)
 
   return {
     hasCycle: true,
