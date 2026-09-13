@@ -154,6 +154,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [dayBalanceSaving, setDayBalanceSaving] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false)
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
+  const [scheduleScope, setScheduleScope] = useState('upcoming')
+  const [scheduleCategory, setScheduleCategory] = useState('all')
 
   const totalSavings = useMemo(() => getTakdaTotalSavings(data?.savings), [data?.savings])
   const totalDebts = useMemo(() => getTakdaTotalDebts(data?.accounts, data?.debts), [data?.accounts, data?.debts])
@@ -547,6 +549,249 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
     return list.sort((a, b) => a.date.localeCompare(b.date))
   }, [unpaidBillsByDateKey, dueDebtsByDateKey])
+
+  const monthScheduleFeed = useMemo(() => {
+    const isCurrentMonth = year === currentYear && month === currentMonth
+    const isFutureMonth = year > currentYear || (year === currentYear && month > currentMonth)
+    const isPastMonth = year < currentYear || (year === currentYear && month < currentMonth)
+    
+    const dayMap = {}
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ds = dateStr(d)
+      const dayEntries = []
+
+      // 1. Income (actual and projected)
+      const incList = allIncome.filter(tx => normalizeDate(tx.date) === ds)
+      incList.forEach(tx => {
+        const isPaid = isTransactionPaid(tx)
+        dayEntries.push({
+          id: `feed-inc-${tx._id || ds}-${tx.amount}`,
+          type: 'income',
+          category: 'income',
+          title: tx.desc || tx.cat || 'Income',
+          sub: tx.accountId ? (accountLookup[tx.accountId]?.name || 'Account') : (tx.cat || 'Salary'),
+          amount: Number(tx.amount) || 0,
+          dateKey: ds,
+          day: d,
+          icon: '💰',
+          badgeText: isPaid ? 'Received' : (tx.isProjected || tx._isProjected ? 'Projected' : 'Pending'),
+          isPaid,
+          isProjected: Boolean(tx.isProjected || tx._isProjected),
+          tx,
+        })
+      })
+
+      // 2. Bills
+      const billList = (data?.bills || []).filter(b => {
+        const dates = getBillOccurrencesForMonth(b, year, month)
+        return dates.includes(ds)
+      })
+      billList.forEach(bill => {
+        const isPaid = isBillPaidForPeriod(bill, ds)
+        dayEntries.push({
+          id: `feed-bill-${bill._id}-${ds}`,
+          type: 'bill',
+          category: 'bills',
+          title: bill.name,
+          sub: `${bill.cat || 'Bill'}${bill.accountId ? ` · ${accountLookup[bill.accountId]?.name || ''}` : ''}`,
+          amount: Number(bill.amount) || 0,
+          dateKey: ds,
+          day: d,
+          icon: '📄',
+          badgeText: isPaid ? 'Paid' : (bill.autoDeduct ? 'Auto-Deduct' : 'Due'),
+          isPaid,
+          autoDeduct: Boolean(bill.autoDeduct),
+          billId: bill._id,
+        })
+      })
+
+      // 3. Debts - Due Dates
+      const dueList = dueDebtsByDateKey[ds] || []
+      dueList.forEach(debt => {
+        const isCc = debt.type === 'Credit Card'
+        const isPaid = (debt.balance || 0) <= 0
+        dayEntries.push({
+          id: `feed-due-${debt._id}-${ds}`,
+          type: 'debt-due',
+          category: 'debts',
+          title: debt.name,
+          sub: `${isCc ? 'Credit Card Due' : 'Loan Due'}${debt.accountId ? ` · ${accountLookup[debt.accountId]?.name || ''}` : ''}`,
+          amount: debt.minPayment > 0 ? Number(debt.minPayment) : (Number(debt.balance) || 0),
+          fullBalance: Number(debt.balance) || 0,
+          minAmount: Number(debt.minPayment) || 0,
+          dateKey: ds,
+          day: d,
+          icon: isCc ? '💳' : '🏦',
+          badgeText: isPaid ? 'Settled' : 'Payment Due',
+          isPaid,
+          debt,
+          isCreditCard: isCc,
+        })
+      })
+
+      // 4. Debts - Statement Cutoff Closures
+      const stmtList = statementDebtsByDateKey[ds] || []
+      stmtList.forEach(debt => {
+        dayEntries.push({
+          id: `feed-stmt-${debt._id}-${ds}`,
+          type: 'debt-stmt',
+          category: 'debts',
+          title: `${debt.name} Cut-off`,
+          sub: `Billing cycle closes on Day ${debt.statementDate}`,
+          amount: Number(debt.balance) || 0,
+          dateKey: ds,
+          day: d,
+          icon: '📋',
+          badgeText: 'Cycle Closes',
+          isPaid: true,
+          debt,
+          isStatement: true,
+        })
+      })
+
+      // 5. Expenses (actual and projected)
+      const expList = allExpenses.filter(tx => normalizeDate(tx.date) === ds)
+      expList.forEach(tx => {
+        const isPaid = isTransactionPaid(tx)
+        dayEntries.push({
+          id: `feed-exp-${tx._id || ds}-${tx.amount}`,
+          type: 'expense',
+          category: 'expenses',
+          title: tx.desc || tx.cat || 'Expense',
+          sub: tx.accountId ? (accountLookup[tx.accountId]?.name || 'Account') : (tx.cat || 'Expense'),
+          amount: Number(tx.amount) || 0,
+          dateKey: ds,
+          day: d,
+          icon: '💸',
+          badgeText: isPaid ? 'Paid' : (tx.isProjected || tx._isProjected ? 'Projected' : 'Pending'),
+          isPaid,
+          isProjected: Boolean(tx.isProjected || tx._isProjected),
+          tx,
+        })
+      })
+
+      // 6. Transfers
+      const trsfList = allTransfers.filter(tx => normalizeDate(tx.date) === ds)
+      trsfList.forEach(tx => {
+        dayEntries.push({
+          id: `feed-trsf-${tx._id || ds}`,
+          type: 'transfer',
+          category: 'transfers',
+          title: tx.desc || 'Transfer',
+          sub: `${tx.fromAccountName || 'Cash'} → ${tx.toAccountName || 'Bank'}`,
+          amount: Number(tx.amount) || 0,
+          dateKey: ds,
+          day: d,
+          icon: '⇄',
+          badgeText: 'Transfer',
+          isPaid: true,
+          tx,
+        })
+      })
+
+      if (dayEntries.length > 0) {
+        const forecast = forecastMap[ds]
+        const baseValue = forecast ? forecast.runningBalance : 0
+        const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
+        const dayBalance = calendarViewMode === 'netWorth'
+          ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
+          : baseValue
+
+        dayMap[ds] = {
+          dateKey: ds,
+          day: d,
+          dayLabel: new Date(`${ds}T00:00:00`).toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }),
+          isToday: ds === todayStr,
+          isPast: ds < todayStr,
+          isFuture: ds > todayStr,
+          dayBalance,
+          entries: dayEntries,
+        }
+      }
+    }
+
+    const sortedDays = Object.values(dayMap).sort((a, b) => a.dateKey.localeCompare(b.dateKey))
+
+    let totalItems = 0
+    let incomeCount = 0
+    let billsCount = 0
+    let debtsCount = 0
+    let expensesCount = 0
+    let transfersCount = 0
+
+    sortedDays.forEach(group => {
+      group.entries.forEach(entry => {
+        totalItems++
+        if (entry.category === 'income') incomeCount++
+        else if (entry.category === 'bills') billsCount++
+        else if (entry.category === 'debts') debtsCount++
+        else if (entry.category === 'expenses') expensesCount++
+        else if (entry.category === 'transfers') transfersCount++
+      })
+    })
+
+    const filteredDays = sortedDays.map(group => {
+      let filteredEntries = group.entries
+
+      if (scheduleScope === 'upcoming' && isCurrentMonth) {
+        filteredEntries = filteredEntries.filter(entry => {
+          if (group.dateKey >= todayStr) return true
+          if (!entry.isPaid) return true
+          return false
+        })
+      }
+
+      if (scheduleCategory !== 'all') {
+        filteredEntries = filteredEntries.filter(entry => entry.category === scheduleCategory)
+      }
+
+      return {
+        ...group,
+        entries: filteredEntries,
+      }
+    }).filter(group => group.entries.length > 0)
+
+    return {
+      days: filteredDays,
+      counts: {
+        all: totalItems,
+        income: incomeCount,
+        bills: billsCount,
+        debts: debtsCount,
+        expenses: expensesCount,
+        transfers: transfersCount,
+      },
+      hasAny: totalItems > 0,
+      isCurrentMonth,
+      isFutureMonth,
+      isPastMonth,
+    }
+  }, [
+    year,
+    month,
+    daysInMonth,
+    allIncome,
+    allExpenses,
+    allTransfers,
+    data?.bills,
+    dueDebtsByDateKey,
+    statementDebtsByDateKey,
+    forecastMap,
+    calendarViewMode,
+    totalSavings,
+    totalCryptoAssets,
+    accountList,
+    data?.debts,
+    incomeList,
+    expenseList,
+    accountLookup,
+    scheduleScope,
+    scheduleCategory,
+    currentYear,
+    currentMonth,
+    todayStr,
+  ])
 
   function jumpToToday() {
     playTick()
@@ -2352,6 +2597,305 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         )}
 
 
+      </div>
+
+      {/* MONTHLY SCHEDULE & UPCOMING EVENTS FEED */}
+      <div className={`${styles.card} ${calStyles.scheduleCard}`}>
+        <div className={calStyles.scheduleHeader}>
+          <div className={calStyles.scheduleHeaderLeft}>
+            <div className={calStyles.scheduleKicker}>Predictive Timeline</div>
+            <div className={calStyles.scheduleTitleRow}>
+              <h3 className={calStyles.scheduleTitle}>
+                Monthly Schedule & Upcoming Events
+              </h3>
+              <span className={calStyles.scheduleCountBadge}>
+                {monthScheduleFeed.days.reduce((s, g) => s + g.entries.length, 0)} events
+              </span>
+            </div>
+            <p className={calStyles.scheduleSubtitle}>
+              All scheduled cashflow, bills, salaries, and credit deadlines for {label}.
+            </p>
+          </div>
+
+          <div className={calStyles.scheduleHeaderRight}>
+            {monthScheduleFeed.isCurrentMonth && (
+              <div className={calStyles.scopeToggleGroup}>
+                <button
+                  type="button"
+                  className={`${calStyles.scopeToggleBtn} ${scheduleScope === 'upcoming' ? calStyles.scopeToggleActive : ''}`}
+                  onClick={() => { playTick(); setScheduleScope('upcoming'); }}
+                >
+                  Upcoming Only
+                </button>
+                <button
+                  type="button"
+                  className={`${calStyles.scopeToggleBtn} ${scheduleScope === 'all' ? calStyles.scopeToggleActive : ''}`}
+                  onClick={() => { playTick(); setScheduleScope('all'); }}
+                >
+                  All Month ({monthScheduleFeed.counts.all})
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Category Filter Pills */}
+        <div className={calStyles.scheduleFilterBar}>
+          <button
+            type="button"
+            className={`${calStyles.filterPill} ${scheduleCategory === 'all' ? calStyles.filterPillActive : ''}`}
+            onClick={() => { playTick(); setScheduleCategory('all'); }}
+          >
+            All <span className={calStyles.pillCount}>{monthScheduleFeed.counts.all}</span>
+          </button>
+          <button
+            type="button"
+            className={`${calStyles.filterPill} ${scheduleCategory === 'income' ? calStyles.filterPillActive : ''}`}
+            onClick={() => { playTick(); setScheduleCategory('income'); }}
+          >
+            💰 Income <span className={calStyles.pillCount}>{monthScheduleFeed.counts.income}</span>
+          </button>
+          <button
+            type="button"
+            className={`${calStyles.filterPill} ${scheduleCategory === 'bills' ? calStyles.filterPillActive : ''}`}
+            onClick={() => { playTick(); setScheduleCategory('bills'); }}
+          >
+            📄 Bills <span className={calStyles.pillCount}>{monthScheduleFeed.counts.bills}</span>
+          </button>
+          <button
+            type="button"
+            className={`${calStyles.filterPill} ${scheduleCategory === 'debts' ? calStyles.filterPillActive : ''}`}
+            onClick={() => { playTick(); setScheduleCategory('debts'); }}
+          >
+            💳 Credit & Loans <span className={calStyles.pillCount}>{monthScheduleFeed.counts.debts}</span>
+          </button>
+          <button
+            type="button"
+            className={`${calStyles.filterPill} ${scheduleCategory === 'expenses' ? calStyles.filterPillActive : ''}`}
+            onClick={() => { playTick(); setScheduleCategory('expenses'); }}
+          >
+            💸 Expenses <span className={calStyles.pillCount}>{monthScheduleFeed.counts.expenses}</span>
+          </button>
+          {monthScheduleFeed.counts.transfers > 0 && (
+            <button
+              type="button"
+              className={`${calStyles.filterPill} ${scheduleCategory === 'transfers' ? calStyles.filterPillActive : ''}`}
+              onClick={() => { playTick(); setScheduleCategory('transfers'); }}
+            >
+              ⇄ Transfers <span className={calStyles.pillCount}>{monthScheduleFeed.counts.transfers}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Feed Body */}
+        {monthScheduleFeed.days.length === 0 ? (
+          <div className={calStyles.scheduleEmptyWrap}>
+            <EmptyState
+              compact
+              description={`No scheduled events found for ${label} with current filters.`}
+              action={
+                <button
+                  type="button"
+                  onClick={() => {
+                    playTick()
+                    setScheduleScope('all')
+                    setScheduleCategory('all')
+                  }}
+                  className={calStyles.emptyResetBtn}
+                >
+                  Reset Filters
+                </button>
+              }
+            />
+          </div>
+        ) : (
+          <div className={calStyles.scheduleTimeline}>
+            {monthScheduleFeed.days.map(group => (
+              <div key={group.dateKey} className={calStyles.scheduleDateGroup}>
+                <div
+                  className={calStyles.scheduleDateGroupHeader}
+                  onClick={() => {
+                    playTick()
+                    setSelected(group.dateKey)
+                    const el = document.getElementById('takda-calendar')
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }}
+                  title="Click to focus this day on the calendar"
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className={calStyles.dateGroupLeft}>
+                    <span className={`${calStyles.dateGroupBadge} ${group.isToday ? calStyles.dateGroupBadgeToday : ''}`}>
+                      {group.dayLabel}
+                    </span>
+                    {group.isToday && <span className={calStyles.todayPill}>Today</span>}
+                  </div>
+
+                  <div className={calStyles.dateGroupRight}>
+                    <span className={calStyles.forecastedBalanceLabel}>
+                      Forecasted Balance:
+                    </span>
+                    <strong
+                      className={`${calStyles.forecastedBalanceVal} ${
+                        group.dayBalance < 0
+                          ? calStyles.balanceNegative
+                          : group.dayBalance < 2000
+                            ? calStyles.balanceWarning
+                            : calStyles.balancePositive
+                      }`}
+                    >
+                      {balanceMoney(group.dayBalance)}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className={calStyles.scheduleItemList}>
+                  {group.entries.map(item => (
+                    <div
+                      key={item.id}
+                      className={`${calStyles.scheduleItemCard} ${
+                        item.isPaid ? calStyles.itemCardPaid : ''
+                      } ${item.type === 'income' ? calStyles.itemCardIncome : ''}`}
+                    >
+                      <div
+                        className={calStyles.itemCardMain}
+                        onClick={() => {
+                          playTick()
+                          setSelected(item.dateKey)
+                          const el = document.getElementById('takda-calendar')
+                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <div
+                          className={calStyles.itemIconBox}
+                          style={{
+                            background:
+                              item.type === 'income'
+                                ? 'var(--accent-glow)'
+                                : item.type === 'bill'
+                                  ? 'var(--amber-dim)'
+                                  : item.type === 'debt-due'
+                                    ? 'var(--red-dim)'
+                                    : item.type === 'debt-stmt'
+                                      ? 'var(--purple-dim)'
+                                      : 'var(--surface2)',
+                            color:
+                              item.type === 'income'
+                                ? 'var(--income)'
+                                : item.type === 'bill'
+                                  ? 'var(--amber)'
+                                  : item.type === 'debt-due'
+                                    ? 'var(--red)'
+                                    : item.type === 'debt-stmt'
+                                      ? 'var(--purple)'
+                                      : 'var(--text)',
+                          }}
+                        >
+                          {item.icon}
+                        </div>
+
+                        <div className={calStyles.itemContent}>
+                          <div className={calStyles.itemTitleRow}>
+                            <span className={calStyles.itemTitle}>{item.title}</span>
+                            <span
+                              className={`${calStyles.itemBadge} ${
+                                item.isPaid
+                                  ? calStyles.badgePaid
+                                  : item.type === 'income'
+                                    ? calStyles.badgeIncome
+                                    : item.type === 'bill' || item.type === 'debt-due'
+                                      ? calStyles.badgeDue
+                                      : calStyles.badgeDim
+                              }`}
+                            >
+                              {item.badgeText}
+                            </span>
+                          </div>
+                          <div className={calStyles.itemSubRow}>
+                            <span>{item.sub}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className={calStyles.itemCardTrailing}>
+                        <div
+                          className={`${calStyles.itemAmount} ${
+                            item.type === 'income'
+                              ? calStyles.amountIncome
+                              : item.type === 'debt-stmt'
+                                ? calStyles.amountStmt
+                                : calStyles.amountExpense
+                          }`}
+                        >
+                          {item.type === 'income' ? '+' : item.type === 'debt-stmt' ? '' : '−'}
+                          {privacyMode ? 'Hidden' : fmt(item.amount, s)}
+                        </div>
+
+                        <div className={calStyles.itemActions}>
+                          {item.type === 'bill' && !item.isPaid && onPayBill && (
+                            <button
+                              type="button"
+                              className={calStyles.btnQuickAction}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onPayBill(item.billId)
+                              }}
+                            >
+                              ⚡ Pay
+                            </button>
+                          )}
+
+                          {item.type === 'debt-due' && !item.isPaid && item.debt?.accountId && (
+                            <button
+                              type="button"
+                              className={calStyles.btnQuickAction}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleFastPayDebt(item.debt, item.amount, item.dateKey)
+                              }}
+                            >
+                              ⚡ Pay
+                            </button>
+                          )}
+
+                          {(item.type === 'income' || item.type === 'expense') && item.isProjected && (
+                            <button
+                              type="button"
+                              className={calStyles.btnQuickActionSettle}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleSettleProjectedNow(item.tx)
+                              }}
+                            >
+                              ✓ Settle
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            className={calStyles.btnViewDay}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              playTick()
+                              setSelected(item.dateKey)
+                              const el = document.getElementById('takda-calendar')
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                            }}
+                            title="Highlight in calendar"
+                          >
+                            View
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {recurringDateTarget && typeof document !== 'undefined'

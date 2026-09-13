@@ -2474,3 +2474,561 @@
   transform: scale(1.04);
 }
 
+/* ==========================================================================
+   MONTHLY SCHEDULE & UPCOMING TRANSACTIONS FEED
+   ========================================================================== */
+
+.scheduleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  margin-top: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 18px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scheduleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.scheduleHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.scheduleKicker {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.scheduleTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scheduleTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.scheduleCountBadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+
+.scheduleSubtitle {
+  font-size: 12px;
+  color: var(--text3);
+  margin: 2px 0 0 0;
+  line-height: 1.4;
+}
+
+.scheduleHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.scopeToggleGroup {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.scopeToggleBtn {
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.scopeToggleBtn:hover {
+  color: var(--text);
+}
+
+.scopeToggleActive {
+  background: var(--surface);
+  color: var(--text) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  font-weight: 700;
+}
+
+.scheduleFilterBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scheduleFilterBar::-webkit-scrollbar {
+  display: none;
+}
+
+.filterPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.16s ease;
+}
+
+.filterPill:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--surface2) 80%, var(--accent));
+}
+
+.filterPillActive {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface2)) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  font-weight: 700;
+}
+
+.pillCount {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.scheduleEmptyWrap {
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emptyResetBtn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.emptyResetBtn:hover {
+  opacity: 0.92;
+  transform: scale(1.02);
+}
+
+.scheduleTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.scheduleDateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scheduleDateGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--surface2) 75%, transparent);
+  border-radius: var(--radius-sm, 8px);
+  border-left: 3px solid var(--accent);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.scheduleDateGroupHeader:hover {
+  background: color-mix(in srgb, var(--surface2) 90%, var(--accent));
+  transform: translateX(2px);
+}
+
+.dateGroupLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dateGroupBadge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dateGroupBadgeToday {
+  color: var(--accent);
+}
+
+.todayPill {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.dateGroupRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.forecastedBalanceLabel {
+  color: var(--text3);
+}
+
+.forecastedBalanceVal {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.balancePositive {
+  color: var(--income, #34c759);
+}
+
+.balanceWarning {
+  color: var(--amber, #ffb347);
+}
+
+.balanceNegative {
+  color: var(--red, #ff453a);
+}
+
+.scheduleItemList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 2px;
+}
+
+.scheduleItemCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 12px);
+  gap: 12px;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.scheduleItemCard:hover {
+  background: color-mix(in srgb, var(--surface2) 85%, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  transform: translateX(2px);
+}
+
+.itemCardPaid {
+  opacity: 0.68;
+}
+
+.itemCardIncome {
+  border-left: 3px solid var(--income, #34c759);
+}
+
+.itemCardMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.itemIconBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.itemTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badgePaid {
+  background: color-mix(in srgb, var(--income, #34c759) 14%, transparent);
+  color: var(--income, #34c759);
+}
+
+.badgeIncome {
+  background: color-mix(in srgb, var(--income, #34c759) 14%, transparent);
+  color: var(--income, #34c759);
+}
+
+.badgeDue {
+  background: color-mix(in srgb, var(--amber, #ffb347) 16%, transparent);
+  color: var(--amber, #ffb347);
+}
+
+.badgeDim {
+  background: var(--surface);
+  color: var(--text3);
+  border: 1px solid var(--border);
+}
+
+.itemSubRow {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemCardTrailing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.itemAmount {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+.amountIncome {
+  color: var(--income, #34c759);
+}
+
+.amountExpense {
+  color: var(--text);
+}
+
+.amountStmt {
+  color: var(--purple, #af52de);
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnQuickAction {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--amber, #ffb347);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnQuickAction:hover {
+  opacity: 0.92;
+  transform: scale(1.04);
+}
+
+.btnQuickActionSettle {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent, #007aff);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnQuickActionSettle:hover {
+  opacity: 0.92;
+  transform: scale(1.04);
+}
+
+.btnViewDay {
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnViewDay:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  transform: scale(1.02);
+}
+
+/* Responsive adjustments for scheduleCard */
+@media (max-width: 768px) {
+  .scheduleCard {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 14px;
+    margin-top: 10px;
+  }
+
+  .scheduleHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .scheduleHeaderRight {
+    width: 100%;
+  }
+
+  .scopeToggleGroup {
+    width: 100%;
+    display: flex;
+  }
+
+  .scopeToggleBtn {
+    flex: 1;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .scheduleDateGroupHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 6px 10px;
+  }
+
+  .dateGroupRight {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 10px;
+  }
+
+  .scheduleItemCard {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .itemIconBox {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  .itemTitle {
+    font-size: 12px;
+  }
+
+  .itemAmount {
+    font-size: 12px;
+  }
+
+  .itemCardTrailing {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .btnQuickAction,
+  .btnQuickActionSettle,
+  .btnViewDay {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+}
+
+
