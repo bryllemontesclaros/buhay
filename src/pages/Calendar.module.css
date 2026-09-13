@@ -1902,56 +1902,81 @@
   }
 }
 
-/* Final winning mobile layer. Keep this at EOF so older calendar rules cannot override it. */
+/* Unified Mobile Calendar Refinements */
 @media (max-width: 1024px) {
   .calendarCard {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px;
-    border-width: 3px;
-    border-radius: 24px;
+    padding: 10px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 18px);
+    overflow: visible;
   }
 
   .calHeader {
-    min-height: 76px;
-    border-width: 3px;
-    border-radius: 22px;
-    /* box-shadow flattened */
+    min-height: auto;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius, 14px);
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .navBtn {
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+  }
+
+  .todayNavBtn {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .dayNames {
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+
+  .dayName {
+    font-size: var(--type-overline);
+    letter-spacing: 0.04em;
+  }
+
+  .grid {
+    gap: 3px;
   }
 
   .cell {
-    min-height: 64px;
-    border-width: 3px;
-    border-radius: 18px;
-    /* box-shadow flattened */
+    min-height: 52px;
+    padding: 5px 2px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .dateNum {
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
   }
 
   .cellBalance {
-    font-size: var(--type-caption);
-    line-height: 1.12;
-    letter-spacing: 0;
-  }
-
-  .balanceRail {
-    min-height: 80px;
-    margin-bottom: 0;
-    padding: 12px 14px;
-    border-width: 3px;
-    border-radius: 18px;
-  }
-
-  .balanceRailLabel {
-    font-size: var(--type-body-lg);
-  }
-
-  .balanceRailMeta {
-    font-size: var(--type-overline);
-    line-height: 1.25;
-  }
-
-  .balanceRailValue {
-    font-size: var(--type-title-xl);
+    display: block;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.1;
     white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: normal;
+    overflow-wrap: normal;
+    letter-spacing: -0.05em;
+    text-align: center;
+    width: 100%;
   }
 
   .daySheetOverlay {
@@ -2038,88 +2063,9 @@
   }
 }
 
-/* Final phone calendar correction: seven columns need lighter chrome and compact values. */
-@media (max-width: 1024px) {
-  .calendarCard {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px;
-    border-width: 3px;
-    border-radius: 22px;
-    overflow: visible;
-  }
-
-  .calHeader {
-    min-height: 66px;
-    border-width: 3px;
-    border-radius: 20px;
-    /* box-shadow flattened */
-  }
-
-  .monthTitle {
-    font-size: var(--type-title-xl);
-  }
-
-  .navBtn {
-    width: 44px;
-    height: 44px;
-    border-width: 3px;
-    /* box-shadow flattened */
-  }
-
-  .dayNames {
-    gap: 3px;
-    margin-bottom: 3px;
-  }
-
-  .dayName {
-    font-size: var(--type-overline);
-    letter-spacing: 0.08em;
-  }
-
-  .grid {
-    gap: 3px;
-  }
-
-  .cell {
-    min-height: 52px;
-    padding: 5px 2px;
-    border-width: 2px;
-    border-radius: 14px;
-    /* box-shadow flattened */
-  }
-
-  .dateNum {
-    font-size: var(--type-body-sm);
-    line-height: 1;
-  }
-
-  .cellBalance {
-    display: block;
-    font-size: 7.8px;
-    font-weight: 700;
-    line-height: 1.1;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
-    word-break: normal;
-    overflow-wrap: normal;
-    letter-spacing: -0.06em;
-    text-align: center;
-    width: 100%;
-  }
-
-  .balanceRail {
-    position: relative;
-    z-index: 2;
-  }
-}
-
 @media (max-width: 390px) {
   .calendarCard {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 6px;
+    padding: 8px 5px;
   }
 
   .grid {
@@ -2127,20 +2073,21 @@
   }
 
   .cell {
-    min-height: 50px;
+    min-height: 48px;
     padding: 4px 1px;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 
   .dateNum {
-    font-size: var(--type-support);
+    font-size: 11px;
   }
 
   .cellBalance {
-    font-size: 7.2px;
-    letter-spacing: -0.07em;
+    font-size: 7.5px;
+    letter-spacing: -0.06em;
   }
 }
+
 
 .dayBalanceInputWrap {
   transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard) !important;

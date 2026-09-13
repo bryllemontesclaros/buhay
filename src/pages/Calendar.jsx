@@ -2401,7 +2401,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   );
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${calStyles.page}`}>
       <input ref={focusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'fixed', top: 0, left: 0, width: 1, height: 1, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <div className={styles.pageHero}>
         <div className={styles.pageHeader}>
