@@ -152,7 +152,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [editingDayBalance, setEditingDayBalance] = useState(false)
   const [dayBalanceDraft, setDayBalanceDraft] = useState('')
   const [dayBalanceSaving, setDayBalanceSaving] = useState(false)
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false)
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
   const [calendarViewMode, setCalendarViewMode] = useState('cash')
   const [scheduleScope, setScheduleScope] = useState('upcoming')
   const [scheduleCategory, setScheduleCategory] = useState('all')
@@ -1664,7 +1664,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const handleResize = () => setIsMobile(window.innerWidth <= 1024)
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])

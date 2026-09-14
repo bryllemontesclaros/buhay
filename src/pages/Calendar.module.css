@@ -366,10 +366,9 @@
   flex-direction: row;
   gap: 16px;
   min-height: 0;
-  height: 100%;
-  overflow: hidden;
   width: 100%;
   box-sizing: border-box;
+  align-items: flex-start;
 }
 
 .calendarMain {
@@ -378,8 +377,6 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  height: 100%;
-  overflow-y: auto;
   width: 100%;
   box-sizing: border-box;
 }
@@ -1429,7 +1426,7 @@
 .modalActions > button { flex: 1; }
 .modalActions > button:last-child { flex: 2; }
 
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .daySheetOverlay {
     align-items: center;
     justify-content: center;
@@ -1439,17 +1436,21 @@
     height: auto;
     max-height: calc(100vh - 32px);
     border-radius: 24px;
-    /* box-shadow flattened */
   }
   .page {
     width: 100%;
     max-width: 1080px;
     margin-inline: auto;
+    height: auto;
+    min-height: 0;
   }
   .calendarCard {
     width: 100%;
     box-sizing: border-box;
-    padding: 1rem;
+    padding: 1.25rem;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
   }
   .calHeader {
     margin-bottom: 0.75rem;
@@ -1468,11 +1469,14 @@
     font-size: var(--type-overline);
   }
   .grid {
-    gap: 4px;
+    gap: 6px;
+    height: auto;
+    overflow: visible;
   }
   .cell {
     min-height: 72px;
-    padding: 7px;
+    height: auto;
+    padding: 7px 4px 8px;
     gap: 4px;
     border-radius: 12px;
   }
@@ -1508,13 +1512,111 @@
     padding: 0 11px;
     font-size: var(--type-overline);
   }
+  .monthBoard > .dayPanel {
+    flex: 0 0 380px;
+    width: 380px;
+    max-width: 380px;
+    min-width: 320px;
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 120px);
+    border-radius: var(--radius-md, 16px);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+  }
+  .dayPanelBody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 14px 16px;
+  }
   .dayPanelTop {
-    padding-top: 10px;
+    padding: 14px 14px 8px;
+    border-bottom: 1px solid var(--border2);
   }
 }
 
-/* MOBILE */
-@media (max-width: 1024px) {
+/* Tablet Media Query */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    gap: 16px;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .pageHeader {
+    display: block;
+  }
+  .calendarCard {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 14px;
+    border-radius: 20px;
+    overflow: visible;
+  }
+  .calHeader {
+    padding: 10px 12px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+  }
+  .monthBoard {
+    flex-direction: column;
+    gap: 14px;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .calendarMain {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .grid {
+    gap: 4px;
+    height: auto;
+    overflow: visible;
+  }
+  .cell {
+    min-height: 64px;
+    height: auto;
+    padding: 6px 4px;
+    border-radius: 12px;
+  }
+  .dateNum {
+    font-size: 13px;
+  }
+  .cellBalance {
+    font-size: 9px;
+    line-height: 1.1;
+  }
+  .monthBoard > .dayPanel {
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 18px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .dayPanelBody {
+    padding: 12px 16px 20px;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+}
+
+/* Mobile Phone Media Query */
+@media (max-width: 768px) {
   .page {
     flex: none !important;
     display: flex !important;
@@ -1524,7 +1626,7 @@
     min-height: 0 !important;
     height: auto !important;
     overflow: visible !important;
-    padding: 10px 12px calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom, 20px) + 60px) !important;
+    padding: 10px 10px calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom, 20px) + 24px) !important;
     gap: 12px !important;
     box-sizing: border-box !important;
   }
@@ -1547,16 +1649,15 @@
     flex: none;
     height: auto;
     min-height: 0;
-    padding: 8px;
+    padding: 8px 6px;
     border-radius: 16px;
-    align-content: start;
     overflow: visible;
   }
   .calHeader {
     margin-bottom: 8px;
     gap: 8px;
-    padding: 10px;
-    border-radius: 16px;
+    padding: 8px 10px;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
   }
@@ -1593,6 +1694,13 @@
     height: 28px;
     padding: 0;
     font-size: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+  }
+  .todayNavBtn {
+    padding: 4px 10px;
+    font-size: 11px;
   }
   .viewToggleWrap {
     width: 100%;
@@ -1641,23 +1749,24 @@
   }
   .dayNames {
     margin-bottom: 2px;
-    gap: 4px;
+    gap: 3px;
   }
   .dayName {
     padding: 1px 0;
     font-size: 9px;
   }
   .grid {
-    gap: 4px;
+    gap: 3px;
     height: auto;
     overflow: visible;
     touch-action: pan-y;
   }
   .cell {
-    min-height: 58px;
+    min-height: 52px;
     height: auto;
     padding: 4px 2px 5px;
     gap: 2px;
+    border: 1px solid var(--border);
     border-radius: 10px;
   }
   .cellTop {
@@ -1676,236 +1785,86 @@
     width: 20px;
     height: 20px;
     font-size: 11px !important;
-    font-weight: 800 !important;
   }
   .cellBalance {
-    font-size: 9px;
-    font-weight: 700;
-    padding: 1px 3px;
-    line-height: 1;
-  }
-  .balanceCurrency {
-    font-size: 8px;
-  }
-  .privacyValuePill {
-    min-height: 30px;
-    padding: 0 10px;
-    font-size: var(--type-overline);
-    letter-spacing: 0.12em;
-  }
-  .privacyValueInline {
-    font-size: var(--type-overline);
-  }
-  .privacySummary {
-    font-size: var(--type-caption);
-  }
-  .modalFields,
-  .advancedGrid { grid-template-columns: 1fr; }
-
-  .daySheetOverlay {
-    padding: max(12px, env(safe-area-inset-top)) 8px max(12px, env(safe-area-inset-bottom));
-    align-items: flex-end;
-  }
-  .daySheet {
-    width: min(560px, calc(100vw - 8px));
-    max-height: calc(100dvh - 12px);
-    border-radius: 24px 24px 0 0;
-    /* box-shadow flattened */
-  }
-  .daySheet .dayPanelHandle {
     display: block;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    letter-spacing: -0.05em;
+    text-align: center;
+    width: 100%;
+  }
+  .daySheetOverlay {
+    align-items: flex-end;
+    padding: 10px 8px calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom) + 10px);
   }
   .dayPanel {
-    margin-top: 10px;
-    border-radius: 16px;
-    /* box-shadow flattened */
-  }
-  .daySheet.dayPanel {
-    margin-top: 0;
-    border-radius: 22px;
-    min-height: 0;
+    width: 100%;
+    max-height: calc(100dvh - 140px - env(safe-area-inset-bottom));
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border2));
+    border-radius: 24px;
+    box-shadow: var(--shadow-resting);
   }
   .dayPanelTop {
-    padding: 12px 14px 9px;
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--border2);
   }
-  .daySheet .dayPanelBody {
-    padding: 12px 14px 20px;
+  .dayPanelBody {
+    padding: 10px 14px 16px;
   }
-  .dayPanelTitle {
-    font-size: 17px;
-  }
-  .dayPanelEyebrowRow {
-    margin-bottom: 3px;
-  }
-  .dayPanelClose {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-  }
-  .dayBalanceCard {
-    padding: 0 0 14px;
+  .daySection {
     margin-bottom: 12px;
   }
-  .dayBalanceHeader {
-    gap: 8px;
+  .daySectionHeader {
+    margin-bottom: 6px;
   }
-  .dayBalanceValue {
-    margin-top: 4px;
-    font-size: var(--type-heading-sm);
+  .dayBalanceCard {
+    margin-top: 12px;
+    padding: 12px 14px;
+  }
+  .dayPanelTitle {
+    font-size: var(--type-heading-md);
   }
   .dayBalanceStats {
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .dayBalanceStatLabel {
-    font-size: var(--type-overline);
-  }
-  .dayBalanceStatValue {
-    font-size: var(--type-caption);
-  }
-  .projectedTxRow {
-    gap: 12px;
-  }
-  .projectedTxAmount {
-    font-size: var(--type-title-xl);
-  }
-  .projectedActionStack {
-    gap: 8px;
-  }
-  .projectedActionRowPrimary,
-  .projectedActionRowSecondary {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    width: 100%;
-  }
-  .logBtn,
-  .recurBtn {
-    width: 100%;
-    min-height: 40px;
-    padding: 0 14px;
-    justify-content: center;
-    font-size: var(--type-support);
-  }
-  .primaryProjectedBtn,
-  .secondaryProjectedBtn {
-    min-width: 0;
-  }
-  .dayBalanceMeta {
-    font-size: var(--type-caption);
-    line-height: 1.4;
-  }
-  .dayBalanceActions {
-    margin-top: 8px;
-    gap: 6px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
   .dayPanelActions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    margin-bottom: 12px;
   }
-  .dayPanelAction {
-    min-height: 44px;
-    font-size: var(--type-support);
-    padding: 0 12px;
-    justify-content: center;
-  }
-  .daySection {
-    margin-bottom: 10px;
-  }
-  .daySectionHeader {
-    margin-bottom: 8px;
-  }
-  .txRow {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    padding: 10px 0;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  .txRow,
   .debtRow {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    padding: 10px 0;
-    align-items: flex-start;
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 8px 0;
   }
-  .debtRowAmounts {
-    align-items: flex-start;
-    padding-left: 0;
-  }
-  .txLeft {
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .txIcon {
-    width: 28px;
-    height: 28px;
-    font-size: var(--type-caption);
-  }
-  .txDesc {
-    font-size: var(--type-support);
-  }
-  .txMeta {
-    font-size: var(--type-overline);
-  }
-  .txAmount {
-    font-size: var(--type-support);
-  }
-  .txRight {
+  .txRight,
+  .txActions {
     width: 100%;
-    flex: 0 0 auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
     min-width: 0;
   }
   .txActions {
-    width: 100%;
-    max-width: none;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px;
   }
-  .txActionDetails,
-  .txActionSummary {
-    width: 100%;
-  }
+  .statusBtn,
   .editBtn,
-  .statusBtn {
-    min-height: 36px;
-    padding: 0 12px;
-    font-size: var(--type-caption);
-  }
-  .txActionSummary {
-    min-height: 36px;
-    padding: 0 12px;
-    font-size: var(--type-caption);
-  }
-  .txActionSummary small {
-    font-size: var(--type-overline);
-  }
+  .delBtnSm,
   .logBtn,
-  .recurBtn {
-    min-height: 36px;
-    padding: 0 12px;
-    font-size: var(--type-caption);
-  }
-  .delBtnSm {
-    min-height: 36px;
+  .recurBtn,
+  .txActionSummary {
     width: 100%;
-    border: 1px solid var(--border2);
-  }
-  .dayPanelEmpty {
-    padding: 10px 0;
-    font-size: var(--type-support);
+    min-height: 40px;
+    padding-inline: 10px;
+    font-size: var(--type-caption);
   }
   .modalOverlay { padding: 0; }
   .modal { width: 100%; max-height: calc(100dvh - 74px - env(safe-area-inset-bottom)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
@@ -1921,192 +1880,26 @@
   }
 }
 
-/* Unified Mobile Calendar Refinements */
-@media (max-width: 1024px) {
-  .calendarCard {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 18px);
-    overflow: visible;
-  }
-
-  .calHeader {
-    min-height: auto;
-    border: 1px solid var(--border2);
-    border-radius: var(--radius, 14px);
-    padding: 8px 10px;
-    gap: 8px;
-  }
-
-  .navBtn {
-    min-width: 28px;
-    min-height: 28px;
-    width: 28px;
-    height: 28px;
-    font-size: 15px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface2);
-  }
-
-  .todayNavBtn {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .dayNames {
-    gap: 3px;
-    margin-bottom: 3px;
-  }
-
-  .dayName {
-    font-size: var(--type-overline);
-    letter-spacing: 0.04em;
-  }
-
-  .grid {
-    gap: 3px;
-  }
-
-  .cell {
-    min-height: 52px;
-    padding: 5px 2px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-
-  .dateNum {
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 600;
-  }
-
-  .cellBalance {
-    display: block;
-    font-size: 8px;
-    font-weight: 700;
-    line-height: 1.1;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
-    word-break: normal;
-    overflow-wrap: normal;
-    letter-spacing: -0.05em;
-    text-align: center;
-    width: 100%;
-  }
-
-  .daySheetOverlay {
-    align-items: flex-end;
-    padding: 10px 8px calc(var(--app-mobile-bottom-offset, 88px) + env(safe-area-inset-bottom) + 10px);
-  }
-
-  .dayPanel {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-height: calc(100dvh - 168px - env(safe-area-inset-bottom));
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border2));
-    border-radius: 24px;
-    box-shadow: var(--shadow-resting);
-  }
-
-  .dayPanelTop {
-    padding: 10px 14px 8px;
-    border-bottom: 1px solid var(--border2);
-  }
-  
-  .dayPanelBody {
-    padding: 10px 14px 16px;
-  }
-
-  .daySection {
-    margin-bottom: 12px;
-  }
-  
-  .daySectionHeader {
-    margin-bottom: 6px;
-  }
-  
-  .dayBalanceCard {
-    margin-top: 12px;
-    padding: 12px 14px;
-  }
-
-  .dayPanelTitle {
-    font-size: var(--type-heading-md);
-  }
-
-  .dayBalanceStats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .dayPanelActions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .txRow,
-  .debtRow {
-    grid-template-columns: 1fr;
-    gap: 6px;
-    padding: 8px 0;
-  }
-
-  .txRight,
-  .txActions {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .txActions {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: 6px;
-  }
-
-  .statusBtn,
-  .editBtn,
-  .delBtnSm,
-  .logBtn,
-  .recurBtn,
-  .txActionSummary {
-    width: 100%;
-    min-height: 40px;
-    padding-inline: 10px;
-    font-size: var(--type-caption);
-  }
-}
-
 @media (max-width: 390px) {
   .calendarCard {
     padding: 8px 5px;
   }
-
   .grid {
     gap: 2px;
   }
-
   .cell {
     min-height: 48px;
     padding: 4px 1px;
     border-radius: 10px;
   }
-
   .dateNum {
     font-size: 11px;
   }
-
   .cellBalance {
     font-size: 7.5px;
     letter-spacing: -0.06em;
   }
 }
-
 
 .dayBalanceInputWrap {
   transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard) !important;
@@ -2114,7 +1907,6 @@
 
 .dayBalanceInputWrap:focus-within {
   border-color: color-mix(in srgb, var(--accent) 76%, var(--glass-border)) !important;
-  /* box-shadow flattened */
 }
 
 .dayTxRowStaggered {
@@ -2132,61 +1924,6 @@
     transform: translateY(0);
   }
 }
-
-/* Desktop Side Panel */
-@media (min-width: 1025px) {
-  .page {
-    height: 100%;
-  }
-  .calendarCard {
-    height: 100%;
-  }
-  .monthBoard > .dayPanel {
-    flex: 0 0 380px;
-    width: 380px;
-    height: 100%;
-    min-height: 0;
-    margin-top: 0;
-    /* box-shadow flattened */
-  }
-  .dayPanelBody {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Mobile Accordion */
-@media (max-width: 1024px) {
-  .monthBoard {
-    flex-direction: column;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-  }
-  .calendarMain {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-    width: 100%;
-  }
-  .grid {
-    grid-template-rows: none;
-    grid-auto-rows: auto;
-    height: auto;
-    min-height: 0;
-    overflow-y: visible;
-    touch-action: pan-y;
-  }
-  .cell {
-    min-height: 52px;
-  }
-}
-
 .viewToggleWrap {
   display: flex;
   gap: 4px;
