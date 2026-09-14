@@ -1,7 +1,7 @@
 {
-  "name": "Buhay — Finance, Fitness, and Life Tracker",
+  "name": "Buhay — Personal Finance & Wealth Tracker",
   "short_name": "Buhay",
-  "description": "All-in-one life tracker for finance, fitness, journal, goals, and daily routines.",
+  "description": "Personal finance, cashflow forecasting, accounts, and wealth tracking.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -9,7 +9,7 @@
   "background_color": "#0a0a0f",
   "theme_color": "#16b88a",
   "orientation": "portrait",
-  "categories": ["finance", "health", "fitness", "productivity", "lifestyle"],
+  "categories": ["finance", "productivity", "lifestyle"],
   "icons": [
     { "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ],
@@ -17,7 +17,7 @@
     {
       "name": "Open Buhay",
       "short_name": "Buhay",
-      "description": "Open your Takda, Lakas, and Tala spaces.",
+      "description": "Open your cashflow and wealth tracker.",
       "url": "/app",
       "icons": [{ "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
