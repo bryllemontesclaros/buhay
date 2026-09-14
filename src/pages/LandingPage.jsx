@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { Link, useNavigate } from 'react-router-dom'
 import RouteMeta from '../components/RouteMeta'
+import BrandLogo from '../components/BrandLogo'
 import { auth } from '../lib/firebase'
 import styles from './LandingPageClean.module.css'
 
@@ -26,24 +27,33 @@ function LiveAppMockup() {
     ])
   }
 
-  const handleGrocery = () => {
-    if (liquidCash <= 2000) return
-    setNetWorth(prev => prev - 2400)
-    setLiquidCash(prev => prev - 2400)
-    setBudgetSpent(prev => Math.min(budgetLimit, prev + 2400))
+  const handleFreelance = () => {
+    setNetWorth(prev => prev + 18500)
+    setLiquidCash(prev => prev + 18500)
     setTxList(prev => [
-      { id: Date.now(), name: 'Weekly Market Run', date: 'Just now', amount: -2400, icon: '🥦', pos: false },
+      { id: Date.now(), name: 'Freelance Design Milestone', date: 'Just now', amount: 18500, icon: '🎨', pos: true },
+      ...prev.slice(0, 4),
+    ])
+  }
+
+  const handleGrocery = () => {
+    if (liquidCash <= 3000) return
+    setNetWorth(prev => prev - 3450)
+    setLiquidCash(prev => prev - 3450)
+    setBudgetSpent(prev => Math.min(budgetLimit, prev + 3450))
+    setTxList(prev => [
+      { id: Date.now(), name: 'Supermarket Grocery Run', date: 'Just now', amount: -3450, icon: '🥦', pos: false },
       ...prev.slice(0, 4),
     ])
   }
 
   const handleCoffee = () => {
     if (liquidCash <= 500) return
-    setNetWorth(prev => prev - 380)
-    setLiquidCash(prev => prev - 380)
-    setBudgetSpent(prev => Math.min(budgetLimit, prev + 380))
+    setNetWorth(prev => prev - 420)
+    setLiquidCash(prev => prev - 420)
+    setBudgetSpent(prev => Math.min(budgetLimit, prev + 420))
     setTxList(prev => [
-      { id: Date.now(), name: 'Matcha Latte & Bagel', date: 'Just now', amount: -380, icon: '🍵', pos: false },
+      { id: Date.now(), name: 'Matcha Latte & Pastry', date: 'Just now', amount: -420, icon: '🍵', pos: false },
       ...prev.slice(0, 4),
     ])
   }
@@ -71,7 +81,7 @@ function LiveAppMockup() {
           <span className={`${styles.controlDot} ${styles.dotMax}`}></span>
         </div>
         <div className={styles.mockupAddressBar}>
-          <span>🔒</span> buhay.app/takda
+          <span>🔒</span> buhay.app/app
         </div>
         <div className={styles.mockupWindowMeta}>
           <span>●</span> Live Financial Simulator
@@ -89,11 +99,14 @@ function LiveAppMockup() {
             <button type="button" onClick={handleSalary} className={`${styles.simBtn} ${styles.simBtnPrimary}`}>
               + Salary (+₱35k)
             </button>
+            <button type="button" onClick={handleFreelance} className={`${styles.simBtn} ${styles.simBtnPrimary}`}>
+              + Project (+₱18.5k)
+            </button>
             <button type="button" onClick={handleGrocery} className={styles.simBtn}>
-              - Groceries (-₱2.4k)
+              - Groceries (-₱3.4k)
             </button>
             <button type="button" onClick={handleCoffee} className={styles.simBtn}>
-              - Coffee (-₱380)
+              - Dining (-₱420)
             </button>
             <button type="button" onClick={handleReset} className={styles.simBtn} style={{ opacity: 0.7 }}>
               Reset
@@ -274,29 +287,34 @@ function AccountsWidget() {
 
   const filtered = activeTab === 'all'
     ? accounts
-    : accounts.filter(a => activeTab === 'liquid' ? a.cat === 'liquid' : a.cat === 'invest' || a.cat === 'credit')
+    : accounts.filter(a => activeTab === 'liquid' ? a.cat === 'liquid' : activeTab === 'invest' ? a.cat === 'invest' : a.cat === 'credit')
 
   return (
     <div className={styles.bentoWidgetArea}>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-        {['all', 'liquid', 'invest'].map(tab => (
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+        {[
+          { key: 'all', label: 'All Accounts' },
+          { key: 'liquid', label: 'Liquid Cash' },
+          { key: 'invest', label: 'Crypto & Assets' },
+          { key: 'credit', label: 'Credit Cards' },
+        ].map(tab => (
           <button
-            key={tab}
+            key={tab.key}
             type="button"
-            onClick={() => setActiveTab(tab)}
+            onClick={() => setActiveTab(tab.key)}
             style={{
-              background: activeTab === tab ? '#ecfdf5' : '#ffffff',
-              border: activeTab === tab ? '1px solid #10b981' : '1px solid #e2e8f0',
-              color: activeTab === tab ? '#059669' : '#64748b',
+              background: activeTab === tab.key ? '#ecfdf5' : '#ffffff',
+              border: activeTab === tab.key ? '1px solid #10b981' : '1px solid #e2e8f0',
+              color: activeTab === tab.key ? '#059669' : '#64748b',
               padding: '4px 12px',
               borderRadius: 99,
               fontSize: 11,
               fontWeight: 700,
-              textTransform: 'capitalize',
               cursor: 'pointer',
+              transition: 'all 0.18s ease',
             }}
           >
-            {tab === 'all' ? 'All Accounts' : tab === 'liquid' ? 'Liquid Cash' : 'Crypto & Debt'}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -428,36 +446,36 @@ const TRUST_POINTS = [
   {
     icon: '🛡️',
     title: 'Zero Bank Credentials Stored',
-    desc: 'Buhay never asks for your bank passwords, OTPs, or API logins. Your accounts stay strictly in your hands.',
+    desc: 'Buhay never asks for your online banking passwords, OTPs, or API logins. Your financial keys remain strictly with you.',
   },
   {
     icon: '⚡',
     title: '100% Free Forever',
-    desc: 'No credit card required, no 14-day trial tricks, and zero features locked behind paywalls.',
+    desc: 'No credit cards required, no trial tricks, and zero artificial feature paywalls. Built for real financial autonomy.',
   },
   {
     icon: '🔒',
-    title: 'Encrypted & Private',
-    desc: 'All financial logs belong exclusively to your account with optional Privacy Mode to blur values in public.',
+    title: 'Privacy Shield & Blur Mode',
+    desc: 'Toggle Privacy Mode instantly to blur sensitive balances and transaction values when checking your finances in public.',
   },
   {
     icon: '📥',
-    title: 'Universal Data Export',
-    desc: 'Export your entire transaction ledger to CSV spreadsheets or full JSON snapshots anytime.',
+    title: 'Universal Data Portability',
+    desc: 'Export your complete transaction ledger to CSV spreadsheets or full encrypted JSON snapshots anytime you want.',
   },
 ]
 
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay?',
-    answer: 'Buhay is an ultra-fast, private personal finance and cashflow cockpit designed to map your daily balances, aggregate multi-account net worth, forecast upcoming bills, crush debt, and reach your savings goals without friction.',
+    answer: 'Buhay is an ultra-fast, private personal finance and cashflow cockpit designed to forecast daily account balances, aggregate multi-account net worth, schedule bills, crush debt, and maintain healthy spending limits without selling your data.',
   },
   {
-    question: 'Why do you not connect directly to banks?',
-    answer: 'Traditional finance apps connect to banks by requesting your online banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never exposed.',
+    question: 'Why does Buhay not ask for my bank passwords?',
+    answer: 'Traditional finance apps connect to banks by requesting your banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never requested or exposed.',
   },
   {
-    question: 'Can I use Buhay on my mobile phone?',
+    question: 'Can I install Buhay on my mobile phone?',
     answer: 'Yes! Buhay is fully responsive and installable as a Progressive Web App (PWA) on iOS and Android. You can add it directly to your home screen for lightning-fast 1-tap tracking.',
   },
   {
@@ -466,7 +484,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How do I backup my financial data?',
-    answer: 'Inside the Settings page, you can download a full CSV transaction ledger or export an encrypted JSON backup snapshot to restore anytime.',
+    answer: 'Inside the Settings page, you can download a full CSV transaction ledger or export a JSON backup snapshot to restore anytime.',
   },
 ]
 
@@ -510,10 +528,16 @@ export default function LandingPage() {
       {/* Sticky Glass Navbar */}
       <nav className={styles.nav}>
         <div className={styles.navInner}>
-          <Link to="/" className={styles.brand}>
-            <span className={styles.brandMark}>↗</span>
-            <span className={styles.brandName}>Buhay</span>
-          </Link>
+          <BrandLogo to="/" />
+
+          <div className={styles.navLinks}>
+            <a href="#forecast" className={styles.navLink}>Forecast</a>
+            <a href="#accounts" className={styles.navLink}>Accounts</a>
+            <a href="#features" className={styles.navLink}>Features</a>
+            <a href="#compare" className={styles.navLink}>Comparison</a>
+            <a href="#privacy" className={styles.navLink}>Security</a>
+            <a href="#faq" className={styles.navLink}>FAQ</a>
+          </div>
 
           <div className={styles.navActions}>
             <button type="button" className={`${styles.btn} ${styles.btnGhost}`} onClick={handleSignIn}>
@@ -531,25 +555,25 @@ export default function LandingPage() {
         <section className={styles.hero}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            <span>Buhay · Personal Finance & Cash Flow Calendar</span>
+            <span>Buhay 2.0 · Predictive Cashflow & Net Worth Cockpit</span>
           </div>
 
           <h1 className={styles.heroTitle}>
-            Master Your Money. <br />
-            <span className={styles.gradientHighlight}>Zero Stress, Total Privacy.</span>
+            Master Your Cashflow. <br />
+            <span className={styles.gradientHighlight}>Predict Every Balance Dip.</span>
           </h1>
 
           <p className={styles.heroSub}>
-            The calm financial cockpit that forecasts daily cash flow, tracks multi-account net worth, stays ahead of bills, and crushes debt without selling your bank data.
+            The calm, private personal finance cockpit that maps your future account balances, aggregates multi-account net worth, stays ahead of bills, and paces daily spending — 100% private with zero bank passwords.
           </p>
 
           <div className={styles.heroActions}>
             <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} onClick={handleOpenPrimary}>
               {primaryLabel} <span>→</span>
             </button>
-            <button type="button" className={`${styles.btn} ${styles.btnGhost} ${styles.btnLg}`} onClick={handleSignIn}>
-              Sign In to Your Account
-            </button>
+            <a href="#forecast" className={`${styles.btn} ${styles.btnGhost} ${styles.btnLg}`}>
+              Explore Features ↓
+            </a>
           </div>
 
           <div className={styles.heroTrustBadges}>
@@ -560,7 +584,10 @@ export default function LandingPage() {
               <span>✓</span> Zero Bank Passwords Needed
             </div>
             <div className={styles.heroTrustItem}>
-              <span>✓</span> Instant CSV / JSON Export
+              <span>✓</span> 30-Day Runway Forecast
+            </div>
+            <div className={styles.heroTrustItem}>
+              <span>✓</span> Instant CSV & JSON Export
             </div>
           </div>
 
@@ -569,12 +596,12 @@ export default function LandingPage() {
         </section>
 
         {/* Bento Grid Feature Suite */}
-        <section className={styles.features}>
+        <section id="forecast" className={`${styles.features} ${styles.sectionAnchor}`}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionEyebrow}>Core Architecture</div>
             <h2 className={styles.sectionTitle}>Everything for Your Money In Perfect Sync</h2>
             <p className={styles.sectionSub}>
-              Everything you need to manage your personal finances effortlessly in one unified platform.
+              Stop juggling fragmented spreadsheets and bank apps. Buhay consolidates your financial life in one unified cockpit.
             </p>
           </div>
 
@@ -595,7 +622,7 @@ export default function LandingPage() {
             </div>
 
             {/* Bento Card 2: Multi-Account Hub */}
-            <div className={styles.bentoCard}>
+            <div id="accounts" className={`${styles.bentoCard} ${styles.sectionAnchor}`}>
               <div className={styles.bentoCardTop}>
                 <div className={styles.bentoIcon}>💳</div>
                 <div>
@@ -604,7 +631,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Consolidate bank accounts, e-wallets, cash, crypto, and credit cards into one real-time liquidity and net worth view with 1-click balance adjust.
+                Consolidate bank accounts, e-wallets, cash, crypto, and credit cards into one real-time liquidity and net worth view with 1-click balance adjustments.
               </p>
               <AccountsWidget />
             </div>
@@ -641,13 +668,50 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* 3 Key Pillars Deep-Dive */}
+        <section id="features" className={`${styles.highlightsSection} ${styles.sectionAnchor}`}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionEyebrow}>Fintech Excellence</div>
+            <h2 className={styles.sectionTitle}>Precision Tools for Intentional Wealth</h2>
+            <p className={styles.sectionSub}>
+              Engineered with advanced algorithms to keep you in total command of every peso.
+            </p>
+          </div>
+
+          <div className={styles.highlightsGrid}>
+            <div className={styles.highlightCard}>
+              <div className={styles.highlightIcon}>💳</div>
+              <h3 className={styles.highlightCardTitle}>Credit Card Cycle Intelligence</h3>
+              <p className={styles.highlightCardDesc}>
+                Track statement cut-off dates, payment due dates, and zero-interest grace periods with automatic symmetrical debt transfers.
+              </p>
+            </div>
+
+            <div className={styles.highlightCard}>
+              <div className={styles.highlightIcon}>🛡️</div>
+              <h3 className={styles.highlightCardTitle}>Zero Bank Credential Scraping</h3>
+              <p className={styles.highlightCardDesc}>
+                We never ask for your online banking passwords, OTPs, or API credentials. Your financial sovereignty stays strictly in your hands.
+              </p>
+            </div>
+
+            <div className={styles.highlightCard}>
+              <div className={styles.highlightIcon}>📊</div>
+              <h3 className={styles.highlightCardTitle}>Universal Data Sovereignty</h3>
+              <p className={styles.highlightCardDesc}>
+                Download your full transaction history to CSV spreadsheets or backup your entire database to encrypted JSON with a single tap.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Comparison Section: Buhay vs Alternatives */}
-        <section className={styles.comparisonSection}>
+        <section id="compare" className={`${styles.comparisonSection} ${styles.sectionAnchor}`}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionEyebrow}>Why Buhay?</div>
             <h2 className={styles.sectionTitle}>Built for You, Not Financial Advertisers</h2>
             <p className={styles.sectionSub}>
-              See how Buhay delivers superior speed, privacy, and clarity compared to traditional methods.
+              See how Buhay delivers superior speed, privacy, and clarity compared to traditional bank apps and spreadsheets.
             </p>
           </div>
 
@@ -656,7 +720,7 @@ export default function LandingPage() {
               <thead>
                 <tr>
                   <th>Feature / Capability</th>
-                  <th className={styles.highlightCol}>↗ Buhay</th>
+                  <th className={styles.highlightCol}>Buhay</th>
                   <th>Bank Apps</th>
                   <th>Spreadsheets</th>
                 </tr>
@@ -690,7 +754,7 @@ export default function LandingPage() {
         </section>
 
         {/* Privacy & Trust Pillars */}
-        <section className={styles.privacySection}>
+        <section id="privacy" className={`${styles.privacySection} ${styles.sectionAnchor}`}>
           <div className={styles.privacyInner}>
             <div className={styles.sectionHeader}>
               <div className={styles.sectionEyebrow}>Security & Ownership</div>
@@ -713,7 +777,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className={styles.faqSection}>
+        <section id="faq" className={`${styles.faqSection} ${styles.sectionAnchor}`}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionEyebrow}>Support & Answers</div>
             <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
@@ -751,7 +815,10 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <p>© {new Date().getFullYear()} Buhay. Financial clarity for real life.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <BrandLogo to="/" />
+            <span style={{ fontSize: 13, color: '#94a3b8' }}>· Bawat araw, mas malinaw.</span>
+          </div>
           <div className={styles.footerLinks}>
             <Link to="/privacy">Privacy Policy</Link>
             <Link to="/terms">Terms of Service</Link>

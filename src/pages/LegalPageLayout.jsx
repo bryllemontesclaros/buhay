@@ -7,6 +7,7 @@ import {
   LEGAL_LAST_UPDATED,
   LEGAL_OPERATOR_NAME,
 } from '../lib/legal'
+import BrandLogo from '../components/BrandLogo'
 import styles from './LegalPage.module.css'
 import navStyles from './LandingPageClean.module.css'
 
@@ -26,10 +27,7 @@ export default function LegalPageLayout({ eyebrow, title, intro, summaryPoints, 
       <a href="#legal-main" className="skipLink">Skip to main content</a>
       <nav className={navStyles.nav}>
         <div className={navStyles.navInner}>
-          <Link to="/" className={navStyles.brand}>
-            <span className={navStyles.brandMark}>↗</span>
-            <span className={navStyles.brandName}>Buhay</span>
-          </Link>
+          <BrandLogo to="/" />
           <div className={navStyles.navActions}>
             {!isSignedIn && (
               <button type="button" className={`${navStyles.btn} ${navStyles.btnGhost}`} onClick={() => navigate('/login')}>

@@ -84,35 +84,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
-.brand {
+.navLinks {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 28px;
+}
+
+.navLink {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
   text-decoration: none;
-  color: var(--text-primary);
+  transition: color 0.18s ease;
+  white-space: nowrap;
 }
 
-.brandMark {
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 20px;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
+.navLink:hover {
+  color: #059669;
 }
 
-.brandName {
-  font-weight: 800;
-  font-size: 22px;
-  letter-spacing: -0.6px;
-  color: var(--text-primary);
+.sectionAnchor {
+  scroll-margin-top: 90px;
 }
 
 .navActions {
@@ -848,6 +843,66 @@
   line-height: 1.6;
 }
 
+/* Highlight Pillars Grid */
+.highlightsSection {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.highlightCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 30px 26px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.highlightCard:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.highlightIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.highlightCardTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.highlightCardDesc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* Footer */
 .footer {
   padding: 40px 24px;
@@ -898,9 +953,18 @@
   .cockpitGrid {
     grid-template-columns: 1fr;
   }
+  .highlightsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 860px) {
+  .navLinks {
+    display: none;
+  }
+  .highlightsGrid {
+    grid-template-columns: 1fr;
+  }
   .bentoGrid {
     grid-template-columns: 1fr;
   }
