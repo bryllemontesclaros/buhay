@@ -233,8 +233,8 @@
   border: 1px solid color-mix(in srgb, var(--glass-border) 62%, var(--border));
   background: color-mix(in srgb, var(--glass-1) 72%, var(--surface2) 28%);
   color: var(--text2);
-  border-radius: 999px;
-  padding: 9px 12px;
+  border-radius: var(--radius-sm, 8px);
+  padding: 8px 12px;
   font-size: var(--type-support);
   font-weight: 700;
   cursor: pointer;

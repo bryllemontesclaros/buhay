@@ -110,19 +110,19 @@
 }
 
 .btnResetMonth {
-  background: var(--accent);
-  color: var(--bg);
-  border: none;
-  border-radius: 999px;
-  padding: 3px 10px;
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border2));
+  border-radius: var(--radius-sm, 8px);
+  padding: 4px 9px;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, background 0.15s ease;
 }
 
 .btnResetMonth:hover {
-  opacity: 0.9;
+  background: color-mix(in srgb, var(--accent) 25%, var(--surface2));
 }
 
 /* METRICS STRIP */

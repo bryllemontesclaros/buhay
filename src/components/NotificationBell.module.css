@@ -91,7 +91,7 @@
   background: linear-gradient(180deg, color-mix(in srgb, var(--blue) 86%, white 14%), color-mix(in srgb, var(--blue) 92%, black 8%));
   color: #07101a;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   font-size: var(--type-caption);
   font-weight: 700;
   cursor: pointer;
@@ -121,7 +121,7 @@
   min-height: var(--control-h-chip);
   padding: 0 10px;
   border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border));
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   background: color-mix(in srgb, var(--accent) 14%, var(--surface2));
   color: var(--accent);
   font-size: var(--type-caption);

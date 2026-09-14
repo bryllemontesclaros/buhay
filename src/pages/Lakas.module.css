@@ -2165,7 +2165,7 @@
 .gymModeVideoButton {
   min-height: 34px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 70%, var(--surface2) 30%);
   color: var(--space-fitness-ink);
@@ -2344,7 +2344,7 @@
 .gymModeSetButton {
   min-height: 46px;
   padding: 10px 15px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--border2);
   background: var(--surface);
   color: var(--text2);
@@ -4873,7 +4873,7 @@
   align-items: center;
   margin-top: 4px;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--accent-glow) 20%, transparent);
   color: var(--accent);

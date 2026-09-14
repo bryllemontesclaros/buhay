@@ -565,7 +565,7 @@
   min-height: 38px;
   padding: 8px 13px;
   border: 1px solid var(--border2);
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   background: color-mix(in srgb, var(--glass-1) 82%, var(--surface2) 18%);
   color: var(--text2);
   font-size: 12px;
@@ -989,7 +989,7 @@ tbody tr:hover td {
   display: inline-flex;
   align-items: center;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--border2);
   background: color-mix(in srgb, var(--blue) 12%, var(--glass-1));
   color: var(--blue);
