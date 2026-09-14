@@ -2756,18 +2756,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       className={`${calStyles.scheduleItemCard} ${
                         item.isPaid ? calStyles.itemCardPaid : ''
                       } ${item.type === 'income' ? calStyles.itemCardIncome : ''}`}
+                      onClick={() => {
+                        playTick()
+                        setSelected(item.dateKey)
+                        const el = document.getElementById('takda-calendar')
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
-                      <div
-                        className={calStyles.itemCardMain}
-                        onClick={() => {
-                          playTick()
-                          setSelected(item.dateKey)
-                          const el = document.getElementById('takda-calendar')
-                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                        }}
-                        role="button"
-                        tabIndex={0}
-                      >
+                      <div className={calStyles.itemCardMain}>
                         <div
                           className={calStyles.itemIconBox}
                           style={{
@@ -2833,61 +2831,50 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           {privacyMode ? 'Hidden' : fmt(item.amount, s)}
                         </div>
 
-                        <div className={calStyles.itemActions}>
-                          {item.type === 'bill' && !item.isPaid && onPayBill && (
-                            <button
-                              type="button"
-                              className={calStyles.btnQuickAction}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onPayBill(item.billId)
-                              }}
-                            >
-                              ⚡ Pay
-                            </button>
-                          )}
+                        {((item.type === 'bill' && !item.isPaid && onPayBill) ||
+                          (item.type === 'debt-due' && !item.isPaid && item.debt?.accountId) ||
+                          ((item.type === 'income' || item.type === 'expense') && item.isProjected)) && (
+                          <div className={calStyles.itemActions}>
+                            {item.type === 'bill' && !item.isPaid && onPayBill && (
+                              <button
+                                type="button"
+                                className={calStyles.btnQuickAction}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onPayBill(item.billId)
+                                }}
+                              >
+                                ⚡ Pay
+                              </button>
+                            )}
 
-                          {item.type === 'debt-due' && !item.isPaid && item.debt?.accountId && (
-                            <button
-                              type="button"
-                              className={calStyles.btnQuickAction}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleFastPayDebt(item.debt, item.amount, item.dateKey)
-                              }}
-                            >
-                              ⚡ Pay
-                            </button>
-                          )}
+                            {item.type === 'debt-due' && !item.isPaid && item.debt?.accountId && (
+                              <button
+                                type="button"
+                                className={calStyles.btnQuickAction}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleFastPayDebt(item.debt, item.amount, item.dateKey)
+                                }}
+                              >
+                                ⚡ Pay
+                              </button>
+                            )}
 
-                          {(item.type === 'income' || item.type === 'expense') && item.isProjected && (
-                            <button
-                              type="button"
-                              className={calStyles.btnQuickActionSettle}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleSettleProjectedNow(item.tx)
-                              }}
-                            >
-                              ✓ Settle
-                            </button>
-                          )}
-
-                          <button
-                            type="button"
-                            className={calStyles.btnViewDay}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              playTick()
-                              setSelected(item.dateKey)
-                              const el = document.getElementById('takda-calendar')
-                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                            }}
-                            title="Highlight in calendar"
-                          >
-                            View
-                          </button>
-                        </div>
+                            {(item.type === 'income' || item.type === 'expense') && item.isProjected && (
+                              <button
+                                type="button"
+                                className={calStyles.btnQuickActionSettle}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleSettleProjectedNow(item.tx)
+                                }}
+                              >
+                                ✓ Settle
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

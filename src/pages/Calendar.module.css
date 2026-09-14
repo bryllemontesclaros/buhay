@@ -2879,59 +2879,67 @@
 }
 
 .btnQuickAction {
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 5px 12px;
   font-size: 11px;
   font-weight: 700;
-  color: #fff;
-  background: var(--amber, #ffb347);
-  border: none;
-  border-radius: 999px;
+  letter-spacing: 0.02em;
+  color: #78350f;
+  background: #fef08a;
+  border: 1px solid #fde047;
+  border-radius: var(--radius-sm, 8px);
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
   white-space: nowrap;
+  user-select: none;
+}
+
+:global([data-theme="dark"]) .btnQuickAction {
+  color: #fef08a;
+  background: rgba(234, 179, 8, 0.18);
+  border: 1px solid rgba(234, 179, 8, 0.38);
 }
 
 .btnQuickAction:hover {
-  opacity: 0.92;
-  transform: scale(1.04);
+  opacity: 0.94;
+  transform: scale(1.02);
+}
+
+.btnQuickAction:active {
+  transform: scale(0.98);
 }
 
 .btnQuickActionSettle {
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 5px 12px;
   font-size: 11px;
   font-weight: 700;
-  color: #fff;
-  background: var(--accent, #007aff);
-  border: none;
-  border-radius: 999px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: var(--radius-sm, 8px);
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
   white-space: nowrap;
+  user-select: none;
 }
 
 .btnQuickActionSettle:hover {
-  opacity: 0.92;
-  transform: scale(1.04);
-}
-
-.btnViewDay {
-  padding: 4px 9px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text2);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.btnViewDay:hover {
-  color: var(--text);
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface2));
   transform: scale(1.02);
+}
+
+.btnQuickActionSettle:active {
+  transform: scale(0.98);
 }
 
 /* Responsive adjustments for scheduleCard */
@@ -2979,7 +2987,7 @@
   }
 
   .scheduleItemCard {
-    padding: 8px 10px;
+    padding: 10px 12px;
     gap: 8px;
   }
 
@@ -3001,14 +3009,16 @@
   .itemCardTrailing {
     flex-direction: column;
     align-items: flex-end;
-    gap: 4px;
+    justify-content: center;
+    gap: 6px;
   }
 
   .btnQuickAction,
-  .btnQuickActionSettle,
-  .btnViewDay {
-    padding: 3px 8px;
-    font-size: 10px;
+  .btnQuickActionSettle {
+    min-height: 26px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    border-radius: 7px;
   }
 }
 
