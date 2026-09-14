@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
-import { calculatePayoffSchedule } from '../lib/debts'
 import { isTransactionPaid } from '../lib/finance'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { getProjectedTransactions } from '../lib/recurrence'
@@ -26,17 +25,6 @@ const COLORS = [
 
 let globalHandledDebtTargetAt = 0
 
-function formatPayoffDate(dateObj, options) {
-  if (!dateObj) return ''
-  try {
-    const d = new Date(dateObj)
-    if (isNaN(d.getTime())) return ''
-    return d.toLocaleString('default', options)
-  } catch {
-    return ''
-  }
-}
-
 const EMPTY_FORM = {
   name: '',
   type: 'Credit Card',
@@ -57,73 +45,6 @@ const EMPTY_FORM = {
 export default function Debts({ user, data, profile = {}, symbol, privacyMode = false, hideHeader = false, debtPaymentTarget = null }) {
   const s = symbol || '₱'
   const debts = data.debts || []
-  
-  const [extraBudget, setExtraBudget] = useState(() => {
-    try {
-      if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
-        return Number(profile.debtPayoffPrefs.extraBudget) || 0
-      }
-      const saved = localStorage.getItem('takda_debt_extra_budget')
-      return saved !== null ? Number(saved) || 0 : 0
-    } catch {
-      return 0
-    }
-  })
-
-  const [strategy, setStrategy] = useState(() => {
-    try {
-      if (profile?.debtPayoffPrefs?.strategy) {
-        return profile.debtPayoffPrefs.strategy
-      }
-      return localStorage.getItem('takda_debt_strategy') || 'avalanche'
-    } catch {
-      return 'avalanche'
-    }
-  })
-
-  useEffect(() => {
-    if (profile?.debtPayoffPrefs?.extraBudget !== undefined) {
-      setExtraBudget(Number(profile.debtPayoffPrefs.extraBudget) || 0)
-    }
-    if (profile?.debtPayoffPrefs?.strategy) {
-      setStrategy(profile.debtPayoffPrefs.strategy)
-    }
-  }, [profile?.debtPayoffPrefs?.extraBudget, profile?.debtPayoffPrefs?.strategy])
-
-  function handleExtraBudgetChange(val) {
-    const numeric = Math.max(0, Number(val) || 0)
-    setExtraBudget(numeric)
-    localStorage.setItem('takda_debt_extra_budget', String(numeric))
-    if (user?.uid) {
-      fsUpdate(user.uid, 'profiles', {
-        debtPayoffPrefs: {
-          extraBudget: numeric,
-          strategy,
-        },
-      }).catch(() => {})
-    }
-  }
-
-  function handleStrategyChange(strat) {
-    setStrategy(strat)
-    localStorage.setItem('takda_debt_strategy', strat)
-    if (user?.uid) {
-      fsUpdate(user.uid, 'profiles', {
-        debtPayoffPrefs: {
-          extraBudget,
-          strategy: strat,
-        },
-      }).catch(() => {})
-    }
-  }
-
-  const availableSurplus = useMemo(() => {
-    const incList = (data.income || []).filter(isTransactionPaid)
-    const expList = (data.expenses || []).filter(isTransactionPaid)
-    const totalInc = incList.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-    const totalExp = expList.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-    return Math.max(0, totalInc - totalExp)
-  }, [data.income, data.expenses])
 
   const [form, setForm] = useState(EMPTY_FORM)
   const [payments, setPayments] = useState({})
@@ -642,58 +563,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const activeDebtsCount = mappedDebts.filter(d => (d.balance || 0) > 0).length
   const totalDebtOwed = mappedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0)
 
-  // Calculations for current payoff schedule
-  const schedule = useMemo(() => {
-    return calculatePayoffSchedule(mappedDebts, extraBudget, strategy)
-  }, [mappedDebts, extraBudget, strategy])
-
-  // Comparison logic (Avalanche vs Snowball)
-  const avalancheComparison = useMemo(() => {
-    return calculatePayoffSchedule(mappedDebts, extraBudget, 'avalanche')
-  }, [mappedDebts, extraBudget])
-
-  const snowballComparison = useMemo(() => {
-    return calculatePayoffSchedule(mappedDebts, extraBudget, 'snowball')
-  }, [mappedDebts, extraBudget])
-
-  // Calculations for baseline (no extra budget payoff)
-  const baselineSchedule = useMemo(() => {
-    return calculatePayoffSchedule(mappedDebts, 0, strategy)
-  }, [mappedDebts, strategy])
-
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
-
-  // Weighted average interest rate calculations
-  const weightedAvgRate = useMemo(() => {
-    if (totalDebtOwed === 0) return 0
-    const weightedSum = mappedDebts.reduce((sum, d) => sum + (Number(d.balance) || 0) * (Number(d.interestRate) || 0), 0)
-    return Math.round((weightedSum / totalDebtOwed) * 10) / 10
-  }, [mappedDebts, totalDebtOwed])
-
-  // Dynamic SVG line/area calculations for the timeline graph
-  const { chartPoints, areaPoints } = useMemo(() => {
-    if (!schedule?.timeline || schedule.timeline.length < 2) {
-      return { chartPoints: '', areaPoints: '' }
-    }
-    const timeline = schedule.timeline
-    const maxVal = Math.max(...timeline.map(t => t.totalOwed), 1)
-    const width = 500
-    const height = 120
-    
-    const points = timeline.map((t, idx) => {
-      const x = (idx / (timeline.length - 1)) * width
-      const y = height - (t.totalOwed / maxVal) * (height - 15) - 5
-      return `${x},${y}`
-    })
-
-    const chartPointsStr = points.join(' ')
-    const areaPointsStr = `0,120 ${chartPointsStr} 500,120`
-    return { chartPoints: chartPointsStr, areaPoints: areaPointsStr }
-  }, [schedule])
-
-  // Calculate savings compared to baseline (paying only minimums)
-  const interestSaved = Math.max(0, (baselineSchedule?.totalInterest || 0) - (schedule?.totalInterest || 0))
-  const monthsSaved = Math.max(0, (baselineSchedule?.months || 0) - (schedule?.months || 0))
 
   const renderCard = (debt) => {
     const balance = Number(debt.balance) || 0
@@ -899,74 +769,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
   const mainContent = (
     <>
-      {/* 1. PAYOFF STRATEGY OPTIMIZER COMMAND BANNER */}
-      {mappedDebts.length > 0 && (
-        <div className={dStyles.optimizerBanner}>
-          <div className={dStyles.optimizerTop}>
-            <div className={dStyles.optimizerSummary}>
-              <span className={dStyles.optimizerEyebrow}>Payoff Strategy Optimizer</span>
-              <div className={dStyles.optimizerTarget}>
-                {schedule.payoffDate ? (
-                  <>
-                    Debt-Free by <strong>{formatPayoffDate(schedule.payoffDate, { month: 'short', year: 'numeric' })}</strong>
-                    <span className={dStyles.optimizerMonthsBadge}>{schedule.months} mo</span>
-                  </>
-                ) : (
-                  <span>Projected Freedom Target</span>
-                )}
-              </div>
-              {interestSaved > 0 && (
-                <div className={dStyles.optimizerSavingsPill}>
-                  ⚡ Saves <strong>{money(interestSaved)}</strong> & {monthsSaved} months with extra payments
-                </div>
-              )}
-            </div>
-
-            <div className={dStyles.strategyToggleGroup}>
-              <button
-                type="button"
-                className={`${dStyles.btnStrategy} ${strategy === 'avalanche' ? dStyles.btnStrategyActive : ''}`}
-                onClick={() => handleStrategyChange('avalanche')}
-                title="Pay highest interest rate first (saves most money)"
-              >
-                🏔️ Avalanche
-              </button>
-              <button
-                type="button"
-                className={`${dStyles.btnStrategy} ${strategy === 'snowball' ? dStyles.btnStrategyActive : ''}`}
-                onClick={() => handleStrategyChange('snowball')}
-                title="Pay lowest balance first (fastest psychological wins)"
-              >
-                ☃️ Snowball
-              </button>
-            </div>
-          </div>
-
-          <div className={dStyles.sliderRow}>
-            <div className={dStyles.sliderLabelWrap}>
-              <span className={dStyles.sliderLabel}>Extra Monthly Payoff Allocation:</span>
-              <strong className={dStyles.sliderValue}>{money(extraBudget)}/mo</strong>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max={Math.max(25000, Math.ceil(totalDebtOwed / 10))}
-              step="500"
-              value={extraBudget}
-              onChange={e => handleExtraBudgetChange(Number(e.target.value))}
-              className={dStyles.sliderRange}
-            />
-            <div className={dStyles.sliderTicks}>
-              <span>₱0 (Min only)</span>
-              <span>+₱5,000</span>
-              <span>+₱10,000</span>
-              <span>+₱25,000+</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 2. TOOLBAR & CLEAN STACK FILTERS */}
+      {/* TOOLBAR & CLEAN STACK FILTERS */}
       <div className={dStyles.toolbar}>
         <div className={dStyles.filterPills}>
           <button
