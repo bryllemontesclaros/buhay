@@ -53,11 +53,6 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.title}>Accounts & Wealth</div>
-        <div className={styles.sub}>Manage liquid cash accounts, track live crypto holdings, and plan debt payoff strategies.</div>
-      </div>
-
       {/* UNIFIED WEALTH & NET WORTH HERO CARD */}
       <div className={tStyles.wealthHeroCard}>
         <div className={tStyles.wealthHeroTop}>

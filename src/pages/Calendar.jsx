@@ -2403,15 +2403,6 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   return (
     <div className={`${styles.page} ${calStyles.page}`}>
       <input ref={focusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'fixed', top: 0, left: 0, width: 1, height: 1, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
-      <div className={styles.pageHero}>
-        <div className={styles.pageHeader}>
-          <div className={styles.pageEyebrow}>Calendar</div>
-          <div className={styles.pageTitle}>Predict the future of your money.</div>
-          <div className={styles.pageSub}>
-            Plan upcoming income, bills, and see exactly what your balance will be on any given day.
-          </div>
-        </div>
-      </div>
       {entryFeedback && (
         <div className={`${styles.card} ${calStyles.feedbackBanner} ${calStyles.feedbackDock}`} style={{ '--feedback-tone': entryFeedback.tone }}>
           <div className={calStyles.feedbackEyebrow}>{entryFeedback.eyebrow || 'Entry saved'}</div>

@@ -44,11 +44,6 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.title}>Insights & History</div>
-        <div className={styles.sub}>Review transaction history ledger records and analyze visual cash flow distributions.</div>
-      </div>
-
       <div className={tStyles.tabsWrap}>
         <div className={tStyles.tabs} role="tablist">
           <button

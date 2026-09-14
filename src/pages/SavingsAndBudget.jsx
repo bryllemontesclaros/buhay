@@ -44,11 +44,6 @@ export default function SavingsAndBudget({ user, data, profile = {}, symbol, pri
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.title}>Budgets & Savings</div>
-        <div className={styles.sub}>Set category monthly budget limits and plan your savings target goals.</div>
-      </div>
-
       <div className={tStyles.tabsWrap}>
         <div className={tStyles.tabs} role="tablist">
           <button

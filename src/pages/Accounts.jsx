@@ -375,18 +375,6 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
 
   const mainContent = (
     <>
-      {!hideHeader ? (
-        <div className={styles.pageHero}>
-          <div className={styles.pageHeader}>
-            <div className={styles.pageEyebrow}>Accounts</div>
-            <div className={styles.pageTitle}>Keep each account clear and current.</div>
-            <div className={styles.pageSub}>
-              Cash, bank, and wallet balances work best when every account has an accurate real-world balance.
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       {/* TOP COMMAND BAR (CLEAN & UN-DUPLICATED) */}
       <div className={accStyles.commandBar}>
         <div className={accStyles.commandBarInfo}>

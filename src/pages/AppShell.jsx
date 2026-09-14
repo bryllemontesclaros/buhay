@@ -485,7 +485,7 @@ function FinanceToolGroup({
   return (
     <div className={styles.financeGroupPage}>
       <section className={styles.financeGroupHero}>
-        <div className={styles.financeGroupSwitch} role="tablist" aria-label={`${title} tools`}>
+        <div className={styles.financeGroupSwitch} role="tablist" aria-label="Finance tools">
           {tools.map(tool => (
             <button
               key={tool.id}
@@ -502,11 +502,6 @@ function FinanceToolGroup({
               <span>{tool.meta}</span>
             </button>
           ))}
-        </div>
-        <div className={styles.financeGroupIntro}>
-          <div className={styles.financeGroupEyebrow}>{eyebrow}</div>
-          <h2>{title}</h2>
-          <p>{description}</p>
         </div>
       </section>
       <div ref={contentRef} className={styles.financeGroupContent}>
