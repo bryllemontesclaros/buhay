@@ -84,7 +84,7 @@ const SECTIONS = [
     title: 'Updates and contact',
     paragraphs: [
       'We may update this Privacy Policy to reflect improvements in our architecture or changes in legal requirements. Material updates will be published on this page with a revised date.',
-      'For privacy-related questions or data requests, please contact our support team at support@takda.app.',
+      'For privacy-related questions or data requests, please contact our support team at support@buhay.app.',
     ],
   },
 ]

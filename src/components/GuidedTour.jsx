@@ -8,7 +8,7 @@ const TOUR_CONFIGS = {
       {
         target: '#takda-calendar',
         title: 'Daily Cashflow & Log',
-        body: 'Welcome to Takda! This interactive calendar shows daily income/expense dots. Tap any date to add a record or view daily entries.',
+        body: 'Welcome to Buhay! This interactive calendar shows daily income/expense dots. Tap any date to add a record or view daily entries.',
         tab: 'calendar'
       },
       {

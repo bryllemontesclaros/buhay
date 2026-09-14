@@ -599,8 +599,8 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
     const confirmed = await confirmApp({
       title: restoreMode === 'replace' ? 'Replace current data?' : 'Merge backup?',
       message: restoreMode === 'replace'
-        ? 'This will replace current income, expenses, bills, goals, accounts, budgets, receipts, transfers, calendar reminders, Lakas data, Tala data, and profile data with this backup. Any legacy receipt, meal, and body image files are reference-only and are not recreated from JSON backups.'
-        : 'This will merge the backup into your current Buhay data, including Takda, Lakas, Tala, and calendar reminders if present. Matching document ids will be updated. Any legacy receipt, meal, and body image files are reference-only and are not recreated from JSON backups.',
+        ? 'This will replace current income, expenses, bills, goals, accounts, budgets, receipts, transfers, and calendar reminders with this backup.'
+        : 'This will merge the backup into your current Buhay data, including accounts, bills, budgets, and transactions. Matching document ids will be updated.',
       confirmLabel: restoreMode === 'replace' ? 'Replace data' : 'Merge backup',
       cancelLabel: 'Cancel',
       tone: restoreMode === 'replace' ? 'danger' : 'default',
@@ -1015,7 +1015,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
         <CardHeader
           eyebrow="Currency"
           title="Currency preference"
-          description="Choose the currency Takda uses across your money records. Exchange rates stay optional for quick reference."
+          description="Choose the currency Buhay uses across your money records. Exchange rates stay optional for quick reference."
         />
 
         <div className={styles.formGroup} style={{ marginBottom: '1.25rem' }}>

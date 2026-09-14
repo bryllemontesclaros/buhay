@@ -1,64 +1,126 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">Buhay</title>
-  <desc id="desc">All-in-one life tracker for Filipinos</desc>
+  <title id="title">Buhay — Personal Finance, Cashflow &amp; Wealth Cockpit</title>
+  <desc id="desc">Predict your cashflow. Master your future wealth. 100% private with zero bank passwords.</desc>
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f8faf9" />
-      <stop offset="60%" stop-color="#eef4ff" />
-      <stop offset="100%" stop-color="#edf8ef" />
+      <stop offset="0%" stop-color="#070b09" />
+      <stop offset="50%" stop-color="#0b1410" />
+      <stop offset="100%" stop-color="#050806" />
     </linearGradient>
-    <radialGradient id="glow" cx="82%" cy="22%" r="50%">
-      <stop offset="0%" stop-color="#baf0cb" stop-opacity="0.7" />
-      <stop offset="100%" stop-color="#baf0cb" stop-opacity="0" />
+    <radialGradient id="emeraldGlow" cx="20%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.18" />
+      <stop offset="60%" stop-color="#059669" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
+    <radialGradient id="blueGlow" cx="80%" cy="80%" r="50%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="logo-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#162e26" />
+      <stop offset="50%" stop-color="#0b1713" />
+      <stop offset="100%" stop-color="#050a08" />
+    </linearGradient>
+    <linearGradient id="logo-mark" x1="16" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34f590" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#131f19" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0d1612" stop-opacity="0.9" />
+    </linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#bg)" rx="40" />
-  <rect width="1200" height="630" fill="url(#glow)" rx="40" />
 
-  <g transform="translate(82 88)">
-    <text x="0" y="0" fill="#16a34a" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="700">Buhay</text>
-    <text x="0" y="56" fill="#6d7196" font-family="Outfit, Arial, sans-serif" font-size="26" font-weight="600">Finance, fitness, mind, and daily life</text>
+  <!-- Background Base -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#emeraldGlow)" />
+  <rect width="1200" height="630" fill="url(#blueGlow)" />
 
-    <text x="0" y="170" fill="#0f1222" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="700">
-      Track your life
+  <!-- Left Content Block -->
+  <g transform="translate(80, 80)">
+    <!-- Brand Logo & Header -->
+    <g transform="translate(0, 0)">
+      <rect width="64" height="64" rx="16" fill="url(#logo-bg)" stroke="#34f590" stroke-width="1.5" stroke-opacity="0.4" />
+      <path
+        d="M18 14h15.5c6.3 0 10.8 3.7 10.8 9.1 0 3.5-1.9 6.2-5.1 7.6 4.4 1.3 7.1 4.7 7.1 9.2 0 6.4-5.3 10.1-12.8 10.1H18V14Zm13.5 14.5c3.6 0 5.8-1.8 5.8-4.7s-2.2-4.7-5.8-4.7h-7.3v9.4h7.3Zm1.2 15.7c4.1 0 6.6-2 6.6-5.2s-2.5-5.2-6.6-5.2h-8.5v10.4h8.5Z"
+        fill="url(#logo-mark)"
+      />
+      <text x="82" y="44" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif" font-size="36" font-weight="800" letter-spacing="-0.5">Buhay</text>
+      <rect x="210" y="16" width="168" height="32" rx="16" fill="#162e26" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
+      <text x="224" y="38" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" letter-spacing="0.5">FINANCIAL COCKPIT</text>
+    </g>
+
+    <!-- Main Taglines -->
+    <text x="0" y="160" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif" font-size="56" font-weight="800" letter-spacing="-1.5">
+      Master Your Cashflow.
     </text>
-    <text x="0" y="248" fill="#0f1222" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="700">
-      without losing the plot.
+    <text x="0" y="228" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif" font-size="56" font-weight="800" letter-spacing="-1.5">
+      Predict Every Balance Dip.
     </text>
 
-    <text x="0" y="336" fill="#50557a" font-family="Outfit, Arial, sans-serif" font-size="32">
-      Takda for money, Lakas for fitness,
+    <!-- Subtitle -->
+    <text x="0" y="310" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="400" line-height="1.5">
+      The calm, private financial cockpit for 30-day cashflow runways,
     </text>
-    <text x="0" y="380" fill="#50557a" font-family="Outfit, Arial, sans-serif" font-size="32">
-      Tala for mind and life admin.
+    <text x="0" y="344" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="400">
+      multi-account net worth, smart bills, and safe daily spend.
     </text>
+
+    <!-- Badges Row -->
+    <g transform="translate(0, 410)">
+      <g transform="translate(0, 0)">
+        <rect width="186" height="42" rx="10" fill="#131e19" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
+        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ Zero Passwords</text>
+      </g>
+      <g transform="translate(202, 0)">
+        <rect width="210" height="42" rx="10" fill="#131e19" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
+        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ 30-Day Forecast</text>
+      </g>
+      <g transform="translate(428, 0)">
+        <rect width="180" height="42" rx="10" fill="#131e19" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
+        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ 100% Private</text>
+      </g>
+    </g>
   </g>
 
-  <g transform="translate(760 138)">
-    <rect width="332" height="352" rx="28" fill="#ffffff" stroke="#d8dcef" stroke-width="3" />
-    <text x="28" y="46" fill="#7c81aa" font-family="Outfit, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="1.4">DAILY BALANCE CALENDAR</text>
-    <text x="28" y="80" fill="#111426" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">April 2026</text>
+  <!-- Right Graphic: Interactive Simulator Preview Card -->
+  <g transform="translate(730, 95)">
+    <rect width="400" height="440" rx="24" fill="url(#cardGrad)" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.25" />
+    
+    <!-- Card Header -->
+    <text x="28" y="44" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700" letter-spacing="1">ESTIMATED NET WORTH</text>
+    <text x="28" y="86" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="34" font-weight="800" letter-spacing="-1">₱482,500.00</text>
+    <text x="28" y="112" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700">▲ +₱35,000 Liquid Runway this month</text>
 
-    <g transform="translate(28 112)">
-      <rect width="84" height="74" rx="14" fill="#f4f6fb" stroke="#d8dcef" />
-      <text x="12" y="24" fill="#111426" font-family="Outfit, Arial, sans-serif" font-size="20" font-weight="700">28</text>
-      <text x="12" y="50" fill="#111426" font-family="'Courier New', monospace" font-size="16" font-weight="700">18,980</text>
-    </g>
-    <g transform="translate(122 112)">
-      <rect width="84" height="74" rx="14" fill="#f4f6fb" stroke="#d8dcef" />
-      <text x="12" y="24" fill="#111426" font-family="Outfit, Arial, sans-serif" font-size="20" font-weight="700">29</text>
-      <text x="12" y="50" fill="#111426" font-family="'Courier New', monospace" font-size="16" font-weight="700">18,450</text>
-    </g>
-    <g transform="translate(216 112)">
-      <rect width="88" height="74" rx="14" fill="#edf8ef" stroke="#16a34a" stroke-width="3" />
-      <text x="12" y="24" fill="#16a34a" font-family="Outfit, Arial, sans-serif" font-size="20" font-weight="700">30</text>
-      <text x="12" y="50" fill="#111426" font-family="'Courier New', monospace" font-size="16" font-weight="700">18,450</text>
+    <!-- Mini Forecast Graph Card -->
+    <g transform="translate(28, 136)">
+      <rect width="344" height="150" rx="16" fill="#0c1410" stroke="#1e2e26" stroke-width="1" />
+      <text x="16" y="28" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="12" font-weight="700">30-Day Cashflow Curve</text>
+      <text x="238" y="28" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="11" font-weight="700">● Positive Runway</text>
+      
+      <!-- Graph SVG Path -->
+      <path d="M 16 110 Q 70 125, 120 90 T 210 50 T 290 75 T 330 35" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" />
+      <circle cx="210" cy="50" r="4" fill="#34f590" />
+      <circle cx="330" cy="35" r="5" fill="#34f590" stroke="#0c1410" stroke-width="2" />
+      <text x="16" y="136" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10">Day 1 (₱52k)</text>
+      <text x="230" y="136" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10">Day 30 (₱79k)</text>
     </g>
 
-    <g transform="translate(28 218)">
-      <rect width="276" height="92" rx="18" fill="#f5f7fd" stroke="#d8dcef" />
-      <text x="18" y="34" fill="#7c81aa" font-family="Outfit, Arial, sans-serif" font-size="16" font-weight="700">SAMPLE BALANCE FOR APR 30, 2026</text>
-      <text x="18" y="67" fill="#111426" font-family="'Courier New', monospace" font-size="30" font-weight="700">₱18,450</text>
+    <!-- Mini Metrics Strip -->
+    <g transform="translate(28, 304)">
+      <rect width="166" height="106" rx="14" fill="#0c1410" stroke="#1e2e26" stroke-width="1" />
+      <text x="14" y="26" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="700">LIQUID CASHFLOW</text>
+      <text x="14" y="56" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="800">₱68,240</text>
+      <text x="14" y="80" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10">BDO, GCash, Maya</text>
+    </g>
+
+    <g transform="translate(206, 304)">
+      <rect width="166" height="106" rx="14" fill="#0c1410" stroke="#1e2e26" stroke-width="1" />
+      <text x="14" y="26" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="10" font-weight="700">SAFE DAILY SPEND</text>
+      <text x="14" y="56" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="20" font-weight="800">₱920<tspan font-size="12" fill="#64748b">/day</tspan></text>
+      <rect x="14" y="74" width="138" height="6" rx="3" fill="#1e2e26" />
+      <rect x="14" y="74" width="98" height="6" rx="3" fill="#10b981" />
     </g>
   </g>
 </svg>

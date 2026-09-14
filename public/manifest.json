@@ -22,9 +22,9 @@
       "icons": [{ "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
-      "name": "Takda Finance",
-      "short_name": "Takda",
-      "description": "Open finance tracking.",
+      "name": "Cashflow Calendar",
+      "short_name": "Calendar",
+      "description": "View 30-day cashflow runway and bill calendar.",
       "url": "/app",
       "icons": [{ "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }

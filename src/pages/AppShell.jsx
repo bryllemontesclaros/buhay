@@ -1307,7 +1307,7 @@ export default function AppShell({ user }) {
     ? 'Open Lakas settings and account controls.'
     : activeSpace === 'tala'
       ? 'Open Tala insights and settings.'
-      : 'Open savings, accounts, insights, and Takda settings here.'
+      : 'Open savings, accounts, insights, and settings here.'
   const isMorePage = activeSpace === 'lakas'
     ? lakasMoreNav.some(item => item.id === resolvedLakasPage)
     : activeSpace === 'tala'

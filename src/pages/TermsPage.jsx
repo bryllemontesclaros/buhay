@@ -79,7 +79,7 @@ const SECTIONS = [
     title: 'Applicable law and contact',
     paragraphs: [
       'These Terms shall be governed by and construed in accordance with applicable laws, including the laws of the Republic of the Philippines where relevant to Buhay\'s operation.',
-      'For any questions or concerns regarding these Terms, please contact support@takda.app.',
+      'For any questions or concerns regarding these Terms, please contact support@buhay.app.',
     ],
   },
 ]
