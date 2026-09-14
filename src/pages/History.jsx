@@ -753,6 +753,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
         onClose={detailsConfig.close}
         symbol={s}
         privacyMode={privacyMode}
+        accountLookup={accountLookup}
       />
     </div>
   )
