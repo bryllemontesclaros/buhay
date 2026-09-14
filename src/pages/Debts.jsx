@@ -1166,7 +1166,9 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
               <div className={dStyles.formRowTwoCol}>
                 <div className={dStyles.field}>
-                  <label className={dStyles.fieldLabel} htmlFor="debt-rate">Interest Rate (% APR)</label>
+                  <label className={dStyles.fieldLabel} htmlFor="debt-rate">
+                    {form.type === 'Credit Card' ? 'Annual Interest (% APR, e.g. 24%)' : 'Interest Rate (% APR)'}
+                  </label>
                   <input
                     id="debt-rate"
                     className={dStyles.fieldInput}

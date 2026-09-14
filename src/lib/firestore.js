@@ -288,22 +288,12 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
 function getTransferOutDelta(account = {}, amount = 0) {
   const normalizedAmount = Math.abs(Number(amount) || 0)
   if (!normalizedAmount) return 0
-  const isCreditCard = String(account?.type || '').toLowerCase() === 'credit card'
-  if (isCreditCard) {
-    const isStoredNegative = (Number(account?.balance) || 0) < 0
-    return isStoredNegative ? -normalizedAmount : normalizedAmount
-  }
   return -normalizedAmount
 }
 
 function getTransferInDelta(account = {}, amount = 0) {
   const normalizedAmount = Math.abs(Number(amount) || 0)
   if (!normalizedAmount) return 0
-  const isCreditCard = String(account?.type || '').toLowerCase() === 'credit card'
-  if (isCreditCard) {
-    const isStoredNegative = (Number(account?.balance) || 0) < 0
-    return isStoredNegative ? normalizedAmount : -normalizedAmount
-  }
   return normalizedAmount
 }
 
