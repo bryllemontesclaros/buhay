@@ -263,8 +263,8 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
   const isEditCreditCard = editSelectedAccount?.type === 'Credit Card'
   const editBillingCycleOptions = useMemo(() => {
     if (!isEditCreditCard || !editSelectedAccount) return []
-    return getBillingCycleOptions(editSelectedAccount, editTx?.date || today())
-  }, [isEditCreditCard, editSelectedAccount, editTx?.date])
+    return getBillingCycleOptions(editSelectedAccount, editTx?.date || today(), today(), data.debts || [])
+  }, [isEditCreditCard, editSelectedAccount, editTx?.date, data.debts])
 
   async function handleSaveEdit() {
     const error = validateAmount(editForm.amount)

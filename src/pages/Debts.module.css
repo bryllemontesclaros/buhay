@@ -459,6 +459,48 @@
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Credit Card Billing Cycle Statement Badges */
+.cycleBreakdownRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cycleBadge {
+  flex: 1;
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: color-mix(in srgb, var(--surface2) 80%, var(--surface));
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.cycleBadgeLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text3);
+}
+
+.cycleBadgeVal {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cycleValDue {
+  color: var(--red);
+}
+
+.cycleValPaid {
+  color: var(--accent);
+}
+
 /* Inline Quick Payment Row */
 .quickPayRow {
   display: flex;

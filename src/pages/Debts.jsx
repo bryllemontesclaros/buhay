@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { isTransactionPaid } from '../lib/finance'
+import { getCreditCardCycleDetails } from '../lib/billingCycles'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { getProjectedTransactions } from '../lib/recurrence'
 import { displayValue, fmt, maskMoney, playTick, today, getMonthKey, formatDisplayDate } from '../lib/utils'
@@ -208,6 +209,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
               name: form.name,
               balance: -Math.abs(balanceVal),
               creditLimit: limitVal,
+              dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
             })
@@ -231,6 +234,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
               type: 'Credit Card',
               balance: -Math.abs(balanceVal),
               creditLimit: limitVal,
+              dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
             })
@@ -254,6 +259,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
               name: form.name,
               balance: -Math.abs(balanceVal),
               creditLimit: limitVal,
+              dueDate: form.dueDate,
+              statementDate: form.statementDate,
               color: form.color,
               notes: form.notes || '',
             })
@@ -278,6 +285,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
             type: 'Credit Card',
             balance: -Math.abs(balanceVal),
             creditLimit: limitVal,
+            dueDate: form.dueDate,
+            statementDate: form.statementDate,
             color: form.color,
             notes: form.notes || '',
           })
@@ -575,6 +584,17 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const creditLimit = linkedAcc ? (Number(linkedAcc.creditLimit) || 0) : (Number(debt.creditLimit) || 0)
     const utilization = creditLimit > 0 ? Math.min(100, Math.round((balance / creditLimit) * 100)) : 0
 
+    const isCreditCard = debt.type === 'Credit Card'
+    const cycle = isCreditCard
+      ? getCreditCardCycleDetails(
+          { ...debt, balance },
+          data.expenses || [],
+          data.transfers || [],
+          today(),
+          data.debts || []
+        )
+      : null
+
     return (
       <SwipeableCard
         key={debt._id}
@@ -616,6 +636,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                 <div className={dStyles.debtMeta}>
                   <span>{debt.type}</span>
                   {Number(debt.interestRate) > 0 && <span>· {debt.interestRate}% APR</span>}
+                  {debt.statementDate && <span>· Closes Day {debt.statementDate}</span>}
                   {debt.dueDate && <span>· Due Day {debt.dueDate}</span>}
                   {debt.contactName && <span>· {debt.contactName}</span>}
                 </div>
@@ -656,6 +677,26 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                   }}
                 />
               </div>
+            </div>
+          )}
+
+          {/* Credit Card Billing Cycle Statement Badges */}
+          {isCreditCard && cycle?.hasCycle && !isCleared && (
+            <div className={dStyles.cycleBreakdownRow}>
+              <div className={dStyles.cycleBadge}>
+                <span className={dStyles.cycleBadgeLabel}>Statement Due ({formatDisplayDate(cycle.dueDate)})</span>
+                <span className={`${dStyles.cycleBadgeVal} ${cycle.billedAmount > 0 && !cycle.isPaid ? dStyles.cycleValDue : dStyles.cycleValPaid}`}>
+                  {cycle.isPaid || cycle.billedAmount <= 0 ? 'Cleared ✓' : money(cycle.billedAmount)}
+                </span>
+              </div>
+              {cycle.unbilledAmount > 0 && (
+                <div className={dStyles.cycleBadge}>
+                  <span className={dStyles.cycleBadgeLabel}>Next Statement ({formatDisplayDate(cycle.nextDueDate)})</span>
+                  <span className={dStyles.cycleBadgeVal}>
+                    {money(cycle.unbilledAmount)}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 

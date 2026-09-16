@@ -1702,8 +1702,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const calendarBillingCycleOptions = useMemo(() => {
     if (!isCurrentModalCreditCard || !currentModalAccount) return []
     const targetDate = editTx?.date || selected || todayStr
-    return getBillingCycleOptions(currentModalAccount, targetDate)
-  }, [isCurrentModalCreditCard, currentModalAccount, editTx?.date, selected, todayStr])
+    return getBillingCycleOptions(currentModalAccount, targetDate, today(), data?.debts || [])
+  }, [isCurrentModalCreditCard, currentModalAccount, editTx?.date, selected, todayStr, data?.debts])
 
 
   useEffect(() => {

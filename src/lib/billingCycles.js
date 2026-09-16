@@ -95,18 +95,26 @@ export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
 /**
  * Generates available billing cycle options for a transaction on a credit card.
  */
-export function getBillingCycleOptions(cardOrDebt = {}, txDateStr = today(), referenceDate = today()) {
-  const rawStatementDay = parseDayOfMonth(cardOrDebt?.statementDate)
-  const rawDueDay = parseDayOfMonth(cardOrDebt?.dueDate)
+export function getBillingCycleOptions(cardOrDebt = {}, txDateStr = today(), referenceDate = today(), debts = []) {
+  let target = cardOrDebt || {}
+  if ((!target.statementDate && !target.dueDate) && Array.isArray(debts) && debts.length > 0 && target._id) {
+    const linked = debts.find(d => d && (d.accountId === target._id || d._id === target._id))
+    if (linked && (linked.statementDate || linked.dueDate)) {
+      target = { ...target, statementDate: linked.statementDate, dueDate: linked.dueDate }
+    }
+  }
 
-  if (!rawStatementDay && !rawDueDay && cardOrDebt?.type !== 'Credit Card') {
+  const rawStatementDay = parseDayOfMonth(target.statementDate)
+  const rawDueDay = parseDayOfMonth(target.dueDate)
+
+  if (!rawStatementDay && !rawDueDay && target.type !== 'Credit Card') {
     return []
   }
 
   const dueDay = rawDueDay || (rawStatementDay <= 10 ? rawStatementDay + 20 : rawStatementDay - 10) || 5
   const statementDay = rawStatementDay || inferStatementDay(dueDay)
 
-  const cycleDetails = getCreditCardCycleDetails(cardOrDebt, [], [], referenceDate)
+  const cycleDetails = getCreditCardCycleDetails(target, [], [], referenceDate, debts)
   const autoCycle = getCycleForTransaction(txDateStr, statementDay, dueDay)
 
   const autoDueDate = autoCycle?.dueDate || cycleDetails?.nextDueDate || ''
@@ -147,13 +155,21 @@ export function getBillingCycleOptions(cardOrDebt = {}, txDateStr = today(), ref
  * Computes complete billing cycle state for a credit card account or debt.
  * Handles statement balances, unbilled current charges, manual cycle overrides, and payment allocations.
  */
-export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], payments = [], referenceDate = today()) {
-  const rawStatementDay = parseDayOfMonth(cardOrDebt.statementDate)
-  const rawDueDay = parseDayOfMonth(cardOrDebt.dueDate)
+export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], payments = [], referenceDate = today(), debts = []) {
+  let target = cardOrDebt || {}
+  if ((!target.statementDate && !target.dueDate) && Array.isArray(debts) && debts.length > 0 && target._id) {
+    const linked = debts.find(d => d && (d.accountId === target._id || d._id === target._id))
+    if (linked && (linked.statementDate || linked.dueDate)) {
+      target = { ...target, statementDate: linked.statementDate, dueDate: linked.dueDate }
+    }
+  }
+
+  const rawStatementDay = parseDayOfMonth(target.statementDate)
+  const rawDueDay = parseDayOfMonth(target.dueDate)
 
   // If neither statement date nor due date is given, fallback
   if (!rawStatementDay && !rawDueDay) {
-    const currentTotalBalance = Math.abs(Number(cardOrDebt.balance) || 0)
+    const currentTotalBalance = Math.abs(Number(target.balance) || 0)
     return {
       hasCycle: false,
       statementDay: null,
@@ -169,7 +185,7 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
   const dueDay = rawDueDay || (rawStatementDay <= 10 ? rawStatementDay + 20 : rawStatementDay - 10)
   const statementDay = rawStatementDay || inferStatementDay(dueDay)
 
-  const currentTotalBalance = Math.abs(Number(cardOrDebt.balance) || 0)
+  const currentTotalBalance = Math.abs(Number(target.balance) || 0)
 
   const refNorm = normalizeDate(referenceDate) || today()
   const [refY, refM, refD] = refNorm.split('-').map(Number)

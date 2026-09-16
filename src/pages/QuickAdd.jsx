@@ -31,7 +31,7 @@ function normalizeAmountInput(value) {
 
 
 
-export default function QuickAdd({ user, profile = {}, accounts = [], symbol, onClose, onTypeChange, defaultType = 'expense', defaultDate, initialEntry = null }) {
+export default function QuickAdd({ user, profile = {}, accounts = [], debts = [], symbol, onClose, onTypeChange, defaultType = 'expense', defaultDate, initialEntry = null }) {
   const s = symbol || '₱'
   const initialType = initialEntry?.type || defaultType
   const initialDraft = getDefaultTransactionDraft(initialType)
@@ -87,8 +87,8 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
 
   const billingCycleOptions = useMemo(() => {
     if (!isCreditCardAccount || !selectedAccount) return []
-    return getBillingCycleOptions(selectedAccount, entryDate)
-  }, [isCreditCardAccount, selectedAccount, entryDate])
+    return getBillingCycleOptions(selectedAccount, entryDate, today(), debts)
+  }, [isCreditCardAccount, selectedAccount, entryDate, debts])
 
 
   useEffect(() => {

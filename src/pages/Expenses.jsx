@@ -38,8 +38,8 @@ export default function Expenses({ user, data, symbol }) {
 
   const billingCycleOptions = useMemo(() => {
     if (!isCreditCard || !selectedAccount) return []
-    return getBillingCycleOptions(selectedAccount, form.date || today())
-  }, [isCreditCard, selectedAccount, form.date])
+    return getBillingCycleOptions(selectedAccount, form.date || today(), today(), data.debts || [])
+  }, [isCreditCard, selectedAccount, form.date, data.debts])
 
   const quickPresets = getQuickItems('expense')
   const presetGroups = getPresetGroups('expense')

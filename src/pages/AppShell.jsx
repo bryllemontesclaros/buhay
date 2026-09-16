@@ -1934,6 +1934,7 @@ export default function AppShell({ user }) {
               user={user}
               profile={profile}
               accounts={data.accounts}
+              debts={data.debts}
               symbol={symbol}
               defaultType={quickAddSheet.type}
               defaultDate={quickAddDefaultDate}
