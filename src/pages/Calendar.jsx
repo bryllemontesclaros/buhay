@@ -2318,12 +2318,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
           <div className={calStyles.outlookRadarGrid}>
             <div className={calStyles.outlookRadarCard}>
-              <span className={calStyles.outlookRadarLabel}>Lowest Dip</span>
-              <strong className={calStyles.outlookRadarValue} style={{ color: lowestBalanceDip.minVal < 0 ? 'var(--red)' : lowestBalanceDip.minVal < 2000 ? 'var(--amber)' : 'var(--text)' }}>
-                {balanceMoney(lowestBalanceDip.minVal)}
+              <span className={calStyles.outlookRadarLabel}>Current Debts</span>
+              <strong className={calStyles.outlookRadarValue} style={{ color: totalDebts > 0 ? 'var(--red)' : 'var(--text)' }}>
+                {balanceMoney(totalDebts)}
               </strong>
               <span className={calStyles.outlookRadarSub}>
-                {lowestBalanceDip.minDate ? formatBalanceDate(lowestBalanceDip.minDate) : '—'}
+                Total Outstanding
               </span>
             </div>
 
@@ -2465,10 +2465,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           </div>
 
           <div className={calStyles.calHeaderBottom}>
-            <div className={calStyles.monthLowestChip} title={`Lowest forecasted balance this month (${formatBalanceDate(lowestBalanceDip.minDate)})`}>
-              <span className={calStyles.monthLowestLabel}>Lowest Dip</span>
-              <strong className={lowestBalanceDip.minVal < 0 ? calStyles.monthLowestNegative : lowestBalanceDip.minVal < 2000 ? calStyles.monthLowestTight : calStyles.monthLowestNormal}>
-                {balanceMoney(lowestBalanceDip.minVal)}
+            <div className={calStyles.monthLowestChip} title={`Total current debts: ${balanceMoney(totalDebts)}`}>
+              <span className={calStyles.monthLowestLabel}>Current Debts</span>
+              <strong className={totalDebts > 0 ? calStyles.monthLowestNegative : calStyles.monthLowestNormal}>
+                {balanceMoney(totalDebts)}
               </strong>
             </div>
 
