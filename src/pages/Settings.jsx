@@ -72,11 +72,13 @@ const BACKUP_COLLECTIONS = [
   { key: 'expenses', label: 'Expenses' },
   { key: 'bills', label: 'Bills' },
   { key: 'goals', label: 'Savings goals' },
+  { key: 'debts', label: 'Debts & credit lines' },
   { key: 'accounts', label: 'Accounts' },
   { key: 'budgets', label: 'Budgets' },
   { key: 'receipts', label: 'Receipts' },
   { key: 'transfers', label: 'Transfers' },
   { key: 'calendarEvents', label: 'Calendar reminders' },
+  { key: 'balanceOverrideLog', label: 'Balance logs' },
   { key: 'portfolioHoldings', label: 'Portfolio holdings' },
   { key: 'lakasRoutines', label: 'Lakas routines' },
   { key: 'lakasWorkouts', label: 'Lakas workouts' },
@@ -627,7 +629,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   async function handleReset() {
     const confirmed = await confirmApp({
       title: 'Reset financial records?',
-      message: 'This permanently deletes your transactions, receipts, accounts, bills, budgets, and savings records while keeping your account login active. This cannot be undone.',
+      message: 'This permanently deletes your transactions, receipts, accounts, credit cards, debts, bills, budgets, and savings records while keeping your account login active. This cannot be undone.',
       confirmLabel: 'Reset data',
       cancelLabel: 'Keep data',
       tone: 'danger',

@@ -771,11 +771,13 @@ export async function fsRestoreBackup(uid, backup = {}, mode = 'merge') {
     'expenses',
     'bills',
     'goals',
+    'debts',
     'accounts',
     'budgets',
     'receipts',
     'transfers',
     'calendarEvents',
+    'balanceOverrideLog',
     'portfolioHoldings',
     'lakasRoutines',
     'lakasWorkouts',
@@ -840,7 +842,33 @@ export async function fsResetFinancialData(uid) {
     ...bodySnapshot.docs.map(snapshot => deleteLakasBodyPhoto((snapshot.data() || {}).photoPath)),
   ])
 
-  const collections = ['income', 'expenses', 'bills', 'goals', 'accounts', 'budgets', 'receipts', 'transfers', 'calendarEvents', 'portfolioHoldings', 'lakasRoutines', 'lakasWorkouts', 'lakasBodyLogs', 'lakasActivities', 'lakasHabits', 'lakasReminders', 'lakasMeals', 'lakasGoals']
+  const collections = [
+    'income',
+    'expenses',
+    'bills',
+    'goals',
+    'debts',
+    'accounts',
+    'budgets',
+    'receipts',
+    'transfers',
+    'calendarEvents',
+    'balanceOverrideLog',
+    'portfolioHoldings',
+    'lakasRoutines',
+    'lakasWorkouts',
+    'lakasBodyLogs',
+    'lakasActivities',
+    'lakasHabits',
+    'lakasReminders',
+    'lakasMeals',
+    'lakasGoals',
+    'talaCheckins',
+    'talaJournal',
+    'talaMoods',
+    'talaTasks',
+    'talaGoals',
+  ]
   for (const col of collections) {
     await fsDeleteCollection(uid, col)
   }
@@ -862,7 +890,34 @@ export async function fsDeleteAccountData(uid) {
     ...bodySnapshot.docs.map(snapshot => deleteLakasBodyPhoto((snapshot.data() || {}).photoPath)),
   ])
 
-  const collections = ['income', 'expenses', 'bills', 'goals', 'accounts', 'budgets', 'feedback', 'receipts', 'transfers', 'calendarEvents', 'portfolioHoldings', 'lakasRoutines', 'lakasWorkouts', 'lakasBodyLogs', 'lakasActivities', 'lakasHabits', 'lakasReminders', 'lakasMeals', 'lakasGoals', 'talaCheckins', 'talaJournal', 'talaMoods', 'talaTasks', 'talaGoals']
+  const collections = [
+    'income',
+    'expenses',
+    'bills',
+    'goals',
+    'debts',
+    'accounts',
+    'budgets',
+    'feedback',
+    'receipts',
+    'transfers',
+    'calendarEvents',
+    'balanceOverrideLog',
+    'portfolioHoldings',
+    'lakasRoutines',
+    'lakasWorkouts',
+    'lakasBodyLogs',
+    'lakasActivities',
+    'lakasHabits',
+    'lakasReminders',
+    'lakasMeals',
+    'lakasGoals',
+    'talaCheckins',
+    'talaJournal',
+    'talaMoods',
+    'talaTasks',
+    'talaGoals',
+  ]
 
   for (const col of collections) {
     await fsDeleteCollection(uid, col)
