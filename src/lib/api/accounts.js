@@ -8,7 +8,12 @@ import { getAccountBalanceDelta, shouldAffectCurrentAccountBalance } from '../fi
 import { getBillPeriodInfo } from '../bills'
 import { normalizeDate, today } from '../utils'
 
-import { userCol, fsAdd, fsUpdate, fsDel } from './core'
+import {
+  userCol, fsAdd, fsUpdate, fsDel,
+  chunkList, getAccountRef, buildAccountLookup, queueAccountAdjustment,
+  hasOwn, getTransactionState, applyAccountAdjustments,
+  getTransferOutDelta, getTransferInDelta
+} from './core'
 
 export async function fsDeleteAccountAndUnlinkTransactions(uid, accountId, data = {}) {
   if (!accountId) return
@@ -90,65 +95,6 @@ export async function fsDeleteAccountAndUnlinkTransactions(uid, accountId, data 
     await batch.commit()
   }
 }
-
-function getAccountRef(uid, accountId) {
-  return doc(db, 'users', uid, 'accounts', accountId)
-}
-
-function buildAccountLookup(accounts = []) {
-  return new Map(accounts.map(account => [account._id, account]))
-}
-
-function queueAccountAdjustment(adjustments, accountId, delta) {
-  if (!accountId || !Number.isFinite(delta) || delta === 0) return
-  adjustments.set(accountId, (adjustments.get(accountId) || 0) + delta)
-}
-
-function hasOwn(object = {}, key) {
-  return Object.prototype.hasOwnProperty.call(object, key)
-}
-
-function getTransactionState(base = {}, overrides = {}, options = {}) {
-  const hasOverride = key => Object.prototype.hasOwnProperty.call(overrides, key)
-  const date = normalizeDate(hasOverride('date') ? overrides.date : base.date)
-  const amount = Number(hasOverride('amount') ? overrides.amount : base.amount) || 0
-  const type = hasOverride('type') ? overrides.type : base.type
-  const paymentStatus = String(hasOverride('paymentStatus') ? overrides.paymentStatus : (base.paymentStatus || 'paid')).toLowerCase() === 'unpaid'
-    ? 'unpaid'
-    : 'paid'
-  const accountId = hasOverride('accountId') ? (overrides.accountId || '') : (base.accountId || '')
-  const requestedLink = hasOverride('accountBalanceLinked')
-    ? Boolean(overrides.accountBalanceLinked)
-    : Boolean(base.accountBalanceLinked)
-  const accountBalanceLinked = Boolean(requestedLink && accountId)
-  const computedAccountBalanceApplied = shouldAffectCurrentAccountBalance({
-    date,
-    accountId,
-    accountBalanceLinked,
-    paymentStatus,
-  })
-  const accountBalanceApplied = options.useStoredApplied && hasOwn(base, 'accountBalanceApplied')
-    ? Boolean(base.accountBalanceApplied)
-    : computedAccountBalanceApplied
-
-  return {
-    date,
-    amount,
-    type,
-    paymentStatus,
-    accountId,
-    accountBalanceLinked,
-    accountBalanceApplied,
-  }
-}
-
-function applyAccountAdjustments(batch, uid, adjustments, accountLookup) {
-  adjustments.forEach((delta, accountId) => {
-    if (!delta || !accountLookup.has(accountId)) return
-    batch.update(getAccountRef(uid, accountId), { balance: increment(delta) })
-  })
-}
-
 
 export async function fsTransferAccounts(uid, transfer = {}, accounts = []) {
   const amount = Number(transfer.amount) || 0

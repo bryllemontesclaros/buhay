@@ -8,7 +8,12 @@ import { getAccountBalanceDelta, shouldAffectCurrentAccountBalance } from '../fi
 import { getBillPeriodInfo } from '../bills'
 import { normalizeDate, today } from '../utils'
 
-import { userCol, fsAdd, fsUpdate, fsDel } from './core'
+import {
+  userCol, fsAdd, fsUpdate, fsDel,
+  chunkList, getAccountRef, buildAccountLookup, queueAccountAdjustment,
+  hasOwn, getTransactionState, applyAccountAdjustments,
+  getTransferOutDelta, getTransferInDelta, deleteReceiptAsset, getReceiptExtension
+} from './core'
 
 export async function fsAddTransaction(uid, col, data, accounts = []) {
   const accountLookup = buildAccountLookup(accounts)
@@ -133,19 +138,6 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
   return { transactionId: expenseId, paidAt, period }
 }
 
-function getTransferOutDelta(account = {}, amount = 0) {
-  const normalizedAmount = Math.abs(Number(amount) || 0)
-  if (!normalizedAmount) return 0
-  return -normalizedAmount
-}
-
-function getTransferInDelta(account = {}, amount = 0) {
-  const normalizedAmount = Math.abs(Number(amount) || 0)
-  if (!normalizedAmount) return 0
-  return normalizedAmount
-}
-
-
 export async function fsUpdateTransaction(uid, col, currentTx, data, accounts = []) {
   const accountLookup = buildAccountLookup(accounts)
   const previous = getTransactionState(currentTx, {}, { useStoredApplied: true })
@@ -249,19 +241,6 @@ export async function fsSyncDueLinkedTransactions(uid, transactions = [], accoun
   return dueTransactions.length
 }
 
-function getReceiptExtension(fileName = '', fallback = 'jpg') {
-  const match = String(fileName || '').match(/\.([a-z0-9]+)$/i)
-  return (match?.[1] || fallback).toLowerCase()
-}
-
-async function deleteReceiptAsset(path) {
-  if (!path) return
-  try {
-    await deleteObject(storageRef(storage, path))
-  } catch {
-    // Ignore missing or already-deleted assets so the Firestore delete can still finish.
-  }
-}
 
 
 

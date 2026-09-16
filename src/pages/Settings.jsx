@@ -1179,7 +1179,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
                   type="date"
                   className={styles.dateFieldNative}
                   value={goalForm.date}
-                  onChange={event => setGoalField('date', event.target.value)}
+                  onChange={event => setGoalForm(current => ({ ...current, date: event.target.value }))}
                 />
               </div>
             </div>

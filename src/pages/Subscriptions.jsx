@@ -88,7 +88,7 @@ export default function Subscriptions({ user, data, symbol, privacyMode = false 
         
         <div className={sStyles.subCardBody}>
           <div className={sStyles.subCardDetail}>
-            <span className={bStyles?.detailLabel || sStyles.detailLabel}>Amount</span>
+            <span className={sStyles.detailLabel}>Amount</span>
             <strong className={isIncome ? sStyles.amountIncome : sStyles.amountExpense}>
               {isIncome ? '+' : '-'}{money(tx.amount)}
             </strong>

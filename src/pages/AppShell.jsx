@@ -11,6 +11,7 @@ import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Bills from './Bills'
+import Settings from './Settings'
 import { QuickAddModal } from '../components/modals/QuickAddModal'
 import History from './History'
 import { SettingsModal } from '../components/modals/SettingsModal'
@@ -544,9 +545,6 @@ export default function AppShell({ user }) {
 
   function handleRealtimeError(key, error) {
     console.error(`Buhay sync failed for ${key}`, error)
-    if (Object.prototype.hasOwnProperty.call(loadFlagsRef.current, key)) {
-      markLoaded(key)
-    }
     setSyncIssue({
       title: 'Sync needs a refresh',
       message: 'Some of your data could not update in real time. Check your connection, then refresh Buhay.',

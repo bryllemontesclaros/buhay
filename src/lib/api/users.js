@@ -8,7 +8,7 @@ import { getAccountBalanceDelta, shouldAffectCurrentAccountBalance } from '../fi
 import { getBillPeriodInfo } from '../bills'
 import { normalizeDate, today } from '../utils'
 
-import { userCol, fsAdd, fsUpdate, fsDel } from './core'
+import { userCol, fsAdd, fsUpdate, fsDel, chunkList, deleteReceiptAsset } from './core'
 
 export async function fsSetProfile(uid, profile) {
   return await setDoc(doc(db, 'users', uid, 'profile', 'main'), profile, { merge: true })
@@ -82,13 +82,6 @@ function sanitizeRestoreDoc(entry = {}) {
   return payload
 }
 
-function chunkList(items = [], size = 400) {
-  const chunks = []
-  for (let index = 0; index < items.length; index += size) {
-    chunks.push(items.slice(index, index + size))
-  }
-  return chunks
-}
 
 function collectRestoreAssetPaths(rows = [], keys = []) {
   const paths = new Set()
