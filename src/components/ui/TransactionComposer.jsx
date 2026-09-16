@@ -300,6 +300,7 @@ export function TransactionComposer({
               </Button>
             </div>
           </div>
-        </div>
+        </div>,
+    document.body
   )
 }
