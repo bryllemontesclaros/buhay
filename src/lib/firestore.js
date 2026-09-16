@@ -872,6 +872,15 @@ export async function fsResetFinancialData(uid) {
   for (const col of collections) {
     await fsDeleteCollection(uid, col)
   }
+
+  try {
+    await updateDoc(doc(db, 'users', uid, 'profile', 'main'), {
+      dailyBalanceOverrides: deleteField(),
+      monthStartBalances: deleteField(),
+    })
+  } catch (err) {
+    console.warn('Could not clear balance overrides on profile', err)
+  }
 }
 
 export async function fsDeleteAccountData(uid) {
