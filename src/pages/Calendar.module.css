@@ -1268,6 +1268,7 @@
   box-shadow: var(--shadow-resting);
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: calc(100dvh - 32px);
   width: 100%;
   padding: 24px;
@@ -1302,7 +1303,10 @@
 .modalClose:disabled,
 .typeBtn:disabled,
 .quickCat:disabled,
-.recurChip:disabled,
+.recurChip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .typeToggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1.25rem; }
 .typeBtn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text3); font-size: var(--type-body-sm); font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; min-height: 52px; /* box-shadow flattened */ }
 .typeBtn:hover { border-color: var(--border2); color: var(--text); }
@@ -1867,7 +1871,21 @@
     font-size: var(--type-caption);
   }
   .modalOverlay { padding: 0; }
-  .modal { width: 100%; max-height: calc(100dvh - 74px - env(safe-area-inset-bottom)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); }
+  .modal {
+    width: 100%;
+    max-height: calc(100dvh - 74px - env(safe-area-inset-bottom));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    overflow-x: hidden;
+  }
+  .modalFields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .advancedGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
   .modalActions {
     position: sticky;
     bottom: calc(-1rem - env(safe-area-inset-bottom));

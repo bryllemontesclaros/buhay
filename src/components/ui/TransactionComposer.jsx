@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import calStyles from '../../pages/Calendar.module.css'
-import styles from '../../pages/AppShell.module.css'
+import styles from '../../pages/Page.module.css'
 import Button from '../ui/Button'
 
 export function TransactionComposer({
@@ -201,7 +201,7 @@ export function TransactionComposer({
                   ))}
                 </select>
               </div>
-              <div className={styles.formGroup}>
+              <div className={`${styles.formGroup} ${isCurrentModalCreditCard && calendarBillingCycleOptions.length > 0 ? '' : calStyles.modalFieldFull}`}>
                 <label>Counts in balances</label>
                 <select value={form.paymentStatus} onChange={event => set('paymentStatus', event.target.value)} disabled={formSaving}>
                   <option value="paid">Paid</option>
@@ -209,7 +209,7 @@ export function TransactionComposer({
                 </select>
               </div>
               {isCurrentModalCreditCard && calendarBillingCycleOptions.length > 0 && (
-                <div className={`${styles.formGroup} ${calStyles.modalFieldFull}`}>
+                <div className={styles.formGroup}>
                   <label>💳 Billing Statement</label>
                   <select
                     value={form.billingCycle || 'auto'}
