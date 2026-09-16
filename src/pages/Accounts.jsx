@@ -12,26 +12,7 @@ import QuickAdjustModal from '../components/modals/QuickAdjustModal'
 import TransferModal from '../components/modals/TransferModal'
 import AccountEditorModal from '../components/modals/AccountEditorModal'
 
-const ACCOUNT_TYPES = ['Bank', 'E-wallet', 'Cash', 'Investment', 'Other']
-const ACCOUNT_ICONS = { Bank: '🏦', 'E-wallet': '📱', Cash: '💵', Investment: '📈', Other: '🏷' }
-const TYPE_COLORS = {
-  Bank: '#3b82f6',
-  'E-wallet': '#10b981',
-  Cash: '#f59e0b',
-  Investment: '#8b5cf6',
-  Other: '#06b6d4',
-}
-
-const COLORS = [
-  { name: 'Green', value: '#22d87a' },
-  { name: 'Blue', value: '#3b82f6' },
-  { name: 'Amber', value: '#ffb347' },
-  { name: 'Red', value: '#ff5370' },
-  { name: 'Purple', value: '#b48eff' },
-  { name: 'Teal', value: '#2dd4bf' },
-  { name: 'Pink', value: '#f472b6' },
-  { name: 'Gray', value: '#9090b0' },
-]
+import { ACCOUNT_TYPES, ACCOUNT_ICONS, TYPE_COLORS, COLORS } from '../lib/accountConstants'
 
 const EMPTY_FORM = { name: '', type: 'Bank', balance: '', creditLimit: '', color: '#3b82f6', notes: '' }
 
@@ -598,4 +579,8 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         handleSaveAccount={handleSaveAccount}
         s={s}
       />
-    
+    </>
+  )
+
+  return hideHeader ? mainContent : <div className={styles.page}>{mainContent}</div>
+}

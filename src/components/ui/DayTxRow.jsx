@@ -1,6 +1,6 @@
 import calStyles from '../../pages/Calendar.module.css'
 import { getTakdaTransactionLifecycle } from '../../lib/finance'
-import { formatFullCellBalance as fmt, today } from '../../lib/utils'
+import { fmt, today } from '../../lib/utils'
 
 export function DayTxRow({
   t,
