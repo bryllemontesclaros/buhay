@@ -126,16 +126,6 @@
   background: linear-gradient(180deg, color-mix(in srgb, #16b88a 28%, white 10%), color-mix(in srgb, #16b88a 80%, black 20%));
 }
 
-.companionAvatarLakas {
-  background: linear-gradient(180deg, color-mix(in srgb, #ea580c 28%, white 10%), color-mix(in srgb, #ea580c 80%, black 20%));
-  animation-delay: 0.4s;
-}
-
-.companionAvatarTala {
-  background: linear-gradient(180deg, color-mix(in srgb, #6366f1 28%, white 10%), color-mix(in srgb, #6366f1 80%, black 20%));
-  animation-delay: 0.8s;
-}
-
 .companionEyes {
   position: absolute;
   top: 21px;
@@ -277,19 +267,7 @@
   background: var(--surface);
 }
 
-.previewSpaceLakas {
-  border-color: color-mix(in srgb, #ea580c 34%, var(--border));
-  background: var(--surface);
-}
-
-.previewSpaceTala {
-  border-color: color-mix(in srgb, #6366f1 34%, var(--border));
-  background: var(--surface);
-}
-
 .previewSpaceTakda span { color: #16b88a; }
-.previewSpaceLakas span { color: #ea580c; }
-.previewSpaceTala span { color: #6366f1; }
 
 .previewDay {
   min-height: 76px;

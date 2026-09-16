@@ -56,8 +56,6 @@
 }
 
 .space_takda { border-color: color-mix(in srgb, #10b981 30%, var(--border2)); }
-.space_lakas { border-color: color-mix(in srgb, #3b82f6 30%, var(--border2)); }
-.space_tala  { border-color: color-mix(in srgb, #c084fc 30%, var(--border2)); }
 
 .icon {
   color: var(--text3);

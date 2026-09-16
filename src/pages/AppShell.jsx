@@ -50,27 +50,6 @@ function safeLazy(importFn) {
   })
 }
 
-const Lakas = safeLazy(() => import('./Lakas'))
-const Tala = safeLazy(() => import('./Tala'))
-
-const LAKAS_COLLECTIONS = [
-  'lakasRoutines',
-  'lakasWorkouts',
-  'lakasBodyLogs',
-  'lakasActivities',
-  'lakasHabits',
-  'lakasReminders',
-  'lakasMeals',
-  'lakasGoals',
-]
-
-const TALA_COLLECTIONS = [
-  'talaCheckins',
-  'talaJournal',
-  'talaMoods',
-  'talaTasks',
-  'talaGoals',
-]
 
 class PageErrorBoundary extends Component {
   constructor(props) {
@@ -255,83 +234,21 @@ const NAV_ICONS = {
       <path d="M12 8v4l2.5 2.5"/>
     </svg>
   ),
-  lakas: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z"/>
-    </svg>
-  ),
+
   overview: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 12h4l2-6 4 12 2-6h4"/>
       <path d="M5 20h14"/>
     </svg>
   ),
-  workouts: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 14V10"/>
-      <path d="M8 16V8"/>
-      <path d="M16 16V8"/>
-      <path d="M20 14V10"/>
-      <path d="M8 12h8"/>
-      <path d="M2 12h2"/>
-      <path d="M20 12h2"/>
-    </svg>
-  ),
-  meals: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 3v8"/>
-      <path d="M5 3v4"/>
-      <path d="M9 3v4"/>
-      <path d="M7 11v10"/>
-      <path d="M15 3v18"/>
-      <path d="M15 3c2 1.2 3 3.2 3 6 0 2.4-1 4-3 4"/>
-    </svg>
-  ),
-  activity: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 17.5c2.5-5 4.5-7.5 7-7.5 2 0 3 1.5 5 1.5 1.2 0 2-.5 2.5-1"/>
-      <circle cx="7" cy="6" r="2"/>
-      <path d="M11 22h.01"/>
-      <path d="M16 20h.01"/>
-      <path d="M20 22h.01"/>
-    </svg>
-  ),
-  habits: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 7 9 18l-5-5"/>
-      <path d="M4 6h8"/>
-      <path d="M4 10h5"/>
-    </svg>
-  ),
-  body: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="5" r="2.5"/>
-      <path d="M6 21c.7-4 2.7-6 6-6s5.3 2 6 6"/>
-      <path d="M8 10h8"/>
-      <path d="M9 10v5"/>
-      <path d="M15 10v5"/>
-    </svg>
-  ),
-  goals: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 21V4"/>
-      <path d="M5 5h11l-1.8 3L16 11H5"/>
-      <path d="M12 15l2 2 4-5"/>
-    </svg>
-  ),
-  reminders: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 9a6 6 0 0 1 12 0c0 7 2 7 2 9H4c0-2 2-2 2-9"/>
-      <path d="M10 21h4"/>
-      <path d="M12 3V2"/>
-    </svg>
-  ),
-  tala: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.8 4.8L19 9.6l-4.2 3.1.1 5.3L12 15.2 9.1 18l.1-5.3L5 9.6l5.2-1.8L12 3z"/>
-      <path d="M4 20h16"/>
-    </svg>
-  ),
+
+
+
+
+
+
+
+
   today: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="4"/>
@@ -345,32 +262,9 @@ const NAV_ICONS = {
       <path d="m19.07 4.93-1.41 1.41"/>
     </svg>
   ),
-  journal: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 1 5 17.5z"/>
-      <path d="M5 17.5A2.5 2.5 0 0 1 7.5 15H19"/>
-      <path d="M9 7h6"/>
-      <path d="M9 10h5"/>
-    </svg>
-  ),
-  mood: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M8 10h.01"/>
-      <path d="M16 10h.01"/>
-      <path d="M8.5 15c1.8 1.4 5.2 1.4 7 0"/>
-    </svg>
-  ),
-  tasks: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 6h13"/>
-      <path d="M8 12h13"/>
-      <path d="M8 18h13"/>
-      <path d="M3 6l1 1 2-2"/>
-      <path d="M3 12l1 1 2-2"/>
-      <path d="M3 18l1 1 2-2"/>
-    </svg>
-  ),
+
+
+
   insights: (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 19V5"/>
@@ -545,8 +439,7 @@ export default function AppShell({ user }) {
   const [activeSpace, setActiveSpace] = useState('takda')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
-  const [lakasPage, setLakasPage] = useState(DEFAULT_SPACE_PAGES.lakas)
-  const [talaPage, setTalaPage] = useState(DEFAULT_SPACE_PAGES.tala)
+
   const [financeToolSelections, setFinanceToolSelections] = useState({ money: 'accounts', plan: 'savings' })
   const [data, setData] = useState({
     income: [],
@@ -560,20 +453,8 @@ export default function AppShell({ user }) {
     transfers: [],
     calendarEvents: [],
     balanceOverrideLog: [],
-    lakasRoutines: [],
-    lakasWorkouts: [],
-    lakasBodyLogs: [],
-    lakasActivities: [],
-    lakasHabits: [],
-    lakasReminders: [],
-    lakasMeals: [],
-    lakasGoals: [],
-    talaCheckins: [],
-    talaJournal: [],
-    talaMoods: [],
-    talaTasks: [],
-    talaGoals: [],
   })
+
   const [profile, setProfile] = useState({})
   const [quickAddSheet, setQuickAddSheet] = useState({ open: false, mode: 'manual', type: 'expense', initialEntry: null })
   const [spaceActionRequest, setSpaceActionRequest] = useState(null)
@@ -598,7 +479,8 @@ export default function AppShell({ user }) {
   const previousVisiblePageRef = useRef(null)
   const [changelogData, setChangelogData] = useState(null)
   const [activeTour, setActiveTour] = useState(null)
-  const autoTriggeredRef = useRef({ takda: false, lakas: false, tala: false })
+  const autoTriggeredRef = useRef({ takda: false })
+
 
   // Auto-trigger tour if user enters a space for the first time after registering
   useEffect(() => {
@@ -608,11 +490,8 @@ export default function AppShell({ user }) {
     const justRegistered = sessionStorage.getItem('just_registered') === 'true'
     if (!justRegistered) return
 
-    // Check if the current space has a completed tour flag
-    const completedFlag = 
-      activeSpace === 'takda' ? profile.hasCompletedTakdaTour :
-      activeSpace === 'lakas' ? profile.hasCompletedLakasTour :
-      activeSpace === 'tala' ? profile.hasCompletedTalaTour : true
+    const completedFlag = profile.hasCompletedTakdaTour
+
 
     if ((completedFlag === undefined || completedFlag === false) && !autoTriggeredRef.current[activeSpace]) {
       autoTriggeredRef.current[activeSpace] = true
@@ -621,10 +500,8 @@ export default function AppShell({ user }) {
   }, [activeSpace, profile])
 
   const handleFinishTour = async () => {
-    const field = 
-      activeSpace === 'takda' ? 'hasCompletedTakdaTour' :
-      activeSpace === 'lakas' ? 'hasCompletedLakasTour' :
-      'hasCompletedTalaTour'
+    const field = 'hasCompletedTakdaTour'
+
     
     try {
       await fsSetProfile(user.uid, { [field]: true })
@@ -635,21 +512,13 @@ export default function AppShell({ user }) {
   }
 
   const handleTourTabChange = (tabName) => {
-    if (activeSpace === 'takda') {
-      navigateToFinancePage(tabName)
-    } else if (activeSpace === 'lakas') {
-      setLakasPage(tabName)
-    } else if (activeSpace === 'tala') {
-      setTalaPage(tabName)
-    }
+    navigateToFinancePage(tabName)
   }
 
   const getActiveTourTab = () => {
-    if (activeSpace === 'takda') return page
-    if (activeSpace === 'lakas') return lakasPage
-    if (activeSpace === 'tala') return talaPage
-    return ''
+    return page
   }
+
 
   useEffect(() => {
     try {
@@ -788,31 +657,8 @@ export default function AppShell({ user }) {
     setActiveSpace('takda')
   }, [user])
 
-  useEffect(() => {
-    if (!user) return undefined
 
-    const uid = user.uid
-    const unsubs = LAKAS_COLLECTIONS.map(collectionName => (
-      listenCol(uid, collectionName, rows => {
-        setData(d => ({ ...d, [collectionName]: rows }))
-      }, error => handleRealtimeError(collectionName, error))
-    ))
 
-    return () => unsubs.forEach(unsub => unsub())
-  }, [user])
-
-  useEffect(() => {
-    if (!user) return undefined
-
-    const uid = user.uid
-    const unsubs = TALA_COLLECTIONS.map(collectionName => (
-      listenCol(uid, collectionName, rows => {
-        setData(d => ({ ...d, [collectionName]: rows }))
-      }, error => handleRealtimeError(collectionName, error))
-    ))
-
-    return () => unsubs.forEach(unsub => unsub())
-  }, [user])
 
   useEffect(() => {
     function getPendingLinkedTransactions() {
@@ -1013,32 +859,13 @@ export default function AppShell({ user }) {
 
   useEffect(() => {
     setMobileNavMenuOpen(false)
-    if (activeSpace !== 'takda' || page !== 'calendar') setCalendarQuickAddDate('')
-  }, [activeSpace, page, lakasPage, talaPage])
+    if (page !== 'calendar') setCalendarQuickAddDate('')
+  }, [page])
 
-  const resolvedLakasPage = ({
-    today: 'workout',
-    overview: 'workout',
-    train: 'workout',
-    workouts: 'workout',
-    log: 'workout',
-    track: 'body',
-    nutrition: 'body',
-    meals: 'body',
-    activity: 'body',
-    habits: 'body',
-    goals: 'body',
-    measurements: 'body',
-    'body-log': 'body',
-  }[lakasPage] || lakasPage)
 
-  const visiblePageKey = activeSpace === 'dashboard'
-    ? 'main'
-    : activeSpace === 'takda'
-      ? page
-      : activeSpace === 'lakas'
-        ? resolvedLakasPage
-        : talaPage
+
+  const visiblePageKey = page
+
 
   useEffect(() => {
     if (previousVisiblePageRef.current == null) {
@@ -1203,17 +1030,8 @@ export default function AppShell({ user }) {
     { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
     { id: 'history', label: 'Insights', iconKey: 'history', section: null },
   ]
-  const lakasNav = [
-    { id: 'workout', label: 'Workout', iconKey: 'workouts', section: 'Fitness' },
-    { id: 'body', label: 'Body System', iconKey: 'meals', section: null },
-    { id: 'progress', label: 'Progress', iconKey: 'body', section: 'Review' },
-  ]
-  const talaNav = [
-    { id: 'journal', label: 'Journal', iconKey: 'journal', section: 'Mind' },
-    { id: 'track', label: 'Track', iconKey: 'mood', section: null },
-    { id: 'focus', label: 'Focus', iconKey: 'goals', section: null },
-  ]
   const takdaMoreNav = [
+
     { id: 'crypto', label: 'Crypto 🪙', iconKey: 'portfolio', section: 'Finance' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: 'Review' },
@@ -1236,13 +1054,10 @@ export default function AppShell({ user }) {
     bills: Bills,
     subscriptions: Subscriptions,
   }
-  const PageComponent = activeSpace === 'lakas'
-    ? Lakas
-    : activeSpace === 'tala'
-      ? Tala
-      : page === 'settings'
-        ? Settings
-        : financePages[page] || Calendar
+  const PageComponent = page === 'settings'
+    ? Settings
+    : financePages[page] || Calendar
+
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
   const selectedFinanceTool = page === 'money'
     ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
@@ -1250,24 +1065,11 @@ export default function AppShell({ user }) {
       ? PLAN_TOOLS.find(tool => tool.id === financeToolSelections.plan)
       : null
 
-  const isCalendarPage = activeSpace === 'takda' && page === 'calendar'
-  const pageBoundaryKey = activeSpace === 'takda'
-    ? `${page}:${selectedFinanceTool?.id || 'main'}`
-    : activeSpace === 'lakas'
-      ? `lakas:${resolvedLakasPage}`
-      : `tala:${talaPage}`
-  const currentSidebarNav = activeSpace === 'lakas'
-    ? lakasNav
-    : activeSpace === 'tala'
-      ? talaNav
-      : nav
-  const currentNavItem = (
-    activeSpace === 'takda'
-      ? [...nav, ...takdaMoreNav]
-      : activeSpace === 'lakas'
-        ? lakasNav
-        : talaNav
-  ).find(item => item.id === visiblePageKey) || currentSidebarNav[0]
+  const isCalendarPage = page === 'calendar'
+  const pageBoundaryKey = `${page}:${selectedFinanceTool?.id || 'main'}`
+
+  const currentSidebarNav = nav
+  const currentNavItem = [...nav, ...takdaMoreNav].find(item => item.id === visiblePageKey) || nav[0]
   const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
     { id: 'calendar', label: 'Calendar', iconKey: 'calendar', space: 'takda' },
@@ -1275,53 +1077,19 @@ export default function AppShell({ user }) {
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'takda' },
     { id: 'history', label: 'Insights', iconKey: 'history', space: 'takda' },
   ]
-  const lakasBottomNav = [
-    { id: 'workout', label: 'Workout', iconKey: 'workouts', space: 'lakas' },
-    { id: 'body', label: 'Body', iconKey: 'meals', space: 'lakas' },
-    { id: 'progress', label: 'Progress', iconKey: 'body', space: 'lakas' },
-  ]
-  const talaBottomNav = [
-    { id: 'journal', label: 'Journal', iconKey: 'journal', space: 'tala' },
-    { id: 'track', label: 'Track', iconKey: 'mood', space: 'tala' },
-    { id: 'focus', label: 'Focus', iconKey: 'goals', space: 'tala' },
-  ]
-  const bottomNav = activeSpace === 'lakas'
-    ? lakasBottomNav
-    : activeSpace === 'tala'
-      ? talaBottomNav
-      : financeBottomNav
+  const bottomNav = financeBottomNav
   const financeMoreNav = takdaMoreNav.map(item => ({ ...item, space: 'takda' }))
-  const lakasMoreNav = lakasNav
-    .filter(item => ['settings'].includes(item.id))
-    .map(item => ({ ...item, space: 'lakas' }))
-  const talaMoreNav = talaNav
-    .filter(item => ['settings'].includes(item.id))
-    .map(item => ({ ...item, space: 'tala' }))
-  talaMoreNav.unshift({ id: 'insights', label: 'Insights', iconKey: 'insights', section: 'Review', space: 'tala' })
   const mobileMoreNav = [
-    ...(activeSpace === 'lakas' ? lakasMoreNav : activeSpace === 'tala' ? talaMoreNav : financeMoreNav),
+    ...financeMoreNav,
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'System', space: 'system' }
   ]
-  const mobileMoreTitle = activeSpace === 'lakas' ? 'More Lakas' : activeSpace === 'tala' ? 'More Tala' : 'More'
-  const mobileMoreMeta = activeSpace === 'lakas'
-    ? 'Open Lakas settings and account controls.'
-    : activeSpace === 'tala'
-      ? 'Open Tala insights and settings.'
-      : 'Open savings, accounts, insights, and settings here.'
-  const isMorePage = activeSpace === 'lakas'
-    ? lakasMoreNav.some(item => item.id === resolvedLakasPage)
-    : activeSpace === 'tala'
-      ? talaMoreNav.some(item => item.id === talaPage)
-      : financeMoreNav.some(item => item.id === page)
+  const mobileMoreTitle = 'More'
+  const mobileMoreMeta = 'Open savings, accounts, insights, and settings here.'
+  const isMorePage = financeMoreNav.some(item => item.id === page)
   const shouldHideBottomNav = mobileNavMenuOpen || quickAddSheet.open
   const isBottomNavItemActive = item => (
-    item.space === 'dashboard'
-      ? activeSpace === 'dashboard'
-      : item.space === 'lakas'
-        ? activeSpace === 'lakas' && resolvedLakasPage === item.id
-        : item.space === 'tala'
-          ? activeSpace === 'tala' && talaPage === item.id
-          : activeSpace === 'takda' && page === item.id
+    activeSpace === 'takda' && page === item.id
+
   )
 
   // 1. Takda Financial Pulse Status
@@ -1417,50 +1185,6 @@ export default function AppShell({ user }) {
     return { status, color, label }
   }, [data])
 
-  // 2. Lakas Weekly Consistency Score
-  const lakasScoreValue = useMemo(() => {
-    const workouts = data.lakasWorkouts || []
-    const habits = data.lakasHabits || []
-
-    const now = new Date()
-    const startMs = now.getTime() - 7 * 24 * 60 * 60 * 1000
-    const endMs = now.getTime()
-
-    const formatDate = d => {
-      const y = d.getFullYear()
-      const m = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      return `${y}-${m}-${day}`
-    }
-
-    const startDateStr = formatDate(new Date(startMs))
-    const endDateStr = formatDate(new Date(endMs))
-
-    const weekWorkouts = workouts.filter(w => w.date > startDateStr && w.date <= endDateStr)
-    const weekHabits = habits.filter(h => h.date > startDateStr && h.date <= endDateStr)
-
-    const workoutsPoints = weekWorkouts.length * 10
-    const habitsPoints = weekHabits.reduce((sum, h) => sum + (Number(h.score) || 0), 0) * 2
-    const runDist = weekWorkouts.reduce((sum, w) => sum + (Number(w.distance) || 0), 0)
-    const runPoints = Math.round(runDist * 3)
-
-    return workoutsPoints + habitsPoints + runPoints
-  }, [data])
-
-  // 3. Tala Weather Climate Status
-  const talaWeatherValue = useMemo(() => {
-    const checkins = data.talaCheckins || []
-    const moods = data.talaMoods || []
-    const todayStr = today()
-
-    const todayLog = checkins.find(row => row.date === todayStr)
-    const sortedMoods = [...moods].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
-    const lastMood = sortedMoods[0]?.mood || 'Okay'
-
-    const mName = todayLog?.mood || lastMood
-    const emojiMap = { Great: '☀️', Good: '🌤️', Okay: '☁️', Low: '🌧️', Heavy: '⛈️' }
-    return emojiMap[mName] || '☁️'
-  }, [data])
 
   const { theme, toggle: toggleTheme } = useTheme()
   // Keep the same layout + component styling in both light and dark.
@@ -1480,36 +1204,24 @@ export default function AppShell({ user }) {
     setSpaceActionRequest(null)
     setTakdaActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
-    const normalizedSpace = ['takda', 'lakas', 'tala'].includes(nextSpace) ? nextSpace : 'takda'
-    setActiveSpace(normalizedSpace)
-    if (normalizedSpace === 'takda') setPage(DEFAULT_SPACE_PAGES.takda)
-    if (normalizedSpace === 'lakas') setLakasPage(DEFAULT_SPACE_PAGES.lakas)
-    if (normalizedSpace === 'tala') setTalaPage(DEFAULT_SPACE_PAGES.tala)
+    setActiveSpace('takda')
+    setPage(DEFAULT_SPACE_PAGES.takda)
   }
+
 
   function handleDashboardNavigate(space, subPage) {
     playTick()
-    setActiveSpace(space)
-    if (space === 'takda') {
-      setPage(subPage || 'calendar')
-    } else if (space === 'lakas') {
-      setLakasPage(subPage || 'workout')
-    } else if (space === 'tala') {
-      setTalaPage(subPage || 'journal')
-    }
+    setActiveSpace('takda')
+    setPage(subPage || 'calendar')
   }
+
 
   function handleBadgeClick(spaceId) {
     playTick()
-    openSpace(spaceId)
-    if (spaceId === 'takda') {
-      setPage('breakdown')
-    } else if (spaceId === 'lakas') {
-      setLakasPage('progress')
-    } else if (spaceId === 'tala') {
-      setTalaPage('insights')
-    }
+    openSpace('takda')
+    setPage('breakdown')
   }
+
 
   function navigateToFinancePage(nextPage = DEFAULT_SPACE_PAGES.takda) {
     const alias = FINANCE_PAGE_ALIASES[nextPage]
@@ -1538,20 +1250,10 @@ export default function AppShell({ user }) {
       openSpace('dashboard')
       return
     }
-    if (item.space === 'lakas') {
-      openSpace('lakas')
-      setLakasPage(item.id || DEFAULT_SPACE_PAGES.lakas)
-      return
-    }
-
-    if (item.space === 'tala') {
-      openSpace('tala')
-      setTalaPage(item.id || DEFAULT_SPACE_PAGES.tala)
-      return
-    }
 
     navigateToFinancePage(item.id || DEFAULT_SPACE_PAGES.takda)
   }
+
 
 
 
@@ -1631,30 +1333,8 @@ export default function AppShell({ user }) {
   function handleNotificationAction(alert) {
     const action = alert?.action || {}
 
-    // Lakas navigation
-    if (activeSpace === 'lakas') {
-      if (action.page) {
-        openSpace('lakas')
-        setLakasPage(action.page)
-      }
-      return
-    }
-
-    // Tala navigation
-    if (activeSpace === 'tala') {
-      if (action.page) {
-        openSpace('tala')
-        setTalaPage(action.page)
-      }
-      return
-    }
-
     // Takda (financial) navigation
-    if (action.page === 'lakas') {
-      openSpace('lakas')
-    } else if (action.page === 'tala') {
-      openSpace('tala')
-    } else if (action.page) {
+    if (action.page) {
       navigateToFinancePage(action.page)
     }
     if (action.type === 'payBill' && action.billId) {
@@ -1666,20 +1346,9 @@ export default function AppShell({ user }) {
   }
 
   function handleCommandNavigate(nextPage) {
-    if (nextPage === 'lakas') {
-      openSpace('lakas')
-      setLakasPage(DEFAULT_SPACE_PAGES.lakas)
-      return
-    }
-
-    if (nextPage === 'tala') {
-      openSpace('tala')
-      setTalaPage(DEFAULT_SPACE_PAGES.tala)
-      return
-    }
-
     navigateToFinancePage(nextPage)
   }
+
 
   const quickAddDefaultDate = isCalendarPage ? (calendarQuickAddDate || today()) : undefined
 
@@ -1694,19 +1363,16 @@ export default function AppShell({ user }) {
 
     billPaymentTarget,
     debtPaymentTarget,
-    activeTab: activeSpace === 'lakas' ? lakasPage : activeSpace === 'tala' ? talaPage : page,
+    activeTab: page,
     financeToolSelections,
     onFinanceToolSelect: handleFinanceToolSelect,
     onTogglePrivacy: togglePrivacy,
     onSelectedDateChange: setCalendarQuickAddDate,
     onPayBill: (billId) => handleNotificationAction({ action: { type: 'payBill', page: 'bills', billId } }),
     onPayDebt: (debtId) => handleNotificationAction({ action: { type: 'payDebt', page: 'debts', debtId } }),
-    actionRequest: activeSpace === 'takda'
-      ? (takdaActionRequest?.space === 'takda' ? takdaActionRequest : null)
-      : (spaceActionRequest?.space === activeSpace ? spaceActionRequest : null),
-    onActionHandled: activeSpace === 'takda' ? handleTakdaActionHandled : handleSpaceActionHandled,
+    actionRequest: takdaActionRequest?.space === 'takda' ? takdaActionRequest : null,
+    onActionHandled: handleTakdaActionHandled,
     onTakdaAction: openTakdaAction,
-    onLakasTabChange: setLakasPage,
     onNavigate: handleDashboardNavigate,
   }
 
@@ -1719,7 +1385,7 @@ export default function AppShell({ user }) {
         : 'Track expense'
 
   return (
-    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${activeSpace === 'takda' ? styles.shellTakda : ''} ${activeSpace === 'lakas' ? styles.shellLakas : ''} ${activeSpace === 'tala' ? styles.shellTala : ''}`}>
+    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${styles.shellTakda}`}>
       <input ref={quickAddFocusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'absolute', top: -9999, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <a href="#app-main" className="skipLink">Skip to main content</a>
       <aside className={styles.sidebar}>
@@ -1745,26 +1411,18 @@ export default function AppShell({ user }) {
             ))}
           </div>
         )}
-        <nav className={styles.sidebarNav} aria-label={activeSpace === 'lakas' ? 'Lakas navigation' : activeSpace === 'tala' ? 'Tala navigation' : 'Finance navigation'}>
+        <nav className={styles.sidebarNav} aria-label="Finance navigation">
           {currentSidebarNav.map(n => (
             <div key={n.id}>
               {n.section && <div className={styles.navSection}>{n.section}</div>}
               <button
                 type="button"
                 id={`${activeSpace}-nav-${n.id}`}
-                className={`${styles.navItem} ${activeSpace === 'lakas' ? resolvedLakasPage === n.id ? styles.active : '' : activeSpace === 'tala' ? talaPage === n.id ? styles.active : '' : page === n.id ? styles.active : ''}`}
+                className={`${styles.navItem} ${page === n.id ? styles.active : ''}`}
                 onClick={() => {
-                  if (activeSpace === 'lakas') {
-                    setLakasPage(n.id)
-                    return
-                  }
-                  if (activeSpace === 'tala') {
-                    setTalaPage(n.id)
-                    return
-                  }
                   navigateToFinancePage(n.id)
                 }}
-                aria-current={activeSpace === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : activeSpace === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
+                aria-current={page === n.id ? 'page' : undefined}
                 aria-label={`Open ${n.label}`}
               >
                 <span className={styles.icon} aria-hidden="true">{NAV_ICONS[n.iconKey]}</span> {n.label}
@@ -1999,22 +1657,16 @@ export default function AppShell({ user }) {
                 <button
                   key={n.id}
                   type="button"
-                  className={`${styles.mobileNavLink} ${n.space === 'lakas' ? resolvedLakasPage === n.id ? styles.mobileNavLinkActive : '' : n.space === 'tala' ? talaPage === n.id ? styles.mobileNavLinkActive : '' : page === n.id ? styles.mobileNavLinkActive : ''}`}
+                  className={`${styles.mobileNavLink} ${page === n.id ? styles.mobileNavLinkActive : ''}`}
                   onClick={() => {
                     if (n.id === 'settings') {
                       openSettings()
-                    } else if (n.space === 'lakas') {
-                      openSpace('lakas')
-                      setLakasPage(n.id)
-                    } else if (n.space === 'tala') {
-                      openSpace('tala')
-                      setTalaPage(n.id)
                     } else {
                       navigateToFinancePage(n.id)
                     }
                     setMobileNavMenuOpen(false)
                   }}
-                  aria-current={n.space === 'lakas' ? resolvedLakasPage === n.id ? 'page' : undefined : n.space === 'tala' ? talaPage === n.id ? 'page' : undefined : page === n.id ? 'page' : undefined}
+                  aria-current={page === n.id ? 'page' : undefined}
                   aria-label={`Open ${n.label}`}
                 >
                   <span className={styles.mobileNavLinkIcon}>{NAV_ICONS[n.iconKey]}</span>

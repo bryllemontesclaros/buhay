@@ -1,4 +1,8 @@
-import { dateDaysAgo } from './lakasHelpers'
+function dateDaysAgo(n) {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
 // Helpers
 function parseDateStr(ds) {

@@ -1,5 +1,5 @@
 const START_SPACE_INTENT_KEY = 'buhay_start_space'
-const VALID_START_SPACES = new Set(['takda', 'lakas', 'tala', 'explore'])
+const VALID_START_SPACES = new Set(['takda', 'explore'])
 
 function normalizeStartSpace(value) {
   const normalized = String(value || '').trim().toLowerCase()
