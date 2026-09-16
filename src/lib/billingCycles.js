@@ -4,15 +4,27 @@ import { normalizeDate, today, getMonthKey } from './utils'
  * Parses a day string or number into a valid day of month (1..31).
  */
 export function parseDayOfMonth(val) {
-  if (!val) return null
+  if (!val && val !== 0) return null
   const num = parseInt(String(val).trim().slice(-2), 10)
   return Number.isFinite(num) && num >= 1 && num <= 31 ? num : null
 }
 
 /**
+ * Infers a realistic statement cut-off day if only due day is provided.
+ * Standard credit card grace period is ~20 to 25 days before payment due date.
+ */
+export function inferStatementDay(dueDay) {
+  const d = parseDayOfMonth(dueDay)
+  if (!d) return 15
+  let stmt = d - 25
+  if (stmt <= 0) stmt += 30
+  return Math.max(1, Math.min(28, stmt))
+}
+
+/**
  * Returns a normalized date string (YYYY-MM-DD) clamped to the valid days of that month.
  */
-function makeValidDate(year, monthIndex, day) {
+export function makeValidDate(year, monthIndex, day) {
   const lastDay = new Date(year, monthIndex + 1, 0).getDate()
   const clampedDay = Math.min(Math.max(day, 1), lastDay)
   return `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(clampedDay).padStart(2, '0')}`
@@ -22,18 +34,20 @@ function makeValidDate(year, monthIndex, day) {
  * Computes the statement closing date and payment due date for a given year & month.
  * 
  * Rules:
- * If dueDay < statementDay (e.g. Cutoff 15th/20th, Due Date 7th):
+ * If dueDay <= statementDay (e.g. Cutoff 10th/15th/20th, Due Date 5th/7th):
  *   Due date is in the MONTH FOLLOWING the statement cutoff.
  * If dueDay > statementDay (e.g. Cutoff 5th, Due Date 25th):
  *   Due date is in the SAME MONTH as the statement cutoff.
  */
 export function getCycleDatesForMonth(year, monthIndex, statementDay, dueDay) {
-  const statementDate = makeValidDate(year, monthIndex, statementDay)
+  const sDay = parseDayOfMonth(statementDay) || 15
+  const dDay = parseDayOfMonth(dueDay) || (sDay <= 10 ? sDay + 20 : sDay - 10)
+  const statementDate = makeValidDate(year, monthIndex, sDay)
   
   let dueYear = year
   let dueMonthIndex = monthIndex
   
-  if (dueDay <= statementDay) {
+  if (dDay <= sDay) {
     // Due date is next month
     dueMonthIndex = monthIndex + 1
     if (dueMonthIndex > 11) {
@@ -42,7 +56,7 @@ export function getCycleDatesForMonth(year, monthIndex, statementDay, dueDay) {
     }
   }
   
-  const dueDate = makeValidDate(dueYear, dueMonthIndex, dueDay)
+  const dueDate = makeValidDate(dueYear, dueMonthIndex, dDay)
   return { statementDate, dueDate }
 }
 
@@ -51,7 +65,10 @@ export function getCycleDatesForMonth(year, monthIndex, statementDay, dueDay) {
  */
 export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
   const normalized = normalizeDate(txDateStr)
-  if (!normalized || !statementDay) return null
+  if (!normalized) return null
+
+  const sDay = parseDayOfMonth(statementDay) || (dueDay ? inferStatementDay(dueDay) : 15)
+  const dDay = parseDayOfMonth(dueDay) || (sDay <= 10 ? sDay + 20 : sDay - 10)
 
   const [yStr, mStr, dStr] = normalized.split('-')
   const txYear = parseInt(yStr, 10)
@@ -63,7 +80,7 @@ export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
   let cycleYear = txYear
   let cycleMonthIndex = txMonthIndex
 
-  if (txDay > statementDay) {
+  if (txDay > sDay) {
     cycleMonthIndex += 1
     if (cycleMonthIndex > 11) {
       cycleMonthIndex = 0
@@ -71,7 +88,7 @@ export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
     }
   }
 
-  const { statementDate, dueDate } = getCycleDatesForMonth(cycleYear, cycleMonthIndex, statementDay, dueDay || statementDay)
+  const { statementDate, dueDate } = getCycleDatesForMonth(cycleYear, cycleMonthIndex, sDay, dDay)
   return { cycleYear, cycleMonthIndex, statementDate, dueDate }
 }
 
@@ -80,22 +97,28 @@ export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
  * Handles statement balances, unbilled current charges, and payment allocations.
  */
 export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], payments = [], referenceDate = today()) {
-  const statementDay = parseDayOfMonth(cardOrDebt.statementDate)
-  const dueDay = parseDayOfMonth(cardOrDebt.dueDate) || statementDay
+  const rawStatementDay = parseDayOfMonth(cardOrDebt.statementDate)
+  const rawDueDay = parseDayOfMonth(cardOrDebt.dueDate)
 
-  const currentTotalBalance = Math.abs(Number(cardOrDebt.balance) || 0)
-
-  if (!statementDay || !dueDay) {
+  // If neither statement date nor due date is given, fallback
+  if (!rawStatementDay && !rawDueDay) {
+    const currentTotalBalance = Math.abs(Number(cardOrDebt.balance) || 0)
     return {
       hasCycle: false,
       statementDay: null,
-      dueDay: dueDay || null,
+      dueDay: null,
       billedAmount: currentTotalBalance,
       unbilledAmount: 0,
       dueDate: null,
       isPaid: currentTotalBalance === 0,
+      totalBalance: currentTotalBalance,
     }
   }
+
+  const dueDay = rawDueDay || (rawStatementDay <= 10 ? rawStatementDay + 20 : rawStatementDay - 10)
+  const statementDay = rawStatementDay || inferStatementDay(dueDay)
+
+  const currentTotalBalance = Math.abs(Number(cardOrDebt.balance) || 0)
 
   const refNorm = normalizeDate(referenceDate) || today()
   const [refY, refM, refD] = refNorm.split('-').map(Number)
@@ -118,7 +141,7 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
 
   const closedCycle = getCycleDatesForMonth(closedCycleYear, closedCycleMonthIndex, statementDay, dueDay)
   
-  // Previous cycle start is the day after the cycle before closedCycle
+  // Previous cycle start is the statement date before closedCycle
   let prevCycleYear = closedCycleYear
   let prevCycleMonthIndex = closedCycleMonthIndex - 1
   if (prevCycleMonthIndex < 0) {
@@ -169,23 +192,23 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     paidPeriodsMap[closedCycle.dueDate]
   )
 
-  // Sum transactions in closed cycle
-  let closedCycleCharges = 0
+  // Calculate unbilled charges (transactions dated strictly AFTER the closed statement cut-off)
   let unbilledCharges = 0
+  let closedCycleCharges = 0
 
   relevantExpenses.forEach(tx => {
     const txDate = normalizeDate(tx.date)
     if (!txDate) return
     const amt = Math.abs(Number(tx.amount) || 0)
 
-    if (txDate > closedCycleStartDate && txDate <= closedCycle.statementDate) {
-      closedCycleCharges += amt
-    } else if (txDate > closedCycle.statementDate) {
+    if (txDate > closedCycle.statementDate) {
       unbilledCharges += amt
+    } else if (txDate > closedCycleStartDate && txDate <= closedCycle.statementDate) {
+      closedCycleCharges += amt
     }
   })
 
-  // Sum payments made towards closed cycle (payments made after closed cycle start date)
+  // Calculate payments made strictly after the closed cycle start date
   let paymentsForClosedCycle = 0
   relevantPayments.forEach(tx => {
     const txDate = normalizeDate(tx.date)
@@ -196,24 +219,18 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     }
   })
 
-  // If explicit transaction history is sparse, calculate from balance
-  let billedAmount = closedCycleCharges > 0 ? Math.max(0, closedCycleCharges - paymentsForClosedCycle) : 0
-  let unbilledAmount = unbilledCharges
-
+  // Billed Statement Balance:
+  // It is the total balance on the card minus any post-cutoff unbilled charges.
+  let billedAmount = 0
   if (hasExplicitPaidPeriod) {
     billedAmount = 0
-  } else if (relevantExpenses.length === 0 && currentTotalBalance > 0) {
-    // If user hasn't logged individual expenses, check if today is past due date or if paid
-    const isPastDue = refNorm > closedCycle.dueDate
-    if (isPastDue) {
-      billedAmount = 0
-      unbilledAmount = currentTotalBalance
-    } else {
-      billedAmount = currentTotalBalance
-      unbilledAmount = 0
-    }
+  } else if (currentTotalBalance > 0) {
+    billedAmount = Math.max(0, currentTotalBalance - unbilledCharges)
+  } else if (closedCycleCharges > 0) {
+    billedAmount = Math.max(0, closedCycleCharges - paymentsForClosedCycle)
   }
 
+  const unbilledAmount = unbilledCharges
   const isClosedCyclePaid = hasExplicitPaidPeriod || (billedAmount <= 0)
 
   return {
@@ -230,3 +247,4 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     totalBalance: currentTotalBalance,
   }
 }
+

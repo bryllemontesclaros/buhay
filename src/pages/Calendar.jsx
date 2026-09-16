@@ -298,7 +298,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const dueDay = parseDayOfMonth(debt.dueDate)
       let balanceForDue = currentBalance
 
-      if (statementDay && dueDay) {
+      if (debt.type === 'Credit Card' || (statementDay && dueDay)) {
         const cycle = getCreditCardCycleDetails(
           { ...debt, balance: currentBalance },
           data?.expenses || [],
@@ -309,8 +309,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         if (dateKey < todayStr && cycle.isPaid) {
           return // Settled / Paid! Do not resurrect with post-cutoff swipes
         }
-        balanceForDue = dateKey <= todayStr ? cycle.billedAmount : (cycle.billedAmount || cycle.unbilledAmount || currentBalance)
-        if (balanceForDue <= 0 && dateKey <= todayStr) {
+        balanceForDue = cycle.billedAmount
+        if (balanceForDue <= 0 && (cycle.isPaid || dateKey <= todayStr)) {
           return // Paid!
         }
       }
@@ -351,7 +351,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const dueDay = parseDayOfMonth(debt.dueDate)
       let stmtBalance = currentBalance
 
-      if (statementDay && dueDay) {
+      if (debt.type === 'Credit Card' || (statementDay && dueDay)) {
         const cycle = getCreditCardCycleDetails(
           { ...debt, balance: currentBalance },
           data?.expenses || [],

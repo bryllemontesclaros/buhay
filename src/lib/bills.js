@@ -255,39 +255,74 @@ export function getVirtualBills(data = {}) {
 
       if (cycleDetails.hasCycle) {
         const isClosedCyclePaid = cycleDetails.isPaid
-        const hasUnbilledOnly = isClosedCyclePaid && cycleDetails.unbilledAmount > 0
-
-        const targetDueDate = hasUnbilledOnly
-          ? cycleDetails.nextDueDate
-          : cycleDetails.dueDate
-
-        const targetAmount = hasUnbilledOnly
-          ? cycleDetails.unbilledAmount
-          : (cycleDetails.billedAmount > 0 ? cycleDetails.billedAmount : (Number(debt.minPayment) > 0 ? Number(debt.minPayment) : balance))
-
-        const targetPeriodKey = `monthly_${targetDueDate}`
         const paidPeriods = getBillPaidPeriods(debt)
 
-        if (isClosedCyclePaid && !hasUnbilledOnly) {
-          paidPeriods[targetPeriodKey] = { paid: true, date: today(), amount: targetAmount }
+        // 1. If closed statement has unpaid balance, generate the Billed Statement Bill
+        if (!isClosedCyclePaid && cycleDetails.billedAmount > 0) {
+          const targetDueDate = cycleDetails.dueDate
+          const targetAmount = cycleDetails.billedAmount
+
+          virtualBills.push({
+            _id: `virtual-debt-${debt._id}`,
+            name: `${debt.name} (Statement Due)`,
+            amount: targetAmount,
+            due: parseDayOfMonth(targetDueDate) || dueDay,
+            dueDateOverride: targetDueDate,
+            freq: 'monthly',
+            cat: 'Bills',
+            subcat: 'Credit Card',
+            accountId: debt.accountId || '',
+            isVirtual: true,
+            isCreditCard: true,
+            statementDate: debt.statementDate || cycleDetails.statementDay,
+            originalDebtId: debt._id,
+            paidPeriods,
+          })
         }
 
-        virtualBills.push({
-          _id: `virtual-debt-${debt._id}`,
-          name: `${debt.name} (Credit Card)`,
-          amount: targetAmount,
-          due: parseDayOfMonth(targetDueDate) || dueDay,
-          dueDateOverride: targetDueDate,
-          freq: 'monthly',
-          cat: 'Bills',
-          subcat: 'Credit Card',
-          accountId: debt.accountId || '',
-          isVirtual: true,
-          isCreditCard: true,
-          statementDate: debt.statementDate,
-          originalDebtId: debt._id,
-          paidPeriods,
-        })
+        // 2. If there are unbilled charges for the next cycle, generate the Upcoming Cycle Bill
+        if (cycleDetails.unbilledAmount > 0) {
+          const nextDueDate = cycleDetails.nextDueDate
+          const nextAmount = cycleDetails.unbilledAmount
+
+          virtualBills.push({
+            _id: `virtual-debt-next-${debt._id}`,
+            name: `${debt.name} (Upcoming Cycle)`,
+            amount: nextAmount,
+            due: parseDayOfMonth(nextDueDate) || dueDay,
+            dueDateOverride: nextDueDate,
+            freq: 'monthly',
+            cat: 'Bills',
+            subcat: 'Credit Card',
+            accountId: debt.accountId || '',
+            isVirtual: true,
+            isCreditCard: true,
+            statementDate: debt.statementDate || cycleDetails.statementDay,
+            originalDebtId: debt._id,
+            paidPeriods,
+          })
+        }
+
+        // 3. Fallback if both are 0 but balance > 0
+        if (cycleDetails.billedAmount <= 0 && cycleDetails.unbilledAmount <= 0 && balance > 0 && !isClosedCyclePaid) {
+          const targetDueDate = cycleDetails.dueDate
+          virtualBills.push({
+            _id: `virtual-debt-${debt._id}`,
+            name: `${debt.name} (Credit Card)`,
+            amount: balance,
+            due: parseDayOfMonth(targetDueDate) || dueDay,
+            dueDateOverride: targetDueDate,
+            freq: 'monthly',
+            cat: 'Bills',
+            subcat: 'Credit Card',
+            accountId: debt.accountId || '',
+            isVirtual: true,
+            isCreditCard: true,
+            statementDate: debt.statementDate || cycleDetails.statementDay,
+            originalDebtId: debt._id,
+            paidPeriods,
+          })
+        }
         return
       }
     }
@@ -340,38 +375,71 @@ export function getVirtualBills(data = {}) {
 
     if (cycleDetails.hasCycle) {
       const isClosedCyclePaid = cycleDetails.isPaid
-      const hasUnbilledOnly = isClosedCyclePaid && cycleDetails.unbilledAmount > 0
-
-      const targetDueDate = hasUnbilledOnly
-        ? cycleDetails.nextDueDate
-        : cycleDetails.dueDate
-
-      const targetAmount = hasUnbilledOnly
-        ? cycleDetails.unbilledAmount
-        : (cycleDetails.billedAmount > 0 ? cycleDetails.billedAmount : balance)
-
-      const targetPeriodKey = `monthly_${targetDueDate}`
       const paidPeriods = getBillPaidPeriods(acc)
 
-      if (isClosedCyclePaid && !hasUnbilledOnly) {
-        paidPeriods[targetPeriodKey] = { paid: true, date: today(), amount: targetAmount }
+      // 1. If closed statement has unpaid balance, generate the Billed Statement Bill
+      if (!isClosedCyclePaid && cycleDetails.billedAmount > 0) {
+        const targetDueDate = cycleDetails.dueDate
+        const targetAmount = cycleDetails.billedAmount
+
+        virtualBills.push({
+          _id: `virtual-acc-${acc._id}`,
+          name: `${acc.name} (Statement Due)`,
+          amount: targetAmount,
+          due: parseDayOfMonth(targetDueDate) || dueDay,
+          dueDateOverride: targetDueDate,
+          freq: 'monthly',
+          cat: 'Bills',
+          subcat: 'Credit Card',
+          accountId: acc._id,
+          isVirtual: true,
+          isCreditCard: true,
+          statementDate: acc.statementDate || cycleDetails.statementDay,
+          paidPeriods,
+        })
       }
 
-      virtualBills.push({
-        _id: `virtual-acc-${acc._id}`,
-        name: `${acc.name} (Credit Card)`,
-        amount: targetAmount,
-        due: parseDayOfMonth(targetDueDate) || dueDay,
-        dueDateOverride: targetDueDate,
-        freq: 'monthly',
-        cat: 'Bills',
-        subcat: 'Credit Card',
-        accountId: acc._id,
-        isVirtual: true,
-        isCreditCard: true,
-        statementDate: acc.statementDate,
-        paidPeriods,
-      })
+      // 2. If there are unbilled charges for the next cycle, generate Upcoming Cycle Bill
+      if (cycleDetails.unbilledAmount > 0) {
+        const nextDueDate = cycleDetails.nextDueDate
+        const nextAmount = cycleDetails.unbilledAmount
+
+        virtualBills.push({
+          _id: `virtual-acc-next-${acc._id}`,
+          name: `${acc.name} (Upcoming Cycle)`,
+          amount: nextAmount,
+          due: parseDayOfMonth(nextDueDate) || dueDay,
+          dueDateOverride: nextDueDate,
+          freq: 'monthly',
+          cat: 'Bills',
+          subcat: 'Credit Card',
+          accountId: acc._id,
+          isVirtual: true,
+          isCreditCard: true,
+          statementDate: acc.statementDate || cycleDetails.statementDay,
+          paidPeriods,
+        })
+      }
+
+      // 3. Fallback if both are 0 but balance > 0
+      if (cycleDetails.billedAmount <= 0 && cycleDetails.unbilledAmount <= 0 && balance > 0 && !isClosedCyclePaid) {
+        const targetDueDate = cycleDetails.dueDate
+        virtualBills.push({
+          _id: `virtual-acc-${acc._id}`,
+          name: `${acc.name} (Credit Card)`,
+          amount: balance,
+          due: parseDayOfMonth(targetDueDate) || dueDay,
+          dueDateOverride: targetDueDate,
+          freq: 'monthly',
+          cat: 'Bills',
+          subcat: 'Credit Card',
+          accountId: acc._id,
+          isVirtual: true,
+          isCreditCard: true,
+          statementDate: acc.statementDate || cycleDetails.statementDay,
+          paidPeriods,
+        })
+      }
       return
     }
 
