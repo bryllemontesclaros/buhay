@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState, Fragment } from 'react'
+import { DayTxRow } from '../components/ui/DayTxRow'
+import { TransactionComposer } from '../components/ui/TransactionComposer'
 import {
   getBalanceAtDate,
   getBalanceAtDateWithOverrides,
@@ -2960,423 +2962,42 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         )
         : null}
 
-      {showModal && typeof document !== 'undefined'
-        ? createPortal(
-          <div className={calStyles.modalOverlay} onClick={() => { if (!formSaving) closeTransactionEditor() }}>
-            <div
-              ref={transactionModalRef}
-              tabIndex={-1}
-              className={calStyles.modal}
-              onClick={event => event.stopPropagation()}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="calendar-transaction-modal-title"
-            >
-            <div className={calStyles.modalHeader}>
-              <div className={calStyles.modalTitle} id="calendar-transaction-modal-title">
-                {editTx ? 'Edit transaction' : `Add ${isIncome ? 'Income' : 'Expense'}`}
-                {selected && !editTx && <span style={{ fontSize: 13, color: 'var(--text3)', marginLeft: 8 }}>{selected}</span>}
-              </div>
-            <button type="button" onClick={closeTransactionEditor} className={calStyles.modalClose} disabled={formSaving} aria-label="Close transaction editor">✕</button>
-            </div>
+      <TransactionComposer
+        showModal={showModal}
+        formSaving={formSaving}
+        closeTransactionEditor={closeTransactionEditor}
+        transactionModalRef={transactionModalRef}
+        editTx={editTx}
+        isIncome={isIncome}
+        selected={selected}
+        switchComposerType={switchComposerType}
+        s={s}
+        amountInputRef={amountInputRef}
+        form={form}
+        set={set}
+        normalizeAmountInput={normalizeAmountInput}
+        visibleQuickPresets={visibleQuickPresets}
+        modalType={modalType}
+        clearComposerPreset={clearComposerPreset}
+        applyComposerPreset={applyComposerPreset}
+        showPresetBrowser={showPresetBrowser}
+        setShowPresetBrowser={setShowPresetBrowser}
+        presetGroups={presetGroups}
+        accountList={accountList}
+        isCurrentModalCreditCard={isCurrentModalCreditCard}
+        calendarBillingCycleOptions={calendarBillingCycleOptions}
+        selectedPreset={selectedPreset}
+        cats={cats}
+        applyComposerCategory={applyComposerCategory}
+        subcats={subcats}
+        applyComposerSubcategory={applyComposerSubcategory}
+        RECUR_OPTIONS={RECUR_OPTIONS}
+        formError={formError}
+        formImpact={formImpact}
+        handleSave={handleSave}
+        handleDelete={handleDelete}
+      />
 
-            {!editTx && (
-              <div className={calStyles.typeToggle}>
-                <button type="button" className={`${calStyles.typeBtn} ${isIncome ? calStyles.typeBtnIncome : ''}`} onClick={() => switchComposerType('income')} disabled={formSaving} aria-pressed={isIncome}>
-                  <span className={calStyles.typeBtnSign}>+</span><span>Income</span>
-                </button>
-                <button type="button" className={`${calStyles.typeBtn} ${!isIncome ? calStyles.typeBtnExpense : ''}`} onClick={() => switchComposerType('expense')} disabled={formSaving} aria-pressed={!isIncome}>
-                  <span className={calStyles.typeBtnSign}>−</span><span>Expense</span>
-                </button>
-              </div>
-            )}
-
-            <div className={calStyles.amountField}>
-              <span className={calStyles.amountSign} style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}>
-                {isIncome ? '+' : '−'}
-              </span>
-              <span className={calStyles.amountSymbol}>{s}</span>
-              <input
-                ref={amountInputRef}
-                className={calStyles.amountInput}
-                type="text"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.amount}
-                disabled={formSaving}
-                onChange={event => set('amount', normalizeAmountInput(event.target.value))}
-                style={{ color: isIncome ? 'var(--income)' : 'var(--red)' }}
-                aria-label={`${isIncome ? 'Income' : 'Expense'} amount`}
-                autoFocus
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px', marginBottom: '16px' }}>
-              {[100, 500, 1000, 5000].map(v => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => set('amount', String(Number(form.amount || 0) + v))}
-                  style={{
-                    flex: '1 1 0',
-                    padding: '6px 0',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    borderRadius: '999px',
-                    border: '1px solid color-mix(in srgb, var(--text) 15%, transparent)',
-                    background: 'color-mix(in srgb, var(--text) 6%, transparent)',
-                    color: 'var(--text2)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  +{v.toLocaleString()}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => set('amount', '')}
-                style={{
-                  flex: '1 1 0',
-                  padding: '6px 0',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  borderRadius: '999px',
-                  border: '1px solid color-mix(in srgb, var(--red, #ff453a) 30%, transparent)',
-                  background: 'color-mix(in srgb, var(--red, #ff453a) 8%, transparent)',
-                  color: 'var(--red, #ff453a)',
-                  cursor: 'pointer',
-                }}
-              >
-                Clear
-              </button>
-            </div>
-
-            <div className={calStyles.modalSectionLabel}>{isIncome ? 'What did you receive?' : 'What did you pay for?'}</div>
-            <div className={calStyles.quickCats}>
-              {visibleQuickPresets.map(item => (
-                <button
-                  key={item.key}
-                  className={`${calStyles.quickCat} ${form.presetKey === item.key ? calStyles.quickCatActive : ''}`}
-                  style={form.presetKey === item.key ? {
-                    borderColor: isIncome ? 'var(--income)' : 'var(--red)',
-                    background: isIncome ? 'var(--income-dim)' : 'var(--red-dim)',
-                    color: isIncome ? 'var(--income)' : 'var(--red)',
-                  } : {}}
-                  disabled={formSaving}
-                  onClick={() => {
-                    if (item.isCustom) clearComposerPreset(modalType, 'Other', 'Miscellaneous')
-                    else applyComposerPreset(item.key)
-                  }}
-                  aria-pressed={form.presetKey === item.key}
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className={calStyles.presetActions}>
-              <button
-                type="button"
-                className={`${calStyles.presetToggle} ${showPresetBrowser ? calStyles.presetToggleActive : ''}`}
-                onClick={() => setShowPresetBrowser(current => !current)}
-                disabled={formSaving}
-                aria-expanded={showPresetBrowser}
-              >
-                {showPresetBrowser ? 'Hide presets' : 'More presets'}
-              </button>
-            </div>
-
-            <div className={calStyles.modalFields}>
-              {showPresetBrowser && (
-                <div className={`${styles.formGroup} ${calStyles.modalFieldFull}`}>
-                  <label>Browse presets</label>
-                  <select
-                    value={form.presetKey || 'other-custom'}
-                    onChange={event => {
-                      if (event.target.value === 'other-custom') clearComposerPreset(modalType, 'Other', 'Miscellaneous')
-                      else applyComposerPreset(event.target.value)
-                    }}
-                    disabled={formSaving}
-                  >
-                    {presetGroups.map(group => (
-                      <optgroup key={group.label} label={group.label}>
-                        {group.items.map(option => <option key={option.key} value={option.key}>{option.label}</option>)}
-                      </optgroup>
-                    ))}
-                    <option value="other-custom">Other / custom</option>
-                  </select>
-                </div>
-              )}
-              <div className={styles.formGroup}>
-                <label>{selectedPreset ? 'Description' : (isIncome ? 'Payer or note' : 'Merchant, biller, or note')}</label>
-                <input placeholder="Merchant, payer, or note (optional)" value={form.desc} onChange={event => set('desc', event.target.value)} disabled={formSaving} />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Account</label>
-                <select value={form.accountId} onChange={event => set('accountId', event.target.value)} disabled={formSaving}>
-                  <option value="">No account selected</option>
-                  {accountList.map(account => (
-                    <option key={account._id} value={account._id}>
-                      {account.name} · {account.type}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Counts in balances</label>
-                <select value={form.paymentStatus} onChange={event => set('paymentStatus', event.target.value)} disabled={formSaving}>
-                  <option value="paid">Paid</option>
-                  <option value="unpaid">Unpaid</option>
-                </select>
-              </div>
-              {isCurrentModalCreditCard && calendarBillingCycleOptions.length > 0 && (
-                <div className={`${styles.formGroup} ${calStyles.modalFieldFull}`}>
-                  <label>💳 Billing Statement</label>
-                  <select
-                    value={form.billingCycle || 'auto'}
-                    onChange={event => set('billingCycle', event.target.value)}
-                    disabled={formSaving}
-                  >
-                    {calendarBillingCycleOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div className={calStyles.presetHint}>
-              {selectedPreset
-                ? `${selectedPreset.label} auto-fills ${selectedPreset.cat} → ${selectedPreset.subcat}.`
-                : isIncome
-                  ? 'No preset selected. Choose a familiar income source, or keep this as a custom entry.'
-                  : 'No preset selected. Choose a familiar biller or merchant, or keep this as a custom entry.'}
-            </div>
-
-            <details className={calStyles.advancedBox}>
-              <summary className={calStyles.advancedSummary}>
-                <span>More options</span>
-                <small>Payment status, category, subcategory, recurrence</small>
-              </summary>
-              <div className={calStyles.advancedGrid}>
-                <div className={styles.formGroup}>
-                  <label>Category</label>
-                  <select value={form.cat} onChange={event => applyComposerCategory(event.target.value)} disabled={formSaving}>
-                    {cats.map(option => <option key={option}>{option}</option>)}
-                  </select>
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Subcategory</label>
-                  <select value={form.subcat} onChange={event => applyComposerSubcategory(event.target.value)} disabled={formSaving}>
-                    {subcats.map(option => <option key={option}>{option}</option>)}
-                  </select>
-                </div>
-                <div className={`${styles.formGroup} ${calStyles.advancedFull}`}>
-                  <label>Recurrence</label>
-                  <div className={calStyles.recurGrid}>
-                    {RECUR_OPTIONS.map(option => (
-                      <button
-                        type="button"
-                        key={option.value}
-                        onClick={() => set('recur', option.value)}
-                        className={`${calStyles.recurChip} ${form.recur === option.value ? calStyles.recurChipActive : ''}`}
-                        disabled={formSaving}
-                        aria-pressed={form.recur === option.value}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            {formError && <div className={calStyles.formError} role="alert">{formError}</div>}
-
-            {formImpact && (
-              <div
-                className={calStyles.impactPreview}
-                role="status"
-                style={{
-                  background: formImpact.level === 'negative' ? 'var(--red-dim)' : formImpact.level === 'tight' ? 'var(--amber-dim)' : 'var(--accent-glow)',
-                  borderColor: formImpact.level === 'negative' ? 'var(--red)' : formImpact.level === 'tight' ? 'var(--amber)' : 'var(--accent)',
-                  color: formImpact.level === 'negative' ? 'var(--red)' : formImpact.level === 'tight' ? 'var(--amber)' : 'var(--accent)',
-                }}
-              >
-                {formImpact.msg}
-              </div>
-            )}
-
-            <div className={calStyles.modalActions}>
-              <Button type="button" onClick={closeTransactionEditor} variant="ghost" disabled={formSaving}>Cancel</Button>
-              <Button
-                type="button"
-                onClick={handleSave}
-                variant={isIncome ? 'primary' : 'danger'}
-                disabled={formSaving || !Number.isFinite(parseFloat(form.amount)) || parseFloat(form.amount) <= 0}
-              >
-                {formSaving ? 'Saving...' : editTx ? 'Save changes' : isIncome ? '+ Add income' : '− Add expense'}
-              </Button>
-            </div>
-            </div>
-          </div>,
-          document.body,
-        )
-        : null}
-    </div>
-  )
-}
-
-function DayTxRow({
-  t,
-  s,
-  privacyMode,
-  onEdit,
-  onDelete,
-  onTogglePaymentStatus,
-  onSettleProjectedNow,
-  onOpenRecurringDateEditor,
-  onLogProjected,
-  onEditRecurrence,
-  recurringActionPending = false,
-  locked = false,
-  accountLabel = '',
-  animationDelay = '0ms',
-}) {
-  if (!t) return null
-  const isIncome = t?.type === 'income'
-  const lifecycle = getTakdaTransactionLifecycle(t || {}, today())
-  const isPaid = lifecycle.paid
-  const isProjected = lifecycle.projected
-  const classification = [t.cat, t.subcat].filter(Boolean).join(' · ')
-  const metaParts = [
-    classification || t.cat,
-    accountLabel,
-    t.recur ? `every ${t.recur}` : null,
-  ].filter(Boolean)
-  const metaSubtitle = metaParts.join(' · ')
-
-  return (
-    <div
-      className={`${calStyles.txRow} ${calStyles.dayTxRowStaggered} ${isPaid ? '' : calStyles.txRowUnpaid} ${isProjected ? calStyles.projectedTxRow : ''}`}
-      style={{ animationDelay }}
-    >
-      <div className={calStyles.txLeft}>
-        <div
-          className={calStyles.txIcon}
-          style={{
-            background: isIncome ? 'color-mix(in srgb, #30d158 16%, transparent)' : 'color-mix(in srgb, #ff453a 16%, transparent)',
-            color: isIncome ? '#30d158' : '#ff453a',
-          }}
-        >
-          {isIncome ? '+' : '−'}
-        </div>
-        <div className={calStyles.txInfoBlock}>
-          <div className={calStyles.txDesc}>
-            {t.desc || t.cat}
-            {t._projected && <span className={calStyles.projBadge}>recurring</span>}
-          </div>
-          <div className={calStyles.txMeta} title={metaSubtitle}>
-            {metaSubtitle}
-          </div>
-        </div>
-      </div>
-      <div className={`${calStyles.txRight} ${isProjected ? calStyles.projectedTxRight : ''}`}>
-        <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? '#30d158' : '#ff453a') }}>
-          {privacyMode ? 'Hidden' : `${isIncome ? '+' : '−'}${fmt(t.amount, s)}`}
-        </div>
-        {t._projected ? (
-          <div className={calStyles.projectedActionStack}>
-            <div className={calStyles.projectedActionRowPrimary}>
-              <button
-                type="button"
-                className={`${calStyles.logBtn} ${calStyles.primaryProjectedBtn}`}
-                onClick={() => onSettleProjectedNow?.(t)}
-                aria-label={`${isIncome ? 'Record' : 'Pay'} ${t.desc || t.cat} now`}
-                disabled={locked || recurringActionPending}
-                style={recurringActionPending
-                  ? undefined
-                  : {
-                    background: isIncome ? '#30d158' : '#ff453a',
-                    borderColor: isIncome ? '#30d158' : '#ff453a',
-                    color: '#ffffff',
-                  }}
-              >
-                {recurringActionPending ? 'Saving...' : isIncome ? 'Record now' : 'Pay now'}
-              </button>
-            </div>
-            <details className={calStyles.txActionDetails}>
-              <summary className={calStyles.txActionSummary}>
-                <span>More options</span>
-                <small>Change date or recurrence</small>
-              </summary>
-              <div className={calStyles.txActionGrid}>
-                <button
-                  type="button"
-                  className={`${calStyles.logBtn} ${calStyles.secondaryProjectedBtn}`}
-                  onClick={() => onOpenRecurringDateEditor?.(t)}
-                  aria-label={`Choose another date for ${t.desc || t.cat}`}
-                  disabled={locked || recurringActionPending}
-                >
-                  Choose date
-                </button>
-                <button
-                  type="button"
-                  className={`${calStyles.logBtn} ${calStyles.tertiaryProjectedBtn}`}
-                  onClick={() => onLogProjected?.(t)}
-                  aria-label={`Keep the scheduled date for ${t.desc || t.cat}`}
-                  disabled={locked || recurringActionPending}
-                >
-                  Keep due date
-                </button>
-                <button
-                  type="button"
-                  className={calStyles.recurBtn}
-                  onClick={() => onEditRecurrence?.(t)}
-                  aria-label={`Edit recurrence for ${t.desc || t.cat}`}
-                  disabled={locked || recurringActionPending}
-                >
-                  Edit recurrence
-                </button>
-              </div>
-            </details>
-          </div>
-        ) : (
-          <div className={calStyles.txActions}>
-            <button
-              type="button"
-              className={`${calStyles.statusBtn} ${isPaid ? calStyles.statusBtnPaid : calStyles.statusBtnUnpaid}`}
-              onClick={() => onTogglePaymentStatus(t)}
-              aria-label={`${isPaid ? 'Mark unpaid' : 'Mark paid'} for ${t.desc || t.cat}`}
-              disabled={locked}
-            >
-              {isPaid ? 'Paid' : 'Unpaid'}
-            </button>
-            <button
-              type="button"
-              className={calStyles.editBtn}
-              onClick={() => onEdit(t)}
-              aria-label={`Edit ${t.desc || t.cat}`}
-              title="Edit transaction"
-              disabled={locked}
-            >
-              ✏️
-            </button>
-            <button
-              type="button"
-              className={calStyles.delBtnSm}
-              onClick={() => onDelete(t)}
-              aria-label={`Delete ${t.desc || t.cat}`}
-              title="Delete transaction"
-              disabled={locked}
-            >
-              🗑️
-            </button>
-          </div>
-        )}
-      </div>
     </div>
   )
 }

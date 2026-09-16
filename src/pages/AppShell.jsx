@@ -11,13 +11,17 @@ import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Bills from './Bills'
-import Settings from './Settings'
-import QuickAdd from './QuickAdd'
+import { QuickAddModal } from '../components/modals/QuickAddModal'
+import History from './History'
+import { SettingsModal } from '../components/modals/SettingsModal'
+import ErrorBoundary from '../components/ErrorBoundary'
 import AccountsAndDebts from './AccountsAndDebts'
 import SavingsAndBudget from './SavingsAndBudget'
 import HistoryAndInsights from './HistoryAndInsights'
 import Accounts from './Accounts'
 import Debts from './Debts'
+import DesktopDock from './DesktopDock'
+import { ChangelogModal } from '../components/modals/ChangelogModal'
 import Budget from './Budget'
 import Savings from './Savings'
 import History from './History'
@@ -1569,41 +1573,17 @@ export default function AppShell({ user }) {
           </PageErrorBoundary>
         </main>
       </div>
-      {quickAddSheet.open && (
-        <>
-          <div className={styles.quickAddBackdrop} onClick={closeQuickAdd} aria-hidden="true" />
-          <div className={styles.quickAddLayer}>
-          <div
-            className={styles.quickAddSheet}
-            role="dialog"
-            aria-modal="true"
-            aria-label={quickAddDialogLabel}
-          >
-            <div className={styles.quickAddHeader}>
-              <div>
-                <div className={styles.quickAddEyebrow}>Quick add</div>
-                <div className={styles.quickAddTitle} id="quick-add-title">
-                  {quickAddSheet.type === 'income' ? 'Log income' : 'Track expense'}
-                </div>
-              </div>
-              <button type="button" className={styles.quickAddClose} onClick={closeQuickAdd} aria-label="Close quick add">✕</button>
-            </div>
-            <QuickAdd
-              user={user}
-              profile={profile}
-              accounts={data.accounts}
-              debts={data.debts}
-              symbol={symbol}
-              defaultType={quickAddSheet.type}
-              defaultDate={quickAddDefaultDate}
-              initialEntry={quickAddSheet.initialEntry}
-              onTypeChange={handleQuickAddTypeChange}
-              onClose={closeQuickAdd}
-            />
-          </div>
-        </div>
-        </>
-      )}
+      <QuickAddModal
+        quickAddSheet={quickAddSheet}
+        closeQuickAdd={closeQuickAdd}
+        quickAddDialogLabel={quickAddDialogLabel}
+        user={user}
+        profile={profile}
+        data={data}
+        symbol={symbol}
+        quickAddDefaultDate={quickAddDefaultDate}
+        handleQuickAddTypeChange={handleQuickAddTypeChange}
+      />
       {workspaceDropdownOpen && (
         <>
           <div className={styles.workspaceDropdownBackdrop} onClick={() => setWorkspaceDropdownOpen(false)} aria-hidden="true" />
@@ -1711,57 +1691,14 @@ export default function AppShell({ user }) {
         )}
       </nav>
 
-      {changelogData && (
-        <div className={styles.changelogOverlay} onClick={dismissChangelog}>
-          <div className={styles.changelogModal} onClick={e => e.stopPropagation()}>
-            <div className={styles.changelogIconWrap}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.changelogSparkle}>
-                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" fill="currentColor" opacity="0.85" />
-                <path d="M5 3v4M3 5h4" />
-                <path d="M19 17v4M17 19h4" />
-              </svg>
-            </div>
-            <div className={styles.changelogBadge}>🎉 Buhay Updated</div>
-            <h2 className={styles.changelogTitle}>What&apos;s New in Buhay</h2>
-            <div className={styles.changelogContent}>
-              <p>{(changelogData.message || "We've added some exciting new improvements to your financial cockpit!").replace(/^(feat|fix|refactor|perf|chore|style)\([^)]+\):\s*/i, '').replace(/^(feat|fix|refactor|perf|chore|style):\s*/i, '')}</p>
-            </div>
-            <div className={styles.changelogActions}>
-              <Button type="button" variant="primary" fullWidth onClick={dismissChangelog}>
-                Awesome, got it!
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-      {isSettingsOpen && (
-        <div className={styles.settingsModalOverlay} onClick={() => setIsSettingsOpen(false)}>
-          <div className={styles.settingsModalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.settingsModalHeader}>
-              <div className={styles.settingsModalTitleGroup}>
-                <span className={styles.settingsModalIcon}>{NAV_ICONS.settings}</span>
-                <div>
-                  <h3 className={styles.settingsModalTitle}>Settings</h3>
-                  <div className={styles.settingsModalSub}>
-                    Preferences & system defaults for {activeSpaceConfig.label}
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                className={styles.settingsModalCloseBtn}
-                onClick={() => setIsSettingsOpen(false)}
-                aria-label="Close Settings"
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.settingsModalBody}>
-              <Settings {...pageProps} />
-            </div>
-          </div>
-        </div>
-      )}
+      <ChangelogModal changelogData={changelogData} dismissChangelog={dismissChangelog} />
+      <SettingsModal 
+        isSettingsOpen={isSettingsOpen} 
+        setIsSettingsOpen={setIsSettingsOpen} 
+        activeSpaceConfig={activeSpaceConfig} 
+        pageProps={pageProps} 
+        NAV_ICONS={NAV_ICONS} 
+      />
       {activeTour && (
         <GuidedTour
           space={activeTour}

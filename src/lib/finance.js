@@ -1,6 +1,7 @@
 import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance } from './forecast'
 import { getProjectedTransactions } from './recurrence'
 import { getMonthKey, normalizeDate, toMonthKey, today } from './utils'
+import { sumBy, sumAbsBy, sumMax0By, calculateDelta } from './math'
 
 export function isTransactionPaid(tx = {}) {
   return String(tx?.paymentStatus || 'paid').toLowerCase() !== 'unpaid'
@@ -120,9 +121,10 @@ export function getAccountSignedBalance(account = {}) {
 
 export function getLiquidBalance(accounts = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
-  return safeAccounts
-    .filter(account => account && ['Cash', 'Bank', 'E-wallet'].includes(account.type))
-    .reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
+  return sumBy(
+    safeAccounts.filter(account => account && ['Cash', 'Bank', 'E-wallet'].includes(account.type)),
+    a => a.balance
+  )
 }
 
 export function getProjectedCcCharges(accounts = [], income = [], expenses = [], targetDate = null) {
@@ -169,35 +171,32 @@ export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null,
   const targetKey = targetDate ? normalizeDate(targetDate) : null
 
   // 1) All standalone debts (personal loans, mortgages, car loans, etc.)
-  const standaloneDebtSum = safeDebts
-    .filter(d => {
-      if (!d || d.type === 'Credit Card') return false
-      if (targetKey && d.startDate) {
-        const startKey = normalizeDate(d.startDate)
-        if (startKey && startKey > targetKey) return false
-      }
-      return true
-    })
-    .reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
+  const standaloneDebtSum = sumAbsBy(safeDebts.filter(d => {
+    if (!d || d.type === 'Credit Card') return false
+    if (targetKey && d.startDate) {
+      const startKey = normalizeDate(d.startDate)
+      if (startKey && startKey > targetKey) return false
+    }
+    return true
+  }), d => d.balance)
 
   // 2) Credit card accounts
-  const creditCardAccountSum = safeAccounts
-    .filter(acc => acc && acc.type === 'Credit Card')
-    .reduce((sum, acc) => sum + Math.abs(Number(acc?.balance) || 0), 0)
+  const creditCardAccountSum = sumAbsBy(
+    safeAccounts.filter(acc => acc && acc.type === 'Credit Card'),
+    acc => acc.balance
+  )
 
   // 3) Unlinked credit card entries
   const accountIds = new Set(safeAccounts.map(a => a?._id).filter(Boolean))
-  const unlinkedCcDebts = safeDebts
-    .filter(d => {
-      if (!d || d.type !== 'Credit Card') return false
-      if (d.accountId && accountIds.has(d.accountId)) return false
-      if (targetKey && d.startDate) {
-        const startKey = normalizeDate(d.startDate)
-        if (startKey && startKey > targetKey) return false
-      }
-      return true
-    })
-    .reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
+  const unlinkedCcDebts = sumAbsBy(safeDebts.filter(d => {
+    if (!d || d.type !== 'Credit Card') return false
+    if (d.accountId && accountIds.has(d.accountId)) return false
+    if (targetKey && d.startDate) {
+      const startKey = normalizeDate(d.startDate)
+      if (startKey && startKey > targetKey) return false
+    }
+    return true
+  }), d => d.balance)
 
   // 4) Projected Credit Card Charges for future dates
   const futureCcCharges = getProjectedCcCharges(accounts, income, expenses, targetDate)
@@ -207,14 +206,15 @@ export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null,
 
 export function getTakdaTotalSavings(savings = []) {
   const safeSavings = Array.isArray(savings) ? savings.filter(Boolean) : []
-  return safeSavings.reduce((sum, s) => sum + (Number(s?.balance) || 0), 0)
+  return sumBy(safeSavings, s => s.balance)
 }
 
 export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = null) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
-  const accountsSum = safeAccounts
-    .filter(acc => acc?.type !== 'Credit Card')
-    .reduce((sum, acc) => sum + Math.max(0, Number(acc?.balance) || 0), 0)
+  const accountsSum = sumMax0By(
+    safeAccounts.filter(acc => acc?.type !== 'Credit Card'),
+    acc => acc.balance
+  )
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   let prices = livePrices
@@ -260,20 +260,15 @@ export function getCurrentBalance(accounts = [], debts = []) {
   const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
   const accountIds = new Set(safeAccounts.map(a => a?._id).filter(Boolean))
   const unlinkedDebts = safeDebts.filter(d => !d?.accountId || !accountIds.has(d.accountId))
-  const totalDebt = unlinkedDebts.reduce((sum, d) => sum + Math.abs(Number(d?.balance) || 0), 0)
   
-  const accountsBalance = safeAccounts.reduce((sum, account) => sum + (Number(account?.balance) || 0), 0)
+  const totalDebt = sumAbsBy(unlinkedDebts, d => d.balance)
+  const accountsBalance = sumBy(safeAccounts, a => a.balance)
+  
   return accountsBalance - totalDebt
 }
 
 export function getAccountBalanceDelta(account = {}, txType, amount = 0) {
-  const normalizedAmount = Math.abs(Number(amount) || 0)
-  if (!normalizedAmount) return 0
-
-  if (txType === 'income') {
-    return normalizedAmount
-  }
-  return -normalizedAmount
+  return calculateDelta(amount, txType === 'income')
 }
 
 export function isLinkedTransaction(tx = {}) {
@@ -344,7 +339,7 @@ export function getMonthTransactions(list = [], year, month) {
 }
 
 export function getMonthTotal(list = [], year, month) {
-  return getPaidTransactions(getMonthTransactions(list, year, month)).reduce((sum, tx) => sum + (Number(tx?.amount) || 0), 0)
+  return sumBy(getPaidTransactions(getMonthTransactions(list, year, month)), tx => tx.amount)
 }
 
 function normalizeMonthStartBalances(raw = {}) {

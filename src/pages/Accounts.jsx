@@ -8,6 +8,9 @@ import { displayValue, fmt, maskMoney, today, validateAmount } from '../lib/util
 import styles from './Page.module.css'
 import accStyles from './Accounts.module.css'
 import SwipeableCard from '../components/SwipeableCard'
+import QuickAdjustModal from '../components/modals/QuickAdjustModal'
+import TransferModal from '../components/modals/TransferModal'
+import AccountEditorModal from '../components/modals/AccountEditorModal'
 
 const ACCOUNT_TYPES = ['Bank', 'E-wallet', 'Cash', 'Investment', 'Other']
 const ACCOUNT_ICONS = { Bank: '🏦', 'E-wallet': '📱', Cash: '💵', Investment: '📈', Other: '🏷' }
@@ -558,299 +561,41 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      {/* 1-CLICK QUICK ADJUST BALANCE MODAL */}
-      {adjustTarget && typeof document !== 'undefined' && createPortal(
-        <div className={accStyles.modalOverlay} onClick={closeQuickAdjust}>
-          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={accStyles.modalHeader}>
-              <div>
-                <div className={accStyles.modalEyebrow}>⚡ Quick Reconcile</div>
-                <div className={accStyles.modalTitle}>Adjust {adjustTarget.name}</div>
-              </div>
-              <button type="button" className={accStyles.modalClose} onClick={closeQuickAdjust}>✕</button>
-            </div>
+      
+      <QuickAdjustModal
+        adjustTarget={adjustTarget}
+        onClose={closeQuickAdjust}
+        adjustNewBalance={adjustNewBalance}
+        setAdjustNewBalance={setAdjustNewBalance}
+        adjustLogToHistory={adjustLogToHistory}
+        setAdjustLogToHistory={setAdjustLogToHistory}
+        adjustSaving={adjustSaving}
+        handleAdjustSubmit={handleAdjustSubmit}
+        s={s}
+        fmt={fmt}
+        money={money}
+      />
 
-            <form onSubmit={handleAdjustSubmit} className={accStyles.modalBody}>
-              <div className={accStyles.adjustCurrentStrip}>
-                <span className={accStyles.adjustCurrentLabel}>Current recorded balance:</span>
-                <strong className={accStyles.adjustCurrentVal}>{money(adjustTarget.balance)}</strong>
-              </div>
+      <TransferModal
+        showTransferModal={showTransferModal}
+        onClose={closeQuickTransfer}
+        transferForm={transferForm}
+        setTransferForm={setTransferForm}
+        transferSaving={transferSaving}
+        handleTransferSubmit={handleTransferSubmit}
+        swapTransferDirection={swapTransferDirection}
+        accounts={accounts}
+        s={s}
+        fmt={fmt}
+      />
 
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="adjust-bal-input">
-                  Actual current balance in real life ({s})
-                </label>
-                <input
-                  id="adjust-bal-input"
-                  type="number"
-                  step="any"
-                  className={accStyles.fieldInputBig}
-                  placeholder="0.00"
-                  value={adjustNewBalance}
-                  onChange={e => setAdjustNewBalance(e.target.value)}
-                  autoFocus
-                />
-              </div>
-
-              {adjustNewBalance !== '' && !isNaN(parseFloat(adjustNewBalance)) && (
-                <div className={accStyles.adjustDiffStrip}>
-                  <span>Difference:</span>
-                  <strong className={parseFloat(adjustNewBalance) - Number(adjustTarget.balance) >= 0 ? accStyles.diffPositive : accStyles.diffNegative}>
-                    {parseFloat(adjustNewBalance) - Number(adjustTarget.balance) >= 0 ? '+' : ''}
-                    {fmt(parseFloat(adjustNewBalance) - Number(adjustTarget.balance), s)}
-                  </strong>
-                </div>
-              )}
-
-              {adjustNewBalance !== '' && !isNaN(parseFloat(adjustNewBalance)) && (parseFloat(adjustNewBalance) - Number(adjustTarget.balance) !== 0) && (
-                <label className={accStyles.reconcileLedgerCheck}>
-                  <input
-                    type="checkbox"
-                    className={accStyles.reconcileCheckbox}
-                    checked={adjustLogToHistory}
-                    onChange={e => setAdjustLogToHistory(e.target.checked)}
-                  />
-                  <div className={accStyles.reconcileCheckCopy}>
-                    <span className={accStyles.reconcileCheckTitle}>Log difference in Transaction History</span>
-                    <span className={accStyles.reconcileCheckSub}>
-                      Automatically logs an adjustment entry so cashflow reports stay balanced
-                    </span>
-                  </div>
-                </label>
-              )}
-
-              <div className={accStyles.modalActions}>
-                <button type="button" className={accStyles.btnSecondary} onClick={closeQuickAdjust}>
-                  Cancel
-                </button>
-                <button type="submit" className={accStyles.btnPrimary} disabled={adjustSaving}>
-                  {adjustSaving ? 'Updating…' : 'Save Balance'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* 1-CLICK INTER-ACCOUNT TRANSFER MODAL */}
-      {showTransferModal && typeof document !== 'undefined' && createPortal(
-        <div className={accStyles.modalOverlay} onClick={closeQuickTransfer}>
-          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={accStyles.modalHeader}>
-              <div>
-                <div className={accStyles.modalEyebrow}>⇄ Inter-Account Transfer</div>
-                <div className={accStyles.modalTitle}>Move Money</div>
-              </div>
-              <button type="button" className={accStyles.modalClose} onClick={closeQuickTransfer}>✕</button>
-            </div>
-
-            <form onSubmit={handleTransferSubmit} className={accStyles.modalBody}>
-              <div className={accStyles.transferTopBar}>
-                <span className={accStyles.transferTopNotice}>Select source & target accounts:</span>
-                <button
-                  type="button"
-                  className={accStyles.btnSwapDirection}
-                  onClick={swapTransferDirection}
-                  title="Reverse transfer direction"
-                >
-                  ⇄ Swap
-                </button>
-              </div>
-
-              <div className={accStyles.transferGrid}>
-                <div className={accStyles.field}>
-                  <label className={accStyles.fieldLabel} htmlFor="transfer-from">From Account</label>
-                  <select
-                    id="transfer-from"
-                    className={accStyles.fieldInput}
-                    value={transferForm.fromAccountId}
-                    onChange={e => setTransferForm(prev => ({ ...prev, fromAccountId: e.target.value }))}
-                  >
-                    {accounts.map(a => (
-                      <option key={a._id} value={a._id} disabled={a._id === transferForm.toAccountId}>
-                        {ACCOUNT_ICONS[a.type] || '🏷'} {a.name} ({fmt(a.balance, s)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className={accStyles.transferArrowWrap} onClick={swapTransferDirection} title="Swap direction" role="button" tabIndex={0}>
-                  ⇄
-                </div>
-
-                <div className={accStyles.field}>
-                  <label className={accStyles.fieldLabel} htmlFor="transfer-to">To Account</label>
-                  <select
-                    id="transfer-to"
-                    className={accStyles.fieldInput}
-                    value={transferForm.toAccountId}
-                    onChange={e => setTransferForm(prev => ({ ...prev, toAccountId: e.target.value }))}
-                  >
-                    {accounts.map(a => (
-                      <option key={a._id} value={a._id} disabled={a._id === transferForm.fromAccountId}>
-                        {ACCOUNT_ICONS[a.type] || '🏷'} {a.name} ({fmt(a.balance, s)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="transfer-amount">Amount ({s})</label>
-                <input
-                  id="transfer-amount"
-                  type="number"
-                  step="any"
-                  min="0.01"
-                  className={accStyles.fieldInputBig}
-                  placeholder="0.00"
-                  value={transferForm.amount}
-                  onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
-                  autoFocus
-                />
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="transfer-date">Date</label>
-                <input
-                  id="transfer-date"
-                  type="date"
-                  className={accStyles.fieldInput}
-                  value={transferForm.date}
-                  onChange={e => setTransferForm(prev => ({ ...prev, date: e.target.value }))}
-                />
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="transfer-desc">Note (Optional)</label>
-                <input
-                  id="transfer-desc"
-                  type="text"
-                  className={accStyles.fieldInput}
-                  placeholder="e.g. ATM cash withdrawal, wallet reload"
-                  value={transferForm.desc}
-                  onChange={e => setTransferForm(prev => ({ ...prev, desc: e.target.value }))}
-                />
-              </div>
-
-              <div className={accStyles.modalActions}>
-                <button type="button" className={accStyles.btnSecondary} onClick={closeQuickTransfer}>
-                  Cancel
-                </button>
-                <button type="submit" className={accStyles.btnPrimary} disabled={transferSaving}>
-                  {transferSaving ? 'Transferring…' : 'Complete Transfer'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* NEW / EDIT ACCOUNT MODAL */}
-      {showModal && typeof document !== 'undefined' && createPortal(
-        <div className={accStyles.modalOverlay} onClick={closeEditor}>
-          <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={accStyles.modalHeader}>
-              <div>
-                <div className={accStyles.modalEyebrow}>{editAccount ? 'Editing Account' : 'New Account'}</div>
-                <div className={accStyles.modalTitle}>{editAccount ? `Update ${editAccount.name}` : 'Add New Account'}</div>
-              </div>
-              <button type="button" className={accStyles.modalClose} onClick={closeEditor}>✕</button>
-            </div>
-
-            <div className={accStyles.modalBody}>
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-name">Account Name</label>
-                <input
-                  id="account-name"
-                  className={accStyles.fieldInput}
-                  placeholder="e.g. BDO Savings, GCash"
-                  value={form.name}
-                  onChange={e => setField('name', e.target.value)}
-                  autoFocus
-                />
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-type">Account Type</label>
-                <select
-                  id="account-type"
-                  className={accStyles.fieldInput}
-                  value={form.type}
-                  onChange={e => {
-                    const newType = e.target.value
-                    setField('type', newType)
-                    if (!editAccount) {
-                      setField('color', TYPE_COLORS[newType] || '#3b82f6')
-                    }
-                  }}
-                >
-                  {ACCOUNT_TYPES.map(type => (
-                    <option key={type} value={type}>
-                      {ACCOUNT_ICONS[type] || '🏷'} {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-balance">Starting Balance ({s})</label>
-                <input
-                  id="account-balance"
-                  className={accStyles.fieldInputBig}
-                  type="number"
-                  step="any"
-                  placeholder="0.00"
-                  value={form.balance}
-                  onChange={e => setField('balance', e.target.value)}
-                />
-              </div>
-
-              <div className={accStyles.field}>
-                <label className={accStyles.fieldLabel} htmlFor="account-notes">Notes / Purpose</label>
-                <input
-                  id="account-notes"
-                  className={accStyles.fieldInput}
-                  placeholder="e.g. Daily spending, Payroll"
-                  value={form.notes}
-                  onChange={e => setField('notes', e.target.value)}
-                />
-              </div>
-
-              <div className={accStyles.colorSection}>
-                <div className={accStyles.fieldLabel}>Theme Color</div>
-                <div className={accStyles.colorGrid}>
-                  {COLORS.map(color => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      onClick={() => setField('color', color.value)}
-                      className={`${accStyles.colorBtn} ${form.color === color.value ? accStyles.colorBtnActive : ''}`}
-                      style={{ '--swatch': color.value }}
-                      title={color.name}
-                      aria-pressed={form.color === color.value}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className={accStyles.modalActions}>
-                <button type="button" className={accStyles.btnSecondary} onClick={closeEditor}>
-                  Cancel
-                </button>
-                <button type="button" className={accStyles.btnPrimary} onClick={handleSaveAccount}>
-                  {editAccount ? 'Save Changes' : 'Create Account'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-    </>
-  )
-
-  return hideHeader ? mainContent : <div className={styles.page}>{mainContent}</div>
-}
+      <AccountEditorModal
+        showModal={showModal}
+        onClose={closeEditor}
+        editAccount={editAccount}
+        form={form}
+        setField={setField}
+        handleSaveAccount={handleSaveAccount}
+        s={s}
+      />
+    
