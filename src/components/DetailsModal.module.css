@@ -277,6 +277,15 @@
   color: var(--amber, #f59e0b);
 }
 
+.txBillingCycle {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent, #3b82f6) 14%, transparent);
+  color: var(--accent, #3b82f6);
+  font-size: 10px;
+  font-weight: 600;
+}
+
 .txAmount {
   font-size: 14px;
   font-weight: 700;

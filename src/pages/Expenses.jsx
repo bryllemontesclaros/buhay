@@ -11,6 +11,7 @@ import {
   sanitizeTransactionCategory,
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
+import { getBillingCycleOptions } from '../lib/billingCycles'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { fmt, today, RECUR_OPTIONS, validateAmount } from '../lib/utils'
 import styles from './Page.module.css'
@@ -20,6 +21,7 @@ function getExpenseDraft(accounts = []) {
     ...getDefaultTransactionDraft('expense'),
     date: today(),
     accountId: accounts?.[0]?._id || '',
+    billingCycle: 'auto',
   }
 }
 
@@ -27,6 +29,17 @@ export default function Expenses({ user, data, symbol }) {
   const s = symbol || '₱'
   const [form, setForm] = useState(() => getExpenseDraft(data.accounts))
   const [showPresetBrowser, setShowPresetBrowser] = useState(false)
+
+  const selectedAccount = useMemo(() => {
+    return (data.accounts || []).find(a => a._id === form.accountId) || null
+  }, [data.accounts, form.accountId])
+
+  const isCreditCard = selectedAccount?.type === 'Credit Card'
+
+  const billingCycleOptions = useMemo(() => {
+    if (!isCreditCard || !selectedAccount) return []
+    return getBillingCycleOptions(selectedAccount, form.date || today())
+  }, [isCreditCard, selectedAccount, form.date])
 
   const quickPresets = getQuickItems('expense')
   const presetGroups = getPresetGroups('expense')
@@ -114,7 +127,13 @@ export default function Expenses({ user, data, symbol }) {
     await fsAddTransaction(
       user.uid,
       'expenses',
-      { ...form, amount: parseFloat(form.amount), type: 'expense', accountBalanceLinked: Boolean(form.accountId) },
+      {
+        ...form,
+        amount: parseFloat(form.amount),
+        type: 'expense',
+        accountBalanceLinked: Boolean(form.accountId),
+        ...(isCreditCard ? { billingCycle: form.billingCycle || 'auto' } : {}),
+      },
       data.accounts,
     )
 
@@ -206,12 +225,21 @@ export default function Expenses({ user, data, symbol }) {
             </select>
           </div>
         </div>
-        <div className={`${styles.formRow} ${styles.col3}`}>
+        <div className={`${styles.formRow} ${isCreditCard && billingCycleOptions.length > 0 ? styles.col3 : styles.col2}`}>
           <div className={styles.formGroup}><label>Recurrence</label>
             <select value={form.recur} onChange={e => setField('recur', e.target.value)}>
               {RECUR_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
+          {isCreditCard && billingCycleOptions.length > 0 && (
+            <div className={styles.formGroup}><label>💳 Billing Statement</label>
+              <select value={form.billingCycle || 'auto'} onChange={e => setField('billingCycle', e.target.value)}>
+                {billingCycleOptions.map(opt => (
+                  <option key={opt.id} value={opt.id}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className={styles.formGroup} style={{ justifyContent: 'flex-end' }}>
             <button className={styles.btnAdd} onClick={handleAdd}>Add expense</button>
           </div>

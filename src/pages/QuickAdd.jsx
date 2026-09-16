@@ -14,6 +14,7 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { formatDisplayDate, RECUR_OPTIONS, today } from '../lib/utils'
+import { getBillingCycleOptions } from '../lib/billingCycles'
 import styles from './QuickAdd.module.css'
 
 function normalizeAmountInput(value) {
@@ -56,6 +57,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [entryDate, setEntryDate] = useState(initialEntry?.date || defaultDate || today())
   const [recur, setRecur] = useState(initialEntry?.recur || '')
   const [accountId, setAccountId] = useState(initialEntry?.accountId || defaultAccountId)
+  const [billingCycle, setBillingCycle] = useState(initialEntry?.billingCycle || 'auto')
   const [paymentStatus, setPaymentStatus] = useState(initialEntry?.paymentStatus || 'paid')
   const [showPresetBrowser, setShowPresetBrowser] = useState(Boolean(initialPresetKey))
   const [saving, setSaving] = useState(false)
@@ -63,6 +65,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
   const [error, setError] = useState('')
   const isIncome = type === 'income'
   const selectedAccount = accounts.find(account => account._id === accountId) || null
+  const isCreditCardAccount = selectedAccount?.type === 'Credit Card'
   const amountRef = useRef(null)
 
   useLayoutEffect(() => {
@@ -81,6 +84,11 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
     const selected = quickPresets.find(item => item.key === presetKey)
     return selected ? [...limited.slice(0, 5), selected] : limited
   }, [presetKey, quickPresets, showPresetBrowser])
+
+  const billingCycleOptions = useMemo(() => {
+    if (!isCreditCardAccount || !selectedAccount) return []
+    return getBillingCycleOptions(selectedAccount, entryDate)
+  }, [isCreditCardAccount, selectedAccount, entryDate])
 
 
   useEffect(() => {
@@ -160,21 +168,44 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
 
 
   // Numpad input
-  function numPress(val) {
-    setError('')
-    if (val === 'C') { setAmount(''); return }
-    if (val === '⌫') { setAmount(a => a.slice(0, -1)); return }
-    if (val === '.' && amount.includes('.')) return
-    if (amount === '0' && val !== '.') {
-      setAmount(normalizeAmountInput(String(val)))
-      return
+  function numPress(k) {
+    if (k === 'C') {
+      setAmount('')
+    } else if (k === '⌫') {
+      setAmount(current => current.slice(0, -1))
+    } else if (k === '.') {
+      setAmount(current => {
+        if (!current) return '0.'
+        if (current.includes('.')) return current
+        return `${current}.`
+      })
+    } else if (k === '00') {
+      setAmount(current => {
+        if (!current || current === '0') return '0'
+        if (current.includes('.')) {
+          const [intPart, decPart = ''] = current.split('.')
+          if (decPart.length >= 2) return current
+          return `${intPart}.${`${decPart}00`.slice(0, 2)}`
+        }
+        return `${current}00`
+      })
+    } else {
+      setAmount(current => {
+        if (current === '0') return String(k)
+        if (current.includes('.')) {
+          const [intPart, decPart = ''] = current.split('.')
+          if (decPart.length >= 2) return current
+          return `${intPart}.${decPart}${k}`
+        }
+        return `${current}${k}`
+      })
     }
-    setAmount(current => normalizeAmountInput(`${current}${val}`))
+    setError('')
   }
 
   async function handleSave() {
-    if (!amount || parseFloat(amount) <= 0) {
-      setError('Enter an amount greater than 0 before saving this entry.')
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      setError('Enter a valid amount before saving.')
       return
     }
     if (!entryDate) {
@@ -198,6 +229,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         paymentStatus,
         accountId,
         accountBalanceLinked: Boolean(accountId),
+        ...(isCreditCardAccount ? { billingCycle: billingCycle || 'auto' } : {}),
       }
 
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
@@ -219,6 +251,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
         setPresetKey('')
         setDescTouched(false)
         setRecur('')
+        setBillingCycle('auto')
         setPaymentStatus('paid')
         setAccountId(defaultAccountId)
         if (!defaultDate) setEntryDate(today())
@@ -415,6 +448,22 @@ export default function QuickAdd({ user, profile = {}, accounts = [], symbol, on
             ))}
           </select>
         </label>
+        {isCreditCardAccount && billingCycleOptions.length > 0 && (
+          <label className={`${styles.metaField} ${styles.metaFieldFull}`}>
+            <span className={styles.fieldLabel}>💳 Billing Statement</span>
+            <select
+              className={styles.fieldControl}
+              value={billingCycle}
+              onChange={event => setBillingCycle(event.target.value)}
+            >
+              {billingCycleOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
       <details className={styles.advancedBox}>

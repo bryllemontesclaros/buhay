@@ -19,6 +19,7 @@ import {
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { formatRecurringDateLabel, isRecurringRecordedOffDueDate } from '../lib/recurrence'
 import { displayValue, fmt, formatDisplayDate, getMonthKey, maskMoney, RECUR_OPTIONS, today, validateAmount } from '../lib/utils'
+import { getBillingCycleOptions } from '../lib/billingCycles'
 import DetailsModal from '../components/DetailsModal'
 import SwipeableCard from '../components/SwipeableCard'
 import styles from './Page.module.css'
@@ -254,8 +255,16 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
       presetKey: matchedPreset && !matchedPreset.isCustom && matchedPreset.cat === nextCat && matchedPreset.subcat === nextSubcat ? matchedPreset.key : '',
       accountId: tx.accountId || '',
       paymentStatus: tx.paymentStatus || 'paid',
+      billingCycle: tx.billingCycle || 'auto',
     })
   }
+
+  const editSelectedAccount = (data.accounts || []).find(a => a._id === editForm.accountId) || null
+  const isEditCreditCard = editSelectedAccount?.type === 'Credit Card'
+  const editBillingCycleOptions = useMemo(() => {
+    if (!isEditCreditCard || !editSelectedAccount) return []
+    return getBillingCycleOptions(editSelectedAccount, editTx?.date || today())
+  }, [isEditCreditCard, editSelectedAccount, editTx?.date])
 
   async function handleSaveEdit() {
     const error = validateAmount(editForm.amount)
@@ -277,6 +286,7 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
       accountId: editForm.accountId,
       paymentStatus: editForm.paymentStatus,
       accountBalanceLinked: Boolean(editForm.accountId),
+      ...(isEditCreditCard ? { billingCycle: editForm.billingCycle || 'auto' } : {}),
     }, data.accounts)
     setEditTx(null)
   }
@@ -718,6 +728,23 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
                   ))}
                 </select>
               </div>
+
+              {isEditCreditCard && editBillingCycleOptions.length > 0 && (
+                <div className={styles.formGroup}>
+                  <label className={hStyles.fieldLabel}>💳 Billing Statement</label>
+                  <select
+                    className={hStyles.fieldInput}
+                    value={editForm.billingCycle || 'auto'}
+                    onChange={e => setEditForm(f => ({ ...f, billingCycle: e.target.value }))}
+                  >
+                    {editBillingCycleOptions.map(opt => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className={hStyles.modalActions}>
                 <button

@@ -38,7 +38,7 @@ import {
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
 import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
-import { getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
+import { getBillingCycleOptions, getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
@@ -93,7 +93,7 @@ function formatCompactCellBalance(value) {
 }
 
 function getEmptyForm(type = 'income', defaultAccountId = '') {
-  return { ...getDefaultTransactionDraft(type), accountId: defaultAccountId, paymentStatus: 'paid' }
+  return { ...getDefaultTransactionDraft(type), accountId: defaultAccountId, paymentStatus: 'paid', billingCycle: 'auto' }
 }
 
 function getLegacyMonthStartKeyForDate(dateKey, monthStartBalances = {}) {
@@ -989,6 +989,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         recur: tx.recur || '',
         accountId: tx.accountId || '',
         paymentStatus: tx.paymentStatus || 'paid',
+        billingCycle: tx.billingCycle || 'auto',
       })
       setDescTouched(Boolean(nextDesc))
       setFormError('')
@@ -1151,6 +1152,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     }
     
     const trimmedDesc = form.desc.trim()
+    const targetAccId = form.accountId || defaultAccountId
+    const targetAccount = accountLookup[targetAccId] || null
+    const isCreditCard = targetAccount?.type === 'Credit Card'
+    const ccExtra = isCreditCard ? { billingCycle: form.billingCycle || 'auto' } : {}
+
     if (editTx) {
       const col = editTx.type === 'income' ? 'income' : 'expenses'
       fsUpdateTransaction(user.uid, col, editTx, {
@@ -1161,8 +1167,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         presetKey: form.presetKey || '',
         recur: form.recur,
         paymentStatus: form.paymentStatus,
-        accountId: form.accountId || defaultAccountId,
-        accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
+        accountId: targetAccId,
+        accountBalanceLinked: Boolean(targetAccId),
+        ...ccExtra,
       }, data.accounts).catch(err => console.error(err))
     } else {
       const col = modalType === 'income' ? 'income' : 'expenses'
@@ -1176,8 +1183,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         recur: form.recur,
         type: modalType,
         paymentStatus: form.paymentStatus,
-        accountId: form.accountId || defaultAccountId,
-        accountBalanceLinked: Boolean(form.accountId || defaultAccountId),
+        accountId: targetAccId,
+        accountBalanceLinked: Boolean(targetAccId),
+        ...ccExtra,
       }, data.accounts).catch(err => console.error(err))
     }
     showEntryFeedback(buildEntryFeedback())
@@ -1688,6 +1696,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   useEffect(() => {
     if (onSelectedDateChange) onSelectedDateChange(selected || '')
   }, [selected, onSelectedDateChange])
+
+  const currentModalAccount = accountLookup[form.accountId || defaultAccountId] || null
+  const isCurrentModalCreditCard = currentModalAccount?.type === 'Credit Card'
+  const calendarBillingCycleOptions = useMemo(() => {
+    if (!isCurrentModalCreditCard || !currentModalAccount) return []
+    const targetDate = editTx?.date || selected || todayStr
+    return getBillingCycleOptions(currentModalAccount, targetDate)
+  }, [isCurrentModalCreditCard, currentModalAccount, editTx?.date, selected, todayStr])
 
 
   useEffect(() => {
@@ -3113,6 +3129,22 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   <option value="unpaid">Unpaid</option>
                 </select>
               </div>
+              {isCurrentModalCreditCard && calendarBillingCycleOptions.length > 0 && (
+                <div className={`${styles.formGroup} ${calStyles.modalFieldFull}`}>
+                  <label>💳 Billing Statement</label>
+                  <select
+                    value={form.billingCycle || 'auto'}
+                    onChange={event => set('billingCycle', event.target.value)}
+                    disabled={formSaving}
+                  >
+                    {calendarBillingCycleOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className={calStyles.presetHint}>

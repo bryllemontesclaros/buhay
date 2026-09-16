@@ -1,4 +1,4 @@
-import { normalizeDate, today, getMonthKey } from './utils'
+import { normalizeDate, today, getMonthKey, formatDisplayDate } from './utils'
 
 /**
  * Parses a day string or number into a valid day of month (1..31).
@@ -93,8 +93,59 @@ export function getCycleForTransaction(txDateStr, statementDay, dueDay) {
 }
 
 /**
+ * Generates available billing cycle options for a transaction on a credit card.
+ */
+export function getBillingCycleOptions(cardOrDebt = {}, txDateStr = today(), referenceDate = today()) {
+  const rawStatementDay = parseDayOfMonth(cardOrDebt?.statementDate)
+  const rawDueDay = parseDayOfMonth(cardOrDebt?.dueDate)
+
+  if (!rawStatementDay && !rawDueDay && cardOrDebt?.type !== 'Credit Card') {
+    return []
+  }
+
+  const dueDay = rawDueDay || (rawStatementDay <= 10 ? rawStatementDay + 20 : rawStatementDay - 10) || 5
+  const statementDay = rawStatementDay || inferStatementDay(dueDay)
+
+  const cycleDetails = getCreditCardCycleDetails(cardOrDebt, [], [], referenceDate)
+  const autoCycle = getCycleForTransaction(txDateStr, statementDay, dueDay)
+
+  const autoDueDate = autoCycle?.dueDate || cycleDetails?.nextDueDate || ''
+  const isAutoCurrent = autoDueDate && cycleDetails?.dueDate && autoDueDate === cycleDetails.dueDate
+
+  const currentDueFormatted = cycleDetails.dueDate ? formatDisplayDate(cycleDetails.dueDate) : 'Current'
+  const nextDueFormatted = cycleDetails.nextDueDate ? formatDisplayDate(cycleDetails.nextDueDate) : 'Next'
+
+  const autoLabel = `Auto (${isAutoCurrent ? `Current · Due ${currentDueFormatted}` : `Upcoming · Due ${nextDueFormatted}`})`
+
+  return [
+    {
+      id: 'auto',
+      value: 'auto',
+      label: autoLabel,
+      sublabel: `Based on transaction date vs Day ${statementDay} cutoff`,
+      dueDate: autoDueDate,
+      isAuto: true,
+    },
+    {
+      id: 'current',
+      value: 'current',
+      label: `Current Statement (Due ${currentDueFormatted})`,
+      sublabel: `Statement closes on ${formatDisplayDate(cycleDetails.closedStatementDate)}`,
+      dueDate: cycleDetails.dueDate,
+    },
+    {
+      id: 'next',
+      value: 'next',
+      label: `Next Statement (Due ${nextDueFormatted})`,
+      sublabel: `Statement closes on ${formatDisplayDate(cycleDetails.nextStatementDate)}`,
+      dueDate: cycleDetails.nextDueDate,
+    },
+  ]
+}
+
+/**
  * Computes complete billing cycle state for a credit card account or debt.
- * Handles statement balances, unbilled current charges, and payment allocations.
+ * Handles statement balances, unbilled current charges, manual cycle overrides, and payment allocations.
  */
 export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], payments = [], referenceDate = today()) {
   const rawStatementDay = parseDayOfMonth(cardOrDebt.statementDate)
@@ -192,7 +243,7 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     paidPeriodsMap[closedCycle.dueDate]
   )
 
-  // Calculate unbilled charges (transactions dated strictly AFTER the closed statement cut-off)
+  // Calculate unbilled charges vs closed statement charges
   let unbilledCharges = 0
   let closedCycleCharges = 0
 
@@ -201,6 +252,27 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     if (!txDate) return
     const amt = Math.abs(Number(tx.amount) || 0)
 
+    // 1. Manual Billing Cycle Assignment Overrides
+    if (tx.billingCycle === 'current' || tx.billingCycle === 'closed') {
+      closedCycleCharges += amt
+      return
+    }
+    if (tx.billingCycle === 'next' || tx.billingCycle === 'upcoming' || tx.billingCycle === 'unbilled') {
+      unbilledCharges += amt
+      return
+    }
+    if (tx.billingCycle && tx.billingCycle !== 'auto') {
+      if (tx.billingCycle === closedCycle.dueDate || tx.billingCycle === closedCycle.statementDate) {
+        closedCycleCharges += amt
+        return
+      }
+      if (tx.billingCycle === nextCycle.dueDate || tx.billingCycle === nextCycle.statementDate) {
+        unbilledCharges += amt
+        return
+      }
+    }
+
+    // 2. Automatic date-based cutoff assignment
     if (txDate > closedCycle.statementDate) {
       unbilledCharges += amt
     } else if (txDate > closedCycleStartDate && txDate <= closedCycle.statementDate) {

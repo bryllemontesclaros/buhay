@@ -153,6 +153,11 @@ export default function DetailsModal({
                                         <div className={styles.txMeta}>
                                           {acc && <span className={styles.txAccount}>{acc.name}</span>}
                                           <span>{tx.cat}{tx.subcat ? ` · ${tx.subcat}` : ''}</span>
+                                          {tx.billingCycle && tx.billingCycle !== 'auto' && (
+                                            <span className={styles.txBillingCycle}>
+                                              {tx.billingCycle === 'current' ? 'Current Cycle' : tx.billingCycle === 'next' ? 'Next Cycle' : tx.billingCycle}
+                                            </span>
+                                          )}
                                           {tx.type !== 'transfer' && (
                                             <span className={`${styles.txStatus} ${isPaid ? styles.txPaid : styles.txUnpaid}`}>
                                               {isPaid ? 'Paid ✓' : 'Unpaid'}
