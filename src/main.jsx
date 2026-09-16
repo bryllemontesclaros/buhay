@@ -6,7 +6,7 @@ import { ThemeProvider } from './lib/theme.jsx'
 import './index.css'
 
 if (typeof window !== 'undefined') {
-  const APP_BUILD_VER = '2026-08-25-v35'
+  const APP_BUILD_VER = typeof __COMMIT_HASH__ !== 'undefined' && __COMMIT_HASH__ ? __COMMIT_HASH__ : '2026-09-16-v2'
   if ('caches' in window) {
     if (localStorage.getItem('takda_build_ver') !== APP_BUILD_VER) {
       localStorage.setItem('takda_build_ver', APP_BUILD_VER)
@@ -17,6 +17,14 @@ if (typeof window !== 'undefined') {
   }
 
   if ('serviceWorker' in navigator) {
+    let refreshing = false
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true
+        window.location.reload()
+      }
+    })
+
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js').then(reg => {
         reg.update().catch(() => {})

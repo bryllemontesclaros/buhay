@@ -96,24 +96,52 @@ class PageErrorBoundary extends Component {
             {this.state.error.stack}
           </pre>
         )}
-        <button
-          type="button"
-          onClick={this.props.onRecover}
-          style={{
-            marginTop: 18,
-            minHeight: 44,
-            border: '1px solid color-mix(in srgb, var(--accent) 38%, var(--glass-border))',
-            borderRadius: 16,
-            background: 'color-mix(in srgb, var(--accent) 18%, var(--glass-1))',
-            color: 'var(--text)',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-body)',
-            fontWeight: 800,
-            padding: '10px 16px',
-          }}
-        >
-          Back to Home
-        </button>
+        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          <button
+            type="button"
+            onClick={this.props.onRecover}
+            style={{
+              minHeight: 44,
+              border: '1px solid color-mix(in srgb, var(--accent) 38%, var(--glass-border))',
+              borderRadius: 16,
+              background: 'color-mix(in srgb, var(--accent) 18%, var(--glass-1))',
+              color: 'var(--text)',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 800,
+              padding: '10px 16px',
+            }}
+          >
+            Back to Home
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                if ('caches' in window) {
+                  caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).finally(() => {
+                    window.location.reload()
+                  })
+                } else {
+                  window.location.reload()
+                }
+              }
+            }}
+            style={{
+              minHeight: 44,
+              border: '1px solid var(--border)',
+              borderRadius: 16,
+              background: 'var(--surface2)',
+              color: 'var(--text)',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 800,
+              padding: '10px 16px',
+            }}
+          >
+            Reload App
+          </button>
+        </div>
       </div>
     )
   }
