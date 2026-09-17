@@ -1,10 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { fsAdd, fsDeleteAccountAndUnlinkTransactions, fsSyncDueLinkedTransactions, fsTransferAccounts, fsUpdate } from '../lib/firestore'
+import {
+  fsAdd,
+  fsDeleteAccountAndUnlinkTransactions,
+  fsSyncDueLinkedTransactions,
+  fsTransferAccounts,
+  fsTransferFiatToCrypto,
+  fsTransferCryptoToFiat,
+  fsUpdate,
+} from '../lib/firestore'
 import { getAccountSignedBalance, shouldAffectCurrentAccountBalance } from '../lib/finance'
 import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, today, validateAmount } from '../lib/utils'
+import { getCachedPrices } from '../lib/crypto'
 import styles from './Page.module.css'
 import accStyles from './Accounts.module.css'
 import SwipeableCard from '../components/SwipeableCard'
@@ -20,6 +29,11 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   const s = symbol || '₱'
   const accounts = (data.accounts || []).filter(a => a.type !== 'Credit Card')
   const allAccounts = data.accounts || []
+  const holdings = useMemo(() => Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : [], [data?.portfolioHoldings])
+  const cryptoPriceMap = useMemo(() => {
+    const cached = getCachedPrices()
+    return cached?.data || {}
+  }, [holdings])
   
   const [syncingDueEntries, setSyncingDueEntries] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -88,13 +102,22 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   // Quick Transfer Modal Open/Close
   function openQuickTransfer(sourceAccount = null) {
     const fromId = sourceAccount?._id || (accounts[0]?._id || '')
-    const toId = accounts.find(a => a._id !== fromId)?._id || ''
+    let toId = accounts.find(a => a._id !== fromId)?._id || ''
+    if (!toId) {
+      if (holdings.length > 0) {
+        toId = `crypto:${holdings[0]._id}`
+      } else {
+        toId = 'new_crypto:bitcoin'
+      }
+    }
     setTransferForm({
       fromAccountId: fromId,
       toAccountId: toId,
       amount: '',
       date: today(),
-      desc: 'Transfer',
+      desc: '',
+      tokenQty: '',
+      customTokenQty: '',
     })
     setShowTransferModal(true)
   }
@@ -187,31 +210,121 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
 
   async function handleTransferSubmit(e) {
     if (e) e.preventDefault()
-    const amount = Number(transferForm.amount) || 0
-    if (amount <= 0) {
-      notifyApp({ title: 'Check amount', message: 'Enter a transfer amount greater than zero.', tone: 'warning' })
+    const fromId = String(transferForm.fromAccountId || '')
+    const toId = String(transferForm.toAccountId || '')
+
+    const isFromCrypto = fromId.startsWith('crypto:')
+    const isToCrypto = toId.startsWith('crypto:') || toId.startsWith('new_crypto:')
+
+    if (!fromId || !toId) {
+      notifyApp({ title: 'Select source and target', message: 'Both source and destination are required.', tone: 'warning' })
       return
     }
-    if (!transferForm.fromAccountId || !transferForm.toAccountId) {
-      notifyApp({ title: 'Select accounts', message: 'Both source and destination accounts are required.', tone: 'warning' })
+    if (fromId === toId) {
+      notifyApp({ title: 'Invalid selection', message: 'Source and destination must be different.', tone: 'warning' })
       return
     }
-    if (transferForm.fromAccountId === transferForm.toAccountId) {
-      notifyApp({ title: 'Invalid accounts', message: 'Source and destination accounts must be different.', tone: 'warning' })
-      return
-    }
+
     setTransferSaving(true)
     try {
-      await fsTransferAccounts(user.uid, transferForm, allAccounts)
-      const fromAcc = accounts.find(a => a._id === transferForm.fromAccountId)
-      const toAcc = accounts.find(a => a._id === transferForm.toAccountId)
-      notifyApp({
-        title: 'Transfer successful',
-        message: `Transferred ${fmt(amount, s)} from ${fromAcc?.name || 'account'} to ${toAcc?.name || 'account'}.`,
-        tone: 'success',
-      })
+      if (isToCrypto) {
+        // CASE A: Bank -> Crypto (Buy / On-ramp)
+        const fiatAmount = Number(transferForm.amount) || 0
+        if (fiatAmount <= 0) {
+          notifyApp({ title: 'Check amount', message: 'Enter a transfer amount greater than zero.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        const fromAcc = accounts.find(a => a._id === fromId)
+        if (!fromAcc) throw new Error('Source bank account not found.')
+        if (Number(fromAcc.balance || 0) < fiatAmount) {
+          notifyApp({ title: 'Insufficient balance', message: `${fromAcc.name} only has ${fmt(fromAcc.balance, s)}.`, tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+
+        const effectiveTokens = Number(transferForm.customTokenQty || (fiatAmount / (transferForm.pricePerToken || 1)))
+        if (!effectiveTokens || effectiveTokens <= 0) {
+          notifyApp({ title: 'Invalid tokens', message: 'Calculated tokens must be greater than zero.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+
+        await fsTransferFiatToCrypto(user.uid, {
+          fromAccountId: fromId,
+          toHoldingId: toId.startsWith('crypto:') ? toId.replace('crypto:', '') : null,
+          coinId: transferForm.coinId,
+          coinSymbol: transferForm.coinSymbol,
+          coinName: transferForm.coinName,
+          fiatAmount,
+          tokenQty: effectiveTokens,
+          pricePerToken: transferForm.pricePerToken,
+          date: transferForm.date,
+          desc: transferForm.desc,
+          currency: s === '$' ? 'USD' : 'PHP',
+        }, allAccounts, holdings)
+
+        notifyApp({
+          title: 'Crypto funded',
+          message: `Transferred ${fmt(fiatAmount, s)} from ${fromAcc.name} to ${transferForm.coinSymbol || 'Crypto'} (+${effectiveTokens.toLocaleString(undefined, { maximumFractionDigits: 6 })} tokens).`,
+          tone: 'success',
+        })
+      } else if (isFromCrypto) {
+        // CASE B: Crypto -> Bank (Sell / Cash-out)
+        const tokenQty = Number(transferForm.tokenQty) || 0
+        const fiatAmount = Number(transferForm.amount) || 0
+        if (tokenQty <= 0 || fiatAmount <= 0) {
+          notifyApp({ title: 'Check amount', message: 'Enter tokens to sell or cash proceeds.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        const toAcc = accounts.find(a => a._id === toId)
+        if (!toAcc) throw new Error('Destination bank account not found.')
+
+        const holdingId = fromId.replace('crypto:', '')
+        const sourceHolding = holdings.find(h => h._id === holdingId)
+        const currentQty = parseFloat(sourceHolding?.quantity ?? sourceHolding?.qty ?? 0) || 0
+        if (tokenQty > currentQty + 0.0000001) {
+          notifyApp({ title: 'Insufficient tokens', message: `You only hold ${currentQty} ${sourceHolding?.symbol || 'tokens'}.`, tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+
+        await fsTransferCryptoToFiat(user.uid, {
+          fromHoldingId: holdingId,
+          toAccountId: toId,
+          tokenQty,
+          fiatAmount,
+          pricePerToken: transferForm.pricePerToken,
+          date: transferForm.date,
+          desc: transferForm.desc,
+        }, allAccounts, holdings)
+
+        notifyApp({
+          title: 'Cash out successful',
+          message: `Cashed out ${tokenQty.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${transferForm.coinSymbol || 'Crypto'} for ${fmt(fiatAmount, s)} into ${toAcc.name}.`,
+          tone: 'success',
+        })
+      } else {
+        // CASE C: Standard Bank <-> Bank Transfer (UNTOUCHED)
+        const amount = Number(transferForm.amount) || 0
+        if (amount <= 0) {
+          notifyApp({ title: 'Check amount', message: 'Enter a transfer amount greater than zero.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        await fsTransferAccounts(user.uid, transferForm, allAccounts)
+        const fromAcc = accounts.find(a => a._id === fromId)
+        const toAcc = accounts.find(a => a._id === toId)
+        notifyApp({
+          title: 'Transfer successful',
+          message: `Transferred ${fmt(amount, s)} from ${fromAcc?.name || 'account'} to ${toAcc?.name || 'account'}.`,
+          tone: 'success',
+        })
+      }
       closeQuickTransfer()
     } catch (err) {
+      console.error('[Accounts] Transfer error:', err)
       notifyApp({ title: 'Transfer failed', message: err.message || 'Could not process transfer.', tone: 'error' })
     } finally {
       setTransferSaving(false)
@@ -394,8 +507,8 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
             type="button"
             className={accStyles.btnHeroSecondary}
             onClick={() => openQuickTransfer()}
-            disabled={accounts.length < 2}
-            title={accounts.length < 2 ? 'Need at least 2 accounts to transfer' : 'Transfer between accounts'}
+            disabled={accounts.length === 0}
+            title={accounts.length === 0 ? 'Add an account first' : 'Transfer funds'}
           >
             ⇄ Transfer
           </button>
@@ -455,9 +568,9 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                 {group.accounts.map(account => (
                   <SwipeableCard
                     key={account._id}
-                    onSwipeRight={() => accounts.length >= 2 ? openQuickTransfer(account) : openQuickAdjust(account)}
-                    rightLabel={accounts.length >= 2 ? 'Transfer' : 'Adjust'}
-                    rightIcon={accounts.length >= 2 ? '⇄' : '⚡'}
+                    onSwipeRight={() => (accounts.length >= 2 || holdings.length > 0) ? openQuickTransfer(account) : openQuickAdjust(account)}
+                    rightLabel={(accounts.length >= 2 || holdings.length > 0) ? 'Transfer' : 'Adjust'}
+                    rightIcon={(accounts.length >= 2 || holdings.length > 0) ? '⇄' : '⚡'}
                     rightTone="success"
                     onSwipeLeft={() => openEdit(account)}
                     leftLabel="Edit"
@@ -511,7 +624,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                           type="button"
                           className={accStyles.btnMiniAction}
                           onClick={() => openQuickTransfer(account)}
-                          disabled={accounts.length < 2}
+                          disabled={accounts.length === 0}
                           title="Transfer funds"
                         >
                           ⇄ Transfer
@@ -566,6 +679,9 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
         handleTransferSubmit={handleTransferSubmit}
         swapTransferDirection={swapTransferDirection}
         accounts={accounts}
+        holdings={holdings}
+        cryptoPriceMap={cryptoPriceMap}
+        vsCurrency={s === '$' ? 'USD' : 'PHP'}
         s={s}
         fmt={fmt}
       />
