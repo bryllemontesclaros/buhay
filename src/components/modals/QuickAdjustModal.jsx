@@ -20,6 +20,7 @@ export default function QuickAdjustModal({
   return createPortal(
     <div className={accStyles.modalOverlay} onClick={onClose}>
       <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+        <div className={accStyles.bottomSheetHandle} />
         <div className={accStyles.modalHeader}>
           <div>
             <div className={accStyles.modalEyebrow}>⚡ Quick Reconcile</div>

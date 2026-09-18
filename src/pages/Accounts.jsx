@@ -614,15 +614,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                       <div className={accStyles.cardQuickActionsBar}>
                         <button
                           type="button"
-                          className={accStyles.btnMiniAction}
-                          onClick={() => openQuickAdjust(account)}
-                          title="Quick reconcile balance"
-                        >
-                          ⚡ Reconcile
-                        </button>
-                        <button
-                          type="button"
-                          className={accStyles.btnMiniAction}
+                          className={accStyles.btnCardTransfer}
                           onClick={() => openQuickTransfer(account)}
                           disabled={accounts.length === 0}
                           title="Transfer funds"
@@ -631,7 +623,15 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                         </button>
                         <button
                           type="button"
-                          className={accStyles.btnMiniAction}
+                          className={accStyles.btnCardAction}
+                          onClick={() => openQuickAdjust(account)}
+                          title="Quick reconcile balance"
+                        >
+                          ⚡ Reconcile
+                        </button>
+                        <button
+                          type="button"
+                          className={accStyles.btnCardAction}
                           onClick={() => openEdit(account)}
                           title="Edit details"
                         >
@@ -639,9 +639,10 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
                         </button>
                         <button
                           type="button"
-                          className={`${accStyles.btnMiniAction} ${accStyles.btnMiniActionDanger}`}
+                          className={accStyles.btnCardActionDanger}
                           onClick={() => handleDel(account._id, account.name)}
                           title="Delete account"
+                          aria-label={`Delete ${account.name}`}
                         >
                           🗑
                         </button>

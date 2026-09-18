@@ -17,6 +17,7 @@ export default function AccountEditorModal({
   return createPortal(
     <div className={accStyles.modalOverlay} onClick={onClose}>
       <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+        <div className={accStyles.bottomSheetHandle} />
         <div className={accStyles.modalHeader}>
           <div>
             <div className={accStyles.modalEyebrow}>{editAccount ? 'Editing Account' : 'New Account'}</div>
@@ -42,7 +43,7 @@ export default function AccountEditorModal({
             <label className={accStyles.fieldLabel} htmlFor="account-type">Account Type</label>
             <select
               id="account-type"
-              className={accStyles.fieldInput}
+              className={accStyles.fieldSelect}
               value={form.type}
               onChange={e => {
                 const newType = e.target.value

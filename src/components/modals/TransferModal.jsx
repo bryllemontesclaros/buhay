@@ -168,9 +168,32 @@ export default function TransferModal({
     }
   }, [coinRate, isToCrypto, isFromCrypto, activeCoinInfo])
 
+  // Resolve source bank account and available balance for quick-fill chips
+  const sourceAccount = useMemo(() => {
+    if (isFromCrypto) return null
+    return accounts.find(a => a._id === transferForm.fromAccountId) || null
+  }, [isFromCrypto, transferForm.fromAccountId, accounts])
+
+  const sourceAvailableFiat = sourceAccount ? Math.max(0, Number(sourceAccount.balance) || 0) : 0
+
+  const setQuickFiatPercent = (pct) => {
+    if (sourceAvailableFiat <= 0) return
+    const val = (sourceAvailableFiat * pct).toFixed(2)
+    setTransferForm(prev => ({ ...prev, amount: val }))
+  }
+
+  const setQuickTokenPercent = (pct) => {
+    if (!sourceHolding) return
+    const maxQty = parseFloat(sourceHolding.quantity || 0)
+    if (maxQty <= 0) return
+    const val = pct === 1 ? String(maxQty) : String(Number((maxQty * pct).toFixed(6)))
+    handleCashOutTokenChange(val)
+  }
+
   return createPortal(
     <div className={accStyles.modalOverlay} onClick={onClose}>
       <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+        <div className={accStyles.bottomSheetHandle} />
         <div className={accStyles.modalHeader}>
           <div>
             <div className={accStyles.modalEyebrow}>
@@ -185,7 +208,7 @@ export default function TransferModal({
 
         <form onSubmit={handleTransferSubmit} className={accStyles.modalBody}>
           <div className={accStyles.transferTopBar}>
-            <span className={accStyles.transferTopNotice}>Select source & target:</span>
+            <span className={accStyles.transferTopNotice}>Select source & destination:</span>
             <button
               type="button"
               className={accStyles.btnSwapDirection}
@@ -202,7 +225,7 @@ export default function TransferModal({
               <label className={accStyles.fieldLabel} htmlFor="transfer-from">From</label>
               <select
                 id="transfer-from"
-                className={accStyles.fieldInput}
+                className={accStyles.fieldSelect}
                 value={transferForm.fromAccountId}
                 onChange={e => {
                   const val = e.target.value
@@ -235,16 +258,23 @@ export default function TransferModal({
               </select>
             </div>
 
-            <div className={accStyles.transferArrowWrap} onClick={swapTransferDirection} title="Swap direction" role="button" tabIndex={0}>
-              ⇄
-            </div>
+            <button
+              type="button"
+              className={accStyles.transferSwapCircle}
+              onClick={swapTransferDirection}
+              title="Swap From and To accounts"
+              aria-label="Swap transfer direction"
+            >
+              <span className={accStyles.swapIconDesktop}>⇄</span>
+              <span className={accStyles.swapIconMobile}>⇅</span>
+            </button>
 
             {/* TO FIELD */}
             <div className={accStyles.field}>
               <label className={accStyles.fieldLabel} htmlFor="transfer-to">To</label>
               <select
                 id="transfer-to"
-                className={accStyles.fieldInput}
+                className={accStyles.fieldSelect}
                 value={transferForm.toAccountId}
                 onChange={e => {
                   const val = e.target.value
@@ -296,17 +326,33 @@ export default function TransferModal({
             <>
               <div className={accStyles.field}>
                 <label className={accStyles.fieldLabel} htmlFor="transfer-amount">Amount to Invest ({s})</label>
-                <input
-                  id="transfer-amount"
-                  type="number"
-                  step="any"
-                  min="0.01"
-                  className={accStyles.fieldInputBig}
-                  placeholder="0.00"
-                  value={transferForm.amount}
-                  onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
-                  autoFocus
-                />
+                <div className={accStyles.amountHeroWrap}>
+                  <span className={accStyles.amountCurrencySymbol}>{s}</span>
+                  <input
+                    id="transfer-amount"
+                    type="number"
+                    step="any"
+                    min="0.01"
+                    inputMode="decimal"
+                    className={accStyles.fieldInputHero}
+                    placeholder="0.00"
+                    value={transferForm.amount}
+                    onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
+                    autoFocus
+                  />
+                </div>
+
+                {sourceAccount && (
+                  <div className={accStyles.quickChipsRow}>
+                    <span className={accStyles.quickChipsLabel}>Quick fill:</span>
+                    <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.25)} disabled={sourceAvailableFiat <= 0}>25%</button>
+                    <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.50)} disabled={sourceAvailableFiat <= 0}>50%</button>
+                    <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.75)} disabled={sourceAvailableFiat <= 0}>75%</button>
+                    <button type="button" className={`${accStyles.chipBtn} ${accStyles.chipBtnMax}`} onClick={() => setQuickFiatPercent(1)} disabled={sourceAvailableFiat <= 0}>
+                      Max ({fmt(sourceAvailableFiat, s)})
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Live Conversion Preview Card */}
@@ -368,34 +414,36 @@ export default function TransferModal({
               <div className={accStyles.field}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                   <label className={accStyles.fieldLabel} htmlFor="transfer-tokens">Tokens to Sell ({sourceHolding.symbol})</label>
-                  <button
-                    type="button"
-                    onClick={() => handleCashOutTokenChange(String(sourceHolding.quantity || 0))}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--accent)',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      padding: 0,
-                    }}
-                  >
+                  <span style={{ fontSize: '11px', color: 'var(--text3)', fontWeight: 600 }}>
+                    Available: {sourceHolding.quantity} {sourceHolding.symbol}
+                  </span>
+                </div>
+                <div className={accStyles.amountHeroWrap}>
+                  <span className={accStyles.amountCurrencySymbol}>🪙</span>
+                  <input
+                    id="transfer-tokens"
+                    type="number"
+                    step="any"
+                    min="0.000001"
+                    max={sourceHolding.quantity}
+                    inputMode="decimal"
+                    className={accStyles.fieldInputHero}
+                    placeholder="0.00"
+                    value={transferForm.tokenQty ?? ''}
+                    onChange={e => handleCashOutTokenChange(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+
+                <div className={accStyles.quickChipsRow}>
+                  <span className={accStyles.quickChipsLabel}>Quick fill:</span>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickTokenPercent(0.25)}>25%</button>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickTokenPercent(0.50)}>50%</button>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickTokenPercent(0.75)}>75%</button>
+                  <button type="button" className={`${accStyles.chipBtn} ${accStyles.chipBtnMax}`} onClick={() => setQuickTokenPercent(1)}>
                     Max ({sourceHolding.quantity} {sourceHolding.symbol})
                   </button>
                 </div>
-                <input
-                  id="transfer-tokens"
-                  type="number"
-                  step="any"
-                  min="0.000001"
-                  max={sourceHolding.quantity}
-                  className={accStyles.fieldInputBig}
-                  placeholder="0.00"
-                  value={transferForm.tokenQty ?? ''}
-                  onChange={e => handleCashOutTokenChange(e.target.value)}
-                  autoFocus
-                />
               </div>
 
               <div className={accStyles.field}>
@@ -405,6 +453,7 @@ export default function TransferModal({
                   type="number"
                   step="any"
                   min="0.01"
+                  inputMode="decimal"
                   className={accStyles.fieldInput}
                   placeholder="0.00"
                   value={transferForm.amount ?? ''}
@@ -440,17 +489,33 @@ export default function TransferModal({
           {!isToCrypto && !isFromCrypto && (
             <div className={accStyles.field}>
               <label className={accStyles.fieldLabel} htmlFor="transfer-amount">Amount ({s})</label>
-              <input
-                id="transfer-amount"
-                type="number"
-                step="any"
-                min="0.01"
-                className={accStyles.fieldInputBig}
-                placeholder="0.00"
-                value={transferForm.amount}
-                onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
-                autoFocus
-              />
+              <div className={accStyles.amountHeroWrap}>
+                <span className={accStyles.amountCurrencySymbol}>{s}</span>
+                <input
+                  id="transfer-amount"
+                  type="number"
+                  step="any"
+                  min="0.01"
+                  inputMode="decimal"
+                  className={accStyles.fieldInputHero}
+                  placeholder="0.00"
+                  value={transferForm.amount}
+                  onChange={e => setTransferForm(prev => ({ ...prev, amount: e.target.value }))}
+                  autoFocus
+                />
+              </div>
+
+              {sourceAccount && (
+                <div className={accStyles.quickChipsRow}>
+                  <span className={accStyles.quickChipsLabel}>Quick fill:</span>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.25)} disabled={sourceAvailableFiat <= 0}>25%</button>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.50)} disabled={sourceAvailableFiat <= 0}>50%</button>
+                  <button type="button" className={accStyles.chipBtn} onClick={() => setQuickFiatPercent(0.75)} disabled={sourceAvailableFiat <= 0}>75%</button>
+                  <button type="button" className={`${accStyles.chipBtn} ${accStyles.chipBtnMax}`} onClick={() => setQuickFiatPercent(1)} disabled={sourceAvailableFiat <= 0}>
+                    Max ({fmt(sourceAvailableFiat, s)})
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
