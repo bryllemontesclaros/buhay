@@ -1,7 +1,7 @@
 {
-  "name": "Buhay — Personal Finance & Wealth Tracker",
+  "name": "Buhay — Personal Finance Tracker",
   "short_name": "Buhay",
-  "description": "Personal finance, cashflow forecasting, accounts, and wealth tracking.",
+  "description": "Track balances, accounts, income, expenses, bills, budgets, savings, debts, and crypto holdings.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -17,14 +17,14 @@
     {
       "name": "Open Buhay",
       "short_name": "Buhay",
-      "description": "Open your cashflow and wealth tracker.",
+      "description": "Open your personal finance tracker.",
       "url": "/app",
       "icons": [{ "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Cashflow Calendar",
       "short_name": "Calendar",
-      "description": "View 30-day cashflow runway and bill calendar.",
+      "description": "View your cashflow calendar and bill schedule.",
       "url": "/app",
       "icons": [{ "src": "/buhay-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">Buhay — Personal Finance, Cashflow &amp; Wealth Cockpit</title>
-  <desc id="desc">Predict your cashflow. Master your future wealth. 100% private with zero bank passwords.</desc>
+  <title id="title">Buhay — Personal Finance, Bills, Budgets &amp; Cashflow</title>
+  <desc id="desc">Track balances, bills, budgets, savings, debts, and crypto holdings with Buhay.</desc>
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#070b09" />
@@ -48,7 +48,7 @@
       />
       <text x="82" y="44" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif" font-size="36" font-weight="800" letter-spacing="-0.5">Buhay</text>
       <rect x="210" y="16" width="168" height="32" rx="16" fill="#162e26" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
-      <text x="224" y="38" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" letter-spacing="0.5">FINANCIAL COCKPIT</text>
+      <text x="224" y="38" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13" font-weight="700" letter-spacing="0.5">FINANCE TRACKER</text>
     </g>
 
     <!-- Main Taglines -->
@@ -56,15 +56,15 @@
       Master Your Cashflow.
     </text>
     <text x="0" y="228" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif" font-size="56" font-weight="800" letter-spacing="-1.5">
-      Predict Every Balance Dip.
+      See Every Peso Clearly.
     </text>
 
     <!-- Subtitle -->
     <text x="0" y="310" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="400" line-height="1.5">
-      The calm, private financial cockpit for 30-day cashflow runways,
+      The calm finance tracker for cashflow, bills, budgets,
     </text>
     <text x="0" y="344" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="22" font-weight="400">
-      multi-account net worth, smart bills, and safe daily spend.
+      savings, debts, and crypto holdings.
     </text>
 
     <!-- Badges Row -->
@@ -75,11 +75,11 @@
       </g>
       <g transform="translate(202, 0)">
         <rect width="210" height="42" rx="10" fill="#131e19" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
-        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ 30-Day Forecast</text>
+        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ Cashflow Calendar</text>
       </g>
       <g transform="translate(428, 0)">
         <rect width="180" height="42" rx="10" fill="#131e19" stroke="#10b981" stroke-width="1" stroke-opacity="0.3" />
-        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ 100% Private</text>
+        <text x="14" y="27" fill="#34f590" font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="14" font-weight="700">✓ Privacy Mode</text>
       </g>
     </g>
   </g>

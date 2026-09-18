@@ -84,7 +84,7 @@ function LiveAppMockup() {
           <span>🔒</span> buhay.app/app
         </div>
         <div className={styles.mockupWindowMeta}>
-          <span>●</span> Live Financial Simulator
+          <span>●</span> Finance Preview
         </div>
       </div>
 
@@ -92,8 +92,8 @@ function LiveAppMockup() {
         {/* Interactive Simulator Control Bar */}
         <div className={styles.simulatorBar}>
           <div>
-            <div className={styles.simulatorTitle}>⚡ Live Financial Cockpit</div>
-            <div className={styles.simulatorSubtitle}>Click any button below to test real-time cashflow reaction:</div>
+            <div className={styles.simulatorTitle}>Finance Command Center</div>
+            <div className={styles.simulatorSubtitle}>Try sample entries and watch balances, budgets, and history react:</div>
           </div>
           <div className={styles.simulatorButtons}>
             <button type="button" onClick={handleSalary} className={`${styles.simBtn} ${styles.simBtnPrimary}`}>
@@ -434,24 +434,24 @@ function BudgetGoalsWidget() {
 }
 
 const COMPARISON_ROWS = [
-  { feature: 'Data Privacy & Security', buhay: '100% Client-Side. Zero data selling', banks: 'Shared with marketing & credit networks', sheets: 'Vulnerable cloud sharing' },
-  { feature: 'Bank Login Credentials', buhay: 'Zero passwords, OTPs, or API logins needed', banks: 'Mandatory passwords & SMS OTP friction', sheets: 'Manual formulas only' },
-  { feature: 'Visual Cashflow Forecasting', buhay: '30-Day interactive calendar & dip radar', banks: 'Past statement histories only', sheets: 'Complex custom macros' },
-  { feature: 'Multi-Account Liquidity', buhay: 'Auto-aggregated cash, e-wallets, crypto & debt', banks: 'Locked to single institution accounts', sheets: 'Prone to broken formulas' },
-  { feature: 'Subscription & Bill Radar', buhay: 'Automated recurrence & 1-tap checkoffs', banks: 'Surprise auto-debits without alert', sheets: 'No recurring trigger alerts' },
-  { feature: 'Cost / Pricing', buhay: '100% Free Forever', banks: 'Hidden fees & minimum balance penalties', sheets: 'Free (but high maintenance)' },
+  { feature: 'Data Ownership', buhay: 'Your finance records stay in your account and can be exported', banks: 'Usually limited to statement downloads', sheets: 'Portable, but easy to duplicate or expose' },
+  { feature: 'Bank Login Credentials', buhay: 'No bank passwords, OTPs, or open-banking links required', banks: 'Requires account access to each institution', sheets: 'No credentials, but every update is manual' },
+  { feature: 'Visual Cashflow Planning', buhay: 'Calendar-based balances, recurring items, and daily runway', banks: 'Mostly past transactions and statement views', sheets: 'Possible, but formula-heavy' },
+  { feature: 'Multi-Account View', buhay: 'Track cash, banks, e-wallets, credit cards, debts, and crypto', banks: 'Usually focused on one institution', sheets: 'Flexible, but maintenance-heavy' },
+  { feature: 'Bills & Recurring Money', buhay: 'Schedules, due states, and mark-paid finance records', banks: 'Autopay visibility varies by provider', sheets: 'Needs custom reminders and formulas' },
+  { feature: 'Cost / Pricing', buhay: 'Free to use in this project version', banks: 'Account fees depend on provider', sheets: 'Free, but high-maintenance' },
 ]
 
 const TRUST_POINTS = [
   {
     icon: '🛡️',
     title: 'Zero Bank Credentials Stored',
-    desc: 'Buhay never asks for your online banking passwords, OTPs, or API logins. Your financial keys remain strictly with you.',
+    desc: 'Buhay is built around intentional manual tracking. It never asks for online banking passwords, OTPs, or bank API credentials.',
   },
   {
     icon: '⚡',
-    title: '100% Free Forever',
-    desc: 'No credit cards required, no trial tricks, and zero artificial feature paywalls. Built for real financial autonomy.',
+    title: 'Free Project Version',
+    desc: 'The current app is free to use and focuses on practical money tracking without subscription prompts in the product flow.',
   },
   {
     icon: '🔒',
@@ -461,18 +461,18 @@ const TRUST_POINTS = [
   {
     icon: '📥',
     title: 'Universal Data Portability',
-    desc: 'Export your complete transaction ledger to CSV spreadsheets or full encrypted JSON snapshots anytime you want.',
+    desc: 'Export your transaction ledger to CSV or download a JSON backup snapshot from Settings whenever you need your data.',
   },
 ]
 
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay?',
-    answer: 'Buhay is an ultra-fast, private personal finance and cashflow cockpit designed to forecast daily account balances, aggregate multi-account net worth, schedule bills, crush debt, and maintain healthy spending limits without selling your data.',
+    answer: 'Buhay is a personal finance tracker for daily balances, accounts, income, expenses, bills, budgets, savings, debts, and crypto holdings. It is the current home of the Takda finance system.',
   },
   {
     question: 'Why does Buhay not ask for my bank passwords?',
-    answer: 'Traditional finance apps connect to banks by requesting your banking credentials, storing them on third-party servers, and selling aggregated financial habits to advertisers. Buhay is intentionally built for private, intentional tracking where your sensitive credentials are never requested or exposed.',
+    answer: 'Buhay is designed for manual, intentional tracking instead of bank scraping. You enter and review your own records, so the app never needs online banking credentials, OTPs, or third-party bank connections.',
   },
   {
     question: 'Can I install Buhay on my mobile phone?',
@@ -480,7 +480,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'Is there a limit on how many transactions or accounts I can add?',
-    answer: 'No! You can track unlimited cash wallets, bank accounts, credit cards, bills, crypto holdings, and savings goals without hitting any limits.',
+    answer: 'There is no product-level limit in the app UI. Practical limits depend on Firebase usage, browser performance, and your project configuration.',
   },
   {
     question: 'How do I backup my financial data?',
@@ -516,8 +516,8 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <RouteMeta
-        title="Buhay — Personal Finance & Cash Flow Calendar"
-        description="Master your money with complete clarity: forecast daily cash flow, sync multi-account net worth, automate bills, and reach savings goals with total privacy."
+        title="Buhay — Personal Finance, Bills, Budgets & Cashflow"
+        description="Track daily balances, accounts, income, expenses, bills, budgets, savings, debts, and crypto holdings with Buhay."
         path="/"
       />
 
@@ -555,16 +555,16 @@ export default function LandingPage() {
         <section className={styles.hero}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            <span>Buhay 2.0 · Predictive Cashflow & Net Worth Cockpit</span>
+            <span>Buhay · Takda Finance Tracker</span>
           </div>
 
           <h1 className={styles.heroTitle}>
             Master Your Cashflow. <br />
-            <span className={styles.gradientHighlight}>Predict Every Balance Dip.</span>
+            <span className={styles.gradientHighlight}>See Every Peso Clearly.</span>
           </h1>
 
           <p className={styles.heroSub}>
-            The calm, private personal finance cockpit that maps your future account balances, aggregates multi-account net worth, stays ahead of bills, and paces daily spending — 100% private with zero bank passwords.
+            A calm personal finance app for daily balances, accounts, bills, budgets, savings, debts, and crypto holdings. Track money manually, keep records organized, and stay ahead without sharing bank passwords.
           </p>
 
           <div className={styles.heroActions}>
@@ -578,13 +578,13 @@ export default function LandingPage() {
 
           <div className={styles.heroTrustBadges}>
             <div className={styles.heroTrustItem}>
-              <span>✓</span> 100% Free Forever
+              <span>✓</span> Free Project Version
             </div>
             <div className={styles.heroTrustItem}>
               <span>✓</span> Zero Bank Passwords Needed
             </div>
             <div className={styles.heroTrustItem}>
-              <span>✓</span> 30-Day Runway Forecast
+              <span>✓</span> Cashflow Calendar
             </div>
             <div className={styles.heroTrustItem}>
               <span>✓</span> Instant CSV & JSON Export
@@ -598,10 +598,10 @@ export default function LandingPage() {
         {/* Bento Grid Feature Suite */}
         <section id="forecast" className={`${styles.features} ${styles.sectionAnchor}`}>
           <div className={styles.sectionHeader}>
-            <div className={styles.sectionEyebrow}>Core Architecture</div>
-            <h2 className={styles.sectionTitle}>Everything for Your Money In Perfect Sync</h2>
+            <div className={styles.sectionEyebrow}>Finance Tools</div>
+            <h2 className={styles.sectionTitle}>Everything for Your Money in One Place</h2>
             <p className={styles.sectionSub}>
-              Stop juggling fragmented spreadsheets and bank apps. Buhay consolidates your financial life in one unified cockpit.
+              Replace scattered notes and fragile formulas with one focused finance app for the records you actually use.
             </p>
           </div>
 
@@ -616,7 +616,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Stop guessing your end-of-month balance. View daily incomes, scheduled bills, and accurate 30-day cash projections at a glance.
+                Stop guessing your end-of-month balance. View daily income, expenses, scheduled bills, and projected money movement at a glance.
               </p>
               <CalendarWidget />
             </div>
@@ -631,7 +631,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Consolidate bank accounts, e-wallets, cash, crypto, and credit cards into one real-time liquidity and net worth view with 1-click balance adjustments.
+                Track bank accounts, e-wallets, cash, crypto, credit cards, and debts in one liquidity and net worth view with quick balance adjustments.
               </p>
               <AccountsWidget />
             </div>
@@ -646,7 +646,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Prevent late penalties and unexpected auto-debits with intelligent due date reminders and one-tap payment checkoffs.
+                Keep recurring bills and subscriptions visible with due states, schedules, and mark-paid records.
               </p>
               <BillsWidget />
             </div>
@@ -661,7 +661,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Calculate your real-time daily spending allowance, build emergency savings goals, and accelerate debt payoff with structured snowball plans.
+                Pace monthly spending, build emergency savings goals, and plan debt payoff with clear progress views.
               </p>
               <BudgetGoalsWidget />
             </div>
@@ -671,10 +671,10 @@ export default function LandingPage() {
         {/* 3 Key Pillars Deep-Dive */}
         <section id="features" className={`${styles.highlightsSection} ${styles.sectionAnchor}`}>
           <div className={styles.sectionHeader}>
-            <div className={styles.sectionEyebrow}>Fintech Excellence</div>
-            <h2 className={styles.sectionTitle}>Precision Tools for Intentional Wealth</h2>
+            <div className={styles.sectionEyebrow}>Daily Money Control</div>
+            <h2 className={styles.sectionTitle}>Practical Tools for Intentional Spending</h2>
             <p className={styles.sectionSub}>
-              Engineered with advanced algorithms to keep you in total command of every peso.
+              Built around the finance workflows Buhay actually supports today.
             </p>
           </div>
 
@@ -683,15 +683,15 @@ export default function LandingPage() {
               <div className={styles.highlightIcon}>💳</div>
               <h3 className={styles.highlightCardTitle}>Credit Card Cycle Intelligence</h3>
               <p className={styles.highlightCardDesc}>
-                Track statement cut-off dates, payment due dates, and zero-interest grace periods with automatic symmetrical debt transfers.
+                Track debt balances, payment due dates, minimum payments, and payoff progress alongside your other accounts.
               </p>
             </div>
 
             <div className={styles.highlightCard}>
               <div className={styles.highlightIcon}>🛡️</div>
-              <h3 className={styles.highlightCardTitle}>Zero Bank Credential Scraping</h3>
+              <h3 className={styles.highlightCardTitle}>No Bank Credential Scraping</h3>
               <p className={styles.highlightCardDesc}>
-                We never ask for your online banking passwords, OTPs, or API credentials. Your financial sovereignty stays strictly in your hands.
+                Buhay never asks for online banking passwords, OTPs, or API credentials. You stay in control of what gets recorded.
               </p>
             </div>
 
@@ -699,7 +699,7 @@ export default function LandingPage() {
               <div className={styles.highlightIcon}>📊</div>
               <h3 className={styles.highlightCardTitle}>Universal Data Sovereignty</h3>
               <p className={styles.highlightCardDesc}>
-                Download your full transaction history to CSV spreadsheets or backup your entire database to encrypted JSON with a single tap.
+                Download your transaction history to CSV or export a JSON backup snapshot from Settings.
               </p>
             </div>
           </div>
@@ -711,7 +711,7 @@ export default function LandingPage() {
             <div className={styles.sectionEyebrow}>Why Buhay?</div>
             <h2 className={styles.sectionTitle}>Built for You, Not Financial Advertisers</h2>
             <p className={styles.sectionSub}>
-              See how Buhay delivers superior speed, privacy, and clarity compared to traditional bank apps and spreadsheets.
+              See how Buhay compares to institution-specific bank apps and do-it-yourself spreadsheets.
             </p>
           </div>
 
@@ -758,9 +758,9 @@ export default function LandingPage() {
           <div className={styles.privacyInner}>
             <div className={styles.sectionHeader}>
               <div className={styles.sectionEyebrow}>Security & Ownership</div>
-              <h2 className={styles.sectionTitle}>Private by Design, Free Forever</h2>
+              <h2 className={styles.sectionTitle}>Private by Design, Clear by Default</h2>
               <p className={styles.sectionSub}>
-                Your financial data should remain strictly confidential. Here is how we ensure zero compromise.
+                Buhay is built for personal tracking without bank-password collection or noisy financial ads.
               </p>
             </div>
 
@@ -801,9 +801,9 @@ export default function LandingPage() {
         {/* Bottom CTA Banner */}
         <div style={{ padding: '0 24px' }}>
           <div className={styles.ctaBanner}>
-            <h2 className={styles.ctaTitle}>Experience Complete Financial Clarity</h2>
+            <h2 className={styles.ctaTitle}>Build Your Everyday Money Clarity</h2>
             <p className={styles.ctaSub}>
-              Take control of your daily cashflow, recurring bills, and savings milestones in less than two minutes.
+              Track balances, bills, budgets, savings, debts, and crypto holdings from one focused finance app.
             </p>
             <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnLg}`} onClick={handleOpenPrimary}>
               {primaryLabel} <span>→</span>
