@@ -137,122 +137,19 @@ export function formatCryptoValue(val, symbol = '$', maxDecimals = 4) {
   return `${symbol}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: maxDecimals })}`
 }
 
-// Kraken pair names differ from standard symbols — map our coin IDs to Kraken pairs
-const KRAKEN_PAIR_MAP = {
-  bitcoin:       'XBTUSD',
-  ethereum:      'ETHUSD',
-  solana:        'SOLUSD',
-  ripple:        'XRPUSD',
-  dogecoin:      'XDGUSD',
-  cardano:       'ADAUSD',
-  chainlink:     'LINKUSD',
-  uniswap:       'UNIUSD',
-  polkadot:      'DOTUSD',
-  'avalanche-2': 'AVAXUSD',
-  near:          'NEARUSD',
-  arbitrum:      'ARBUSD',
-  optimism:      'OPUSD',
-  sui:           'SUIUSD',
-  kaspa:         'KASUSD',
-  pepe:          'PEPEUSD',
-  'shiba-inu':   'SHIBUSD',
-  'render-token':'RENDERUSD',
-  binancecoin:   'BNBUSD',
-  // Stablecoins — always $1
-  tether:        null,
-  'usd-coin':    null,
-}
-
-/**
- * Fetch live cryptocurrency prices from Kraken public API (free, no API key, works in PH).
- * Returns an enriched lookup map keyed by coinId, symbol, and lowercase symbol.
- */
-export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAULT_FOREX_RATE) {
-  const fxRate = parseFloat(forexRate) > 0 ? parseFloat(forexRate) : DEFAULT_FOREX_RATE
-  const allCoins = [...POPULAR_CRYPTO_COINS, ...customCoins]
-  const now = Date.now()
-
-  // Only request pairs explicitly mapped — unknown pairs cause Kraken to return errors
-  // which previously threw and killed the whole fetch
-  const pairSet = new Set()
-  allCoins.forEach(coin => {
-    const krakenPair = KRAKEN_PAIR_MAP[coin.id?.toLowerCase()]
-    if (krakenPair) pairSet.add(krakenPair)
-    // If krakenPair === undefined (not in map) or null (stablecoin) — skip
-  })
-
-  const pairs = [...pairSet].join(',')
-  const url = `https://api.kraken.com/0/public/Ticker?pair=${pairs}`
-
-  try {
-    const res = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`Kraken fetch error: ${res.statusText}`)
-    const json = await res.json()
-
-    // Log errors but DON'T throw — Kraken may still return valid data for known pairs
-    if (json.error?.length > 0) console.warn('[crypto] Kraken partial errors:', json.error)
-
-    // Build symbol → usdPrice from Kraken response (c[0] = last trade price)
-    const priceMap = new Map()
-    Object.entries(json.result || {}).forEach(([krakenPair, ticker]) => {
-      const usdPrice = parseFloat(ticker?.c?.[0])
-      if (!usdPrice || usdPrice <= 0) return
-      // Normalise Kraken's pair name: strip leading X/Z and trailing Z/USD
-      // e.g. XXBTZUSD → BTC, XETHZUSD → ETH, SOLUSD → SOL
-      let sym = krakenPair
-        .replace(/^X([A-Z]{3,4})Z?USD$/, '$1')   // XXBTZUSD → XBT
-        .replace(/^([A-Z]{2,8})USD$/, '$1')        // SOLUSD → SOL
-      if (sym === 'XBT') sym = 'BTC'
-      if (sym === 'XDG') sym = 'DOGE'
-      if (sym === 'XRP') sym = 'XRP'
-      priceMap.set(sym.toUpperCase(), usdPrice)
-    })
-
-    // Stablecoins always $1
-    priceMap.set('USDT', 1.0)
-    priceMap.set('USDC', 1.0)
-
-    const quotes = {}
-    allCoins.forEach(coin => {
-      const sym = (coin.symbol || '').toUpperCase()
-      const coinId = (coin.id || sym.toLowerCase()).toLowerCase()
-      if (!sym) return
-
-      const usdPrice = priceMap.get(sym) || null
-
-      if (usdPrice && usdPrice > 0) {
-        const quoteObj = {
-          usd: usdPrice,
-          php: usdPrice * fxRate,
-          source: 'kraken_live',
-          updatedAt: now,
-        }
-        quotes[coinId] = quoteObj
-        quotes[sym] = quoteObj
-        quotes[sym.toLowerCase()] = quoteObj
-      }
-    })
-
-    return Object.keys(quotes).length > 0 ? quotes : null
-  } catch (err) {
-    console.warn('[crypto] Failed to fetch live prices from Kraken:', err)
-    return null
-  }
-}
-
 /**
  * Resolve price quote for a holding.
  */
-export function getHoldingQuote(h, livePrices = {}) {
+export function getHoldingQuote(h, manualPrices = {}) {
   if (!h) return {}
   const coinId = (h.coinId || '').toLowerCase()
   const symbol = (h.symbol || '').toUpperCase()
   const symLower = symbol.toLowerCase()
 
   return (
-    livePrices[coinId] ||
-    livePrices[symbol] ||
-    livePrices[symLower] ||
+    manualPrices[coinId] ||
+    manualPrices[symbol] ||
+    manualPrices[symLower] ||
     {}
   )
 }
@@ -289,7 +186,7 @@ export function calculatePortfolioMetrics(holdings = [], userPrices = {}, vsCurr
     const coinId = (h.coinId || (h.symbol ? h.symbol.toLowerCase() : 'bitcoin')).toLowerCase()
     const symbol = (h.symbol || 'CRYPTO').toUpperCase()
 
-    // 1. Determine Current Live Price per unit in viewing currency
+    // 1. Determine the manually maintained current price per unit in viewing currency.
     const quote = getHoldingQuote(h, userPrices)
     let currentPriceInVsCurrency = 0
 
@@ -301,13 +198,19 @@ export function calculatePortfolioMetrics(holdings = [], userPrices = {}, vsCurr
       }
     }
 
-    // If no custom price set yet, fallback to holding's saved currentPrice or default coin price or buyPrice
+    // If no profile price exists yet, use the holding's saved manual price, then buy price.
     if (!currentPriceInVsCurrency || currentPriceInVsCurrency <= 0) {
-      const defaultCoin = POPULAR_CRYPTO_COINS.find(c => c.id === coinId || c.symbol === symbol)
-      if (defaultCoin?.defaultUsd) {
-        currentPriceInVsCurrency = isUsd ? defaultCoin.defaultUsd : defaultCoin.defaultUsd * fxRate
+      const savedCurrentPrice = parseFloat(h.currentPrice ?? h.price ?? 0) || 0
+      const savedCurrentCurrency = (h.currentPriceCurrency || h.currency || 'USD').toUpperCase()
+      if (savedCurrentPrice > 0) {
+        if (savedCurrentCurrency === 'PHP' && isUsd) {
+          currentPriceInVsCurrency = savedCurrentPrice / fxRate
+        } else if (savedCurrentCurrency === 'USD' && !isUsd) {
+          currentPriceInVsCurrency = savedCurrentPrice * fxRate
+        } else {
+          currentPriceInVsCurrency = savedCurrentPrice
+        }
       } else {
-        // Fallback to buy price converted
         const holdingCurrency = (h.currency || 'USD').toUpperCase()
         if (holdingCurrency === 'PHP' && isUsd) {
           currentPriceInVsCurrency = rawBuyPrice / fxRate

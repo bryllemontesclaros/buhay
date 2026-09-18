@@ -41,6 +41,8 @@ export default function TransferModal({
           id: String(h.coinId || h.symbol).toLowerCase(),
           symbol: String(h.symbol || 'CRYPTO').toUpperCase(),
           name: h.name || h.symbol,
+          manualPrice: h.currentPrice ?? h.price ?? h.buyPrice,
+          manualPriceCurrency: h.currentPriceCurrency || h.currency || h.buyCurrency || vsCurrency,
           isExisting: true,
           holdingId: h._id,
         }
@@ -76,13 +78,31 @@ export default function TransferModal({
   }, [isFromCrypto, transferForm.fromAccountId, holdings])
 
   // 4. Resolve current exchange rate for the active coin
-  const activeCoinInfo = targetCoin || (sourceHolding ? {
-    id: String(sourceHolding.coinId || sourceHolding.symbol).toLowerCase(),
-    symbol: String(sourceHolding.symbol || 'CRYPTO').toUpperCase(),
-  } : null)
+  const activeCoinInfo = useMemo(() => {
+    if (targetCoin) return targetCoin
+    if (!sourceHolding) return null
+    return {
+      id: String(sourceHolding.coinId || sourceHolding.symbol).toLowerCase(),
+      symbol: String(sourceHolding.symbol || 'CRYPTO').toUpperCase(),
+      name: sourceHolding.name || sourceHolding.symbol,
+    }
+  }, [targetCoin, sourceHolding])
+
+  function normalizeManualPrice(price, currency) {
+    const parsed = parseFloat(price) || 0
+    if (parsed <= 0) return 0
+    const priceCurrency = String(currency || vsCurrency || 'PHP').toUpperCase()
+    const isUsd = vsCurrency === 'USD'
+    if (priceCurrency === 'USD' && !isUsd) return parsed * DEFAULT_FOREX_RATE
+    if (priceCurrency === 'PHP' && isUsd) return parsed / DEFAULT_FOREX_RATE
+    return parsed
+  }
 
   const coinRate = useMemo(() => {
     if (!activeCoinInfo) return 1
+    const manualOverride = parseFloat(transferForm.pricePerToken) || 0
+    if (transferForm.manualPriceOverride && manualOverride > 0) return manualOverride
+
     const coinId = activeCoinInfo.id
     const sym = activeCoinInfo.symbol
     const quote =
@@ -90,17 +110,25 @@ export default function TransferModal({
       cryptoPriceMap[sym] ||
       cryptoPriceMap[sym?.toLowerCase()] ||
       {}
-    const pop = POPULAR_CRYPTO_COINS.find(c => c.id === coinId || c.symbol === sym)
-    const defUsd = pop?.defaultUsd || 1
 
     const isUsd = vsCurrency === 'USD'
     if (quote.usd !== undefined || quote.php !== undefined) {
       return isUsd
-        ? (quote.usd ?? (quote.php ? quote.php / DEFAULT_FOREX_RATE : defUsd))
-        : (quote.php ?? (quote.usd ? quote.usd * DEFAULT_FOREX_RATE : defUsd * DEFAULT_FOREX_RATE))
+        ? (quote.usd ?? (quote.php ? quote.php / DEFAULT_FOREX_RATE : 0))
+        : (quote.php ?? (quote.usd ? quote.usd * DEFAULT_FOREX_RATE : 0))
     }
-    return isUsd ? defUsd : defUsd * DEFAULT_FOREX_RATE
-  }, [activeCoinInfo, cryptoPriceMap, vsCurrency])
+
+    const targetManualPrice = normalizeManualPrice(activeCoinInfo.manualPrice, activeCoinInfo.manualPriceCurrency)
+    if (targetManualPrice > 0) return targetManualPrice
+
+    const sourceManualPrice = normalizeManualPrice(
+      sourceHolding?.currentPrice ?? sourceHolding?.price ?? sourceHolding?.buyPrice,
+      sourceHolding?.currentPriceCurrency || sourceHolding?.currency || sourceHolding?.buyCurrency
+    )
+    if (sourceManualPrice > 0) return sourceManualPrice
+
+    return 1
+  }, [activeCoinInfo, cryptoPriceMap, sourceHolding, transferForm.manualPriceOverride, transferForm.pricePerToken, vsCurrency])
 
   // 5. Compute tokens when funding crypto
   const computedTokens = useMemo(() => {
@@ -165,12 +193,28 @@ export default function TransferModal({
     }))
   }
 
+  function handleManualRateChange(val) {
+    const rate = parseFloat(val) || 0
+    setTransferForm(prev => {
+      const next = {
+        ...prev,
+        pricePerToken: val,
+        manualPriceOverride: true,
+      }
+      if (isFromCrypto && rate > 0) {
+        const tokens = parseFloat(prev.tokenQty) || 0
+        if (tokens > 0) next.amount = (tokens * rate).toFixed(2)
+      }
+      return next
+    })
+  }
+
   // Sync price per token when target coin rate changes
   useEffect(() => {
     if (isToCrypto || isFromCrypto) {
       setTransferForm(prev => ({
         ...prev,
-        pricePerToken: coinRate,
+        pricePerToken: prev.manualPriceOverride ? prev.pricePerToken : coinRate,
         coinSymbol: activeCoinInfo?.symbol || 'CRYPTO',
         coinId: activeCoinInfo?.id || '',
         coinName: activeCoinInfo?.name || '',
@@ -242,6 +286,7 @@ export default function TransferModal({
                   setTransferForm(prev => ({
                     ...prev,
                     fromAccountId: val,
+                    manualPriceOverride: false,
                     // If source is crypto and target is also crypto, reset target to first bank account
                     toAccountId: val.startsWith('crypto:') && (prev.toAccountId.startsWith('crypto:') || prev.toAccountId.startsWith('new_crypto:'))
                       ? (accounts[0]?._id || '')
@@ -291,6 +336,7 @@ export default function TransferModal({
                   setTransferForm(prev => ({
                     ...prev,
                     toAccountId: val,
+                    manualPriceOverride: false,
                     // If target is crypto and source is also crypto, reset source to first bank account
                     fromAccountId: (val.startsWith('crypto:') || val.startsWith('new_crypto:')) && prev.fromAccountId.startsWith('crypto:')
                       ? (accounts[0]?._id || '')
@@ -365,11 +411,26 @@ export default function TransferModal({
                 )}
               </div>
 
-              {/* Live Conversion Preview Card */}
+              {/* Manual Conversion Preview Card */}
               <div className={accStyles.cryptoConversionCard}>
                 <div className={accStyles.cryptoConversionHeader}>
-                  <span className={accStyles.cryptoConversionBadge}>⚡ Live Market Conversion</span>
+                  <span className={accStyles.cryptoConversionBadge}>✎ Manual Price Conversion</span>
                   <span className={accStyles.cryptoRateText}>1 {targetCoin.symbol} ≈ {fmt(coinRate, s)}</span>
+                </div>
+                <div style={{ margin: '8px 0' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text3)', display: 'block', marginBottom: '4px' }}>
+                    Manual price per {targetCoin.symbol} ({s})
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    inputMode="decimal"
+                    className={accStyles.fieldInput}
+                    value={transferForm.pricePerToken ?? ''}
+                    onChange={e => handleManualRateChange(e.target.value)}
+                    placeholder="0.00"
+                  />
                 </div>
                 <div className={accStyles.cryptoTokensRow}>
                   <span className={accStyles.cryptoTokensLabel}>Tokens to receive:</span>
@@ -476,6 +537,21 @@ export default function TransferModal({
                 <div className={accStyles.cryptoConversionHeader}>
                   <span className={accStyles.cryptoConversionBadge}>💰 Cash Out to Bank</span>
                   <span className={accStyles.cryptoRateText}>1 {sourceHolding.symbol} ≈ {fmt(coinRate, s)}</span>
+                </div>
+                <div style={{ margin: '8px 0' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text3)', display: 'block', marginBottom: '4px' }}>
+                    Manual price per {sourceHolding.symbol} ({s})
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    inputMode="decimal"
+                    className={accStyles.fieldInput}
+                    value={transferForm.pricePerToken ?? ''}
+                    onChange={e => handleManualRateChange(e.target.value)}
+                    placeholder="0.00"
+                  />
                 </div>
                 <div className={accStyles.cryptoTokensRow}>
                   <span className={accStyles.cryptoTokensLabel}>Tokens remaining:</span>

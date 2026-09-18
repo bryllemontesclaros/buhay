@@ -14,7 +14,7 @@ Buhay is a personal finance tracker for everyday money clarity. It is the curren
 - Savings goals with targets, contributions, progress, and summary views.
 - Debt tracking for credit cards, loans, payment targets, and payoff planning.
 - History and insights for search, review, editing, spending breakdowns, reports, and month comparisons.
-- Crypto portfolio tracking with holdings, manual/live price context, fiat-to-crypto and crypto-to-fiat transfer flows.
+- Crypto portfolio tracking with holdings, manual price context, fiat-to-crypto and crypto-to-fiat transfer flows.
 - Privacy mode, light/dark theme, guided onboarding, app feedback, and responsive desktop/mobile navigation.
 
 ## App Areas
