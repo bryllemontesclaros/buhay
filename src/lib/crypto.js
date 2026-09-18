@@ -287,7 +287,7 @@ export function calculatePortfolioMetrics(holdings = [], userPrices = {}, vsCurr
     }
 
     // 2. Determine Cost Basis per unit in viewing currency
-    const holdingCurrency = (h.currency || (rawBuyPrice > 10000 ? 'PHP' : 'USD')).toUpperCase()
+    const holdingCurrency = (h.currency || 'USD').toUpperCase()
     let unitCostInVsCurrency = rawBuyPrice
     if (holdingCurrency === 'PHP' && isUsd) {
       unitCostInVsCurrency = rawBuyPrice / fxRate

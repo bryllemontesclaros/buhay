@@ -2,6 +2,7 @@ import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance } 
 import { getProjectedTransactions } from './recurrence'
 import { getMonthKey, normalizeDate, toMonthKey, today } from './utils'
 import { sumBy, sumAbsBy, sumMax0By, calculateDelta } from './math'
+import { DEFAULT_FOREX_RATE } from './crypto'
 
 export function isTransactionPaid(tx = {}) {
   return String(tx?.paymentStatus || 'paid').toLowerCase() !== 'unpaid'
@@ -218,14 +219,14 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
 
   const safeHoldings = Array.isArray(holdings) ? holdings.filter(Boolean) : []
   let prices = livePrices
-  let forexRate = 61.718
+  let forexRate = DEFAULT_FOREX_RATE
   if (!prices && typeof window !== 'undefined') {
     try {
-      const raw = localStorage.getItem('buhay_crypto_prices_v7') || localStorage.getItem('buhay_crypto_prices_v6')
+      const raw = localStorage.getItem('buhay_crypto_prices_v7')
       if (raw) {
         const parsed = JSON.parse(raw)
         prices = parsed?.data || null
-        if (parsed?.forexRate) forexRate = parseFloat(parsed.forexRate) || 61.718
+        if (parsed?.forexRate) forexRate = parseFloat(parsed.forexRate) || DEFAULT_FOREX_RATE
       }
     } catch {
       // ignore
