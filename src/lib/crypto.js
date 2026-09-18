@@ -138,53 +138,61 @@ export function formatCryptoValue(val, symbol = '$', maxDecimals = 4) {
 }
 
 /**
- * Fetch live cryptocurrency prices from Binance public spot ticker (zero keys, CORS-free).
+ * Fetch live cryptocurrency prices from CoinCap API (free, no API key, works in PH).
+ * Falls back gracefully per-coin if CoinCap doesn't list it.
  * Returns an enriched lookup map keyed by coinId, symbol, and lowercase symbol.
  */
 export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAULT_FOREX_RATE) {
   const fxRate = parseFloat(forexRate) > 0 ? parseFloat(forexRate) : DEFAULT_FOREX_RATE
 
-  try {
-    const res = await fetch('https://api.binance.com/api/v3/ticker/price', { cache: 'no-store' })
-    if (!res.ok) throw new Error(`Binance price fetch error: ${res.statusText}`)
-    const data = await res.json()
+  // Build deduplicated list of all coins to fetch
+  const allCoins = [...POPULAR_CRYPTO_COINS, ...customCoins]
+  const uniqueIds = [...new Set(allCoins.map(c => (c.id || c.symbol || '').toLowerCase()).filter(Boolean))]
 
-    const tickerMap = new Map()
-    if (Array.isArray(data)) {
-      data.forEach(item => {
-        if (item.symbol && item.price) {
-          tickerMap.set(item.symbol.toUpperCase(), parseFloat(item.price))
+  try {
+    // CoinCap accepts comma-separated ids — fetch all at once
+    const url = `https://api.coincap.io/v2/assets?ids=${uniqueIds.join(',')}&limit=200`
+    const res = await fetch(url, { cache: 'no-store' })
+    if (!res.ok) throw new Error(`CoinCap fetch error: ${res.statusText}`)
+    const json = await res.json()
+
+    // Build a map of coinId → usdPrice from response
+    const priceMap = new Map()
+    if (Array.isArray(json?.data)) {
+      json.data.forEach(item => {
+        if (item.id && item.priceUsd) {
+          priceMap.set(item.id.toLowerCase(), parseFloat(item.priceUsd))
+          // Also index by symbol for fallback lookup
+          if (item.symbol) {
+            priceMap.set(item.symbol.toUpperCase(), parseFloat(item.priceUsd))
+          }
         }
       })
     }
 
-    const allCoins = [...POPULAR_CRYPTO_COINS, ...customCoins]
+    // Handle stablecoins that CoinCap may not return perfectly
+    if (!priceMap.has('tether'))   priceMap.set('tether',   1.0)
+    if (!priceMap.has('usd-coin')) priceMap.set('usd-coin', 1.0)
+    if (!priceMap.has('USDT'))     priceMap.set('USDT',     1.0)
+    if (!priceMap.has('USDC'))     priceMap.set('USDC',     1.0)
+
     const quotes = {}
+    const now = Date.now()
 
     allCoins.forEach(coin => {
       const sym = (coin.symbol || '').toUpperCase()
       const coinId = (coin.id || sym.toLowerCase()).toLowerCase()
       if (!sym) return
 
-      let usdPrice = null
-
-      const pair = `${sym}USDT`
-      if (tickerMap.has(pair)) {
-        usdPrice = tickerMap.get(pair)
-      } else if (sym === 'USDT' || sym === 'USDC') {
-        usdPrice = 1.0
-      } else if (tickerMap.has(`${sym}BUSD`)) {
-        usdPrice = tickerMap.get(`${sym}BUSD`)
-      } else if (tickerMap.has(`${sym}USDC`)) {
-        usdPrice = tickerMap.get(`${sym}USDC`)
-      }
+      // Look up by coinId first, then by symbol
+      const usdPrice = priceMap.get(coinId) || priceMap.get(sym) || null
 
       if (usdPrice && usdPrice > 0) {
         const quoteObj = {
           usd: usdPrice,
           php: usdPrice * fxRate,
-          source: 'binance_live',
-          updatedAt: Date.now(),
+          source: 'coincap_live',
+          updatedAt: now,
         }
         quotes[coinId] = quoteObj
         quotes[sym] = quoteObj
@@ -192,9 +200,9 @@ export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAUL
       }
     })
 
-    return quotes
+    return Object.keys(quotes).length > 0 ? quotes : null
   } catch (err) {
-    console.warn('[crypto] Failed to fetch live prices from Binance:', err)
+    console.warn('[crypto] Failed to fetch live prices from CoinCap:', err)
     return null
   }
 }
