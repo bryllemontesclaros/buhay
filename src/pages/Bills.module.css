@@ -156,11 +156,11 @@
 }
 
 .undoBtn {
-  min-height: 34px;
+  min-height: var(--control-h-sm, 36px);
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--control-radius, 10px);
   border: 1px solid var(--border2);
   background: var(--surface2);
   color: var(--text2);

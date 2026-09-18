@@ -207,6 +207,7 @@ export default function Onboarding({ user, onComplete }) {
                       type="button"
                       className={`${styles.currencyBtn} ${isSelected ? styles.currencyBtnActive : ''}`}
                       onClick={() => setCurrency(c.code)}
+                      aria-pressed={isSelected}
                     >
                       <span className={styles.currencySymbol}>{c.symbol}</span>
                       <strong className={styles.currencyCode}>{c.code}</strong>
@@ -251,20 +252,24 @@ export default function Onboarding({ user, onComplete }) {
                   <div key={acc.id} className={styles.accountRowCard}>
                     <div className={styles.accountRowMain}>
                       <input
+                        id={`account-name-${acc.id}`}
                         type="text"
                         className={styles.inputName}
                         placeholder="Account name"
                         value={acc.name}
                         onChange={e => updateAccount(acc.id, 'name', e.target.value)}
+                        aria-label="Account name"
                       />
                       <div className={styles.balanceInputWrap}>
                         <span className={styles.currencyPrefix}>{symbol}</span>
                         <input
+                          id={`account-balance-${acc.id}`}
                           type="number"
                           className={styles.inputBalance}
                           placeholder="0.00"
                           value={acc.balance}
                           onChange={e => updateAccount(acc.id, 'balance', e.target.value)}
+                          aria-label={`${acc.name || 'Account'} starting balance`}
                         />
                       </div>
                     </div>
@@ -273,6 +278,7 @@ export default function Onboarding({ user, onComplete }) {
                       className={styles.removeRowBtn}
                       onClick={() => removeAccount(acc.id)}
                       title="Remove account"
+                      aria-label={`Remove ${acc.name || 'account'}`}
                     >
                       ✕
                     </button>

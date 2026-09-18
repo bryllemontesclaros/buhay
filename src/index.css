@@ -103,8 +103,18 @@
 
   --radius: 16px;
   --radius-sm: 8px;
+  --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
+  --radius-card: 16px;
+  --radius-panel: 20px;
+  --control-h-sm: 36px;
+  --control-h: 44px;
+  --control-h-lg: 52px;
+  --control-radius: 10px;
+  --control-radius-pill: 999px;
+  --surface-card-border: color-mix(in srgb, var(--border2) 72%, transparent);
+  --surface-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   --bento-radius: 24px;
   --bento-radius-lg: 32px;
   --bento-radius-xl: 40px;
@@ -239,6 +249,7 @@
   --accent-dim: rgba(17, 17, 17, 0.08);
   --accent-glow: rgba(17, 17, 17, 0.12);
   --income: #28cd41;
+  --income-ink: #057a36;
   --income-dim: rgba(40, 205, 65, 0.14);
   --income-glow: rgba(40, 205, 65, 0.20);
   --expense: #ff3b30;
@@ -538,16 +549,23 @@ input, select, textarea {
 
 /* Touch target accessibility for touchscreens */
 @media (pointer: coarse) {
-  button, [role="button"], a.btn {
-    min-height: 44px;
+  button, [role="button"], a.btn,
+  [class*="btn"], [class*="Btn"],
+  [class*="button"], [class*="Button"],
+  [class*="action"], [class*="Action"] {
+    min-height: var(--control-h, 44px);
   }
 
   /* Touchscreen button safety */
   button[class*="iconOnly"], button[class*="circleBtn"],
   button[class*="closeBtn"], button[class*="CloseBtn"],
-  button[class*="iconBtn"], button[class*="btnIcon"] {
-    min-width: 44px;
-    min-height: 44px;
+  button[class*="iconBtn"], button[class*="btnIcon"],
+  button[class*="trash"], button[class*="Trash"],
+  button[class*="delete"], button[class*="Delete"] {
+    min-width: var(--control-h, 44px) !important;
+    min-height: var(--control-h, 44px) !important;
+    max-width: none;
+    max-height: none;
   }
 }
 

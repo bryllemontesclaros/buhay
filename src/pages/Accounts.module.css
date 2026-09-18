@@ -202,7 +202,7 @@
   gap: 6px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--control-radius, 10px);
   padding: 4px 10px;
 }
 
@@ -240,13 +240,13 @@
   --account-tone: var(--accent);
   position: relative;
   background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, var(--surface2)), var(--surface));
-  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
-  border-radius: 16px;
+  border: 1px solid var(--surface-card-border, color-mix(in srgb, var(--border2) 72%, transparent));
+  border-radius: var(--radius-card, 16px);
   padding: 15px 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 5%, transparent);
+  box-shadow: var(--surface-card-shadow, 0 1px 2px color-mix(in srgb, var(--text) 5%, transparent));
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 }
@@ -399,7 +399,7 @@
   align-items: center;
   gap: 6px;
   transition: transform 0.15s ease, filter 0.15s ease;
-  min-height: 34px;
+  min-height: var(--control-h-sm, 36px);
   white-space: nowrap;
 }
 
@@ -417,7 +417,7 @@
   padding: 6px 12px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: var(--control-radius, 10px);
   border: 1px solid color-mix(in srgb, var(--border2) 68%, transparent);
   background: color-mix(in srgb, var(--surface2) 78%, transparent);
   color: var(--text2);
@@ -426,7 +426,7 @@
   align-items: center;
   gap: 4px;
   transition: all 0.15s ease;
-  min-height: 34px;
+  min-height: var(--control-h-sm, 36px);
   white-space: nowrap;
 }
 
@@ -441,7 +441,7 @@
   padding: 6px 10px;
   font-size: 13px;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: var(--control-radius, 10px);
   border: 1px solid color-mix(in srgb, var(--border2) 68%, transparent);
   background: color-mix(in srgb, var(--surface2) 78%, transparent);
   color: var(--text3);
@@ -450,7 +450,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  min-height: 34px;
+  min-height: var(--control-h-sm, 36px);
   margin-left: auto;
 }
 

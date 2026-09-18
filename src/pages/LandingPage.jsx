@@ -506,7 +506,7 @@ export default function LandingPage() {
     : 'Open App'
 
   const handleOpenPrimary = () => {
-    navigate(isSignedIn ? '/app' : '/login')
+    navigate(isSignedIn ? '/app' : '/signup')
   }
 
   const handleSignIn = () => {

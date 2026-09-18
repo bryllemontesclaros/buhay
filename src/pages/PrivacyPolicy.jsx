@@ -55,7 +55,7 @@ const SECTIONS = [
     title: 'Data retention, export, and deletion',
     bullets: [
       'Your financial records are retained only while your account remains active.',
-      'You can download a complete CSV transaction ledger or export an encrypted JSON backup file directly from the Settings page at any time.',
+      'You can download a complete CSV transaction ledger or export a plain JSON backup file directly from the Settings page at any time.',
       'You can delete specific transactions, accounts, or reset all financial data with 1-click in Settings.',
       'If you choose to delete your account, all associated records, profile data, and logs are permanently and irreversibly purged from our database.',
     ],

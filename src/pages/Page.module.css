@@ -255,7 +255,7 @@
   content-visibility: auto;
   contain-intrinsic-size: 220px;
   border: 1px solid var(--border2);
-  border-radius: 24px;
+  border-radius: var(--radius-panel, 20px);
   background: var(--surface);
   /* box-shadow flattened */
 

@@ -225,11 +225,12 @@ export default function AuthScreen() {
 
               {tab === 'login' ? (
                 <form onSubmit={handleLogin}>
-                  <div className={styles.field}><label>Email</label><input type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
+                  <div className={styles.field}><label htmlFor="login-email">Email</label><input id="login-email" type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
                   <div className={styles.field}>
-                    <label>Password</label>
+                    <label htmlFor="login-password">Password</label>
                     <div className={styles.passwordInputWrap}>
                       <input
+                        id="login-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         value={form.password}
@@ -259,12 +260,13 @@ export default function AuthScreen() {
                 </form>
               ) : (
                 <form onSubmit={handleRegister}>
-                  <div className={styles.field}><label>Full name</label><input type="text" placeholder="Juan dela Cruz" value={form.name} onChange={e => set('name', e.target.value)} autoComplete="name" /></div>
-                  <div className={styles.field}><label>Email</label><input type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
+                  <div className={styles.field}><label htmlFor="register-name">Full name</label><input id="register-name" type="text" placeholder="Juan dela Cruz" value={form.name} onChange={e => set('name', e.target.value)} autoComplete="name" /></div>
+                  <div className={styles.field}><label htmlFor="register-email">Email</label><input id="register-email" type="email" placeholder="you@example.com" value={form.email} onChange={e => set('email', e.target.value)} autoComplete="email" /></div>
                   <div className={styles.field}>
-                    <label>Password</label>
+                    <label htmlFor="register-password">Password</label>
                     <div className={styles.passwordInputWrap}>
                       <input
+                        id="register-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Min. 6 characters"
                         value={form.password}
@@ -283,9 +285,10 @@ export default function AuthScreen() {
                     </div>
                   </div>
                   <div className={styles.field}>
-                    <label>Confirm password</label>
+                    <label htmlFor="register-confirm">Confirm password</label>
                     <div className={styles.passwordInputWrap}>
                       <input
+                        id="register-confirm"
                         type={showConfirm ? 'text' : 'password'}
                         placeholder="••••••••"
                         value={form.confirm}
@@ -303,7 +306,7 @@ export default function AuthScreen() {
                       </button>
                     </div>
                   </div>
-                  <div className={styles.field}><label>Access Code</label><input type="text" placeholder="BUHAY-BETA" value={form.inviteCode} onChange={e => set('inviteCode', e.target.value)} autoComplete="off" /></div>
+                  <div className={styles.field}><label htmlFor="register-invite-code">Access Code</label><input id="register-invite-code" type="text" placeholder="BUHAY-BETA" value={form.inviteCode} onChange={e => set('inviteCode', e.target.value)} autoComplete="off" /></div>
                   <button className={styles.btnPrimary} type="submit" disabled={loading}>{loading ? 'Creating account...' : 'Create account & launch'}</button>
                   <p className={styles.legalNotice}>
                     By creating an account, you agree to Buhay&apos;s <Link className={styles.legalLink} to="/terms">Terms of Use</Link> and acknowledge the <Link className={styles.legalLink} to="/privacy">Privacy Policy</Link>.
@@ -315,7 +318,7 @@ export default function AuthScreen() {
             <>
               {error && <div className={styles.error} role="alert">{error}</div>}
               <form onSubmit={handleReset}>
-                <div className={styles.field}><label>Email</label><input type="email" placeholder="you@example.com" value={resetEmail} onChange={e => setResetEmail(e.target.value)} autoFocus /></div>
+                <div className={styles.field}><label htmlFor="reset-email">Email</label><input id="reset-email" type="email" placeholder="you@example.com" value={resetEmail} onChange={e => setResetEmail(e.target.value)} autoFocus /></div>
                 <button className={styles.btnPrimary} type="submit" disabled={resetLoading}>{resetLoading ? 'Sending...' : 'Send reset link'}</button>
               </form>
               <button type="button" className={styles.backLink} onClick={() => { setShowForgot(false); setError('') }}>← Back to login</button>

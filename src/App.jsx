@@ -176,6 +176,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<AuthRoute />} />
+            <Route path="/signup" element={<AuthRoute />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/app" element={<ProtectedRoute />} />
@@ -187,4 +188,3 @@ export default function App() {
     </ErrorBoundary>
   )
 }
-

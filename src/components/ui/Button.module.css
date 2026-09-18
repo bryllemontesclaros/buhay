@@ -5,9 +5,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-height: 40px;
+  min-height: var(--control-h, 44px);
   padding: 8px 20px;
-  border-radius: 10px;
+  border-radius: var(--control-radius, 10px);
   border: 1px solid var(--border2);
   font-family: var(--font-body);
   font-size: var(--type-body);
@@ -36,7 +36,7 @@
 }
 
 .btnSm {
-  min-height: 32px;
+  min-height: var(--control-h-sm, 36px);
   padding: 0 12px;
   font-size: 12px;
 }
@@ -141,4 +141,3 @@
 }
 
 /* Neo Theme overrides */
-

@@ -297,15 +297,15 @@
 /* 4. HIGH-DENSITY DEBT CARDS */
 .debtCard {
   background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, white 2%), var(--surface));
-  border: 1px solid color-mix(in srgb, var(--border2) 56%, transparent);
-  border-radius: 18px;
+  border: 1px solid var(--surface-card-border, color-mix(in srgb, var(--border2) 64%, transparent));
+  border-radius: var(--radius-card, 16px);
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   position: relative;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-  box-shadow: 0 1px 2px color-mix(in srgb, #000 5%, transparent), 0 12px 28px color-mix(in srgb, #000 3%, transparent);
+  box-shadow: var(--surface-card-shadow, 0 1px 2px color-mix(in srgb, #000 5%, transparent));
 }
 
 .debtCard:hover {
@@ -659,7 +659,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: filter 0.15s ease, transform 0.15s ease;
-  min-height: 36px;
+  min-height: var(--control-h, 44px);
   white-space: nowrap;
 }
 

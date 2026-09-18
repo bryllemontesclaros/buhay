@@ -685,7 +685,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
 
       {showDrawer && createPortal(
         <div className={bStyles.drawerOverlay} onClick={() => setShowDrawer(false)}>
-          <div className={bStyles.drawerModal} onClick={e => e.stopPropagation()}>
+          <div className={bStyles.drawerContent} onClick={e => e.stopPropagation()}>
             <div className={bStyles.drawerHeader}>
               <h3>Add Recurring Bill</h3>
               <button className={bStyles.drawerClose} onClick={() => setShowDrawer(false)}>✕</button>

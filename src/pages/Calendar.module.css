@@ -1601,7 +1601,7 @@
     font-size: 13px;
   }
   .cellBalance {
-    font-size: 9px;
+    font-size: 10px;
     line-height: 1.1;
   }
   .monthBoard > .dayPanel {
@@ -1792,13 +1792,13 @@
   }
   .cellBalance {
     display: block;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
     line-height: 1.1;
     white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
-    letter-spacing: -0.05em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0;
     text-align: center;
     width: 100%;
   }
@@ -1914,8 +1914,8 @@
     font-size: 11px;
   }
   .cellBalance {
-    font-size: 7.5px;
-    letter-spacing: -0.06em;
+    font-size: 8.5px;
+    letter-spacing: 0;
   }
 }
 
@@ -2784,4 +2784,3 @@
     border-radius: 10px;
   }
 }
-

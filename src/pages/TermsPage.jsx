@@ -63,7 +63,7 @@ const SECTIONS = [
   {
     title: 'Data exports, backups, and termination',
     bullets: [
-      'Buhay provides 1-click CSV spreadsheet exports and encrypted JSON backup downloads in the Settings page. Users are encouraged to maintain local backup copies of their records.',
+      'Buhay provides 1-click CSV spreadsheet exports and plain JSON backup downloads in the Settings page. Users are encouraged to maintain local backup copies of their records.',
       'You may discontinue use of the service or permanently delete your account and all associated data at any time.',
       'We reserve the right to suspend or terminate accounts that violate these Terms or engage in abusive, fraudulent behavior.',
     ],
