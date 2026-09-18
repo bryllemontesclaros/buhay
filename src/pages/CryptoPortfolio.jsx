@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { fsAdd, fsDel, fsUpdate, fsTransferAccounts } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsTransferAccounts, fsSetProfile } from '../lib/firestore'
 import { fsTransferFiatToCrypto, fsTransferCryptoToFiat } from '../lib/api/cryptoTransfers'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { fmt, maskMoney, playTick, today } from '../lib/utils'
@@ -15,6 +15,7 @@ import {
   POPULAR_CRYPTO_COINS,
   searchCryptoCoins,
   setCachedPrices,
+  fetchLiveCryptoPrices,
 } from '../lib/crypto'
 import styles from './CryptoPortfolio.module.css'
 import SwipeableCard from '../components/SwipeableCard'
@@ -58,9 +59,25 @@ export default function CryptoPortfolio({
   })
 
   const [userPrices, setUserPrices] = useState(() => {
+    if (profile?.cryptoPrices && typeof profile.cryptoPrices === 'object' && Object.keys(profile.cryptoPrices).length > 0) {
+      return profile.cryptoPrices
+    }
     const cached = getCachedPrices()
     return cached?.data || {}
   })
+
+  // Sync if profile.cryptoPrices updates from Firestore
+  useEffect(() => {
+    if (profile?.cryptoPrices && typeof profile.cryptoPrices === 'object' && Object.keys(profile.cryptoPrices).length > 0) {
+      setUserPrices(prev => ({
+        ...profile.cryptoPrices,
+        ...prev,
+      }))
+    }
+  }, [profile?.cryptoPrices])
+
+  const [syncingLivePrices, setSyncingLivePrices] = useState(false)
+  const [filterTab, setFilterTab] = useState('active') // 'active' | 'all'
 
   // Transfer Modal State for Direct Cash Out / Buy
   const [showTransferModal, setShowTransferModal] = useState(false)
@@ -294,8 +311,73 @@ export default function CryptoPortfolio({
 
     setUserPrices(updated)
     setCachedPrices(updated, DEFAULT_FOREX_RATE)
+    if (user?.uid) {
+      fsSetProfile(user.uid, { cryptoPrices: updated }).catch(e => console.warn('[crypto] Cloud sync error:', e))
+    }
     setShowPriceModal(false)
     notifyApp({ title: 'Prices Updated', message: 'Portfolio recalculated with your updated prices.', tone: 'positive' })
+  }
+
+  async function handleLiveSync() {
+    playTick()
+    setSyncingLivePrices(true)
+    try {
+      const liveQuotes = await fetchLiveCryptoPrices(holdings, DEFAULT_FOREX_RATE)
+      if (liveQuotes && Object.keys(liveQuotes).length > 0) {
+        const merged = { ...userPrices, ...liveQuotes }
+        setUserPrices(merged)
+        setCachedPrices(merged, DEFAULT_FOREX_RATE)
+        if (user?.uid) {
+          fsSetProfile(user.uid, { cryptoPrices: merged }).catch(e => console.warn('[crypto] Cloud sync error:', e))
+        }
+        notifyApp({
+          title: 'Live Market Sync Complete',
+          message: 'Portfolio updated with latest Binance spot prices.',
+          tone: 'positive',
+        })
+      } else {
+        notifyApp({
+          title: 'Sync Notice',
+          message: 'Could not reach live market ticker. Kept cached prices.',
+          tone: 'warning',
+        })
+      }
+    } catch {
+      notifyApp({
+        title: 'Sync Failed',
+        message: 'Could not connect to live market. Using cached prices.',
+        tone: 'error',
+      })
+    } finally {
+      setSyncingLivePrices(false)
+    }
+  }
+
+  async function handleFetchLiveIntoModal() {
+    playTick()
+    setSyncingLivePrices(true)
+    try {
+      const liveQuotes = await fetchLiveCryptoPrices(holdings, DEFAULT_FOREX_RATE)
+      if (liveQuotes) {
+        const isUsd = vsCurrency === 'USD'
+        setPriceForm(prev => {
+          const next = { ...prev }
+          metrics.holdings.forEach(h => {
+            const key = h.coinId || h.symbol.toLowerCase()
+            const q = liveQuotes[key] || liveQuotes[h.symbol?.toUpperCase()]
+            if (q) {
+              next[key] = isUsd ? String(q.usd) : String(q.php)
+            }
+          })
+          return next
+        })
+        notifyApp({ title: 'Live Quotes Auto-Filled', message: 'Review prices and click Save.', tone: 'positive' })
+      }
+    } catch {
+      notifyApp({ title: 'Fetch Error', message: 'Could not auto-fill quotes.', tone: 'warning' })
+    } finally {
+      setSyncingLivePrices(false)
+    }
   }
 
   // Preview total value inside quick price modal
@@ -564,7 +646,11 @@ export default function CryptoPortfolio({
                 <div className={styles.coinHeader}>
                   <span className={styles.coinSymbol}>{h.symbol}</span>
                   <span className={styles.walletBadge}>{h.wallet}</span>
-                  <span className={styles.shareBadge}>{h.allocationPct.toFixed(0)}%</span>
+                  {h.qty <= 0 ? (
+                    <span className={styles.soldPill}>Cashed Out</span>
+                  ) : (
+                    <span className={styles.shareBadge}>{h.allocationPct.toFixed(0)}%</span>
+                  )}
                 </div>
                 <div className={styles.coinName}>{h.name}</div>
                 <div className={styles.coinSub}>
@@ -590,14 +676,16 @@ export default function CryptoPortfolio({
           </div>
 
           <div className={styles.cardQuickActionsBar}>
-            <button
-              type="button"
-              className={styles.btnCardTransfer}
-              onClick={(e) => { e.stopPropagation(); openQuickTransfer(h); }}
-              title="Cash out to bank or move tokens"
-            >
-              ⇄ Cash Out
-            </button>
+            {h.qty > 0 && (
+              <button
+                type="button"
+                className={styles.btnCardTransfer}
+                onClick={(e) => { e.stopPropagation(); openQuickTransfer(h); }}
+                title="Cash out to bank or move tokens"
+              >
+                ⇄ Cash Out
+              </button>
+            )}
             <button
               type="button"
               className={styles.cardMicroAction}
@@ -722,9 +810,19 @@ export default function CryptoPortfolio({
             <button
               type="button"
               className={styles.btnSecondarySmall}
-              onClick={openPriceModal}
+              onClick={handleLiveSync}
+              disabled={syncingLivePrices}
+              title="Fetch live market spot prices from Binance"
             >
-              ⚡ Update Prices
+              {syncingLivePrices ? '↻ Syncing...' : '⚡ Live Sync'}
+            </button>
+            <button
+              type="button"
+              className={styles.btnSecondarySmall}
+              onClick={openPriceModal}
+              title="Set custom prices manually"
+            >
+              ✎ Prices
             </button>
             <button
               type="button"
@@ -780,14 +878,25 @@ export default function CryptoPortfolio({
                 )}
               </div>
 
-              <button
-                type="button"
-                className={styles.updatePricesBtn}
-                onClick={openPriceModal}
-                title="Update current asset prices"
-              >
-                ⚡ Update Prices
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  className={styles.updatePricesBtn}
+                  onClick={handleLiveSync}
+                  disabled={syncingLivePrices}
+                  title="Fetch live market spot prices from Binance"
+                >
+                  {syncingLivePrices ? '↻ Syncing...' : '⚡ Live Market Sync'}
+                </button>
+                <button
+                  type="button"
+                  className={styles.updatePricesBtn}
+                  onClick={openPriceModal}
+                  title="Update custom asset prices"
+                >
+                  ✎ Custom Prices
+                </button>
+              </div>
             </div>
           </div>
 
@@ -837,8 +946,28 @@ export default function CryptoPortfolio({
           </button>
         </div>
       ) : (
-        <div className={styles.holdingsGrid}>
-          {metrics.holdings.map(renderCard)}
+        <div>
+          {zeroBalanceHoldings.length > 0 && (
+            <div className={styles.filterPillsRow}>
+              <button
+                type="button"
+                className={`${styles.filterPill} ${filterTab === 'active' ? styles.filterPillActive : ''}`}
+                onClick={() => { playTick(); setFilterTab('active'); }}
+              >
+                Active Holdings ({activeHoldings.length})
+              </button>
+              <button
+                type="button"
+                className={`${styles.filterPill} ${filterTab === 'all' ? styles.filterPillActive : ''}`}
+                onClick={() => { playTick(); setFilterTab('all'); }}
+              >
+                All Holdings ({metrics.holdings.length})
+              </button>
+            </div>
+          )}
+          <div className={styles.holdingsGrid}>
+            {displayedHoldings.map(renderCard)}
+          </div>
         </div>
       )}
 
@@ -852,8 +981,17 @@ export default function CryptoPortfolio({
             </div>
 
             <div className={styles.quickPriceDesc}>
-              Input current market price for each token from your exchange.
+              Input current market price for each token or auto-fill with Binance live quotes.
             </div>
+
+            <button
+              type="button"
+              className={styles.btnLiveSyncInModal}
+              onClick={handleFetchLiveIntoModal}
+              disabled={syncingLivePrices}
+            >
+              {syncingLivePrices ? '↻ Fetching Binance Tickers...' : '⚡ Auto-Fill Live Market Quotes'}
+            </button>
 
             <div className={styles.quickPriceList}>
               {metrics.holdings.map(h => {

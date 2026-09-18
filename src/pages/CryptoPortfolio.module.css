@@ -881,3 +881,68 @@
     grid-template-columns: repeat(auto-fill, minmax(360px, 480px));
   }
 }
+
+.filterPillsRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filterPill {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterPill:hover {
+  color: var(--text);
+}
+
+.filterPillActive {
+  background: var(--surface);
+  color: var(--text) !important;
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.soldPill {
+  background: color-mix(in srgb, var(--surface3) 70%, transparent);
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px dashed var(--border2);
+  text-transform: uppercase;
+}
+
+.btnLiveSyncInModal {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btnLiveSyncInModal:hover {
+  background: var(--accent);
+  color: var(--accent-contrast, #fff);
+}
+

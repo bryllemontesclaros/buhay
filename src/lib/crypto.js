@@ -119,6 +119,7 @@ export function setCachedPrices(data, forexRate = DEFAULT_FOREX_RATE) {
 
 /**
  * Format crypto number with smart decimals.
+ * Supports up to 8 decimals for micro-value coins (e.g. PEPE, SHIB) to prevent $0.0000 display.
  */
 export function formatCryptoValue(val, symbol = '$', maxDecimals = 4) {
   const num = parseFloat(val) || 0
@@ -129,7 +130,73 @@ export function formatCryptoValue(val, symbol = '$', maxDecimals = 4) {
   if (num >= 1) {
     return `${symbol}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`
   }
+  if (num < 0.01) {
+    const decimals = Math.max(maxDecimals, 8)
+    return `${symbol}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: decimals })}`
+  }
   return `${symbol}${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: maxDecimals })}`
+}
+
+/**
+ * Fetch live cryptocurrency prices from Binance public spot ticker (zero keys, CORS-free).
+ * Returns an enriched lookup map keyed by coinId, symbol, and lowercase symbol.
+ */
+export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAULT_FOREX_RATE) {
+  const fxRate = parseFloat(forexRate) > 0 ? parseFloat(forexRate) : DEFAULT_FOREX_RATE
+
+  try {
+    const res = await fetch('https://api.binance.com/api/v3/ticker/price', { cache: 'no-store' })
+    if (!res.ok) throw new Error(`Binance price fetch error: ${res.statusText}`)
+    const data = await res.json()
+
+    const tickerMap = new Map()
+    if (Array.isArray(data)) {
+      data.forEach(item => {
+        if (item.symbol && item.price) {
+          tickerMap.set(item.symbol.toUpperCase(), parseFloat(item.price))
+        }
+      })
+    }
+
+    const allCoins = [...POPULAR_CRYPTO_COINS, ...customCoins]
+    const quotes = {}
+
+    allCoins.forEach(coin => {
+      const sym = (coin.symbol || '').toUpperCase()
+      const coinId = (coin.id || sym.toLowerCase()).toLowerCase()
+      if (!sym) return
+
+      let usdPrice = null
+
+      const pair = `${sym}USDT`
+      if (tickerMap.has(pair)) {
+        usdPrice = tickerMap.get(pair)
+      } else if (sym === 'USDT' || sym === 'USDC') {
+        usdPrice = 1.0
+      } else if (tickerMap.has(`${sym}BUSD`)) {
+        usdPrice = tickerMap.get(`${sym}BUSD`)
+      } else if (tickerMap.has(`${sym}USDC`)) {
+        usdPrice = tickerMap.get(`${sym}USDC`)
+      }
+
+      if (usdPrice && usdPrice > 0) {
+        const quoteObj = {
+          usd: usdPrice,
+          php: usdPrice * fxRate,
+          source: 'binance_live',
+          updatedAt: Date.now(),
+        }
+        quotes[coinId] = quoteObj
+        quotes[sym] = quoteObj
+        quotes[sym.toLowerCase()] = quoteObj
+      }
+    })
+
+    return quotes
+  } catch (err) {
+    console.warn('[crypto] Failed to fetch live prices from Binance:', err)
+    return null
+  }
 }
 
 /**

@@ -113,13 +113,23 @@ export default function TransferModal({
     ? parseFloat(transferForm.customTokenQty) || 0
     : computedTokens
 
-  // 6. Compute P&L when cashing out
+  // 6. Compute P&L when cashing out (normalized to vsCurrency)
   const cashOutPnl = useMemo(() => {
     if (!isFromCrypto || !sourceHolding) return null
     const tokens = parseFloat(transferForm.tokenQty) || 0
     if (!tokens) return null
-    const buyPrice = parseFloat(sourceHolding.buyPrice ?? sourceHolding.rawBuyPrice ?? coinRate) || coinRate
-    const costBasis = tokens * buyPrice
+    const rawBuyPrice = parseFloat(sourceHolding.buyPrice ?? sourceHolding.rawBuyPrice ?? coinRate) || coinRate
+    const holdingCurrency = (sourceHolding.currency || sourceHolding.buyCurrency || (rawBuyPrice > 10000 ? 'PHP' : 'USD')).toUpperCase()
+    const isVsUsd = vsCurrency === 'USD'
+
+    let normalizedBuyPrice = rawBuyPrice
+    if (holdingCurrency === 'USD' && !isVsUsd) {
+      normalizedBuyPrice = rawBuyPrice * DEFAULT_FOREX_RATE
+    } else if (holdingCurrency === 'PHP' && isVsUsd) {
+      normalizedBuyPrice = rawBuyPrice / DEFAULT_FOREX_RATE
+    }
+
+    const costBasis = tokens * normalizedBuyPrice
     const proceeds = tokens * coinRate
     const diff = proceeds - costBasis
     const pct = costBasis > 0 ? ((diff / costBasis) * 100).toFixed(1) : '0.0'
@@ -130,7 +140,7 @@ export default function TransferModal({
       costBasis,
       proceeds,
     }
-  }, [isFromCrypto, sourceHolding, transferForm.tokenQty, coinRate])
+  }, [isFromCrypto, sourceHolding, transferForm.tokenQty, coinRate, vsCurrency])
 
   // Sync tokenQty and amount when user edits during cash out
   function handleCashOutTokenChange(val) {

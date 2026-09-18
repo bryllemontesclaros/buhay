@@ -241,9 +241,13 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
 
     let livePriceInPhp = parseFloat(quote?.php)
     if (!livePriceInPhp || isNaN(livePriceInPhp) || livePriceInPhp <= 0) {
-      const rawPrice = parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
-      const isUsd = (h?.currency || '').toUpperCase() === 'USD' || (rawPrice < 10000 && (coinId === 'bitcoin' || coinId === 'ethereum' || symbol === 'BTC' || symbol === 'ETH'))
-      livePriceInPhp = isUsd ? rawPrice * forexRate : rawPrice
+      if (quote?.usd && parseFloat(quote.usd) > 0) {
+        livePriceInPhp = parseFloat(quote.usd) * forexRate
+      } else {
+        const rawPrice = parseFloat(h?.currentPrice ?? h?.livePrice ?? h?.buyPrice ?? h?.price ?? 0) || 0
+        const isUsd = (h?.currency || '').toUpperCase() === 'USD' || rawPrice < 10000
+        livePriceInPhp = isUsd ? rawPrice * forexRate : rawPrice
+      }
     }
     return sum + (qty * livePriceInPhp)
   }, 0)

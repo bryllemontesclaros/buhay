@@ -2,6 +2,7 @@ import { doc, writeBatch, increment } from 'firebase/firestore'
 import { db } from '../firebase'
 import { userCol, getAccountRef, buildAccountLookup, getTransferOutDelta, getTransferInDelta } from './core'
 import { normalizeDate, today } from '../utils'
+import { DEFAULT_FOREX_RATE } from '../crypto'
 
 /**
  * Transfer fiat funds from a bank account to purchase or top-up a cryptocurrency holding.
@@ -30,6 +31,8 @@ export async function fsTransferFiatToCrypto(uid, transfer = {}, accounts = [], 
   const wallet = transfer.wallet || 'Binance'
   const currency = transfer.currency || 'PHP'
 
+  const fxRate = Number(transfer.forexRate) || DEFAULT_FOREX_RATE
+
   // Look for an existing holding for this coin
   const existingHolding = holdings.find(h => {
     if (transfer.toHoldingId && transfer.toHoldingId === h._id) return true
@@ -51,18 +54,29 @@ export async function fsTransferFiatToCrypto(uid, transfer = {}, accounts = [], 
     holdingRef = doc(db, 'users', uid, 'portfolioHoldings', existingHolding._id)
     const oldQty = parseFloat(existingHolding.quantity ?? existingHolding.qty ?? 0) || 0
     const oldBuyPrice = parseFloat(existingHolding.buyPrice ?? existingHolding.rawBuyPrice ?? pricePerToken) || pricePerToken
+    const holdingBaseCurr = String(existingHolding.currency || (oldBuyPrice > 10000 ? 'PHP' : 'USD')).toUpperCase()
+    const transferCurr = String(currency).toUpperCase()
+
+    // Normalize incoming price to the holding's existing base currency
+    let incomingPriceInHoldingBase = pricePerToken
+    if (holdingBaseCurr === 'USD' && transferCurr === 'PHP') {
+      incomingPriceInHoldingBase = pricePerToken / fxRate
+    } else if (holdingBaseCurr === 'PHP' && transferCurr === 'USD') {
+      incomingPriceInHoldingBase = pricePerToken * fxRate
+    }
+
     const newTotalQty = oldQty + tokenQty
     
     // Calculate new weighted Dollar-Cost Average (DCA) buy price
     const newAvgBuyPrice = newTotalQty > 0
-      ? ((oldQty * oldBuyPrice) + (tokenQty * pricePerToken)) / newTotalQty
-      : pricePerToken
+      ? ((oldQty * oldBuyPrice) + (tokenQty * incomingPriceInHoldingBase)) / newTotalQty
+      : incomingPriceInHoldingBase
 
     batch.update(holdingRef, {
       quantity: newTotalQty,
       buyPrice: newAvgBuyPrice,
-      currentPrice: pricePerToken,
-      price: pricePerToken,
+      currentPrice: incomingPriceInHoldingBase,
+      price: incomingPriceInHoldingBase,
       updatedAt: Date.now(),
     })
   } else {
