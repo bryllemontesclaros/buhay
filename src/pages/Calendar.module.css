@@ -1692,10 +1692,10 @@
     padding: 2px 4px;
   }
   .navBtn {
-    min-width: 28px;
-    min-height: 28px;
-    width: 28px;
-    height: 28px;
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     font-size: 15px;
     border: 1px solid var(--border);
@@ -2778,11 +2778,10 @@
 
   .btnQuickAction,
   .btnQuickActionSettle {
-    min-height: 26px;
-    padding: 3px 10px;
-    font-size: 10.5px;
-    border-radius: 7px;
+    min-height: 44px;
+    padding: 7px 12px;
+    font-size: 12px;
+    border-radius: 10px;
   }
 }
-
 

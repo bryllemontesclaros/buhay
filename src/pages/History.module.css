@@ -517,9 +517,9 @@
 
 /* 5. EMPTY STATE */
 .emptyCard {
-  background: var(--surface);
-  border: 1px dashed var(--border2);
-  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
+  border-radius: 18px;
   padding: 40px 20px;
   text-align: center;
   display: flex;
@@ -601,11 +601,11 @@
 }
 
 .modalClose {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
+  background: color-mix(in srgb, var(--surface2) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
   color: var(--text2);
   cursor: pointer;
   display: flex;

@@ -5,9 +5,9 @@
   justify-content: center;
   text-align: center;
   padding: 32px 16px;
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  border: 1px dashed var(--border2);
-  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 88%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
+  border-radius: 18px;
   position: relative;
   overflow: hidden;
   transition: all 0.2s ease;
@@ -89,4 +89,3 @@
 .compact .action {
   margin-top: 12px;
 }
-

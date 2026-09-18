@@ -151,3 +151,11 @@
 }
 .dismissBtn:hover { color: var(--red); background: var(--red-dim); }
 
+@media (pointer: coarse) {
+  .dismissBtn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

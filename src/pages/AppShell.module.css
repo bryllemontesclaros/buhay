@@ -1135,8 +1135,8 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border: none;
   border-radius: 999px;
   background: transparent;
@@ -1505,8 +1505,8 @@
   color: var(--text);
 }
 .quickAddClose {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   aspect-ratio: 1;
   border-radius: 50%;

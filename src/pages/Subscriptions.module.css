@@ -107,14 +107,15 @@
   display: flex;
   justify-content: flex-end;
   padding-top: 8px;
-  border-top: 1px dashed color-mix(in srgb, var(--glass-border) 50%, var(--border));
+  border-top: 1px solid color-mix(in srgb, var(--glass-border) 42%, var(--border));
 }
 
 .stopBtn {
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--text2) 20%, var(--border));
+  background: color-mix(in srgb, var(--surface2) 66%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text2) 18%, var(--border));
   color: var(--text2);
-  padding: 6px 14px;
+  min-height: 34px;
+  padding: 7px 14px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
@@ -132,9 +133,9 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 60px 20px;
-  background: color-mix(in srgb, var(--glass-1) 50%, var(--surface) 50%);
-  border: 1px dashed color-mix(in srgb, var(--glass-border) 60%, var(--border));
-  border-radius: 20px;
+  background: color-mix(in srgb, var(--glass-1) 44%, var(--surface) 56%);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 64%, transparent);
+  border-radius: 18px;
 }
 
 .emptyState h4 {

@@ -161,7 +161,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 0 4px 8px;
-  border-bottom: 1px dashed color-mix(in srgb, var(--border) 70%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 54%, transparent);
 }
 
 .groupTitleWrap {
@@ -497,9 +497,9 @@
 .emptyCard {
   text-align: center;
   padding: 3rem 1.5rem;
-  border: 1px dashed var(--border);
-  border-radius: 20px;
-  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -614,11 +614,11 @@
 }
 
 .modalClose {
-  background: var(--surface2);
-  border: none;
+  background: color-mix(in srgb, var(--surface2) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1007,6 +1007,18 @@
   transform: scale(1.15);
 }
 
+@media (pointer: coarse) {
+  .colorBtn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: none;
+    max-height: none;
+    flex-basis: 44px;
+  }
+}
+
 .colorBtnActive {
   border-color: var(--text);
   box-shadow: 0 0 0 2px var(--surface), 0 0 10px var(--swatch);
@@ -1144,7 +1156,7 @@
   font-size: 11px;
   font-weight: 600;
   padding-top: 4px;
-  border-top: 1px dashed color-mix(in srgb, var(--text) 12%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   display: flex;
   justify-content: space-between;
   align-items: center;

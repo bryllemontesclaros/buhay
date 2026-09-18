@@ -156,7 +156,8 @@
 }
 
 .undoBtn {
-  padding: 6px 12px;
+  min-height: 34px;
+  padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
   border-radius: 8px;
@@ -167,8 +168,8 @@
 }
 
 .delBtn {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 1px solid var(--border2);
   background: transparent;
@@ -197,9 +198,9 @@
 }
 
 .emptyState {
-  background: var(--surface);
-  border: 1px dashed var(--border2);
-  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
+  border-radius: 18px;
   padding: 40px 24px;
   text-align: center;
   margin: 20px 0;
@@ -249,8 +250,8 @@
 }
 
 .drawerClose {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--surface2);
   border: 1px solid var(--border2);

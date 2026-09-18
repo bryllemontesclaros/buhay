@@ -517,9 +517,9 @@
 
 /* 4. EMPTY STATE */
 .emptyState {
-  background: var(--surface);
-  border: 1px dashed var(--border2);
-  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
+  border-radius: 18px;
   padding: 40px 24px;
   text-align: center;
   display: flex;
@@ -606,11 +606,11 @@
 }
 
 .modalClose {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
+  background: color-mix(in srgb, var(--surface2) 84%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
   color: var(--text2);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -797,7 +797,7 @@
 
 .coinPill:hover {
   color: var(--text);
-  border-color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--border2));
 }
 
 .coinPillActive {
@@ -919,30 +919,6 @@
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 6px;
-  border: 1px dashed var(--border2);
+  border: 1px solid color-mix(in srgb, var(--border2) 70%, transparent);
   text-transform: uppercase;
 }
-
-.btnLiveSyncInModal {
-  background: color-mix(in srgb, var(--accent) 15%, var(--surface2));
-  color: var(--accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.15s ease;
-}
-
-.btnLiveSyncInModal:hover {
-  background: var(--accent);
-  color: var(--accent-contrast, #fff);
-}
-

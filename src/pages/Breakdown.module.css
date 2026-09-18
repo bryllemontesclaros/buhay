@@ -100,6 +100,18 @@
   color: var(--text);
 }
 
+@media (pointer: coarse) {
+  .navBtn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: none;
+    max-height: none;
+    flex-basis: 44px;
+  }
+}
+
 .monthTitle {
   font-family: var(--font-display);
   font-size: 14px;

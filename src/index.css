@@ -546,7 +546,8 @@ input, select, textarea {
   button[class*="iconOnly"], button[class*="circleBtn"],
   button[class*="closeBtn"], button[class*="CloseBtn"],
   button[class*="iconBtn"], button[class*="btnIcon"] {
-    min-height: unset;
+    min-width: 44px;
+    min-height: 44px;
   }
 }
 
@@ -556,4 +557,3 @@ input, select, textarea {
     background: color-mix(in srgb, var(--surface2) 95%, #000000 5%) !important;
   }
 }
-
