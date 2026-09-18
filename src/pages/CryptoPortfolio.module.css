@@ -327,8 +327,8 @@
 /* 3. HOLDINGS GRID & CARDS */
 .holdingsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 14px;
 }
 
 .holdingCard {
@@ -450,33 +450,67 @@
   border-radius: 6px;
 }
 
-/* Micro Action Buttons */
+/* Card Action Buttons */
 .cardQuickActionsBar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
   gap: 6px;
-  padding-top: 8px;
+  padding-top: 10px;
   border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  flex-wrap: wrap;
+}
+
+.btnCardTransfer {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-contrast, #fff);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  min-height: 30px;
+  white-space: nowrap;
+}
+
+.btnCardTransfer:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
 
 .cardMicroAction {
-  background: transparent;
+  background: var(--surface2);
   border: 1px solid var(--border2);
   color: var(--text2);
-  border-radius: 6px;
-  padding: 3px 8px;
+  border-radius: 8px;
+  padding: 5px 10px;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  white-space: nowrap;
 }
 
 .cardMicroAction:hover {
-  background: var(--surface2);
+  background: var(--surface3);
   color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border2));
+}
+
+.cardMicroActionDanger {
+  margin-left: auto;
 }
 
 .cardMicroActionDanger:hover {
+  background: color-mix(in srgb, var(--red) 14%, transparent);
   border-color: var(--red);
   color: var(--red);
 }
@@ -818,4 +852,32 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .commandMetrics {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .commandActions {
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+  .commandActions button {
+    flex: 1;
+    min-height: 36px;
+    justify-content: center;
+  }
+  .holdingsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .holdingsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 480px));
+  }
 }

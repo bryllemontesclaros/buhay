@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
+import { fsAdd, fsDel, fsUpdate, fsTransferAccounts } from '../lib/firestore'
+import { fsTransferFiatToCrypto, fsTransferCryptoToFiat } from '../lib/api/cryptoTransfers'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { fmt, maskMoney, playTick } from '../lib/utils'
+import { fmt, maskMoney, playTick, today } from '../lib/utils'
 import {
   calculatePortfolioMetrics,
   COIN_GRADIENTS,
@@ -17,6 +18,7 @@ import {
 } from '../lib/crypto'
 import styles from './CryptoPortfolio.module.css'
 import SwipeableCard from '../components/SwipeableCard'
+import TransferModal from '../components/modals/TransferModal'
 
 const EMPTY_FORM = {
   coinId: 'bitcoin',
@@ -43,6 +45,10 @@ export default function CryptoPortfolio({
     return Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings.filter(Boolean) : []
   }, [data?.portfolioHoldings])
 
+  const accounts = useMemo(() => {
+    return Array.isArray(data?.accounts) ? data.accounts : []
+  }, [data?.accounts])
+
   const [vsCurrency, setVsCurrency] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('buhay_crypto_vs_currency')
@@ -55,6 +61,159 @@ export default function CryptoPortfolio({
     const cached = getCachedPrices()
     return cached?.data || {}
   })
+
+  // Transfer Modal State for Direct Cash Out / Buy
+  const [showTransferModal, setShowTransferModal] = useState(false)
+  const [transferSaving, setTransferSaving] = useState(false)
+  const [transferForm, setTransferForm] = useState({
+    fromAccountId: '',
+    toAccountId: '',
+    amount: '',
+    date: today(),
+    desc: '',
+    tokenQty: '',
+    customTokenQty: '',
+    pricePerToken: 1,
+  })
+
+  function openQuickTransfer(holding = null) {
+    playTick()
+    const firstBank = accounts.find(a => a.type !== 'Credit Card') || accounts[0]
+    setTransferForm({
+      fromAccountId: holding ? `crypto:${holding._id || holding.id}` : (firstBank?._id || ''),
+      toAccountId: holding ? (firstBank?._id || '') : (accounts[1]?._id || ''),
+      amount: '',
+      date: today(),
+      desc: '',
+      tokenQty: holding ? String(holding.quantity || '') : '',
+      customTokenQty: '',
+      pricePerToken: 1,
+    })
+    setShowTransferModal(true)
+  }
+
+  function swapTransferDirection() {
+    playTick()
+    setTransferForm(prev => ({
+      ...prev,
+      fromAccountId: prev.toAccountId,
+      toAccountId: prev.fromAccountId,
+    }))
+  }
+
+  async function handleTransferSubmit(e) {
+    if (e) e.preventDefault()
+    const fromId = String(transferForm.fromAccountId || '')
+    const toId = String(transferForm.toAccountId || '')
+
+    const isFromCrypto = fromId.startsWith('crypto:')
+    const isToCrypto = toId.startsWith('crypto:') || toId.startsWith('new_crypto:')
+
+    if (!fromId || !toId) {
+      notifyApp({ title: 'Select source and target', message: 'Both source and destination are required.', tone: 'warning' })
+      return
+    }
+    if (fromId === toId) {
+      notifyApp({ title: 'Invalid selection', message: 'Source and destination must be different.', tone: 'warning' })
+      return
+    }
+
+    setTransferSaving(true)
+    try {
+      if (isToCrypto) {
+        const fiatAmount = Number(transferForm.amount) || 0
+        if (fiatAmount <= 0) {
+          notifyApp({ title: 'Check amount', message: 'Enter a transfer amount greater than zero.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        const fromAcc = accounts.find(a => a._id === fromId)
+        if (!fromAcc) throw new Error('Source bank account not found.')
+        if (Number(fromAcc.balance || 0) < fiatAmount) {
+          notifyApp({ title: 'Insufficient balance', message: `${fromAcc.name} only has ${fmt(fromAcc.balance, s)}.`, tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+
+        const effectiveTokens = Number(transferForm.customTokenQty || (fiatAmount / (transferForm.pricePerToken || 1)))
+        await fsTransferFiatToCrypto(user.uid, {
+          fromAccountId: fromId,
+          toHoldingId: toId.startsWith('crypto:') ? toId.replace('crypto:', '') : null,
+          coinId: transferForm.coinId,
+          coinSymbol: transferForm.coinSymbol,
+          coinName: transferForm.coinName,
+          fiatAmount,
+          tokenQty: effectiveTokens,
+          pricePerToken: transferForm.pricePerToken,
+          date: transferForm.date,
+          desc: transferForm.desc,
+          currency: s === '$' ? 'USD' : 'PHP',
+        }, accounts, holdings)
+
+        notifyApp({
+          title: 'Crypto funded',
+          message: `Added ${effectiveTokens.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${transferForm.coinSymbol} from ${fromAcc.name}.`,
+          tone: 'success',
+        })
+      } else if (isFromCrypto) {
+        const hId = fromId.replace('crypto:', '')
+        const holding = holdings.find(h => (h._id || h.id) === hId)
+        if (!holding) throw new Error('Source crypto holding not found.')
+        const tokenQty = Number(transferForm.tokenQty) || 0
+        const fiatAmount = Number(transferForm.amount) || 0
+        if (tokenQty <= 0 || fiatAmount <= 0) {
+          notifyApp({ title: 'Check details', message: 'Enter tokens to sell and cash proceeds.', tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        const toAcc = accounts.find(a => a._id === toId)
+        if (!toAcc) throw new Error('Destination account not found.')
+
+        await fsTransferCryptoToFiat(user.uid, {
+          fromHoldingId: hId,
+          toAccountId: toId,
+          tokenQty,
+          fiatAmount,
+          pricePerToken: transferForm.pricePerToken,
+          date: transferForm.date,
+          desc: transferForm.desc,
+          currency: s === '$' ? 'USD' : 'PHP',
+        }, holdings, accounts)
+
+        notifyApp({
+          title: 'Cashed out to bank',
+          message: `Deposited ${fmt(fiatAmount, s)} to ${toAcc.name} from selling ${tokenQty} ${holding.symbol}.`,
+          tone: 'success',
+        })
+      } else {
+        const amount = parseFloat(transferForm.amount)
+        const fromAcc = accounts.find(a => a._id === fromId)
+        const toAcc = accounts.find(a => a._id === toId)
+        if (Number(fromAcc.balance || 0) < amount) {
+          notifyApp({ title: 'Insufficient balance', message: `${fromAcc.name} only has ${fmt(fromAcc.balance, s)}.`, tone: 'warning' })
+          setTransferSaving(false)
+          return
+        }
+        await fsTransferAccounts(user.uid, {
+          fromAccountId: fromId,
+          toAccountId: toId,
+          amount,
+          date: transferForm.date,
+          desc: transferForm.desc,
+        })
+        notifyApp({
+          title: 'Transfer complete',
+          message: `Moved ${fmt(amount, s)} from ${fromAcc.name} to ${toAcc.name}.`,
+          tone: 'success',
+        })
+      }
+      setShowTransferModal(false)
+    } catch (err) {
+      notifyApp({ title: 'Transfer failed', message: err.message || 'Could not complete transfer.', tone: 'error' })
+    } finally {
+      setTransferSaving(false)
+    }
+  }
 
   // Quick Price Update Modal State
   const [showPriceModal, setShowPriceModal] = useState(false)
@@ -433,6 +592,14 @@ export default function CryptoPortfolio({
           <div className={styles.cardQuickActionsBar}>
             <button
               type="button"
+              className={styles.btnCardTransfer}
+              onClick={(e) => { e.stopPropagation(); openQuickTransfer(h); }}
+              title="Cash out to bank or move tokens"
+            >
+              ⇄ Cash Out
+            </button>
+            <button
+              type="button"
               className={styles.cardMicroAction}
               onClick={(e) => { e.stopPropagation(); openPriceModal(); }}
               title="Update price"
@@ -465,6 +632,7 @@ export default function CryptoPortfolio({
                 }
               }}
               title="Delete holding"
+              aria-label={`Delete ${h.name}`}
             >
               🗑
             </button>
@@ -543,6 +711,14 @@ export default function CryptoPortfolio({
           )}
 
           <div className={styles.commandActions}>
+            <button
+              type="button"
+              className={styles.btnSecondarySmall}
+              onClick={() => openQuickTransfer()}
+              title="Transfer funds or buy/sell crypto"
+            >
+              ⇄ Move Money
+            </button>
             <button
               type="button"
               className={styles.btnSecondarySmall}
@@ -864,6 +1040,22 @@ export default function CryptoPortfolio({
         </div>,
         document.body
       )}
+
+      <TransferModal
+        showTransferModal={showTransferModal}
+        onClose={() => setShowTransferModal(false)}
+        transferForm={transferForm}
+        setTransferForm={setTransferForm}
+        transferSaving={transferSaving}
+        handleTransferSubmit={handleTransferSubmit}
+        swapTransferDirection={swapTransferDirection}
+        accounts={accounts}
+        holdings={holdings}
+        cryptoPriceMap={userPrices}
+        vsCurrency={vsCurrency}
+        s={s}
+        fmt={fmt}
+      />
     </div>
   )
 }

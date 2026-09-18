@@ -50,6 +50,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const [form, setForm] = useState(EMPTY_FORM)
   const [payments, setPayments] = useState({})
   const [paymentSources, setPaymentSources] = useState({})
+  const [openPaymentTray, setOpenPaymentTray] = useState({})
   const [isEditing, setIsEditing] = useState(false)
   const [editDebt, setEditDebt] = useState(null)
   const [showDrawer, setShowDrawer] = useState(false)
@@ -79,6 +80,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     
     // Auto-expand the history to show the payment form
     setExpandedHistory(prev => ({ ...prev, [target._id]: true }))
+    setOpenPaymentTray(prev => ({ ...prev, [target._id]: true }))
     
     // Auto-focus the payment input by setting the payment state to active
     setPayments(prev => ({
@@ -559,6 +561,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
       setPayments(current => ({ ...current, [debt._id]: '' }))
       setPaymentSources(current => ({ ...current, [debt._id]: '' }))
+      setOpenPaymentTray(current => ({ ...current, [debt._id]: false }))
       notifyApp({
         title: 'Payment logged',
         message: `Paid ${fmt(value, s)} toward ${debt.name}.`,
@@ -594,6 +597,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           data.debts || []
         )
       : null
+    const isStatementCleared = isCreditCard && cycle?.hasCycle && (cycle.isPaid || cycle.billedAmount <= 0)
 
     return (
       <SwipeableCard
@@ -702,41 +706,120 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
 
           {/* Inline Quick Payment Section */}
           {!isCleared && (
-            <div className={dStyles.quickPayRow}>
-              {debt.accountId && (
-                <select
-                  className={dStyles.paySourceSelect}
-                  value={paymentSources[debt._id] || ''}
-                  onChange={event => setPaymentSources(current => ({ ...current, [debt._id]: event.target.value }))}
-                >
-                  <option value="">Pay from Account...</option>
-                  {(data.accounts || []).filter(a => a.type !== 'Credit Card').map(a => (
-                    <option key={a._id} value={a._id}>{a.name} ({fmt(a.balance, s)})</option>
-                  ))}
-                </select>
-              )}
-              <div className={dStyles.payInputGroup}>
-                <input
-                  type="number"
-                  className={dStyles.payAmountInput}
-                  min="0"
-                  inputMode="decimal"
-                  placeholder={`Pay amount (${s})`}
-                  value={payments[debt._id] || ''}
-                  onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
-                  onKeyDown={event => {
-                    if (event.key === 'Enter') handlePayment(debt)
-                  }}
-                />
-                <button
-                  type="button"
-                  className={dStyles.btnPaySubmit}
-                  onClick={() => { playTick(); handlePayment(debt); }}
-                >
-                  Pay
-                </button>
+            isStatementCleared && !openPaymentTray[debt._id] && !payments[debt._id] ? (
+              <button
+                type="button"
+                className={dStyles.btnExpandPayment}
+                onClick={() => {
+                  playTick()
+                  setOpenPaymentTray(prev => ({ ...prev, [debt._id]: true }))
+                }}
+              >
+                <span>💳 Make an Extra / Unbilled Payment</span>
+                <span>▾</span>
+              </button>
+            ) : (
+              <div className={dStyles.quickPayRow}>
+                {isStatementCleared && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text3)' }}>Statement is cleared. Extra payment:</span>
+                    <button
+                      type="button"
+                      style={{ background: 'transparent', border: 'none', color: 'var(--text3)', fontSize: '11px', cursor: 'pointer' }}
+                      onClick={() => setOpenPaymentTray(prev => ({ ...prev, [debt._id]: false }))}
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+                )}
+                {/* Quick Pay Chips */}
+                {isCreditCard && cycle?.billedAmount > 0 && !cycle?.isPaid ? (
+                  <div className={dStyles.quickPayChipsRow}>
+                    <span className={dStyles.quickPayPrompt}>Quick:</span>
+                    <button
+                      type="button"
+                      className={dStyles.chipStatementDue}
+                      onClick={() => {
+                        playTick()
+                        setPayments(current => ({ ...current, [debt._id]: String(cycle.billedAmount) }))
+                      }}
+                    >
+                      Statement Due: {money(cycle.billedAmount)}
+                    </button>
+                    {Number(debt.minPayment) > 0 && Number(debt.minPayment) < cycle.billedAmount && (
+                      <button
+                        type="button"
+                        className={dStyles.chipMinDue}
+                        onClick={() => {
+                          playTick()
+                          setPayments(current => ({ ...current, [debt._id]: String(debt.minPayment) }))
+                        }}
+                      >
+                        Min: {money(debt.minPayment)}
+                      </button>
+                    )}
+                  </div>
+                ) : !isCreditCard && Number(debt.minPayment) > 0 && Number(debt.minPayment) < balance ? (
+                  <div className={dStyles.quickPayChipsRow}>
+                    <span className={dStyles.quickPayPrompt}>Quick:</span>
+                    <button
+                      type="button"
+                      className={dStyles.chipMinDue}
+                      onClick={() => {
+                        playTick()
+                        setPayments(current => ({ ...current, [debt._id]: String(debt.minPayment) }))
+                      }}
+                    >
+                      Min: {money(debt.minPayment)}
+                    </button>
+                    <button
+                      type="button"
+                      className={dStyles.chipMinDue}
+                      onClick={() => {
+                        playTick()
+                        setPayments(current => ({ ...current, [debt._id]: String(balance) }))
+                      }}
+                    >
+                      Full: {money(balance)}
+                    </button>
+                  </div>
+                ) : null}
+
+                {debt.accountId && (
+                  <select
+                    className={dStyles.paySourceSelect}
+                    value={paymentSources[debt._id] || ''}
+                    onChange={event => setPaymentSources(current => ({ ...current, [debt._id]: event.target.value }))}
+                  >
+                    <option value="">Pay from Account...</option>
+                    {(data.accounts || []).filter(a => a.type !== 'Credit Card').map(a => (
+                      <option key={a._id} value={a._id}>{a.name} ({fmt(a.balance, s)})</option>
+                    ))}
+                  </select>
+                )}
+                <div className={dStyles.payInputGroup}>
+                  <input
+                    type="number"
+                    className={dStyles.payAmountInput}
+                    min="0"
+                    inputMode="decimal"
+                    placeholder={`Pay amount (${s})`}
+                    value={payments[debt._id] || ''}
+                    onChange={event => setPayments(current => ({ ...current, [debt._id]: event.target.value }))}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') handlePayment(debt)
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className={dStyles.btnPaySubmit}
+                    onClick={() => { playTick(); handlePayment(debt); }}
+                  >
+                    Pay
+                  </button>
+                </div>
               </div>
-            </div>
+            )
           )}
 
           {/* Micro-actions & History Toggle */}

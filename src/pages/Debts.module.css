@@ -284,8 +284,14 @@
 
 .debtsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+@media (min-width: 1200px) {
+  .debtsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 480px));
+  }
 }
 
 /* 4. HIGH-DENSITY DEBT CARDS */
@@ -501,25 +507,111 @@
   color: var(--accent);
 }
 
-/* Inline Quick Payment Row */
+/* Inline Quick Payment Row & Expandable Trigger */
+.btnExpandPayment {
+  background: var(--surface2);
+  border: 1px dashed var(--border);
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btnExpandPayment:hover {
+  background: var(--surface3);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .quickPayRow {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   background: var(--surface2);
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid var(--border);
+  animation: fadeIn 0.15s ease;
+}
+
+.quickPayChipsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quickPayPrompt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+}
+
+.chipStatementDue {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chipStatementDue:hover {
+  background: var(--accent);
+  color: var(--accent-contrast, #fff);
+}
+
+.chipMinDue {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chipMinDue:hover {
+  border-color: var(--accent);
+  color: var(--text);
 }
 
 .paySourceSelect {
   width: 100%;
-  background: var(--surface);
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(140,140,140,0.85)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
   color: var(--text);
   border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 6px 8px;
+  border-radius: 10px;
+  padding: 8px 30px 8px 10px;
   font-size: 12px;
+  font-weight: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.paySourceSelect:focus {
+  border-color: var(--accent);
 }
 
 .payInputGroup {
@@ -533,26 +625,46 @@
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 6px 10px;
+  border-radius: 10px;
+  padding: 8px 12px;
   font-size: 13px;
   font-family: var(--font-mono, monospace);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.payAmountInput:focus {
+  border-color: var(--accent);
+}
+
+.payAmountInput::-webkit-outer-spin-button,
+.payAmountInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.payAmountInput[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .btnPaySubmit {
   background: var(--accent);
-  color: #000;
+  color: var(--accent-contrast, #fff);
   border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
+  border-radius: 10px;
+  padding: 8px 16px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s ease;
+  transition: filter 0.15s ease, transform 0.15s ease;
+  min-height: 36px;
+  white-space: nowrap;
 }
 
 .btnPaySubmit:hover {
   filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* Card Footer Row */
@@ -973,3 +1085,36 @@
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
 }
+
+/* Responsive Grid & Breakpoints for Tablet & Mobile */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .debtsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .debtsGrid {
+    grid-template-columns: 1fr;
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filterPills {
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .filterPills::-webkit-scrollbar {
+    display: none;
+  }
+  .btnAddDebt {
+    width: 100%;
+    justify-content: center;
+  }
+  .cycleBreakdownRow {
+    flex-direction: column;
+  }
+}
+
