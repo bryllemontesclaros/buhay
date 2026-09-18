@@ -602,6 +602,10 @@ export default function CryptoPortfolio({
     return searchCryptoCoins(searchQuery)
   }, [searchQuery])
 
+  const activeHoldings = useMemo(() => metrics.holdings.filter(h => h.qty > 0), [metrics.holdings])
+  const zeroBalanceHoldings = useMemo(() => metrics.holdings.filter(h => h.qty <= 0), [metrics.holdings])
+  const displayedHoldings = filterTab === 'active' ? activeHoldings : metrics.holdings
+
   const ALLOCATION_COLORS = ['#f7931a', '#627eea', '#14f195', '#38ef7d', '#375bd2', '#f4b728', '#ff007a', '#2775ca', '#e84142', '#4da2ff', '#0033ad']
 
   const renderCard = (h) => {
