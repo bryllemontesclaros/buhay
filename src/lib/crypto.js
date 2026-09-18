@@ -172,16 +172,13 @@ export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAUL
   const allCoins = [...POPULAR_CRYPTO_COINS, ...customCoins]
   const now = Date.now()
 
-  // Collect all Kraken pairs to fetch (skip stablecoins — they're hardcoded)
+  // Only request pairs explicitly mapped — unknown pairs cause Kraken to return errors
+  // which previously threw and killed the whole fetch
   const pairSet = new Set()
   allCoins.forEach(coin => {
     const krakenPair = KRAKEN_PAIR_MAP[coin.id?.toLowerCase()]
     if (krakenPair) pairSet.add(krakenPair)
-    else if (krakenPair === undefined) {
-      // Not in map — try standard SYMBOLUSDT format as fallback
-      const sym = (coin.symbol || '').toUpperCase()
-      if (sym && sym !== 'USDT' && sym !== 'USDC') pairSet.add(`${sym}USD`)
-    }
+    // If krakenPair === undefined (not in map) or null (stablecoin) — skip
   })
 
   const pairs = [...pairSet].join(',')
@@ -192,7 +189,8 @@ export async function fetchLiveCryptoPrices(customCoins = [], forexRate = DEFAUL
     if (!res.ok) throw new Error(`Kraken fetch error: ${res.statusText}`)
     const json = await res.json()
 
-    if (json.error?.length > 0) throw new Error(`Kraken API error: ${json.error.join(', ')}`)
+    // Log errors but DON'T throw — Kraken may still return valid data for known pairs
+    if (json.error?.length > 0) console.warn('[crypto] Kraken partial errors:', json.error)
 
     // Build symbol → usdPrice from Kraken response (c[0] = last trade price)
     const priceMap = new Map()
