@@ -332,7 +332,7 @@ export default function CryptoPortfolio({
         }
         notifyApp({
           title: 'Live Market Sync Complete',
-          message: 'Portfolio updated with latest Binance spot prices.',
+          message: 'Portfolio updated with latest Kraken spot prices.',
           tone: 'positive',
         })
       } else {
