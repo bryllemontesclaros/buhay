@@ -398,8 +398,8 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
         originalAmount: Math.abs(Number(a.balance) || 0),
         interestRate: 0,
         minPayment: 0,
-        dueDate: '',
-        statementDate: '',
+        dueDate: a.dueDate || '',
+        statementDate: a.statementDate || '',
         color: a.color || 'var(--red)',
         notes: a.notes || '',
         accountId: a._id,
@@ -506,7 +506,11 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const original = debt.originalAmount || prevBalance || 0
     const value = parseFloat(payments[debt._id] || 0)
     const fromAccountId = paymentSources[debt._id]
-    const monthKey = getMonthKey(today())
+    
+    const cycle = debt.type === 'Credit Card' 
+      ? getCreditCardCycleDetails({ ...debt, balance: prevBalance }, data.expenses || [], data.transfers || [], today(), data.debts || []) 
+      : null
+    const periodKey = cycle?.hasCycle && cycle.dueDate ? cycle.dueDate : getMonthKey(today())
     const paymentRecord = { date: today(), amount: value }
 
     if (!Number.isFinite(value) || value <= 0) {
@@ -529,13 +533,17 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           source: 'debt-payment'
         }, data.accounts || [])
         if (!debt.isSynthesized) {
-          await fsUpdate(user.uid, 'debts', debt._id, { [`paidPeriods.${monthKey}`]: paymentRecord })
+          const newBalance = Math.max(0, prevBalance - value)
+          await fsUpdate(user.uid, 'debts', debt._id, { 
+            balance: newBalance,
+            [`paidPeriods.${periodKey}`]: paymentRecord 
+          })
         }
       } else {
-        const newBalance = Math.max(0, (debt.balance || 0) - value)
+        const newBalance = Math.max(0, prevBalance - value)
         await fsUpdate(user.uid, 'debts', debt._id, { 
           balance: newBalance,
-          [`paidPeriods.${monthKey}`]: paymentRecord
+          [`paidPeriods.${periodKey}`]: paymentRecord
         })
       }
 
@@ -606,7 +614,7 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           playTick()
           const minAmt = Number(debt.minPayment) || 0
           if (minAmt > 0) setPayments(p => ({ ...p, [debt._id]: String(minAmt) }))
-          handlePayment(debt)
+          setOpenPaymentTray(prev => ({ ...prev, [debt._id]: true }))
         } : null}
         rightLabel="Pay Min"
         rightIcon="💳"
