@@ -308,17 +308,34 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
   })
 
   // Billed Statement Balance:
-  // It is the total balance on the card minus any post-cutoff unbilled charges.
   let billedAmount = 0
+  let unbilledAmount = 0
+  
+  const excessPayment = Math.max(0, paymentsForClosedCycle - closedCycleCharges)
+
   if (hasExplicitPaidPeriod) {
     billedAmount = 0
-  } else if (currentTotalBalance > 0) {
-    billedAmount = Math.max(0, currentTotalBalance - unbilledCharges)
-  } else if (closedCycleCharges > 0) {
-    billedAmount = Math.max(0, closedCycleCharges - paymentsForClosedCycle)
+    // If statement is marked paid, the remaining total balance is all unbilled.
+    // If they have no balance, unbilled is just whatever unbilled charges are left.
+    unbilledAmount = currentTotalBalance > 0 ? currentTotalBalance : Math.max(0, unbilledCharges - excessPayment)
+  } else {
+    // If they rely strictly on balance (no tracked expenses):
+    if (closedCycleCharges === 0 && unbilledCharges === 0 && currentTotalBalance > 0) {
+      billedAmount = currentTotalBalance
+      unbilledAmount = 0
+    } else {
+      billedAmount = Math.max(0, closedCycleCharges - paymentsForClosedCycle)
+      unbilledAmount = Math.max(0, unbilledCharges - excessPayment)
+      
+      // Safety bound: Billed + Unbilled should generally equal currentTotalBalance (ignoring future scheduled tx).
+      // We prioritize billedAmount, and cap unbilledAmount if they exceed the actual physical balance.
+      // We only cap if currentTotalBalance is positive (meaning they aren't overpaid) and there's a discrepancy.
+      if (currentTotalBalance > 0 && (billedAmount + unbilledAmount > currentTotalBalance)) {
+         unbilledAmount = Math.max(0, currentTotalBalance - billedAmount)
+      }
+    }
   }
 
-  const unbilledAmount = unbilledCharges
   const isClosedCyclePaid = hasExplicitPaidPeriod || (billedAmount <= 0)
 
   return {
