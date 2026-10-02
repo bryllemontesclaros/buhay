@@ -193,7 +193,7 @@ export default function CryptoPortfolio({
           date: transferForm.date,
           desc: transferForm.desc,
           currency: s === '$' ? 'USD' : 'PHP',
-        }, holdings, accounts)
+        }, accounts, holdings)
 
         notifyApp({
           title: 'Cashed out to bank',
@@ -1001,6 +1001,26 @@ export default function CryptoPortfolio({
                       <span>{c.symbol}</span>
                     </button>
                   ))}
+                  {searchQuery.trim().length > 0 && !filteredCoins.some(c => c.symbol.toLowerCase() === searchQuery.trim().toLowerCase()) && (
+                    <button
+                      type="button"
+                      className={`${styles.coinPill} ${holdingForm.isCustom ? styles.coinPillActive : ''}`}
+                      onClick={() => {
+                        playTick()
+                        const val = searchQuery.trim().toUpperCase()
+                        setHoldingForm(prev => ({
+                          ...prev,
+                          coinId: val.toLowerCase(),
+                          symbol: val,
+                          name: val,
+                          isCustom: true,
+                        }))
+                      }}
+                    >
+                      <span>🪙</span>
+                      <span>Use "{searchQuery.trim().toUpperCase()}"</span>
+                    </button>
+                  )}
                 </div>
               </div>
             )}
