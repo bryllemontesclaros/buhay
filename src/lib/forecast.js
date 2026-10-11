@@ -3,7 +3,7 @@ import { today } from './utils'
 // Cash Flow Forecasting Engine
 // Calculates projected running balance for each day of a month
 
-function getStatusForDay(ds, runningBalance, startingBalance, todayStr) {
+export function getStatusForDay(ds, runningBalance, startingBalance, todayStr) {
   if (ds > todayStr) {
     if (runningBalance < 0) return 'negative'
     if (runningBalance < startingBalance * 0.2) return 'tight'

@@ -441,8 +441,9 @@ export default function CryptoPortfolio({
   }
 
   async function handleSaveHolding() {
-    if (!holdingForm.symbol) {
-      notifyApp({ title: 'Enter symbol', message: 'Please enter a crypto symbol.', tone: 'warning' })
+    const sym = (holdingForm.symbol || '').trim().toUpperCase()
+    if (!sym) {
+      notifyApp({ title: 'Enter symbol', message: 'Please enter a crypto symbol/ticker.', tone: 'warning' })
       return
     }
     const qty = parseFloat(holdingForm.quantity)
@@ -454,9 +455,9 @@ export default function CryptoPortfolio({
     const currentP = parseFloat(holdingForm.currentPrice) || buyP
 
     const payload = {
-      coinId: (holdingForm.coinId || holdingForm.symbol).toLowerCase(),
-      symbol: holdingForm.symbol.toUpperCase(),
-      name: holdingForm.name || holdingForm.symbol.toUpperCase(),
+      coinId: (holdingForm.coinId || sym).toLowerCase(),
+      symbol: sym,
+      name: holdingForm.name?.trim() || sym,
       quantity: qty,
       buyPrice: buyP,
       currentPrice: currentP,
@@ -980,47 +981,150 @@ export default function CryptoPortfolio({
             {/* COIN SELECTOR */}
             {!editHolding && (
               <div className={styles.formGroup}>
-                <label className={styles.label}>Select Cryptocurrency</label>
-                <input
-                  type="text"
-                  className={styles.input}
-                  placeholder="Search BTC, ETH, LINK, HYPE, TAO, SOL..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <label className={styles.label} style={{ margin: 0 }}>
+                    {holdingForm.isCustom ? 'Custom Token / Coin Ticker' : 'Select Cryptocurrency'}
+                  </label>
+                  <button
+                    type="button"
+                    style={{
+                      background: holdingForm.isCustom ? 'color-mix(in srgb, var(--accent) 18%, transparent)' : 'color-mix(in srgb, var(--text2) 10%, transparent)',
+                      border: `1px solid ${holdingForm.isCustom ? 'var(--accent)' : 'var(--border)'}`,
+                      color: holdingForm.isCustom ? 'var(--accent)' : 'var(--text2)',
+                      borderRadius: '999px',
+                      padding: '3px 10px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                    onClick={() => {
+                      playTick()
+                      setHoldingForm(prev => ({
+                        ...prev,
+                        isCustom: !prev.isCustom,
+                        symbol: !prev.isCustom ? (searchQuery.trim().toUpperCase() || '') : 'BTC',
+                        name: !prev.isCustom ? (searchQuery.trim() || '') : 'Bitcoin',
+                        coinId: !prev.isCustom ? (searchQuery.trim().toLowerCase() || '') : 'bitcoin',
+                      }))
+                    }}
+                  >
+                    {holdingForm.isCustom ? 'Switch to Popular Coins' : '✍️ Custom Ticker / Token'}
+                  </button>
+                </div>
 
-                <div className={styles.coinPillsWrap}>
-                  {filteredCoins.slice(0, 12).map(c => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      className={`${styles.coinPill} ${holdingForm.coinId === c.id ? styles.coinPillActive : ''}`}
-                      onClick={() => selectCoin(c)}
-                    >
-                      <span>{c.icon}</span>
-                      <span>{c.symbol}</span>
-                    </button>
-                  ))}
-                  {searchQuery.trim().length > 0 && !filteredCoins.some(c => c.symbol.toLowerCase() === searchQuery.trim().toLowerCase()) && (
-                    <button
-                      type="button"
-                      className={`${styles.coinPill} ${holdingForm.isCustom ? styles.coinPillActive : ''}`}
-                      onClick={() => {
-                        playTick()
-                        const val = searchQuery.trim().toUpperCase()
-                        setHoldingForm(prev => ({
-                          ...prev,
-                          coinId: val.toLowerCase(),
-                          symbol: val,
-                          name: val,
-                          isCustom: true,
-                        }))
+                {!holdingForm.isCustom ? (
+                  <>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      placeholder="Search BTC, ETH, LINK, HYPE, TAO, SOL..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                    />
+
+                    <div className={styles.coinPillsWrap}>
+                      {filteredCoins.slice(0, 12).map(c => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          className={`${styles.coinPill} ${!holdingForm.isCustom && holdingForm.coinId === c.id ? styles.coinPillActive : ''}`}
+                          onClick={() => selectCoin(c)}
+                        >
+                          <span>{c.icon}</span>
+                          <span>{c.symbol}</span>
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        className={`${styles.coinPill} ${holdingForm.isCustom ? styles.coinPillActive : ''}`}
+                        onClick={() => {
+                          playTick()
+                          const val = searchQuery.trim().toUpperCase()
+                          setHoldingForm(prev => ({
+                            ...prev,
+                            coinId: val.toLowerCase(),
+                            symbol: val,
+                            name: val,
+                            isCustom: true,
+                          }))
+                        }}
+                      >
+                        <span>🪙</span>
+                        <span>{searchQuery.trim() ? `Use "${searchQuery.trim().toUpperCase()}"` : 'Custom Token'}</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 10, marginTop: 4 }}>
+                    <div>
+                      <label className={styles.label} style={{ fontSize: 11 }}>Ticker / Symbol</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        placeholder="e.g. BP, TKN"
+                        value={holdingForm.symbol}
+                        onChange={e => {
+                          const val = e.target.value.trim().toUpperCase()
+                          setHoldingForm(prev => ({
+                            ...prev,
+                            symbol: val,
+                            coinId: val.toLowerCase(),
+                            isCustom: true,
+                          }))
+                        }}
+                        required
+                        autoFocus
+                      />
+                    </div>
+                    <div>
+                      <label className={styles.label} style={{ fontSize: 11 }}>Token Name</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        placeholder="e.g. Backpack Token"
+                        value={holdingForm.name}
+                        onChange={e => {
+                          setHoldingForm(prev => ({
+                            ...prev,
+                            name: e.target.value,
+                            isCustom: true,
+                          }))
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {editHolding && editHolding.isCustom && (
+              <div className={styles.formGroup}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 10 }}>
+                  <div>
+                    <label className={styles.label} style={{ fontSize: 11 }}>Ticker / Symbol</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={holdingForm.symbol}
+                      onChange={e => {
+                        const val = e.target.value.trim().toUpperCase()
+                        setHoldingForm(prev => ({ ...prev, symbol: val, coinId: val.toLowerCase(), isCustom: true }))
                       }}
-                    >
-                      <span>🪙</span>
-                      <span>Use "{searchQuery.trim().toUpperCase()}"</span>
-                    </button>
-                  )}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={styles.label} style={{ fontSize: 11 }}>Token Name</label>
+                    <input
+                      type="text"
+                      className={styles.input}
+                      value={holdingForm.name}
+                      onChange={e => setHoldingForm(prev => ({ ...prev, name: e.target.value, isCustom: true }))}
+                    />
+                  </div>
                 </div>
               </div>
             )}

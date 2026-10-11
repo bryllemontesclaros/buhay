@@ -1,4 +1,4 @@
-import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance } from './forecast'
+import { applyBalanceOverridesToForecast, buildForecast, getEndOfMonthBalance, getStatusForDay } from './forecast'
 import { getProjectedTransactions } from './recurrence'
 import { getMonthKey, normalizeDate, toMonthKey, today } from './utils'
 import { sumBy, sumAbsBy, sumMax0By, calculateDelta } from './math'
@@ -210,9 +210,9 @@ export function getTakdaTotalSavings(savings = []) {
   return sumBy(safeSavings, s => s.balance)
 }
 
-export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = null) {
+export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = null, savings = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
-  const accountsSum = sumMax0By(
+  const accountsSum = sumBy(
     safeAccounts.filter(acc => acc?.type !== 'Credit Card'),
     acc => acc.balance
   )
@@ -253,11 +253,13 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
     return sum + (qty * livePriceInPhp)
   }, 0)
 
-  return accountsSum + holdingsSum
+  const savingsSum = getTakdaTotalSavings(savings)
+
+  return accountsSum + holdingsSum + savingsSum
 }
 
 export function getTakdaNetWorth(accounts = [], debts = [], savings = [], holdings = [], targetDate = null) {
-  return getTakdaTotalAssets(accounts, holdings) + getTakdaTotalSavings(savings) - getTakdaTotalDebts(accounts, debts, targetDate)
+  return getTakdaTotalAssets(accounts, holdings, null, savings) - getTakdaTotalDebts(accounts, debts, targetDate)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {
@@ -650,7 +652,24 @@ export function getMonthForecast(
   ]
 
   const baseForecast = buildForecast(effectiveLiquidIncome, effectiveLiquidExpenses, year, month, startingBalance)
-  return applyBalanceOverridesToForecast(baseForecast, year, month, balanceOverrides, startingBalance)
+
+  // Align every day's runningBalance with authoritative getBalanceAtDateWithOverrides ledger calculation
+  // to eliminate drift and ensure Calendar and Accounts views are 100% synchronized
+  const sortedDays = Object.keys(baseForecast).sort()
+  sortedDays.forEach(ds => {
+    const authoritativeBalance = getBalanceAtDateWithOverrides(
+      safeAccounts,
+      transfers,
+      income,
+      expenses,
+      ds,
+      balanceOverrides
+    )
+    baseForecast[ds].runningBalance = authoritativeBalance
+    baseForecast[ds].status = getStatusForDay(ds, authoritativeBalance, startingBalance, todayKey)
+  })
+
+  return baseForecast
 }
 
 export function getMonthEndBalanceForView(

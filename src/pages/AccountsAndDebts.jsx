@@ -5,7 +5,7 @@ import CryptoPortfolio from './CryptoPortfolio'
 import styles from './Page.module.css'
 import tStyles from '../components/SharedTabs.module.css'
 import { fmt } from '../lib/utils'
-import { getTakdaTotalAssets, getTakdaTotalDebts, getTakdaNetWorth } from '../lib/finance'
+import { getTakdaTotalAssets, getTakdaTotalDebts, getTakdaNetWorth, getTakdaTotalSavings } from '../lib/finance'
 
 export default function AccountsAndDebts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, subTab = 'accounts' }) {
   const [activeTab, setActiveTab] = useState(subTab)
@@ -45,9 +45,11 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
     }
   }, [holdings])
 
+  const savings = Array.isArray(data?.savings) ? data.savings : []
+  const totalSavings = getTakdaTotalSavings(savings)
   const cashAssets = getTakdaTotalAssets(accounts, [])
-  const totalAssets = getTakdaTotalAssets(accounts, holdings, cryptoPriceMap)
-  const cryptoAssets = Math.max(0, totalAssets - cashAssets)
+  const cryptoAssets = getTakdaTotalAssets([], holdings, cryptoPriceMap)
+  const totalAssets = cashAssets + cryptoAssets + totalSavings
   const totalDebts = getTakdaTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
 
