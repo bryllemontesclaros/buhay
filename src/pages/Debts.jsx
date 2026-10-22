@@ -404,6 +404,9 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
         notes: a.notes || '',
         accountId: a._id,
         isSynthesized: true,
+        // Carry paidPeriods from the account so getCreditCardCycleDetails
+        // can detect hasExplicitPaidPeriod after a payment is logged.
+        paidPeriods: a.paidPeriods && typeof a.paidPeriods === 'object' ? a.paidPeriods : {},
       }))
 
     return [...baseDebts, ...synthesizedDebts]
@@ -537,6 +540,12 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
           await fsUpdate(user.uid, 'debts', debt._id, { 
             balance: newBalance,
             [`paidPeriods.${periodKey}`]: paymentRecord 
+          })
+        } else {
+          // Synthesized debts have no Firestore debt doc — save paidPeriods
+          // on the linked account so the cycle can detect the paid state.
+          await fsUpdate(user.uid, 'accounts', debt.accountId, {
+            [`paidPeriods.${periodKey}`]: paymentRecord
           })
         }
       } else {
