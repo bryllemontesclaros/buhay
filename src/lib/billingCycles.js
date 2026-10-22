@@ -296,13 +296,16 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
     }
   })
 
-  // Calculate payments made strictly after the closed cycle start date
+  // Calculate payments that apply to the closed cycle:
+  // Only count payments made AFTER closedCycleStartDate and ON OR BEFORE the closed cycle's due date.
+  // Payments after the due date are overpayments/next-cycle payments and should not be double-counted.
   let paymentsForClosedCycle = 0
   relevantPayments.forEach(tx => {
     const txDate = normalizeDate(tx.date)
     if (!txDate) return
     const amt = Math.abs(Number(tx.amount) || 0)
-    if (txDate > closedCycleStartDate) {
+    // Only count payments within the closed cycle's payment window
+    if (txDate > closedCycleStartDate && txDate <= closedCycle.dueDate) {
       paymentsForClosedCycle += amt
     }
   })
@@ -310,28 +313,37 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
   // Billed Statement Balance:
   let billedAmount = 0
   let unbilledAmount = 0
-  
+
+  // Excess payment: payment that exceeded the closed cycle charges (overpayment credit)
   const excessPayment = Math.max(0, paymentsForClosedCycle - closedCycleCharges)
 
   if (hasExplicitPaidPeriod) {
+    // The closed statement is paid — billed amount is 0.
+    // For next statement: use only TRACKED unbilled charges (charges posted AFTER the last cutoff).
+    // Do NOT use currentTotalBalance here — that includes what was just paid off and causes inflation.
     billedAmount = 0
-    // If statement is marked paid, the remaining total balance is all unbilled.
-    // If they have no balance, unbilled is just whatever unbilled charges are left.
-    unbilledAmount = currentTotalBalance > 0 ? currentTotalBalance : Math.max(0, unbilledCharges - excessPayment)
+    if (unbilledCharges > 0) {
+      // We have tracked transactions: use them directly
+      unbilledAmount = Math.max(0, unbilledCharges - excessPayment)
+    } else {
+      // No tracked transactions: fall back to physical balance as a best guess for unbilled
+      // This handles the case where user hasn't logged individual charges
+      unbilledAmount = currentTotalBalance > 0 ? currentTotalBalance : 0
+    }
   } else {
-    // If they rely strictly on balance (no tracked expenses):
+    // Closed statement NOT explicitly paid — compute from tracked charges vs payments
     if (closedCycleCharges === 0 && unbilledCharges === 0 && currentTotalBalance > 0) {
+      // No tracked transactions at all: all balance is considered billed (due now)
       billedAmount = currentTotalBalance
       unbilledAmount = 0
     } else {
       billedAmount = Math.max(0, closedCycleCharges - paymentsForClosedCycle)
       unbilledAmount = Math.max(0, unbilledCharges - excessPayment)
-      
-      // Safety bound: Billed + Unbilled should generally equal currentTotalBalance (ignoring future scheduled tx).
-      // We prioritize billedAmount, and cap unbilledAmount if they exceed the actual physical balance.
-      // We only cap if currentTotalBalance is positive (meaning they aren't overpaid) and there's a discrepancy.
+
+      // Safety bound: Billed + Unbilled should not exceed the physical card balance.
+      // Prioritize billedAmount; cap unbilledAmount if the sum exceeds actual balance.
       if (currentTotalBalance > 0 && (billedAmount + unbilledAmount > currentTotalBalance)) {
-         unbilledAmount = Math.max(0, currentTotalBalance - billedAmount)
+        unbilledAmount = Math.max(0, currentTotalBalance - billedAmount)
       }
     }
   }
