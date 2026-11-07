@@ -124,7 +124,22 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
   const editorRef = useRef(null)
 
   function set(key, value) {
-    setForm(current => ({ ...current, [key]: value }))
+    setForm(current => {
+      const next = { ...current, [key]: value }
+      if (key === 'name' && !editDebt && next.type === 'Credit Card' && value) {
+        const valLower = value.trim().toLowerCase()
+        const matchingAcc = (data.accounts || []).find(a => 
+          a && a.type === 'Credit Card' && a.name && a.name.trim().toLowerCase() === valLower
+        )
+        if (matchingAcc) {
+          if (!next.dueDate && matchingAcc.dueDate) next.dueDate = matchingAcc.dueDate
+          if (!next.statementDate && matchingAcc.statementDate) next.statementDate = matchingAcc.statementDate
+          if (!next.creditLimit && matchingAcc.creditLimit) next.creditLimit = matchingAcc.creditLimit
+          if (matchingAcc.color) next.color = matchingAcc.color
+        }
+      }
+      return next
+    })
   }
 
   function openAdd() {
@@ -137,22 +152,22 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const linkedAcc = debt.accountId ? (data.accounts || []).find(a => a._id === debt.accountId) : null
     setEditDebt(debt)
     setForm({
-      name: debt.name || '',
+      name: debt.name || linkedAcc?.name || '',
       type: debt.type || 'Credit Card',
       balance: debt.accountId
         ? Math.abs(Number(linkedAcc?.balance) || 0)
         : (debt.balance || ''),
-      originalAmount: debt.originalAmount || '',
+      originalAmount: debt.originalAmount || linkedAcc?.originalAmount || '',
       interestRate: debt.interestRate || '',
       minPayment: debt.minPayment || '',
-      dueDate: debt.dueDate || '',
-      statementDate: debt.statementDate || '',
+      dueDate: debt.dueDate || linkedAcc?.dueDate || '',
+      statementDate: debt.statementDate || linkedAcc?.statementDate || '',
       startDate: debt.startDate || '',
-      color: debt.color || 'var(--red)',
+      color: debt.color || linkedAcc?.color || 'var(--red)',
       contactName: debt.contactName || '',
-      notes: debt.notes || '',
+      notes: debt.notes || linkedAcc?.notes || '',
       accountId: debt.accountId || '',
-      creditLimit: linkedAcc ? (linkedAcc.creditLimit || '') : '',
+      creditLimit: (debt.creditLimit !== undefined && debt.creditLimit !== '') ? debt.creditLimit : (linkedAcc?.creditLimit || ''),
     })
     setShowModal(true)
   }

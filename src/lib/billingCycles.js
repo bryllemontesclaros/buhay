@@ -241,10 +241,28 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
 
   const relevantPayments = payments.filter(tx => {
     if (!tx) return false
-    if (tx.toAccountId === cardAccountId || tx.accountId === cardAccountId || tx.debtId === debtId || tx.debtId === cleanDebtId) return true
-    if (cardNameLower && tx.desc && tx.desc.toLowerCase().includes(cardNameLower)) {
-      if (tx.type === 'transfer' || tx.cat === 'Debts' || tx.cat === 'Debt' || tx.desc.toLowerCase().includes('payment')) return true
+    // 1. Direct match by destination card account or linked debt ID
+    if (cardAccountId && tx.toAccountId === cardAccountId) return true
+    if (debtId && tx.debtId === debtId) return true
+    if (cleanDebtId && tx.debtId === cleanDebtId) return true
+
+    // Direct income / payment credit on the CC account (not outgoing transfer)
+    if (cardAccountId && tx.accountId === cardAccountId && tx.type !== 'transfer') {
+      if (tx.type === 'income' || tx.cat === 'Debts' || tx.cat === 'Debt' || tx.cat === 'Debt Payment') {
+        return true
+      }
     }
+
+    // 2. Strict description fallback ONLY if the debt is not linked to an account
+    // (Avoid fuzzy substring matching on unrelated transfers)
+    if (!cardAccountId && cardNameLower && tx.desc) {
+      const descLower = tx.desc.toLowerCase().trim()
+      const exactPaymentDesc = `debt payment: ${cardNameLower}`
+      if (descLower === exactPaymentDesc || descLower === cardNameLower) {
+        return true
+      }
+    }
+
     return false
   })
 
@@ -333,9 +351,19 @@ export function getCreditCardCycleDetails(cardOrDebt = {}, expenses = [], paymen
   } else {
     // Closed statement NOT explicitly paid — compute from tracked charges vs payments
     if (closedCycleCharges === 0 && unbilledCharges === 0 && currentTotalBalance > 0) {
-      // No tracked transactions at all: all balance is considered billed (due now)
-      billedAmount = currentTotalBalance
-      unbilledAmount = 0
+      const refDate = normalizeDate(referenceDate) || today()
+      const isPastDueDate = refDate > closedCycle.dueDate
+
+      if (!isPastDueDate) {
+        // Before or on due date: treat balance as billed statement amount due now
+        billedAmount = Math.max(0, currentTotalBalance - paymentsForClosedCycle)
+        unbilledAmount = 0
+      } else {
+        // Past the due date: the closed statement period has elapsed.
+        // Treat current balance as unbilled charges accumulating for the next statement.
+        billedAmount = 0
+        unbilledAmount = Math.max(0, currentTotalBalance - excessPayment)
+      }
     } else {
       billedAmount = Math.max(0, closedCycleCharges - paymentsForClosedCycle)
       unbilledAmount = Math.max(0, unbilledCharges - excessPayment)
