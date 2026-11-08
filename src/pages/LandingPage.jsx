@@ -7,9 +7,10 @@ import { auth } from '../lib/firebase'
 import styles from './LandingPageClean.module.css'
 
 function LiveAppMockup() {
-  const [netWorth, setNetWorth] = useState(482500)
+  const [netWorth, setNetWorth] = useState(480240)
   const [liquidCash, setLiquidCash] = useState(68240)
   const [budgetSpent, setBudgetSpent] = useState(18400)
+  const [activeForecastDay, setActiveForecastDay] = useState(17)
   const budgetLimit = 25000
   const [txList, setTxList] = useState([
     { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
@@ -40,7 +41,7 @@ function LiveAppMockup() {
     if (liquidCash <= 3000) return
     setNetWorth(prev => prev - 3450)
     setLiquidCash(prev => prev - 3450)
-    setBudgetSpent(prev => Math.min(budgetLimit, prev + 3450))
+    setBudgetSpent(prev => prev + 3450)
     setTxList(prev => [
       { id: Date.now(), name: 'Supermarket Grocery Run', date: 'Just now', amount: -3450, icon: '🥦', pos: false },
       ...prev.slice(0, 4),
@@ -51,7 +52,7 @@ function LiveAppMockup() {
     if (liquidCash <= 500) return
     setNetWorth(prev => prev - 420)
     setLiquidCash(prev => prev - 420)
-    setBudgetSpent(prev => Math.min(budgetLimit, prev + 420))
+    setBudgetSpent(prev => prev + 420)
     setTxList(prev => [
       { id: Date.now(), name: 'Matcha Latte & Pastry', date: 'Just now', amount: -420, icon: '🍵', pos: false },
       ...prev.slice(0, 4),
@@ -59,9 +60,10 @@ function LiveAppMockup() {
   }
 
   const handleReset = () => {
-    setNetWorth(482500)
+    setNetWorth(480240)
     setLiquidCash(68240)
     setBudgetSpent(18400)
+    setActiveForecastDay(17)
     setTxList([
       { id: 1, name: 'Client Retainer Deposit', date: 'Today · 9:30 AM', amount: 45000, icon: '💵', pos: true },
       { id: 2, name: 'S&R Supermarket Haul', date: 'Today · 1:15 PM', amount: -3450, icon: '🛒', pos: false },
@@ -71,6 +73,19 @@ function LiveAppMockup() {
   }
 
   const budgetPct = Math.min(100, Math.round((budgetSpent / budgetLimit) * 100))
+
+  // Cashflow radar days dynamically driven by current balance
+  const forecastDays = [
+    { day: 14, label: 'Day 14 · Sat', balance: 48500, dotClass: styles.dotExpense, isToday: false, note: 'Specialty coffee & weekend meal (-₱420)' },
+    { day: 15, label: 'Day 15 · Sun', balance: 83500, dotClass: styles.dotIncome, isToday: false, note: '🎉 Mid-month salary deposit (+₱35,000)' },
+    { day: 16, label: 'Day 16 · Mon', balance: 80400, dotClass: styles.dotExpense, isToday: false, note: '⚡ Meralco power utility bill (-₱3,100)' },
+    { day: 17, label: 'Day 17 · Tue', balance: liquidCash, dotClass: styles.dotToday, isToday: true, note: '🟢 Today · Active daily closing balance anchor' },
+    { day: 18, label: 'Day 18 · Wed', balance: Math.max(0, liquidCash - 1899), dotClass: styles.dotExpense, isToday: false, note: '📶 Globe Fiber WiFi bill due (-₱1,899)' },
+    { day: 19, label: 'Day 19 · Thu', balance: Math.max(0, liquidCash - 2549), dotClass: styles.dotTransfer, isToday: false, note: '🏦 Scheduled transfer to Emergency Fund (-₱650)' },
+    { day: 20, label: 'Day 20 · Fri', balance: Math.max(0, liquidCash - 3200), dotClass: styles.dotExpense, isToday: false, note: '🛒 Scheduled grocery replenishment' },
+  ]
+
+  const activeDayInfo = forecastDays.find(d => d.day === activeForecastDay) || forecastDays[3]
 
   return (
     <div className={styles.mockupContainer}>
@@ -153,39 +168,55 @@ function LiveAppMockup() {
 
         {/* Cockpit Grid */}
         <div className={styles.cockpitGrid}>
-          {/* Left: Projected 30-Day Cashflow Curve */}
+          {/* Left: Authentic Cashflow Radar & Daily Closing Balances */}
           <div className={styles.cockpitPanel}>
             <div className={styles.panelTitle}>
-              <span>📈 30-Day Cashflow Forecast</span>
-              <span style={{ fontSize: 11, color: '#059669', fontWeight: 700 }}>● Positive Runway</span>
+              <span>📅 Cashflow Radar & Daily Balances</span>
+              <span style={{ fontSize: 11, color: '#059669', fontWeight: 700 }}>● Live Forecast</span>
             </div>
-            <div style={{ height: 130, position: 'relative', display: 'flex', alignItems: 'flex-end' }}>
-              <svg viewBox="0 0 400 120" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                <defs>
-                  <linearGradient id="curveGradLight" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20 L 400 120 L 0 120 Z"
-                  fill="url(#curveGradLight)"
-                />
-                <path
-                  d="M 0 90 Q 60 110, 100 80 T 200 40 T 300 65 T 400 20"
-                  fill="none"
-                  stroke="#059669"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <circle cx="200" cy="40" r="4" fill="#059669" />
-                <circle cx="400" cy="20" r="5" fill="#059669" stroke="#ffffff" strokeWidth="2" />
-              </svg>
+
+            <div className={styles.cockpitCalGrid}>
+              {['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((dayName, idx) => (
+                <div key={idx} className={styles.cockpitCalHeader}>{dayName}</div>
+              ))}
+              {forecastDays.map(item => {
+                const isSelected = item.day === activeForecastDay
+                return (
+                  <button
+                    key={item.day}
+                    type="button"
+                    onClick={() => setActiveForecastDay(item.day)}
+                    className={`${styles.cockpitCalCell} ${isSelected ? styles.cockpitCalCellActive : ''}`}
+                  >
+                    <span className={styles.cockpitCalDayNum}>
+                      {item.day}
+                      {item.isToday && <span style={{ fontSize: 9, marginLeft: 2, color: '#059669' }}>★</span>}
+                    </span>
+                    <span className={styles.cockpitCalBalance}>
+                      ₱{Math.round(item.balance / 1000)}k
+                    </span>
+                    <span className={`${styles.cockpitCalDot} ${item.dotClass}`} />
+                  </button>
+                )
+              })}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginTop: 8 }}>
-              <span>Day 1 (₱52k)</span>
-              <span>Day 15 (Salary Spike ₱87k)</span>
-              <span>Day 30 (Forecast ₱79k)</span>
+
+            <div className={styles.cockpitDaySnapshot}>
+              <div>
+                <div className={styles.cockpitDaySnapshotLabel}>
+                  {activeDayInfo.label}
+                  {activeDayInfo.isToday && (
+                    <span style={{ marginLeft: 6, fontSize: 10, background: '#ecfdf5', color: '#059669', padding: '2px 6px', borderRadius: 6, fontWeight: 700 }}>
+                      Today
+                    </span>
+                  )}
+                </div>
+                <div className={styles.cockpitDaySnapshotDesc}>{activeDayInfo.note}</div>
+              </div>
+              <div className={styles.cockpitDaySnapshotBalance}>
+                <div>₱{activeDayInfo.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>Closing Balance</div>
+              </div>
             </div>
           </div>
 
@@ -218,57 +249,127 @@ function LiveAppMockup() {
 
 function CalendarWidget() {
   const [selectedDay, setSelectedDay] = useState(17)
+  const [viewMode, setViewMode] = useState('cash')
+
   const dayForecasts = {
-    14: { balance: 48500, note: 'Regular spending day (-₱450)' },
-    15: { balance: 83500, note: '🎉 Mid-month salary deposit (+₱35,000)' },
-    16: { balance: 81200, note: 'Electric utility bill due (-₱2,300)' },
-    17: { balance: 80750, note: '🟢 Current active day · Safe cashflow (+₱58.4k projection)' },
-    18: { balance: 79250, note: 'Internet subscription recurring (-₱1,500)' },
-    19: { balance: 78600, note: 'Scheduled savings transfer to Emergency Fund (-₱650)' },
-    20: { balance: 77900, note: 'Planned grocery replenishment' },
+    14: { cashBalance: 48500, nwBalance: 460500, note: 'Specialty coffee & weekend meal (-₱420)' },
+    15: { cashBalance: 83500, nwBalance: 495500, note: '🎉 Mid-month salary deposit (+₱35,000)' },
+    16: { cashBalance: 80400, nwBalance: 492400, note: '⚡ Meralco power utility bill (-₱3,100)' },
+    17: { cashBalance: 80750, nwBalance: 492750, note: '🟢 Active day · Safe runway projection' },
+    18: { cashBalance: 78851, nwBalance: 490851, note: '📶 Globe Fiber WiFi subscription (-₱1,899)' },
+    19: { cashBalance: 78201, nwBalance: 490851, note: 'Scheduled savings transfer to Emergency Fund (-₱650)' },
+    20: { cashBalance: 75001, nwBalance: 487651, note: 'Planned supermarket grocery run' },
   }
 
   const activeInfo = dayForecasts[selectedDay] || dayForecasts[17]
+  const displayBal = viewMode === 'cash' ? activeInfo.cashBalance : activeInfo.nwBalance
 
   return (
     <div className={styles.bentoWidgetArea}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
-          📅 {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })} Interactive Calendar
+      {/* 2-Tier Calendar Header matching Buhay Calendar.jsx */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+          📅 {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+          <span style={{ fontSize: 10, color: '#64748b' }}>▾</span>
         </div>
-        <div style={{ fontSize: 12, color: '#059669', fontWeight: 800 }}>₱{activeInfo.balance.toLocaleString()} balance</div>
+        <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 8, padding: 2 }}>
+          <button
+            type="button"
+            onClick={() => setViewMode('cash')}
+            style={{
+              border: 'none',
+              background: viewMode === 'cash' ? '#ffffff' : 'transparent',
+              color: viewMode === 'cash' ? '#059669' : '#64748b',
+              padding: '3px 8px',
+              borderRadius: 6,
+              fontSize: 10,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: viewMode === 'cash' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+            }}
+          >
+            Cash
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('netWorth')}
+            style={{
+              border: 'none',
+              background: viewMode === 'netWorth' ? '#ffffff' : 'transparent',
+              color: viewMode === 'netWorth' ? '#059669' : '#64748b',
+              padding: '3px 8px',
+              borderRadius: 6,
+              fontSize: 10,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: viewMode === 'netWorth' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+            }}
+          >
+            Net Worth
+          </button>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, textAlign: 'center', marginBottom: 12 }}>
+      {/* Metric chips matching Buhay Calendar header */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+          <span style={{ color: '#64748b' }}>Current Debts: </span>
+          <strong style={{ color: '#dc2626' }}>₱8,400.00</strong>
+        </div>
+        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+          <span style={{ color: '#047857' }}>Net Flow: </span>
+          <strong style={{ color: '#059669' }}>+₱18,240.00</strong>
+        </div>
+      </div>
+
+      {/* 7-Day Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, textAlign: 'center', marginBottom: 10 }}>
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
           <div key={i} style={{ fontSize: 10, fontWeight: 700, color: '#64748b' }}>{d}</div>
         ))}
-        {[14, 15, 16, 17, 18, 19, 20].map((d) => (
-          <button
-            key={d}
-            type="button"
-            onClick={() => setSelectedDay(d)}
-            style={{
-              background: d === selectedDay ? '#ecfdf5' : '#ffffff',
-              border: d === selectedDay ? '2px solid #059669' : '1px solid #e2e8f0',
-              borderRadius: 8,
-              padding: '8px 4px',
-              color: d === selectedDay ? '#059669' : '#334155',
-              fontWeight: d === selectedDay ? 800 : 600,
-              fontSize: 12,
-              cursor: 'pointer',
-              boxShadow: d === selectedDay ? '0 2px 8px rgba(16,185,129,0.2)' : 'none',
-              transition: 'all 0.18s ease',
-            }}
-          >
-            {d}
-            <div style={{ fontSize: 7, color: d === 15 ? '#059669' : d === 16 ? '#ef4444' : d === 17 ? '#10b981' : '#94a3b8', marginTop: 2 }}>●</div>
-          </button>
-        ))}
+        {[14, 15, 16, 17, 18, 19, 20].map((d) => {
+          const isSelected = d === selectedDay
+          const dayInfo = dayForecasts[d]
+          const cellBal = viewMode === 'cash' ? dayInfo.cashBalance : dayInfo.nwBalance
+          return (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setSelectedDay(d)}
+              style={{
+                background: isSelected ? '#ecfdf5' : '#ffffff',
+                border: isSelected ? '2px solid #059669' : '1px solid #e2e8f0',
+                borderRadius: 8,
+                padding: '6px 2px',
+                color: isSelected ? '#059669' : '#334155',
+                fontWeight: isSelected ? 800 : 600,
+                fontSize: 11,
+                cursor: 'pointer',
+                boxShadow: isSelected ? '0 2px 8px rgba(16,185,129,0.2)' : 'none',
+                transition: 'all 0.18s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <span>{d}</span>
+              <span style={{ fontSize: 8.5, color: '#059669', fontWeight: 700, background: 'rgba(16,185,129,0.1)', padding: '1px 3px', borderRadius: 3 }}>
+                ₱{Math.round(cellBal / 1000)}k
+              </span>
+              <div style={{ fontSize: 6, color: d === 15 ? '#10b981' : d === 16 ? '#ef4444' : d === 17 ? '#059669' : '#94a3b8' }}>●</div>
+            </button>
+          )
+        })}
       </div>
 
-      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '10px 14px', borderRadius: 10, fontSize: 12, color: '#065f46' }}>
-        <strong style={{ color: '#047857' }}>Day {selectedDay} Snapshot:</strong> {activeInfo.note}
+      <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '10px 12px', borderRadius: 10, fontSize: 12, color: '#065f46', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <strong style={{ color: '#047857' }}>Day {selectedDay} Snapshot:</strong> {activeInfo.note}
+        </div>
+        <strong style={{ color: '#059669', fontSize: 13, whiteSpace: 'nowrap', marginLeft: 8 }}>
+          ₱{displayBal.toLocaleString()}
+        </strong>
       </div>
     </div>
   )
@@ -335,9 +436,9 @@ function AccountsWidget() {
 
 function BillsWidget() {
   const [bills, setBills] = useState([
-    { id: 1, name: 'Meralco Electricity', amount: 3100, due: 'Due in 2 days', paid: false, urgent: true },
-    { id: 2, name: 'Globe Fiber WiFi 200Mbps', amount: 1899, due: 'Due in 6 days', paid: false, urgent: false },
-    { id: 3, name: 'Netflix Premium HD', amount: 549, due: 'Auto-debit on 24th', paid: true, urgent: false },
+    { id: 1, name: 'Meralco Electricity', cat: 'Utility', amount: 3100, due: 'Due in 2 days', paid: false, urgent: true, icon: '⚡' },
+    { id: 2, name: 'Globe Fiber WiFi', cat: 'Internet', amount: 1899, due: 'Due in 6 days', paid: false, urgent: false, icon: '📶' },
+    { id: 3, name: 'Netflix Premium HD', cat: 'Streaming', amount: 549, due: 'Auto-debit on 24th', paid: true, urgent: false, icon: '🍿' },
   ])
 
   const togglePaid = (id) => {
@@ -347,7 +448,7 @@ function BillsWidget() {
   return (
     <div className={styles.bentoWidgetArea}>
       <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>
-        Tap checkbox to mark bills as paid in real-time:
+        Tap any bill to toggle settlement & observe real-time balance impact:
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {bills.map(bill => (
@@ -367,32 +468,26 @@ function BillsWidget() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                width: 20,
-                height: 20,
-                borderRadius: 6,
-                background: bill.paid ? '#10b981' : '#f1f5f9',
-                border: bill.paid ? 'none' : '1px solid #cbd5e1',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 12,
-                color: '#ffffff',
-              }}>
-                {bill.paid ? '✓' : ''}
-              </div>
+              <span style={{ fontSize: 18 }}>{bill.icon}</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: bill.paid ? '#94a3b8' : '#0f172a', textDecoration: bill.paid ? 'line-through' : 'none' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: bill.paid ? '#059669' : '#0f172a' }}>
                   {bill.name}
                 </div>
-                <div style={{ fontSize: 10, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#64748b' }}>
-                  {bill.paid ? 'Marked as Paid' : bill.due}
+                <div style={{ fontSize: 10, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>{bill.cat}</span>
+                  <span>•</span>
+                  <span>{bill.paid ? '✓ In Account · Cleared' : bill.due}</span>
                 </div>
               </div>
             </div>
-            <strong style={{ fontSize: 13, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#0f172a' }}>
-              ₱{bill.amount.toLocaleString()}
-            </strong>
+            <div style={{ textAlign: 'right' }}>
+              <strong style={{ fontSize: 13, color: bill.paid ? '#059669' : bill.urgent ? '#dc2626' : '#0f172a' }}>
+                ₱{bill.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </strong>
+              <div style={{ fontSize: 9.5, color: bill.paid ? '#059669' : '#64748b', fontWeight: 600 }}>
+                {bill.paid ? 'Settled' : 'Unsettled'}
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -416,17 +511,17 @@ function BudgetGoalsWidget() {
 
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-            <span style={{ color: '#0f172a', fontWeight: 700 }}>💳 Credit Debt Snowball</span>
-            <strong style={{ color: '#0284c7' }}>Debt Free in 5 Months!</strong>
+            <span style={{ color: '#0f172a', fontWeight: 700 }}>💳 Credit Debt Payoff Stack</span>
+            <strong style={{ color: '#0284c7' }}>75% Paid Off 🎉 · On Track</strong>
           </div>
           <div style={{ height: 8, background: '#e2e8f0', borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ width: '82%', height: '100%', background: 'linear-gradient(90deg, #0284c7, #2563eb)' }}></div>
+            <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #0284c7, #2563eb)' }}></div>
           </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', background: '#ffffff', border: '1px solid #e2e8f0', padding: '8px 12px', borderRadius: 8, fontSize: 11, color: '#64748b' }}>
           <span>Monthly Safe-to-Spend Envelope</span>
-          <strong style={{ color: '#059669' }}>₱920 / day remaining</strong>
+          <strong style={{ color: '#059669' }}>₱920 / day · On Track ✓</strong>
         </div>
       </div>
     </div>
@@ -468,7 +563,7 @@ const TRUST_POINTS = [
 const FAQ_ITEMS = [
   {
     question: 'What is Buhay?',
-    answer: 'Buhay is a personal finance tracker for daily balances, accounts, income, expenses, bills, budgets, savings, debts, and crypto holdings. It is the current home of the Takda finance system.',
+    answer: 'Buhay is a personal finance tracker for daily balances, accounts, income, expenses, bills, budgets, savings, debts, and crypto holdings. It gives you complete clarity over your money without sharing bank passwords.',
   },
   {
     question: 'Why does Buhay not ask for my bank passwords?',
@@ -555,7 +650,7 @@ export default function LandingPage() {
         <section className={styles.hero}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgeDot}></span>
-            <span>Buhay · Takda Finance Tracker</span>
+            <span>Buhay · Personal Finance & Cashflow</span>
           </div>
 
           <h1 className={styles.heroTitle}>
