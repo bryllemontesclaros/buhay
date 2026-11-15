@@ -530,3 +530,41 @@ export function getVirtualBills(data = {}) {
 
   return virtualBills
 }
+
+/**
+ * Projects unsettled bill occurrences for a given month as virtual expense transactions
+ * so future calendar forecasts and runway calculations accurately reflect upcoming bill deductions
+ * without requiring the user to click 'Pay' in advance.
+ */
+export function getProjectedBillExpenses(bills = [], targetYear, targetMonth) {
+  if (!Array.isArray(bills) || bills.length === 0) return []
+  const projected = []
+
+  bills.forEach(bill => {
+    if (!bill || !bill._id) return
+    const dates = getBillOccurrencesForMonth(bill, targetYear, targetMonth)
+    dates.forEach(date => {
+      // If already settled for this occurrence, it's either paid in cash or has a real expense record
+      const isPaid = isBillPaidForPeriod(bill, date)
+      if (isPaid) return
+
+      projected.push({
+        _id: `proj_bill_${bill._id}_${date}`,
+        _sourceId: bill._id,
+        _occurrenceKey: date,
+        desc: bill.name || 'Bill',
+        amount: Number(bill.amount) || 0,
+        cat: bill.cat || 'Bills & Utilities',
+        accountId: bill.accountId || '',
+        date,
+        isProjected: true,
+        _projected: true,
+        _isBill: true,
+        type: 'expense',
+      })
+    })
+  })
+
+  return projected
+}
+

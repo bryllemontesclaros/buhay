@@ -39,7 +39,7 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
-import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod } from '../lib/bills'
+import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses } from '../lib/bills'
 import { getBillingCycleOptions, getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
@@ -223,7 +223,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const projected = useMemo(() => getProjectedTransactions(incomeList, expenseList, year, month), [incomeList, expenseList, year, month])
   const projectedIncome = useMemo(() => projected.filter(t => t.type === 'income'), [projected])
-  const projectedExpenses = useMemo(() => projected.filter(t => t.type === 'expense'), [projected])
+  const projectedBillExpenses = useMemo(() => getProjectedBillExpenses(data?.bills, year, month), [data?.bills, year, month])
+  const projectedExpenses = useMemo(
+    () => [...projected.filter(t => t.type === 'expense'), ...projectedBillExpenses],
+    [projected, projectedBillExpenses]
+  )
 
   const actualIncome = useMemo(() => getMonthTransactions(incomeList, year, month), [incomeList, year, month])
   const actualExpenses = useMemo(() => getMonthTransactions(expenseList, year, month), [expenseList, year, month])
