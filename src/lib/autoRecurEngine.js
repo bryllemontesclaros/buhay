@@ -7,24 +7,34 @@ export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses =
   if (!uid) return 0
   let addedCount = 0
 
-  // Auto-deduct bills that have autoDeduct === true and are due today or overdue
+  // 1. Auto-settle bills when actual due date arrives (today or past due)
+  // Respects bills that have not been manually paid early, ensuring account balance deduction on due date
   if (Array.isArray(bills) && bills.length > 0) {
     const todayStr = today()
     for (const bill of bills) {
-      if (!bill || !bill.autoDeduct || !bill._id) continue
+      if (!bill || !bill._id) continue
+      // If bill is explicitly paused or has no positive amount, skip
+      if (Number(bill.amount) <= 0) continue
+
       const period = getBillPeriodInfo(bill, todayStr)
-      if (period.paid) continue
+      if (period.paid) continue // Already manually paid or auto-paid earlier
+
+      // Deduct on or after due date
       if (todayStr >= period.dueDate) {
         try {
           await fsMarkBillPaid(uid, bill, {
             amount: bill.amount,
             date: period.dueDate > todayStr ? todayStr : period.dueDate,
             accountId: bill.accountId || '',
-            source: 'auto-deduct-engine',
+            periodReferenceDate: period.dueDate,
+            source: 'auto-due-engine',
           }, accounts)
           addedCount++
         } catch (err) {
-          console.error('Failed to auto-deduct bill', bill.name, err)
+          // If already marked paid in concurrent session, ignore safely
+          if (!err?.message?.includes('already marked paid')) {
+            console.error('Failed to auto-settle bill on due date:', bill.name, err)
+          }
         }
       }
     }
