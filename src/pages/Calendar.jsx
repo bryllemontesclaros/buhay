@@ -595,6 +595,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       })
       billList.forEach(bill => {
         const isPaid = isBillPaidForPeriod(bill, ds)
+        const isFuture = ds > todayStr
         dayEntries.push({
           id: `feed-bill-${bill._id}-${ds}`,
           type: 'bill',
@@ -605,7 +606,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
           dateKey: ds,
           day: d,
           icon: '📄',
-          badgeText: isPaid ? 'Paid' : (bill.autoDeduct ? 'Auto-Deduct' : 'Due'),
+          badgeText: isPaid ? 'Paid' : (isFuture ? '⚡ Auto-pays on date' : 'Due'),
           isPaid,
           autoDeduct: Boolean(bill.autoDeduct),
           billId: bill._id,
