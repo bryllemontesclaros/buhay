@@ -200,7 +200,7 @@
 .emptyState {
   background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
   border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   padding: 40px 24px;
   text-align: center;
   margin: 20px 0;

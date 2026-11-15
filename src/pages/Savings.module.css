@@ -14,7 +14,7 @@
 .commandBar {
   background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
@@ -376,7 +376,7 @@
 .emptyCard {
   background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
   border: 1px solid color-mix(in srgb, var(--border2) 72%, transparent);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   padding: 40px 24px;
   text-align: center;
   display: flex;
@@ -438,7 +438,7 @@
 .modalCard {
   background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 22px;
+  border-radius: var(--radius-lg, 24px);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;

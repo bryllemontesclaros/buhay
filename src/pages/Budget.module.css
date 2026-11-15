@@ -636,7 +636,7 @@
   .radarHeroCard,
   .surfaceCard {
     padding: 16px;
-    border-radius: 18px;
+    border-radius: var(--radius-card, 16px);
   }
   .radarHeroTop {
     flex-direction: column;

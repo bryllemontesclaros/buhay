@@ -135,7 +135,7 @@
   gap: 10px;
   margin: 0 10px 12px;
   padding: 12px 13px;
-  border-radius: 22px;
+  border-radius: var(--radius-panel, 20px);
   border: 1px solid var(--glass-border);
   background: var(--surface);
   /* box-shadow flattened */
@@ -409,7 +409,7 @@
 .userCard {
   position: relative;
   border: 1px solid var(--glass-border);
-  border-radius: 22px;
+  border-radius: var(--radius-panel, 20px);
   padding: 13px;
   background: var(--surface);
   /* box-shadow flattened */
@@ -540,7 +540,7 @@
 .financeGroupTab {
   min-height: 66px;
   padding: 10px;
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   border: 1px solid var(--glass-border);
   background: color-mix(in srgb, var(--glass-1) 72%, transparent);
   color: var(--text2);
@@ -738,7 +738,7 @@
   gap: 3px;
   margin-top: 10px;
   padding: 10px 12px;
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   border: 1px solid var(--glass-border);
   max-width: 44ch;
   transition:
@@ -1042,7 +1042,7 @@
   gap: 12px;
   min-height: 58px;
   padding: 10px 12px;
-  border-radius: 22px;
+  border-radius: var(--radius-panel, 20px);
   border: 1px solid var(--glass-border);
   background: var(--surface);
   /* box-shadow flattened */
@@ -1308,7 +1308,7 @@
   width: 240px;
   min-width: 228px;
   padding: 10px;
-  border-radius: 28px;
+  border-radius: var(--radius-lg, 24px);
   border: 1px solid var(--glass-border);
   background: var(--surface);
   /* box-shadow flattened */
@@ -1470,7 +1470,7 @@
   -webkit-overflow-scrolling: touch;
   background: var(--surface);
   border: 1px solid var(--glass-border);
-  border-radius: 30px;
+  border-radius: var(--radius-lg, 24px);
   padding: 1rem;
   /* box-shadow flattened */
 
@@ -1836,7 +1836,7 @@
     padding: 12px 12px calc(16px + env(safe-area-inset-bottom));
   }
   .quickAddSheet {
-    border-radius: 26px;
+    border-radius: var(--radius-lg, 24px);
     padding: 0.9rem;
     max-height: min(82vh, calc(100vh - 116px - env(safe-area-inset-bottom)));
   }
@@ -1869,7 +1869,7 @@
   .fabActionDetailed {
     min-height: 72px;
     padding: 12px 13px;
-    border-radius: 22px;
+    border-radius: var(--radius-panel, 20px);
   }
   .fabActionDetailed .fabActionIcon {
     width: 34px;
@@ -1890,7 +1890,7 @@
     max-width: none;
     max-height: calc(100dvh - env(safe-area-inset-top) - 8px);
     min-height: 0;
-    border-radius: 28px;
+    border-radius: var(--radius-lg, 24px);
     padding: 12px;
     /* box-shadow flattened */
   }
@@ -1939,7 +1939,7 @@
     padding: 6px 4px;
     border: none;
     background: none;
-    border-radius: 18px;
+    border-radius: var(--radius-card, 16px);
     font-family: var(--font-body);
     transition:
       background var(--motion-duration) var(--motion-ease-standard),
@@ -1979,7 +1979,7 @@
     bottom: calc(84px + env(safe-area-inset-bottom));
     z-index: 101;
     padding: 10px 14px 14px;
-    border-radius: 28px;
+    border-radius: var(--radius-lg, 24px);
     border: 1px solid var(--glass-border);
     background: var(--surface);
     /* box-shadow flattened */
@@ -2035,7 +2035,7 @@
     gap: 12px;
     min-height: 58px;
     padding: 10px 14px;
-    border-radius: 18px;
+    border-radius: var(--radius-card, 16px);
     border: 1px solid var(--glass-border);
     background: var(--surface);
     color: var(--text);

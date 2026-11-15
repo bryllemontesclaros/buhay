@@ -61,7 +61,7 @@
 .heroStatCard {
   background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   /* box-shadow flattened */
 
 }

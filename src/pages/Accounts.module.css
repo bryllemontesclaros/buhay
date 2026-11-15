@@ -500,7 +500,7 @@
   text-align: center;
   padding: 3rem 1.5rem;
   border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   background: color-mix(in srgb, var(--surface) 92%, var(--surface2));
   display: flex;
   flex-direction: column;

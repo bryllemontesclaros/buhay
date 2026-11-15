@@ -179,7 +179,7 @@
   margin-bottom: 12px;
   padding: 10px 12px;
   border: 1px solid var(--border2);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   background: color-mix(in srgb, var(--surface) 96%, var(--surface2));
   width: 100%;
   box-sizing: border-box;
@@ -672,7 +672,7 @@
   margin-top: 12px;
   padding: 14px 16px;
   min-height: 66px;
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   border: 1px solid var(--border2);
   background: var(--surface);
   display: flex;
@@ -1264,7 +1264,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border2));
-  border-radius: 28px;
+  border-radius: var(--radius-lg, 24px);
   box-shadow: var(--shadow-resting);
   position: relative;
   overflow-y: auto;
@@ -1321,7 +1321,7 @@
   padding: 14px 18px;
   background: var(--surface);
   border: 1px solid var(--border2);
-  border-radius: 18px;
+  border-radius: var(--radius-card, 16px);
   transition: border-color var(--motion-duration) var(--motion-ease-standard), box-shadow var(--motion-duration) var(--motion-ease-standard);
 }
 
@@ -1607,7 +1607,7 @@
   .monthBoard > .dayPanel {
     width: 100%;
     margin-top: 8px;
-    border-radius: 18px;
+    border-radius: var(--radius-card, 16px);
     border: 1px solid var(--border2);
     background: var(--surface);
     overflow: hidden;
