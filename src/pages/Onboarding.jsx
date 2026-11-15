@@ -327,31 +327,37 @@ export default function Onboarding({ user, onComplete }) {
                   <div key={bill.id} className={styles.accountRowCard}>
                     <div className={styles.accountRowMain}>
                       <input
+                        id={`bill-desc-${bill.id}`}
                         type="text"
                         className={styles.inputName}
                         placeholder="Bill description (e.g. Meralco)"
                         value={bill.desc}
                         onChange={e => updateBill(bill.id, 'desc', e.target.value)}
+                        aria-label="Bill description"
                       />
                       <div className={styles.billDueWrap}>
-                        <span>Due Day:</span>
+                        <label htmlFor={`bill-due-${bill.id}`}>Due Day:</label>
                         <input
+                          id={`bill-due-${bill.id}`}
                           type="number"
                           min="1"
                           max="31"
                           className={styles.inputDue}
                           value={bill.due}
                           onChange={e => updateBill(bill.id, 'due', e.target.value)}
+                          aria-label={`${bill.desc || 'Bill'} due day of month`}
                         />
                       </div>
                       <div className={styles.balanceInputWrap}>
                         <span className={styles.currencyPrefix}>{symbol}</span>
                         <input
+                          id={`bill-amount-${bill.id}`}
                           type="number"
                           className={styles.inputBalance}
                           placeholder="0.00"
                           value={bill.amount}
                           onChange={e => updateBill(bill.id, 'amount', e.target.value)}
+                          aria-label={`${bill.desc || 'Bill'} amount`}
                         />
                       </div>
                     </div>
@@ -360,6 +366,7 @@ export default function Onboarding({ user, onComplete }) {
                       className={styles.removeRowBtn}
                       onClick={() => removeBill(bill.id)}
                       title="Remove bill"
+                      aria-label={`Remove ${bill.desc || 'bill'}`}
                     >
                       ✕
                     </button>
