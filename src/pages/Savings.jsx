@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel, fsUpdate } from '../lib/firestore'
 import { confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from '../lib/utils'
@@ -386,16 +386,21 @@ export default function Savings({
       )}
 
       {/* 3. PORTALED ADD / EDIT GOAL MODAL */}
-      {showModal && typeof document !== 'undefined' && createPortal(
-        <div className={sStyles.modalOverlay} onClick={closeModal}>
-          <div className={sStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={sStyles.modalHeader}>
-              <div>
-                <div className={sStyles.modalEyebrow}>{editGoal ? 'Editing Goal' : 'New Savings Target'}</div>
-                <div className={sStyles.modalTitle}>{editGoal ? `Update ${editGoal.name}` : 'Set a New Goal'}</div>
-              </div>
-              <button type="button" className={sStyles.modalClose} onClick={closeModal}>✕</button>
+      <ModalShell
+        isOpen={showModal}
+        onClose={closeModal}
+        title={editGoal ? `Update ${editGoal.name}` : 'Set a New Goal'}
+        overlayClassName={sStyles.modalOverlay}
+        className={sStyles.modalCard}
+      >
+        {({ titleId }) => (<>
+          <div className={sStyles.modalHeader}>
+            <div>
+              <div className={sStyles.modalEyebrow}>{editGoal ? 'Editing Goal' : 'New Savings Target'}</div>
+              <div id={titleId} className={sStyles.modalTitle}>{editGoal ? `Update ${editGoal.name}` : 'Set a New Goal'}</div>
             </div>
+            <button type="button" className={sStyles.modalClose} onClick={closeModal}>✕</button>
+          </div>
 
             <form onSubmit={handleSaveGoal} className={sStyles.modalBody}>
               <div className={sStyles.field}>
@@ -478,11 +483,9 @@ export default function Savings({
                   {editGoal ? 'Save Changes' : 'Create Goal'}
                 </button>
               </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
+          </form>
+        </>)}
+      </ModalShell>
     </div>
   )
 

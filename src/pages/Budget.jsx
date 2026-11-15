@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
+import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { isTransactionPaid } from '../lib/finance'
@@ -304,20 +304,25 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
       )}
 
       {/* ADJUST BUDGET MODAL */}
-      {showAdjustModal && typeof document !== 'undefined' && createPortal(
-        <div className={bStyles.modalOverlay} onClick={() => setShowAdjustModal(false)}>
-          <div className={bStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={bStyles.modalHeader}>
-              <div>
-                <div className={bStyles.modalEyebrow}>Monthly Target</div>
-                <h3 className={bStyles.modalTitle}>Adjust Monthly Budget</h3>
-              </div>
-              <button
-                type="button"
-                className={bStyles.modalClose}
-                onClick={() => setShowAdjustModal(false)}
-              >
-                ✕
+      <ModalShell
+        isOpen={showAdjustModal}
+        onClose={() => setShowAdjustModal(false)}
+        title="Adjust Monthly Budget"
+        overlayClassName={bStyles.modalOverlay}
+        className={bStyles.modalCard}
+      >
+        {({ titleId }) => (<>
+          <div className={bStyles.modalHeader}>
+            <div>
+              <div className={bStyles.modalEyebrow}>Monthly Target</div>
+              <h3 id={titleId} className={bStyles.modalTitle}>Adjust Monthly Budget</h3>
+            </div>
+            <button
+              type="button"
+              className={bStyles.modalClose}
+              onClick={() => setShowAdjustModal(false)}
+            >
+              ✕
               </button>
             </div>
 
@@ -380,11 +385,9 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
                   {savingBudget ? 'Saving...' : 'Save Budget'}
                 </button>
               </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
+          </form>
+        </>)}
+      </ModalShell>
     </div>
   )
 

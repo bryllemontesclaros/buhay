@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import ModalShell from '../ui/ModalShell'
 import accStyles from '../../pages/Accounts.module.css'
 import { ACCOUNT_ICONS } from '../../lib/accountConstants'
 import { POPULAR_CRYPTO_COINS, DEFAULT_FOREX_RATE } from '../../lib/crypto'
@@ -19,7 +19,6 @@ export default function TransferModal({
   s = '₱',
   fmt,
 }) {
-  if (!showTransferModal || typeof document === 'undefined') return null
 
   const [showCustomTokens, setShowCustomTokens] = useState(false)
 
@@ -244,16 +243,22 @@ export default function TransferModal({
     handleCashOutTokenChange(val)
   }
 
-  return createPortal(
-    <div className={accStyles.modalOverlay} onClick={onClose}>
-      <div className={accStyles.modalCard} onClick={e => e.stopPropagation()}>
+  return (
+    <ModalShell
+      isOpen={showTransferModal}
+      onClose={onClose}
+      title={isToCrypto ? 'Fund Crypto' : isFromCrypto ? 'Cash Out to Bank' : 'Move Money'}
+      overlayClassName={accStyles.modalOverlay}
+      className={accStyles.modalCard}
+    >
+      {({ titleId }) => (<>
         <div className={accStyles.bottomSheetHandle} />
         <div className={accStyles.modalHeader}>
           <div>
             <div className={accStyles.modalEyebrow}>
               {isToCrypto ? '⚡ Bank to Crypto Transfer' : isFromCrypto ? '💰 Cash Out Crypto to Bank' : '⇄ Inter-Account Transfer'}
             </div>
-            <div className={accStyles.modalTitle}>
+            <div id={titleId} className={accStyles.modalTitle}>
               {isToCrypto ? 'Fund Crypto' : isFromCrypto ? 'Cash Out to Bank' : 'Move Money'}
             </div>
           </div>
@@ -646,8 +651,7 @@ export default function TransferModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>,
-    document.body
+      </>)}
+    </ModalShell>
   )
 }

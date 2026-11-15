@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import ModalShell from '../components/ui/ModalShell'
 import { fsDeleteTransaction, fsDeleteTransfer, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
 import {
   getTakdaTransactionLifecycle,
@@ -636,16 +636,21 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
       )}
 
       {/* EDIT TRANSACTION MODAL */}
-      {editTx && typeof document !== 'undefined' && createPortal(
-        <div className={hStyles.modalOverlay} onClick={event => { if (event.target === event.currentTarget) setEditTx(null) }}>
-          <div className={hStyles.modal}>
-            <div className={hStyles.modalHeader}>
-              <div>
-                <div className={hStyles.modalEyebrow}>Record Details</div>
-                <div className={hStyles.modalTitle}>Edit Transaction</div>
-              </div>
-              <button onClick={() => setEditTx(null)} className={hStyles.modalClose}>✕</button>
+      <ModalShell
+        isOpen={!!editTx}
+        onClose={() => setEditTx(null)}
+        title="Edit Transaction"
+        overlayClassName={hStyles.modalOverlay}
+        className={hStyles.modal}
+      >
+        {({ titleId }) => (<>
+          <div className={hStyles.modalHeader}>
+            <div>
+              <div className={hStyles.modalEyebrow}>Record Details</div>
+              <div id={titleId} className={hStyles.modalTitle}>Edit Transaction</div>
             </div>
+            <button onClick={() => setEditTx(null)} className={hStyles.modalClose}>✕</button>
+          </div>
 
             <div className={hStyles.modalBody}>
               <div className={styles.formGroup}>
@@ -766,10 +771,8 @@ export default function History({ user, data, symbol, privacyMode = false, hideH
                 </button>
               </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+        </>)}
+      </ModalShell>
 
       {/* DETAILS MODAL */}
       <DetailsModal

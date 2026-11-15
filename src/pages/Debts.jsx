@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTransactions, fsTransferAccounts } from '../lib/firestore'
 import { isTransactionPaid } from '../lib/finance'
 import { getCreditCardCycleDetails } from '../lib/billingCycles'
@@ -1021,16 +1022,21 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
       )}
 
       {/* 4. PORTALED ADD/EDIT DEBT MODAL */}
-      {showModal && typeof document !== 'undefined' && createPortal(
-        <div className={dStyles.modalOverlay} onClick={closeEditor}>
-          <div className={dStyles.modalCard} onClick={e => e.stopPropagation()}>
-            <div className={dStyles.modalHeader}>
-              <div>
-                <div className={dStyles.modalEyebrow}>{editDebt ? 'Editing Debt' : 'New Debt Entry'}</div>
-                <div className={dStyles.modalTitle}>{editDebt ? `Update ${editDebt.name}` : 'Add Debt to Payoff Stack'}</div>
-              </div>
-              <button type="button" className={dStyles.modalClose} onClick={closeEditor}>✕</button>
+      <ModalShell
+        isOpen={showModal}
+        onClose={closeEditor}
+        title={editDebt ? `Update ${editDebt.name}` : 'Add Debt to Payoff Stack'}
+        overlayClassName={dStyles.modalOverlay}
+        className={dStyles.modalCard}
+      >
+        {({ titleId }) => (<>
+          <div className={dStyles.modalHeader}>
+            <div>
+              <div className={dStyles.modalEyebrow}>{editDebt ? 'Editing Debt' : 'New Debt Entry'}</div>
+              <div id={titleId} className={dStyles.modalTitle}>{editDebt ? `Update ${editDebt.name}` : 'Add Debt to Payoff Stack'}</div>
             </div>
+            <button type="button" className={dStyles.modalClose} onClick={closeEditor}>✕</button>
+          </div>
 
             <form onSubmit={e => { e.preventDefault(); handleSave(); }} className={dStyles.modalBody}>
               <div className={dStyles.field}>
@@ -1209,11 +1215,9 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
                   {editDebt ? 'Save Changes' : 'Add Debt'}
                 </button>
               </div>
-            </form>
-          </div>
-        </div>,
-        document.body
-      )}
+          </form>
+        </>)}
+      </ModalShell>
 
       {activeMilestone && typeof document !== 'undefined' && createPortal(
         <div className={dStyles.celebrationOverlay} onClick={() => setActiveMilestone(null)}>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
+import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel, fsUpdate, fsTransferAccounts, fsSetProfile } from '../lib/firestore'
 import { fsTransferFiatToCrypto, fsTransferCryptoToFiat } from '../lib/api/cryptoTransfers'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
@@ -901,13 +901,18 @@ export default function CryptoPortfolio({
       )}
 
       {/* 3. QUICK PRICE UPDATE MODAL */}
-      {showPriceModal && typeof document !== 'undefined' && createPortal(
-        <div className={styles.modalOverlay} onClick={closePriceModal}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}>✎ Update Manual Prices ({vsCurrency})</div>
-              <button type="button" className={styles.modalClose} onClick={closePriceModal}>✕</button>
-            </div>
+      <ModalShell
+        isOpen={showPriceModal}
+        onClose={closePriceModal}
+        title={`Update Manual Prices (${vsCurrency})`}
+        overlayClassName={styles.modalOverlay}
+        className={styles.modalContent}
+      >
+        {({ titleId }) => (<>
+          <div className={styles.modalHeader}>
+            <div id={titleId} className={styles.modalTitle}>✎ Update Manual Prices ({vsCurrency})</div>
+            <button type="button" className={styles.modalClose} onClick={closePriceModal}>✕</button>
+          </div>
 
             <div className={styles.quickPriceDesc}>
               Enter the current price you want Buhay to use for each token. These prices are saved to your profile and used for portfolio value, P&L, and crypto transfer previews.
@@ -962,17 +967,20 @@ export default function CryptoPortfolio({
                 <button type="button" className={styles.btnPrimary} onClick={saveQuickPrices}>Save Prices</button>
               </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+        </>)}
+      </ModalShell>
 
       {/* 4. ADD / EDIT HOLDING MODAL */}
-      {showHoldingModal && typeof document !== 'undefined' && createPortal(
-        <div className={styles.modalOverlay} onClick={closeHoldingModal}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitle}>
+      <ModalShell
+        isOpen={showHoldingModal}
+        onClose={closeHoldingModal}
+        title="Manage Holding"
+        overlayClassName={styles.modalOverlay}
+        className={styles.modalContent}
+      >
+        {({ titleId }) => (<>
+          <div className={styles.modalHeader}>
+            <div id={titleId} className={styles.modalTitle}>
                 {editHolding ? `Edit ${editHolding.symbol}` : 'Add Crypto Holding'}
               </div>
               <button type="button" className={styles.modalClose} onClick={closeHoldingModal}>✕</button>
@@ -1217,10 +1225,8 @@ export default function CryptoPortfolio({
                 {editHolding ? 'Save Changes' : 'Add Holding'}
               </button>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+        </>)}
+      </ModalShell>
 
       <TransferModal
         showTransferModal={showTransferModal}
