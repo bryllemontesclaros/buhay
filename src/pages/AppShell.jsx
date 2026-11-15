@@ -6,6 +6,7 @@ import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } fro
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
 import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '../lib/utils'
 import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
+import { notifyApp } from '../lib/appFeedback'
 import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
@@ -764,6 +765,11 @@ export default function AppShell({ user }) {
       .then(addedCount => {
         if (addedCount > 0) {
           playTick()
+          notifyApp({
+            title: 'Auto-Payment Applied',
+            message: `${addedCount} scheduled bill${addedCount === 1 ? '' : 's'}/recurring item${addedCount === 1 ? '' : 's'} reached due date and auto-settled.`,
+            tone: 'success'
+          })
           console.log(`Buhay AutoRecurEngine: ${addedCount} transactions automatically logged.`)
         }
       })

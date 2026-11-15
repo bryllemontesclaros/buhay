@@ -432,9 +432,14 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
               <h4 className={bStyles.billCardTitle}>{row.name}</h4>
               <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 2 }}>
                 <span className={bStyles.billCardSubcat}>{row.subcat || row.cat}</span>
-                {row.autoDeduct && (
-                  <span style={{ background: 'var(--amber-glow)', color: 'var(--amber)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
-                    ⚡ Auto-Deduct
+                {!isPaid && (
+                  <span style={{ background: 'var(--amber-glow, rgba(245, 158, 11, 0.15))', color: 'var(--amber, #f59e0b)', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
+                    ⚡ Auto-pays on date
+                  </span>
+                )}
+                {isPaid && (
+                  <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
+                    ✓ Settled
                   </span>
                 )}
               </div>
