@@ -653,20 +653,22 @@ export function getMonthForecast(
 
   const baseForecast = buildForecast(effectiveLiquidIncome, effectiveLiquidExpenses, year, month, startingBalance)
 
-  // Align every day's runningBalance with authoritative getBalanceAtDateWithOverrides ledger calculation
-  // to eliminate drift and ensure Calendar and Accounts views are 100% synchronized
+  // Historical/today balances must match the paid account ledger. Future
+  // balances must retain projected recurring income, bills, and expenses.
   const sortedDays = Object.keys(baseForecast).sort()
   sortedDays.forEach(ds => {
-    const authoritativeBalance = getBalanceAtDateWithOverrides(
-      safeAccounts,
-      transfers,
-      income,
-      expenses,
-      ds,
-      balanceOverrides
-    )
-    baseForecast[ds].runningBalance = authoritativeBalance
-    baseForecast[ds].status = getStatusForDay(ds, authoritativeBalance, startingBalance, todayKey)
+    if (ds < todayKey) {
+      const authoritativeBalance = getBalanceAtDateWithOverrides(
+        safeAccounts,
+        transfers,
+        income,
+        expenses,
+        ds,
+        balanceOverrides
+      )
+      baseForecast[ds].runningBalance = authoritativeBalance
+      baseForecast[ds].status = getStatusForDay(ds, authoritativeBalance, startingBalance, todayKey)
+    }
   })
 
   return baseForecast

@@ -1551,6 +1551,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
+  const selectedDayIsFuture = Boolean(selected && selected > today())
   const selectedDayRawBalance = selected
     ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, balanceOverrides))
     : 0
@@ -1926,7 +1927,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           </span>
                         </span>
                       ) : (
-                        'Day opening balance'
+                        selectedDayIsFuture ? 'Projected balance' : 'Day balance'
                       )}
                     </span>
                     <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit opening balance for ${selected}`} disabled={selectedDateLocked}>
@@ -1938,9 +1939,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   <div className={calStyles.dayBalanceMeta}>
                     {hasManualBalanceOnSelectedDay
                       ? 'Manual balance override active.'
+                      : selectedDayIsFuture
+                        ? 'Includes scheduled recurring income, expenses, and unpaid bills.'
                       : selectedDayUnpaidCount > 0
                         ? `Day balance excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
-                        : 'Day balance includes paid entries only.'}
+                        : 'Includes paid entries only.'}
                     {latestOverrideEvent?.createdAt && (
                       <div style={{ marginTop: 6, color: 'var(--text3)', fontSize: 11, lineHeight: 1.45 }}>
                         Last manual balance change: {new Date(latestOverrideEvent.createdAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.
