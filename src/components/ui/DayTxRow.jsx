@@ -23,7 +23,9 @@ export function DayTxRow({
   const lifecycle = getTakdaTransactionLifecycle(t || {}, today())
   const isPaid = lifecycle.paid
   const isProjected = lifecycle.projected
-  const isAutoPaidBill = Boolean(t._autoPaidBill)
+  const isAutoPaidBill = Boolean(
+    t._autoPaidBill || (t._projected && String(t.cat || '').trim().toLowerCase() === 'bills'),
+  )
   const classification = [t.cat, t.subcat].filter(Boolean).join(' · ')
   const metaParts = [
     classification || t.cat,

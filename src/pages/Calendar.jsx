@@ -1942,7 +1942,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     {hasManualBalanceOnSelectedDay
                       ? 'Manual balance override active.'
                       : selectedDayIsFuture
-                        ? 'Includes scheduled recurring income, expenses, and unpaid bills.'
+                        ? 'Includes scheduled recurring income and expenses.'
                       : selectedDayUnpaidCount > 0
                         ? `Day balance excludes ${selectedDayUnpaidCount} unpaid entr${selectedDayUnpaidCount === 1 ? 'y' : 'ies'}.`
                         : 'Includes paid entries only.'}
