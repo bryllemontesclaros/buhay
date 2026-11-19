@@ -5,7 +5,8 @@ import { fsAdd, fsDel, fsUpdate, fsAddTransaction, fsDeleteAccountAndUnlinkTrans
 import { isTransactionPaid } from '../lib/finance'
 import { getCreditCardCycleDetails } from '../lib/billingCycles'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
-import { getProjectedTransactions } from '../lib/recurrence'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
 import { displayValue, fmt, maskMoney, playTick, today, getMonthKey, formatDisplayDate } from '../lib/utils'
 import { safeScrollIntoView } from '../lib/ui'
 import styles from './Page.module.css'
@@ -437,10 +438,13 @@ export default function Debts({ user, data, profile = {}, symbol, privacyMode = 
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth()
     
-    const projCurrent = getProjectedTransactions(safeIncome, safeExpenses, currentYear, currentMonth)
+    const ledgerInput = adaptLegacyFinanceData(data)
+    const projCurrent = getProjectedLedgerForMonth(ledgerInput, currentYear, currentMonth).entries
+      .filter(tx => tx.isProjected)
     
     const nextDate = new Date(currentYear, currentMonth + 1, 1)
-    const projNext = getProjectedTransactions(safeIncome, safeExpenses, nextDate.getFullYear(), nextDate.getMonth())
+    const projNext = getProjectedLedgerForMonth(ledgerInput, nextDate.getFullYear(), nextDate.getMonth()).entries
+      .filter(tx => tx.isProjected)
 
     const endOfNextMonth = new Date(currentYear, currentMonth + 2, 0)
     const endKey = `${endOfNextMonth.getFullYear()}-${String(endOfNextMonth.getMonth() + 1).padStart(2, '0')}-${String(endOfNextMonth.getDate()).padStart(2, '0')}`

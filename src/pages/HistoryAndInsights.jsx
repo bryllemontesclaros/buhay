@@ -3,8 +3,9 @@ import History from './History'
 import Breakdown from './Breakdown'
 import styles from './Page.module.css'
 import tStyles from '../components/SharedTabs.module.css'
-import { isTransactionPaid } from '../lib/finance'
-import { isSameMonth, fmt } from '../lib/utils'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
+import { fmt } from '../lib/utils'
 
 export default function HistoryAndInsights({ user, data, profile = {}, symbol, privacyMode = false, subTab = 'history' }) {
   const [activeTab, setActiveTab] = useState(subTab)
@@ -22,15 +23,12 @@ export default function HistoryAndInsights({ user, data, profile = {}, symbol, p
     const viewMonth = now.getMonth()
     const viewYear = now.getFullYear()
 
-    const income = data?.income || []
-    const expenses = data?.expenses || []
-
-    const incomeSum = income
-      .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const ledger = getProjectedLedgerForMonth(adaptLegacyFinanceData(data), viewYear, viewMonth)
+    const incomeSum = ledger.entries
+      .filter(tx => tx.type === 'income' && tx.status === 'actual')
       .reduce((sum, tx) => sum + (tx.amount || 0), 0)
-
-    const expenseSum = expenses
-      .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const expenseSum = ledger.entries
+      .filter(tx => tx.type === 'expense' && tx.status === 'actual')
       .reduce((sum, tx) => sum + (tx.amount || 0), 0)
 
     return {

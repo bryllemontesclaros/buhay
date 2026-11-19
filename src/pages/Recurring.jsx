@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fsAdd, fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
@@ -29,13 +29,17 @@ function getMonthlyEquivalent(amount, freq = 'monthly') {
   }
 }
 
-export default function Recurring({ user, data, symbol, privacyMode = false, billPaymentTarget }) {
+export default function Recurring({ user, data, symbol, privacyMode = false, billPaymentTarget, subTab = '' }) {
   const s = symbol || '₱'
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   
   // Default to bills tab if arriving via a bill payment deep-link, otherwise check localStorage or default to bills
-  const initialTab = billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills')
+  const initialTab = subTab || (billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills'))
   const [activeTab, setActiveTab] = useState(initialTab)
+
+  useEffect(() => {
+    if (subTab) setActiveTab(subTab)
+  }, [subTab])
 
   const handleTabChange = (tab) => {
     playTick()
@@ -428,7 +432,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             className={`${sStyles.tab} ${activeTab === 'subscriptions' ? sStyles.tabActive : ''}`}
             onClick={() => handleTabChange('subscriptions')}
           >
-            🔄 Subscriptions
+            🔄 Recurring Expenses
             <span className={sStyles.tabCount}>{subscriptions.length}</span>
           </button>
           <button
@@ -449,18 +453,6 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
         <div className={sStyles.billsWrapper}>
           <Bills user={user} data={data} symbol={s} privacyMode={privacyMode} billPaymentTarget={billPaymentTarget} embedded={true} />
           
-          {calendarBills.length > 0 && (
-            <div>
-              <div className={sStyles.billsDivider} />
-              <div className={sStyles.groupHeader}>
-                <h3 className={sStyles.groupTitle}>Auto-generated Bills</h3>
-                <span className={sStyles.groupDesc}>Tracked from your calendar</span>
-              </div>
-              <div className={sStyles.listLayout}>
-                {calendarBills.map(renderRowItem)}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -468,15 +460,15 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
         <div>
           <div className={sStyles.groupHeader}>
             <div>
-              <h3 className={sStyles.groupTitle}>Subscriptions & Services</h3>
-              <div className={sStyles.groupSub}>Recurring memberships, streaming, software, and tools</div>
+              <h3 className={sStyles.groupTitle}>Recurring Expenses</h3>
+              <div className={sStyles.groupSub}>Subscriptions, services, and other scheduled spending</div>
             </div>
             <button
               type="button"
               className={sStyles.btnAddCompact}
               onClick={() => openAddModal('subscription')}
             >
-              + Add Subscription
+              + Add Expense
             </button>
           </div>
           
@@ -486,14 +478,14 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             ) : (
               <div className={sStyles.emptyState}>
                 <div className={sStyles.emptyStateIcon}>🍿</div>
-                <h4>No active subscriptions</h4>
+                <h4>No recurring expenses</h4>
                 <p>Track your Spotify, Netflix, gym, or software subscriptions to automate your monthly runway.</p>
                 <button
                   type="button"
                   className={sStyles.emptyStateBtn}
                   onClick={() => openAddModal('subscription')}
                 >
-                  + Add Your First Subscription
+                  + Add Your First Expense
                 </button>
               </div>
             )}

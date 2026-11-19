@@ -324,10 +324,10 @@ const FINANCE_PAGE_ALIASES = {
   history: { page: 'history' },
   breakdown: { page: 'breakdown' },
   savings: { page: 'savings' },
-  bills: { page: 'bills' },
+  bills: { page: 'recurring', subTab: 'bills' },
   budget: { page: 'budget' },
   debts: { page: 'debts' },
-  subscriptions: { page: 'bills' },
+  subscriptions: { page: 'recurring', subTab: 'subscriptions' },
 }
 
 const MONEY_TOOLS = [
@@ -471,6 +471,7 @@ export default function AppShell({ user }) {
   const [activeSpace, setActiveSpace] = useState('takda')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
+  const [routeSubTab, setRouteSubTab] = useState('')
 
   const [financeToolSelections, setFinanceToolSelections] = useState({ money: 'accounts', plan: 'savings' })
   const [data, setData] = useState({
@@ -1243,6 +1244,7 @@ export default function AppShell({ user }) {
     setTakdaActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
     setActiveSpace('takda')
+    setRouteSubTab('')
     setPage(DEFAULT_SPACE_PAGES.takda)
   }
 
@@ -1250,6 +1252,7 @@ export default function AppShell({ user }) {
   function handleDashboardNavigate(space, subPage) {
     playTick()
     setActiveSpace('takda')
+    setRouteSubTab('')
     setPage(subPage || 'calendar')
   }
 
@@ -1257,6 +1260,7 @@ export default function AppShell({ user }) {
   function handleBadgeClick(spaceId) {
     playTick()
     openSpace('takda')
+    setRouteSubTab('')
     setPage('breakdown')
   }
 
@@ -1265,9 +1269,11 @@ export default function AppShell({ user }) {
     const alias = FINANCE_PAGE_ALIASES[nextPage]
     setActiveSpace('takda')
     if (alias?.page) {
+      setRouteSubTab(alias.subTab || '')
       setPage(alias.page)
       return
     }
+    setRouteSubTab('')
     if (nextPage === 'money') {
       setPage(financeToolSelections.money || 'accounts')
       return
@@ -1397,7 +1403,7 @@ export default function AppShell({ user }) {
     symbol,
     privacyMode,
     exchangeRates,
-    subTab: page === 'breakdown' ? 'insights' : page,
+    subTab: routeSubTab || (page === 'breakdown' ? 'insights' : page),
 
     billPaymentTarget,
     debtPaymentTarget,

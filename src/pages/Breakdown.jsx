@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
-import { getProjectedTransactions } from '../lib/recurrence'
 import { isUnpaidBillBackedExpense } from '../lib/bills'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
 import { displayValue, fmt, maskMoney, playTick } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
 import styles from './Page.module.css'
@@ -232,30 +232,19 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
   const [detailsMode, setDetailsMode] = useState('')
 
   const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth()
-
-  const projected = useMemo(
-    () => getProjectedTransactions(data?.income || [], data?.expenses || [], viewYear, viewMonth),
-    [data?.income, data?.expenses, viewYear, viewMonth],
-  )
-  const projectedIncome = useMemo(
-    () => projected.filter(tx => tx.type === 'income'),
-    [projected],
-  )
-  const projectedExpenses = useMemo(
-    () => projected.filter(tx => tx.type === 'expense'),
-    [projected],
+  const ledgerInput = useMemo(() => adaptLegacyFinanceData(data), [data])
+  const monthLedger = useMemo(
+    () => getProjectedLedgerForMonth(ledgerInput, viewYear, viewMonth),
+    [ledgerInput, viewYear, viewMonth],
   )
   const monthIncome = useMemo(
-    () => [...getMonthTransactions(data?.income || [], viewYear, viewMonth).filter(isTransactionPaid), ...projectedIncome],
-    [data?.income, projectedIncome, viewYear, viewMonth],
+    () => monthLedger.entries.filter(tx => tx.type === 'income' && tx.status !== 'unpaid'),
+    [monthLedger.entries],
   )
   const monthExpenses = useMemo(
-    () => [
-      ...getMonthTransactions(data?.expenses || [], viewYear, viewMonth)
-        .filter(tx => isTransactionPaid(tx) && !isUnpaidBillBackedExpense(tx, data?.bills)),
-      ...projectedExpenses.filter(tx => !isUnpaidBillBackedExpense(tx, data?.bills)),
-    ],
-    [data?.expenses, data?.bills, projectedExpenses, viewYear, viewMonth],
+    () => monthLedger.entries
+      .filter(tx => tx.type === 'expense' && tx.status !== 'unpaid' && !isUnpaidBillBackedExpense(tx, data?.bills)),
+    [monthLedger.entries, data?.bills],
   )
 
   const expenseCats = useMemo(() => {
@@ -308,17 +297,13 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
         year++
       }
 
-      const projectedMonth = getProjectedTransactions(data?.income || [], data?.expenses || [], year, month)
-      const inc = getMonthTotal(data?.income || [], year, month)
-        + projectedMonth
-          .filter(tx => tx.type === 'income')
-          .reduce((sum, tx) => sum + (tx.amount || 0), 0)
-    const exp = getMonthTransactions(data?.expenses || [], year, month)
-      .filter(tx => isTransactionPaid(tx) && !isUnpaidBillBackedExpense(tx, data?.bills))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-        + projectedMonth
-          .filter(tx => tx.type === 'expense')
-          .reduce((sum, tx) => sum + (tx.amount || 0), 0)
+      const monthLedger = getProjectedLedgerForMonth(ledgerInput, year, month)
+      const inc = monthLedger.entries
+        .filter(tx => tx.type === 'income' && tx.status !== 'unpaid')
+        .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+      const exp = monthLedger.entries
+        .filter(tx => tx.type === 'expense' && tx.status !== 'unpaid' && !isUnpaidBillBackedExpense(tx, data?.bills))
+        .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
       return { 
         label: MONTHS[month], 
         income: inc, 
@@ -327,7 +312,7 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
         isCurrent: year === now.getFullYear() && month === now.getMonth()
       }
     })
-  }, [data?.expenses, data?.bills, data?.income, viewMonth, viewYear, now])
+  }, [ledgerInput, data?.bills, viewMonth, viewYear, now])
 
   const maxTrendFlow = useMemo(() => {
     return Math.max(1, ...last6.map(m => Math.max(m.income, m.expenses)))

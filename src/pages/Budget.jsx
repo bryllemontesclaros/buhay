@@ -2,9 +2,10 @@ import { useMemo, useState } from 'react'
 import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
-import { isTransactionPaid } from '../lib/finance'
 import { isUnpaidBillBackedExpense } from '../lib/bills'
-import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
+import { displayValue, fmt, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 import bStyles from './Budget.module.css'
 import SwipeableCard from '../components/SwipeableCard'
@@ -58,11 +59,17 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
   }
 
   // Monthly Spending
+  const ledgerInput = useMemo(() => adaptLegacyFinanceData(data), [data])
+  const monthLedger = useMemo(
+    () => getProjectedLedgerForMonth(ledgerInput, viewYear, viewMonth),
+    [ledgerInput, viewYear, viewMonth],
+  )
+
   const monthExpensesList = useMemo(() => {
-    return (data?.expenses || [])
-      .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth) && !isUnpaidBillBackedExpense(tx, data?.bills))
+    return monthLedger.entries
+      .filter(tx => tx.type === 'expense' && tx.status === 'actual' && !isUnpaidBillBackedExpense(tx, data?.bills))
       .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-  }, [data?.expenses, data?.bills, viewMonth, viewYear])
+  }, [monthLedger.entries, data?.bills])
 
   const totalExpenses = useMemo(() => {
     return monthExpensesList.reduce((sum, tx) => sum + (tx.amount || 0), 0)
