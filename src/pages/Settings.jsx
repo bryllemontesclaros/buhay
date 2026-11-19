@@ -20,6 +20,7 @@ import { generateStructuredCSV, generateCleanJSONBackup, parseAndValidateBackup 
 import FinancialStatementModal from '../components/FinancialStatementModal'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { CURRENCIES, displayValue, fmt, formatDisplayDate, maskMoney, playTick, today } from '../lib/utils'
+import { getReferenceRates } from '../lib/currencyRates'
 import styles from './Page.module.css'
 import settStyles from './Settings.module.css'
 
@@ -264,8 +265,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   const [exportDone, setExportDone] = useState(false)
   const [jsonExportDone, setJsonExportDone] = useState(false)
   const [showStatementModal, setShowStatementModal] = useState(false)
-  const [rates, setRates] = useState(null)
-  const [ratesLoading, setRatesLoading] = useState(false)
+  const [rates, setRates] = useState(() => ({ base: 'PHP', data: getReferenceRates('PHP') }))
 
 
   const [accountForm, setAccountForm] = useState({ displayName: '', newEmail: '', password: '' })
@@ -327,22 +327,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
   }, [user])
 
   useEffect(() => {
-    fetchRates()
+    const base = profileForm.currency || 'PHP'
+    setRates({ data: getReferenceRates(base), base })
   }, [profileForm.currency])
-
-  async function fetchRates() {
-    setRatesLoading(true)
-    try {
-      const baseCurrency = profileForm.currency || 'PHP'
-      const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`)
-      const json = await response.json()
-      setRates({ data: json.rates, base: baseCurrency })
-    } catch {
-      setRates(null)
-    } finally {
-      setRatesLoading(false)
-    }
-  }
 
   function setPF(key, value) {
     setProfileForm(current => ({ ...current, [key]: value }))
@@ -1007,11 +994,7 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
             <small>Helpful context, not a required setting.</small>
           </summary>
           <div className={settStyles.inlineDisclosureBody}>
-            {ratesLoading ? (
-              <div className={settStyles.emptyCopy}>Loading rates...</div>
-            ) : !rates ? (
-              <div className={settStyles.emptyCopy}>Could not load rates. Check your connection.</div>
-            ) : (
+            {rates ? (
               <>
                 <div className={settStyles.ratesGrid}>
                   <div className={settStyles.rateBaseCard}>
@@ -1030,9 +1013,9 @@ export default function Settings({ user, data, profile, symbol, privacyMode = fa
                     )
                   })}
                 </div>
-                <div className={settStyles.rateSource}>Indicative rates from exchangerate-api.com</div>
+                <div className={settStyles.rateSource}>Built-in reference rates only. These values are not live market rates.</div>
               </>
-            )}
+            ) : null}
           </div>
         </details>
 

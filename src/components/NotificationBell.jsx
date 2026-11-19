@@ -20,7 +20,7 @@ const safeLocalStorageSet = (key, value) => {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch {}
 }
 
-export default function NotificationBell({ data, profile, privacyMode = false, onAction = null, space = 'takda' }) {
+export default function NotificationBell({ data, profile, privacyMode = false, onAction = null, space = 'buhay' }) {
   const dismissedKey = `sentimo_dismissed_${space}`
   const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(() => safeLocalStorageGet(dismissedKey, '[]'))

@@ -10,7 +10,7 @@ Use this checklist after any change that touches:
 ## Core Truths
 
 1. Unpaid transactions do not affect:
-   - Takda Total Balance (now)
+   - Buhay Total Balance (now)
    - Calendar closing balances
    - Month totals / insights
 
@@ -62,7 +62,7 @@ Use this checklist after any change that touches:
 - Transfer between two accounts.
 - Verify:
   - From account decreases, To account increases
-  - Takda Total Balance stays the same (unless credit card rules invert expectations)
+  - Buhay Total Balance stays the same (unless credit card rules invert expectations)
 
 ### F) Credit Cards
 - Add a credit card account balance.

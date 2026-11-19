@@ -39,14 +39,14 @@
     linear-gradient(180deg, color-mix(in srgb, white 3%, transparent), transparent 22%, color-mix(in srgb, white 2%, transparent) 82%, transparent) !important; flat */
 }
 
-.shellTakda {
+.shellBuhay {
   --accent: #10b981;
   --accent-dim: rgba(16, 185, 129, 0.14);
   --accent-glow: rgba(16, 185, 129, 0.20);
 }
 
-:global([data-theme="light"]) .shellTakda,
-:global(.force-light-theme) .shellTakda {
+:global([data-theme="light"]) .shellBuhay,
+:global(.force-light-theme) .shellBuhay {
   --accent: #059669;
   --accent-dim: rgba(5, 150, 105, 0.12);
   --accent-glow: rgba(5, 150, 105, 0.18);
@@ -193,7 +193,7 @@
   margin-left: 0;
 }
 
-.sidebarGuideDotTakda {
+.sidebarGuideDotBuhay {
   background: #10b981;
 }
 
@@ -510,82 +510,6 @@
   background: transparent;
   -webkit-overflow-scrolling: touch;
   scrollbar-gutter: stable;
-}
-
-.financeGroupPage {
-  display: grid;
-  gap: 12px;
-}
-
-.financeGroupContent {
-  min-width: 0;
-}
-
-.financeGroupHero {
-  display: block;
-  margin: 10px 18px 0;
-  padding: 0;
-  border-radius: 0;
-  border: none;
-  background: transparent;
-}
-
-.financeGroupSwitch {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 7px;
-  align-content: stretch;
-}
-
-.financeGroupTab {
-  min-height: 66px;
-  padding: 10px;
-  border-radius: var(--radius-card, 16px);
-  border: 1px solid var(--glass-border);
-  background: color-mix(in srgb, var(--glass-1) 72%, transparent);
-  color: var(--text2);
-  cursor: pointer;
-  font-family: var(--font-body);
-  text-align: left;
-  transition:
-    transform var(--motion-duration) var(--motion-ease-out),
-    border-color var(--motion-duration) var(--motion-ease-standard),
-    background var(--motion-duration) var(--motion-ease-standard),
-    color var(--motion-duration) var(--motion-ease-standard),
-    box-shadow var(--motion-duration) var(--motion-ease-standard);
-}
-
-.financeGroupTab:hover {
-  transform: translateY(-1px);
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 32%, var(--glass-border));
-}
-
-.financeGroupTab strong {
-  display: block;
-  color: inherit;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.financeGroupTab span {
-  display: -webkit-box;
-  margin-top: 5px;
-  color: var(--text3);
-  font-size: 11px;
-  font-weight: 750;
-  line-height: 1.3;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.financeGroupTabActive {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 46%, var(--glass-border));
-  background: var(--surface);
-  /* box-shadow flattened */
 }
 
 .mainWrap {
@@ -1277,7 +1201,7 @@
   background: rgba(8, 12, 18, 0.22);
 
   z-index: 280;
-  animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
+  animation: buhayBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
 .fabWrap {
   position: fixed;
@@ -1313,7 +1237,7 @@
   background: var(--surface);
   /* box-shadow flattened */
 
-  animation: takdaFloatIn var(--motion-duration-slow) var(--motion-ease-out) both;
+  animation: buhayFloatIn var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .fabMenuContextual {
   width: min(304px, calc(100vw - 32px));
@@ -1445,7 +1369,7 @@
   background: var(--glass-3);
 
   z-index: 299;
-  animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
+  animation: buhayBackdropIn var(--motion-duration) var(--motion-ease-out) both;
 }
 .quickAddLayer {
   position: fixed;
@@ -1475,7 +1399,7 @@
   /* box-shadow flattened */
 
   pointer-events: auto;
-  animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
+  animation: buhaySheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
 }
 .quickAddSheet > * {
   min-width: 0;
@@ -1550,17 +1474,17 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes takdaBackdropIn {
+@keyframes buhayBackdropIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes takdaFloatIn {
+@keyframes buhayFloatIn {
   from { opacity: 0; transform: translateY(10px) scale(0.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes takdaSheetUp {
+@keyframes buhaySheetUp {
   from { opacity: 0; transform: translateY(22px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
@@ -1568,8 +1492,7 @@
 @media (hover: hover) and (pointer: fine) {
   .sidebarGuide:hover,
   .sidebarDeckCard:hover,
-  .userCard:hover,
-  .financeGroupHero:hover {
+  .userCard:hover {
     transform: translateY(-3px) scale(1.015);
     border-color: var(--accent);
     /* box-shadow flattened */
@@ -1612,46 +1535,6 @@
     -webkit-overflow-scrolling: touch;
     position: relative !important;
     z-index: 1 !important;
-  }
-  .financeGroupPage {
-    gap: 12px;
-  }
-  .financeGroupHero {
-    display: block;
-    margin: 8px 12px 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-  .financeGroupSwitch {
-    display: flex;
-    gap: 6px;
-    margin: 2px -2px 0;
-    padding: 0 2px 2px;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    align-content: unset;
-  }
-  .financeGroupSwitch::-webkit-scrollbar {
-    display: none;
-  }
-  .financeGroupTab {
-    min-width: max-content;
-    min-height: 42px;
-    padding: 10px 14px;
-    border-radius: 16px;
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    white-space: nowrap;
-  }
-  .financeGroupTab strong {
-    font-size: 12px;
-    line-height: 1;
-  }
-  .financeGroupTab span {
-    display: none;
   }
   .mainCalendar {
     display: flex;
@@ -1967,7 +1850,7 @@
     border: none;
     z-index: 98;
 
-    animation: takdaBackdropIn var(--motion-duration) var(--motion-ease-out) both;
+    animation: buhayBackdropIn var(--motion-duration) var(--motion-ease-out) both;
   }
   .mobileNavSheet {
     display: flex;
@@ -1984,7 +1867,7 @@
     background: var(--surface);
     /* box-shadow flattened */
 
-    animation: takdaSheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
+    animation: buhaySheetUp var(--motion-duration-slow) var(--motion-ease-out) both;
   }
   .mobileNavSheetHandle {
     width: 42px;
@@ -2163,7 +2046,7 @@
   text-transform: uppercase;
 }
 
-/* Takda Today Strip Header Dashboard */
+/* Buhay Today Strip Header Dashboard */
 .todayStrip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

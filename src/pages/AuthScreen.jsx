@@ -106,7 +106,7 @@ export default function AuthScreen() {
     if (!form.name || !form.email || !form.password) return setError('Enter your name, email, and password.')
     if (form.password !== form.confirm) return setError('Passwords do not match.')
     if (form.password.length < 6) return setError('Use at least 6 characters for your password.')
-    if (!['BUHAY-BETA', 'BUHAY2026', 'TAKDA'].includes((form.inviteCode || '').trim().toUpperCase())) {
+    if (!['BUHAY-BETA', 'BUHAY2026'].includes((form.inviteCode || '').trim().toUpperCase())) {
       return setError('Invalid access code. Use BUHAY-BETA or BUHAY2026.')
     }
     setLoading(true); setError(''); setSuccess('')
@@ -181,17 +181,17 @@ export default function AuthScreen() {
               <strong>{tab === 'login' ? 'Continue your runway' : 'Set your baseline'}</strong>
             </div>
             <div className={styles.previewSpaceList}>
-              <div className={`${styles.previewSpace} ${styles.previewSpaceTakda}`}>
+              <div className={`${styles.previewSpace} ${styles.previewSpaceBuhay}`}>
                 <span>30-Day Cashflow</span>
                 <strong>Predict Every Balance Dip</strong>
                 <em>Know your exact liquidity before bills arrive</em>
               </div>
-              <div className={`${styles.previewSpace} ${styles.previewSpaceTakda}`}>
+              <div className={`${styles.previewSpace} ${styles.previewSpaceBuhay}`}>
                 <span>Multi-Account Radar</span>
                 <strong>Unified Liquidity & Net Worth</strong>
                 <em>Cash, Bank, GCash, Maya, and Crypto</em>
               </div>
-              <div className={`${styles.previewSpace} ${styles.previewSpaceTakda}`}>
+              <div className={`${styles.previewSpace} ${styles.previewSpaceBuhay}`}>
                 <span>Smart Commitments</span>
                 <strong>Fixed Bills & Safe Daily Spend</strong>
                 <em>Paced budget limits with zero overdrafts</em>

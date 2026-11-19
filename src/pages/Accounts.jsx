@@ -10,7 +10,7 @@ import {
   fsUpdate,
 } from '../lib/firestore'
 import { getAccountSignedBalance, shouldAffectCurrentAccountBalance } from '../lib/finance'
-import { getTakdaTotalBalanceNow } from '../lib/balanceSystem'
+import { getBuhayTotalBalanceNow } from '../lib/balanceSystem'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import { displayValue, fmt, maskMoney, today, validateAmount } from '../lib/utils'
 import { getCachedPrices } from '../lib/crypto'
@@ -357,7 +357,7 @@ export default function Accounts({ user, data, profile = {}, symbol, privacyMode
   }
 
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
-  const totalBalance = getTakdaTotalBalanceNow(allAccounts, data.debts || [])
+  const totalBalance = getBuhayTotalBalanceNow(allAccounts, data.debts || [])
 
   const liquidTotal = accounts
     .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))

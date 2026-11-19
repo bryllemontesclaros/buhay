@@ -9,7 +9,7 @@ import { getVirtualBills } from '../lib/bills'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import Bills from './Bills'
 
-const RECURRING_TABS = new Set(['bills', 'subscriptions', 'income'])
+const RECURRING_TABS = new Set(['expenses', 'bills', 'subscriptions', 'income'])
 
 function getMonthlyEquivalent(amount, freq = 'monthly') {
   const numericAmount = Number(amount) || 0
@@ -36,8 +36,11 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   
   // Default to bills tab if arriving via a bill payment deep-link, otherwise check localStorage or default to bills
-  const requestedTab = RECURRING_TABS.has(subTab) ? subTab : ''
-  const initialTab = requestedTab || (billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills'))
+  const requestedTab = RECURRING_TABS.has(subTab)
+    ? (subTab === 'income' ? 'income' : 'expenses')
+    : ''
+  const storedTab = localStorage.getItem('buhay_recurring_tab')
+  const initialTab = requestedTab || (billPaymentTarget ? 'expenses' : (storedTab === 'income' ? 'income' : 'expenses'))
   const [activeTab, setActiveTab] = useState(initialTab)
 
   useEffect(() => {
@@ -47,11 +50,11 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
   const handleTabChange = (tab) => {
     playTick()
     setActiveTab(tab)
-    localStorage.setItem('takda_recurring_tab', tab)
+    localStorage.setItem('buhay_recurring_tab', tab === 'income' ? 'income' : 'expenses')
   }
 
   // --- Aggregate Recurring Transactions ---
-  const { calendarBills, subscriptions, recurringIncome, totals, dueThisWeek } = useMemo(() => {
+  const { scheduledExpenses, recurringIncome, totals, dueThisWeek } = useMemo(() => {
     const allTx = [...(data?.income || []), ...(data?.expenses || [])]
     const chains = {}
     
@@ -65,7 +68,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
     Object.values(chains).forEach(chain => {
       chain.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
       const latest = chain[0]
-      if (latest && latest.recur) {
+      if (latest && latest.recur && latest.active !== false && latest.paused !== true) {
         active.push(latest)
       }
     })
@@ -84,7 +87,8 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
         incomeMonthly += monthlyEquiv
       } else {
         obligationsMonthly += monthlyEquiv
-        if (tx.cat === 'Bills' && tx.subcat !== 'Subscriptions') {
+        const isBill = tx.isBill === true || (tx.cat === 'Bills' && tx.subcat !== 'Subscriptions')
+        if (isBill) {
           cBills.push(tx)
         } else {
           subs.push(tx)
@@ -113,8 +117,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
     rIncome.sort(sortByAmount)
     
     return { 
-      calendarBills: cBills, 
-      subscriptions: subs, 
+      scheduledExpenses: subs,
       recurringIncome: rIncome,
       totals: {
         obligations: obligationsMonthly,
@@ -203,7 +206,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
   // Add Recurring Modal State
   const [showAddModal, setShowAddModal] = useState(false)
   const [addForm, setAddForm] = useState({
-    kind: 'subscription', // 'bill' | 'subscription' | 'income'
+    kind: 'expense', // 'bill' | 'expense' | 'income'
     name: '',
     amount: '',
     freq: 'monthly',
@@ -212,7 +215,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
   })
   const [savingAdd, setSavingAdd] = useState(false)
 
-  function openAddModal(defaultKind = 'subscription') {
+  function openAddModal(defaultKind = 'expense') {
     playTick()
     setAddForm({
       kind: defaultKind,
@@ -252,26 +255,36 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
         }
         await fsAdd(user.uid, 'bills', payload)
         notifyApp({ title: 'Bill added', message: `${payload.name} added to your recurring bills.`, tone: 'success' })
-      } else if (addForm.kind === 'subscription') {
+      } else if (addForm.kind === 'expense' || addForm.kind === 'subscription') {
         const payload = {
           desc: addForm.name.trim(),
           amount: numericAmount,
           recur: addForm.freq,
-          cat: 'Bills',
-          subcat: 'Subscriptions',
+          cat: '',
+          subcat: '',
+          isBill: false,
+          active: true,
+          paused: false,
+          startDate: today(),
+          endDate: '',
           date: today(),
           type: 'expense',
           accountId: addForm.accountId || '',
         }
         await fsAdd(user.uid, 'expenses', payload)
-        notifyApp({ title: 'Subscription added', message: `${payload.desc} added to active subscriptions.`, tone: 'success' })
+        notifyApp({ title: 'Recurring expense added', message: `${payload.desc} was added to recurring expenses.`, tone: 'success' })
       } else {
         const payload = {
           desc: addForm.name.trim(),
           amount: numericAmount,
           recur: addForm.freq,
-          cat: 'Income',
-          subcat: 'Salary',
+          cat: '',
+          subcat: '',
+          isBill: false,
+          active: true,
+          paused: false,
+          startDate: today(),
+          endDate: '',
           date: today(),
           type: 'income',
           accountId: addForm.accountId || '',
@@ -303,7 +316,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
         <div className={sStyles.rowTop}>
           <div className={sStyles.rowLeft}>
             <div className={`${sStyles.iconWrap} ${isIncome ? sStyles.iconIncome : sStyles.iconExpense}`}>
-              {isIncome ? '💰' : tx.subcat === 'Subscriptions' ? '🍿' : '🔄'}
+              {isIncome ? '💰' : '🔄'}
             </div>
             <div className={sStyles.rowInfo}>
               <h4 className={sStyles.rowTitle} title={tx.desc || tx.cat}>{tx.desc || tx.cat}</h4>
@@ -364,9 +377,9 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             <button
               type="button"
               className={sStyles.btnHeroPrimary}
-              onClick={() => openAddModal(activeTab === 'income' ? 'income' : activeTab === 'subscriptions' ? 'subscription' : 'bill')}
+              onClick={() => openAddModal(activeTab === 'income' ? 'income' : 'expense')}
             >
-              + Add Recurring
+              + Add rule
             </button>
           </div>
         </div>
@@ -421,22 +434,12 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
           <button
             type="button"
             role="tab"
-            aria-selected={activeTab === 'bills'}
-            className={`${sStyles.tab} ${activeTab === 'bills' ? sStyles.tabActive : ''}`}
-            onClick={() => handleTabChange('bills')}
+            aria-selected={activeTab === 'expenses'}
+            className={`${sStyles.tab} ${activeTab === 'expenses' ? sStyles.tabActive : ''}`}
+            onClick={() => handleTabChange('expenses')}
           >
-            📄 Bills & Utilities
-            <span className={sStyles.tabCount}>{totalBillsCount}</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'subscriptions'}
-            className={`${sStyles.tab} ${activeTab === 'subscriptions' ? sStyles.tabActive : ''}`}
-            onClick={() => handleTabChange('subscriptions')}
-          >
-            🔄 Recurring Expenses
-            <span className={sStyles.tabCount}>{subscriptions.length}</span>
+            📄 Expenses & bills
+            <span className={sStyles.tabCount}>{totalBillsCount + scheduledExpenses.length}</span>
           </button>
           <button
             type="button"
@@ -452,41 +455,35 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
       </div>
 
       {/* TAB CONTENT */}
-      {activeTab === 'bills' && (
-        <div className={sStyles.billsWrapper}>
-          <Bills user={user} data={data} symbol={s} privacyMode={privacyMode} billPaymentTarget={billPaymentTarget} embedded={true} />
-          
-        </div>
-      )}
-
-      {activeTab === 'subscriptions' && (
+      {activeTab === 'expenses' && (
+        <>
+          <div className={sStyles.billsWrapper}>
+            <Bills user={user} data={data} symbol={s} privacyMode={privacyMode} billPaymentTarget={billPaymentTarget} embedded={true} />
+          </div>
         <div>
           <div className={sStyles.groupHeader}>
             <div>
-              <h3 className={sStyles.groupTitle}>Recurring Expenses</h3>
-              <div className={sStyles.groupSub}>Subscriptions, services, and other scheduled spending</div>
+              <h3 className={sStyles.groupTitle}>Scheduled expenses</h3>
+              <div className={sStyles.groupSub}>Recurring spending that is not a bill</div>
             </div>
-            <button
-              type="button"
-              className={sStyles.btnAddCompact}
-              onClick={() => openAddModal('subscription')}
-            >
-              + Add Expense
-            </button>
+            <div className={sStyles.rowActions}>
+              <button type="button" className={sStyles.btnAddCompact} onClick={() => openAddModal('bill')}>+ Add bill</button>
+              <button type="button" className={sStyles.btnAddCompact} onClick={() => openAddModal('expense')}>+ Add expense</button>
+            </div>
           </div>
           
           <div className={sStyles.listLayout}>
-            {subscriptions.length > 0 ? (
-              subscriptions.map(renderRowItem)
+            {scheduledExpenses.length > 0 ? (
+              scheduledExpenses.map(renderRowItem)
             ) : (
               <div className={sStyles.emptyState}>
                 <div className={sStyles.emptyStateIcon}>🍿</div>
                 <h4>No recurring expenses</h4>
-                <p>Track your Spotify, Netflix, gym, or software subscriptions to automate your monthly runway.</p>
+                <p>Add rent, utilities, memberships, or any other scheduled expense to keep your future cashflow accurate.</p>
                 <button
                   type="button"
                   className={sStyles.emptyStateBtn}
-                  onClick={() => openAddModal('subscription')}
+                  onClick={() => openAddModal('expense')}
                 >
                   + Add Your First Expense
                 </button>
@@ -494,6 +491,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             )}
           </div>
         </div>
+        </>
       )}
 
       {activeTab === 'income' && (
@@ -660,7 +658,7 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
               <div>
                 <div className={sStyles.modalEyebrow}>Edit Rule</div>
                 <h3 className={sStyles.modalTitle}>
-                  Edit {editingTx.type === 'income' ? 'Income' : 'Subscription'}
+                  Edit {editingTx.type === 'income' ? 'Income' : 'Recurring expense'}
                 </h3>
               </div>
               <button

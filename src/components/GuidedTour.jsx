@@ -2,23 +2,23 @@ import { useState, useEffect, useRef } from 'react'
 import styles from './GuidedTour.module.css'
 
 const TOUR_CONFIGS = {
-  takda: {
+  buhay: {
     accentColor: 'var(--accent)',
     steps: [
       {
-        target: '#takda-calendar',
+        target: '#buhay-calendar',
         title: 'Daily Cashflow & Log',
         body: 'Welcome to Buhay! This interactive calendar shows daily income/expense dots. Tap any date to add a record or view daily entries.',
         tab: 'calendar'
       },
       {
-        target: '#takda-savings-summary',
+        target: '#buhay-savings-summary',
         title: 'Savings Targets',
         body: 'Track your savings goals, set target dates, and simulate your monthly deposits.',
         tab: 'savings'
       },
       {
-        target: '#takda-debts-summary',
+        target: '#buhay-debts-summary',
         title: 'Debt & Interest Tracker',
         body: 'Tracks credit cards, interest, repayment milestones, and transaction logs in one place.',
         tab: 'debts'

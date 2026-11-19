@@ -55,7 +55,7 @@
   height: 100%;
 }
 
-.space_takda { border-color: color-mix(in srgb, #10b981 30%, var(--border2)); }
+.space_buhay { border-color: color-mix(in srgb, #10b981 30%, var(--border2)); }
 
 .icon {
   color: var(--text3);

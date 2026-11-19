@@ -741,7 +741,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className={styles.bentoCardDesc}>
-                Keep recurring bills and subscriptions visible with due states, schedules, and mark-paid records.
+                Keep recurring expenses and bills visible with due states, schedules, forecasts, and mark-paid records.
               </p>
               <BillsWidget />
             </div>

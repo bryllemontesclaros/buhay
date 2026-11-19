@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const ThemeContext = createContext()
 
-const THEME_KEY = 'takda_theme'
+const THEME_KEY = 'buhay_theme'
 const LEGACY_THEME_KEY = 'sentimo_theme'
 
 const safeSet = (key, val) => { try { localStorage.setItem(key, val) } catch {} }

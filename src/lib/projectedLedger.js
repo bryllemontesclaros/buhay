@@ -195,7 +195,9 @@ export function getProjectedLedger({
   months.forEach(({ year, month }) => {
     const recurring = getProjectedTransactions(income, expenses, year, month)
     recurring.forEach(tx => {
-      if (tx.type === 'expense' && String(tx.cat || '').toLowerCase() === 'bills') return
+      const isBill = tx.isBill === true
+        || (String(tx.cat || '').toLowerCase() === 'bills' && String(tx.subcat || '').toLowerCase() !== 'subscriptions')
+      if (tx.type === 'expense' && isBill) return
       const date = normalizeDate(tx.date)
       const identity = getScheduleIdentity(tx, date)
       if (!date || !identity || actualIdentitySet.has(identity) || projectedIdentitySet.has(identity)) return

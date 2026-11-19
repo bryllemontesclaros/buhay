@@ -73,8 +73,13 @@ export function isRecurringRecordedOffDueDate(tx = {}) {
 
 export function getRecurringDates(tx, targetYear, targetMonth) {
   if (!tx.recur || tx.recur === '') return []
+  if (tx.active === false || tx.paused === true) return []
 
-  const originDate = new Date(tx.date)
+  const startDate = normalizeDate(tx.startDate || tx.date)
+  const endDate = normalizeDate(tx.endDate)
+  if (!startDate) return []
+
+  const originDate = new Date(`${startDate}T00:00:00`)
   if (isNaN(originDate)) return []
 
   const originYear = originDate.getFullYear()
@@ -89,8 +94,8 @@ export function getRecurringDates(tx, targetYear, targetMonth) {
     if (year !== targetYear || month !== targetMonth) return
     const d = Math.min(day, new Date(year, month + 1, 0).getDate())
     const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
-    // Must be on or after origin date
-    if (ds >= tx.date) results.push(ds)
+    // Must be on or after the schedule start and before an optional end date.
+    if (ds >= startDate && (!endDate || ds <= endDate)) results.push(ds)
   }
 
   switch (tx.recur) {
@@ -109,7 +114,8 @@ export function getRecurringDates(tx, targetYear, targetMonth) {
       }
       break
     }
-    case 'bi-weekly': {
+    case 'bi-weekly':
+    case 'biweekly': {
       const originDow = originDate.getDay()
       // Find first occurrence in target month that matches DOW
       // Then every 14 days
@@ -158,6 +164,20 @@ export function getRecurringDates(tx, targetYear, targetMonth) {
       if (targetIsAfterOrigin) {
         pushIfValid(targetYear, targetMonth, originDay)
       } else if (targetYear === originYear && targetMonth === originMonth) {
+        pushIfValid(targetYear, targetMonth, originDay)
+      }
+      break
+    }
+    case 'quarterly': {
+      const monthDiff = (targetYear - originYear) * 12 + (targetMonth - originMonth)
+      if (monthDiff >= 0 && monthDiff % 3 === 0) {
+        pushIfValid(targetYear, targetMonth, originDay)
+      }
+      break
+    }
+    case 'yearly':
+    case 'annually': {
+      if (targetMonth === originMonth && targetYear >= originYear) {
         pushIfValid(targetYear, targetMonth, originDay)
       }
       break

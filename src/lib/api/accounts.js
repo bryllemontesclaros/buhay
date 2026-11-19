@@ -190,7 +190,7 @@ async function fsLogBalanceOverride(uid, entry = {}) {
   if (!uid) return
   const payload = {
     action: entry.action || 'set',
-    scope: entry.scope || 'takda-closing-balance',
+    scope: entry.scope || 'buhay-closing-balance',
     source: entry.source || 'calendar',
     dateKey: entry.dateKey || '',
     amount: Number(entry.amount) || 0,

@@ -5,8 +5,8 @@ Phase 1 freezes the current behavior before any screen is switched to the new pr
 ## Current product boundary
 
 - Buhay is currently a finance-only app.
-- The active primary workflow is Calendar, Accounts, Recurring, Budgets, and Insights.
-- Lakas and Tala are no longer active product modules. Older documentation may still mention them.
+- The active primary workflow is Calendar, Accounts, Recurring, and History. Planning and optional analysis tools stay available from More.
+- Buhay is a single finance product with no multi-space workspace model.
 - Crypto remains optional and uses manual portfolio pricing.
 
 ## Current source collections
@@ -52,4 +52,3 @@ Before switching any screen:
 3. Old and new totals must be compared for the same account and date range.
 4. A mismatch must be visible in development logs or tests.
 5. Each later phase must be a separate commit and deploy.
-

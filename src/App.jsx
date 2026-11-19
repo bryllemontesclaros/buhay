@@ -32,7 +32,7 @@ const Onboarding = safeLazy(() => import('./pages/Onboarding'))
 const PrivacyPolicy = safeLazy(() => import('./pages/PrivacyPolicy'))
 const TermsPage = safeLazy(() => import('./pages/TermsPage'))
 
-const AUTH_FLASH_KEY = 'takda_auth_flash'
+const AUTH_FLASH_KEY = 'buhay_auth_flash'
 
 /**
  * Consumes the temporary authentication message/alert flash data.

@@ -1,4 +1,4 @@
-// Buhay / Takda Service Worker (Network-First, Auto-Purge Old Caches)
+// Buhay / Buhay Service Worker (Network-First, Auto-Purge Old Caches)
 self.addEventListener('install', e => {
   self.skipWaiting()
 })

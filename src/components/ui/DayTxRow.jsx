@@ -1,5 +1,5 @@
 import calStyles from '../../pages/Calendar.module.css'
-import { getTakdaTransactionLifecycle } from '../../lib/finance'
+import { getBuhayTransactionLifecycle } from '../../lib/finance'
 import { fmt, today } from '../../lib/utils'
 
 export function DayTxRow({
@@ -20,7 +20,7 @@ export function DayTxRow({
 }) {
   if (!t) return null
   const isIncome = t?.type === 'income'
-  const lifecycle = getTakdaTransactionLifecycle(t || {}, today())
+  const lifecycle = getBuhayTransactionLifecycle(t || {}, today())
   const isPaid = lifecycle.paid
   const isProjected = lifecycle.projected
   const isAutoPaidBill = Boolean(

@@ -2,14 +2,14 @@
 
 > Bawat araw, mas malinaw. Every day, clearer.
 
-Buhay is a personal finance tracker for everyday money clarity. It is the current home of Takda: a React + Firebase app for tracking balances, income, expenses, bills, budgets, savings, debts, cashflow, and crypto holdings in one installable web app.
+Buhay is a finance-only React + Firebase app for recording money activity, tracking accounts, planning recurring income and expenses, and projecting future cashflow in one installable web app.
 
 ## What Buhay Includes Today
 
 - Calendar-first finance tracking with daily balances and selected-day details.
 - Accounts for cash, bank, e-wallet, credit card, investment, and other balances.
 - Income and expense logging with categories, subcategories, notes, account links, recurrence, and quick add flows.
-- Recurring bills, subscriptions, due/overdue states, and mark-paid flows that can create real expense records.
+- Recurring expenses and bills, due/overdue states, and mark-paid flows that can create real expense records.
 - Monthly budgets with pacing, category limits, warnings, and recent outflow review.
 - Savings goals with targets, contributions, progress, and summary views.
 - Debt tracking for credit cards, loans, payment targets, and payoff planning.
@@ -21,7 +21,7 @@ Buhay is a personal finance tracker for everyday money clarity. It is the curren
 
 - **Calendar**: day-by-day money view, daily closing balances, projected recurring items, and quick finance actions.
 - **Accounts**: account balances, transfers, debts, and crypto holdings.
-- **Recurring**: recurring income, bills, subscriptions, and scheduled money movement.
+- **Recurring**: recurring income, scheduled expenses, bills, and scheduled money movement.
 - **Budgets**: monthly budget status, category limits, and budget pacing.
 - **Insights**: history, breakdowns, financial statements, trends, and reports.
 - **Settings**: profile, currency, notifications, privacy mode, account security, data export/import, legal links, feedback, and account deletion.
@@ -51,7 +51,7 @@ Buhay is a personal finance tracker for everyday money clarity. It is the curren
 - [Buhay balance system spec](docs/buhay-balance-system-spec.md)
 - [Buhay balance QA checklist](docs/buhay-balance-qa-checklist.md)
 
-Some older docs may still mention removed Lakas or Tala modules. The active app code is currently finance-focused.
+The app is intentionally finance-only. Bills are recurring expense schedules, and future schedules are calculated by the shared projected ledger without requiring a payment action.
 
 ## Getting Started
 
@@ -126,7 +126,7 @@ Manual QA:
 - Onboarding: currency, opening balances, recurring bills, and bill pay-from account.
 - Calendar: month navigation, selected-day detail, projected recurring items, quick add, and daily balance display.
 - Accounts: create/edit accounts, transfers, balance adjustment, debts, and crypto holdings.
-- Recurring: recurring income, recurring expenses, bills, subscriptions, settlement behavior, and duplicate-prevention checks.
+- Recurring: recurring income, recurring expenses, bills, settlement behavior, and duplicate-prevention checks.
 - Budgets: monthly budget setup, category limits, warning states, and recent budget outflows.
 - Savings: create goals, update contributions, edit targets, and verify summaries.
 - History and insights: filters, search, inline editing, category breakdowns, reports, and financial statement export/print.
@@ -159,8 +159,9 @@ users/{uid}/
 - Auth lives at `/login`.
 - The signed-in app lives at `/app`.
 - The whole product is named Buhay.
-- The finance system inside Buhay is still named Takda in parts of the code and documentation.
-- Lakas and Tala were removed from the active app. Any remaining mentions in older docs or assets are historical and should not be treated as current product scope.
+- The visible app has five primary areas: Calendar, Accounts, Recurring, History, and Settings.
+- Budgets, savings goals, debt, crypto, insights, and reports are optional tools available from More.
+- Crypto prices are entered manually; Buhay does not depend on a crypto pricing API.
 - Google Sign-In is not enabled in the active auth screen.
 - Build verification requires Node/npm.
 

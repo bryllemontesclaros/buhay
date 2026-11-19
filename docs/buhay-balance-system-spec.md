@@ -95,17 +95,17 @@ Recommended user-visible state machine (labels can differ, the logic must match)
 ## Known Implementation Anchors (Code References)
 
 - Firestore transaction writes and account adjustments:
-  - [firestore.js](/Users/bryllemontesclaros/Documents/New%20project/takda_patch/src/lib/firestore.js)
+  - [firestore.js](/Users/bryllemontesclaros/Documents/New%20project/buhay_patch/src/lib/firestore.js)
     - `fsAddTransaction`, `fsUpdateTransaction`, `fsDeleteTransaction`
     - `fsSyncDueLinkedTransactions`
 
 - Ledger math and balance-as-of calculations:
-  - [finance.js](/Users/bryllemontesclaros/Documents/New%20project/takda_patch/src/lib/finance.js)
+  - [finance.js](/Users/bryllemontesclaros/Documents/New%20project/buhay_patch/src/lib/finance.js)
     - `isTransactionPaid`, `getCurrentBalance`
     - `getBalanceAtDateWithOverrides`, `getMonthForecast`
 
 - Global loading / background reconciliation behavior:
-  - [AppShell.jsx](/Users/bryllemontesclaros/Documents/New%20project/takda_patch/src/pages/AppShell.jsx)
+  - [AppShell.jsx](/Users/bryllemontesclaros/Documents/New%20project/buhay_patch/src/pages/AppShell.jsx)
     - Realtime listeners
     - `fsSyncDueLinkedTransactions` effect
 

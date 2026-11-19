@@ -1,92 +1,69 @@
 # Buhay System Rules
 
-This is the plain-language source of truth for how Buhay behaves as an information system.
+This document describes the finance-only behavior of Buhay.
 
-## 1. Platform Rules
+## 1. Account Rules
 
-- A Buhay account is one identity across Takda, Lakas, and Tala.
-- Authentication, privacy controls, export, backup/restore, and deletion belong to the shared platform layer.
-- Each space has different domain behavior, but they should feel like one product and follow the same save, edit, delete, and error-recovery patterns.
+- A user owns and controls their own finance records.
+- Account balances represent actual current balances.
+- Cash, bank, e-wallet, and savings accounts use positive available balances.
+- Credit-card balances represent outstanding debt.
+- Account adjustments are recorded and auditable.
+- Transfers change two accounts but are not income or expenses.
 
-## 2. Domain Rules
+## 2. Transaction Rules
 
-### Takda
+- A posted transaction is an actual recorded event.
+- A projected schedule is a forecast-only event.
+- A future schedule never changes the current actual balance.
+- An expense decreases the applicable account when posted.
+- Income increases the applicable account when posted.
+- A transaction without an account can remain ledger-only.
 
-- Takda is a ledger-and-balance system, not just a list of transactions.
-- The calendar shows a date-based closing balance, not only the sum of visible rows.
-- Current balance, historical balance, and projected balance are different values and must stay clearly separated.
-- Paid status controls whether a real transaction affects balances.
-- Account linking controls where a paid transaction applies.
-- Manual balance overrides are trusted anchors and take precedence over calculated day totals for that day.
+## 3. Recurring Rules
 
-### Lakas
+- Every active schedule creates virtual future occurrences.
+- A schedule requires a name, amount, type, frequency, and start date.
+- A schedule may have an account, end date, and active/paused status.
+- Supported frequencies include daily, weekly, biweekly, monthly, quarterly, and yearly.
+- Bills are expense schedules with due-date metadata.
+- One schedule and one date produce one occurrence.
 
-- Lakas is a training-log system first.
-- Sessions, sets, reps, and workout records are the primary truth, not motivational prompts.
-- Guidance should help users start, but real logged workout data is the system of record.
+## 4. Payment Rules
 
-### Tala
+- A scheduled occurrence is included in future projections automatically.
+- Recording payment creates one posted expense transaction.
+- The posted transaction links to the source schedule and occurrence key.
+- The projected occurrence is then replaced by the actual transaction.
+- Repeating the payment action is safe and must not create another expense.
 
-- Tala is a reflection-and-life-tracking system.
-- Journal entries, check-ins, moods, tasks, and goals are separate record types even when they appear in one calm workflow.
-- Tala records reflection data; it does not make medical or mental-health claims.
+## 5. Balance Rules
 
-## 3. Recurrence Rules (Takda)
+```text
+Actual balance = recorded income - recorded expenses + account adjustments
+Projected balance = actual balance + future scheduled items
+```
 
-- A recurring rule creates projected cycles.
-- A projected cycle is not yet a real transaction.
-- A recurring cycle is identified by:
-  - recurrence source
-  - occurrence date
-- Settling a recurring cycle creates a real entry linked back to the original recurrence via:
-  - `recurrenceSourceId`
-  - `recurrenceOccurrenceKey`
-- A recurring cycle is settled if a non-projected transaction exists with the same source and occurrence key.
-- A cycle can be settled on:
-  - the due date
-  - an earlier date
-  - a later chosen date
-- The actual payment/record date and the scheduled cycle date are allowed to differ.
+For future dates, the calendar displays projected balance. For past dates, it displays actual balance. Today may include valid same-day scheduled items in the projection.
 
-## 4. Transaction State Rules (Takda)
+## 6. UI Rules
 
-- Unpaid transactions never affect balances.
-- Paid transactions can affect balances if they are due and linked correctly.
-- Linked transactions require an account.
-- If an account is missing, the transaction may remain ledger-only/reference-only.
-- Deleting a real recurring settlement may allow the forecast cycle to appear again.
+The UI must identify each item as:
 
-Canonical lifecycle states:
+- Actual
+- Scheduled
+- Projected
+- Paid
+- Unpaid
 
-- `forecast`
-- `paid`
-- `unpaid`
+The UI must not show the same scheduled bill in both a bill section and a recurring-expense section.
 
-Canonical balance-impact states:
+The UI must not require a payment action to calculate future balances.
 
-- `none`
-- `in-account`
-- `due-to-sync`
-- `applies-on-date`
-- `linked`
-- `reference-only`
-- `ledger-only`
+## 7. Data Safety Rules
 
-## 5. UI Truthfulness Rules
-
-- The UI should explain whether something is:
-  - real
-  - projected
-  - paid
-  - unpaid
-  - linked
-  - applied
-- Labels should favor user meaning over internal wording.
-  - Example: `Pay now` is clearer than `Log projected`
-- If a screen summarizes balances, it should make clear whether unpaid or projected items are excluded.
-
-## 6. Operational Rules
-
-- Screenshots and marketing assets must be bundled or committed with the code they depend on.
-- Shared domain logic should live in shared helpers, not be reimplemented in multiple page files.
-- Domain rules should be documented whenever balance, recurrence, or account behavior changes.
+- Do not delete existing financial records during feature changes.
+- Preserve legacy fields while adapters are in use.
+- Use deterministic occurrence keys for idempotent writes.
+- Reverse account effects when actual transactions are edited or deleted.
+- Keep authentication and owner-scoped database rules intact.

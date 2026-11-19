@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { ThemeProvider } from './lib/theme.jsx'
+import { migrateLegacyLocalStorage } from './lib/storageMigration'
 import './index.css'
+
+migrateLegacyLocalStorage()
 
 if (typeof window !== 'undefined') {
   const APP_BUILD_VER = typeof __COMMIT_HASH__ !== 'undefined' && __COMMIT_HASH__ ? __COMMIT_HASH__ : '2026-09-16-v2'
   if ('caches' in window) {
-    if (localStorage.getItem('takda_build_ver') !== APP_BUILD_VER) {
-      localStorage.setItem('takda_build_ver', APP_BUILD_VER)
+    if (localStorage.getItem('buhay_build_ver') !== APP_BUILD_VER) {
+      localStorage.setItem('buhay_build_ver', APP_BUILD_VER)
       caches.keys().then(keys => {
         keys.forEach(k => caches.delete(k))
       })

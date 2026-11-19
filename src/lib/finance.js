@@ -12,13 +12,13 @@ export function getPaidTransactions(list = []) {
   return list.filter(isTransactionPaid)
 }
 
-export const TAKDA_TRANSACTION_STATUS = Object.freeze({
+export const BUHAY_TRANSACTION_STATUS = Object.freeze({
   FORECAST: 'forecast',
   PAID: 'paid',
   UNPAID: 'unpaid',
 })
 
-export const TAKDA_BALANCE_IMPACT = Object.freeze({
+export const BUHAY_BALANCE_IMPACT = Object.freeze({
   NONE: 'none',
   IN_ACCOUNT: 'in-account',
   DUE_TO_SYNC: 'due-to-sync',
@@ -48,37 +48,37 @@ export function getTransactionBalanceState(tx = {}, referenceDate = today()) {
   }
 }
 
-export function getTakdaTransactionLifecycle(tx = {}, referenceDate = today()) {
+export function getBuhayTransactionLifecycle(tx = {}, referenceDate = today()) {
   const projected = Boolean(tx?._projected)
   const paid = isTransactionPaid(tx)
   const balanceState = projected ? null : getTransactionBalanceState(tx, referenceDate)
 
-  let balanceImpactKey = TAKDA_BALANCE_IMPACT.NONE
+  let balanceImpactKey = BUHAY_BALANCE_IMPACT.NONE
   let balanceImpactLabel = ''
 
   if (!projected) {
     if (!balanceState?.paid) {
-      balanceImpactKey = TAKDA_BALANCE_IMPACT.NONE
+      balanceImpactKey = BUHAY_BALANCE_IMPACT.NONE
       balanceImpactLabel = 'No balance impact'
     } else if (balanceState.linked) {
       if (balanceState.applied) {
-        balanceImpactKey = TAKDA_BALANCE_IMPACT.IN_ACCOUNT
+        balanceImpactKey = BUHAY_BALANCE_IMPACT.IN_ACCOUNT
         balanceImpactLabel = 'In account'
       } else if (balanceState.pendingApply) {
-        balanceImpactKey = TAKDA_BALANCE_IMPACT.DUE_TO_SYNC
+        balanceImpactKey = BUHAY_BALANCE_IMPACT.DUE_TO_SYNC
         balanceImpactLabel = 'Due to sync'
       } else if (balanceState.willApplyLater) {
-        balanceImpactKey = TAKDA_BALANCE_IMPACT.APPLIES_ON_DATE
+        balanceImpactKey = BUHAY_BALANCE_IMPACT.APPLIES_ON_DATE
         balanceImpactLabel = 'Applies on date'
       } else {
-        balanceImpactKey = TAKDA_BALANCE_IMPACT.LINKED
+        balanceImpactKey = BUHAY_BALANCE_IMPACT.LINKED
         balanceImpactLabel = 'Linked'
       }
     } else if (tx?.accountId) {
-      balanceImpactKey = TAKDA_BALANCE_IMPACT.REFERENCE_ONLY
+      balanceImpactKey = BUHAY_BALANCE_IMPACT.REFERENCE_ONLY
       balanceImpactLabel = 'Ref only'
     } else {
-      balanceImpactKey = TAKDA_BALANCE_IMPACT.LEDGER_ONLY
+      balanceImpactKey = BUHAY_BALANCE_IMPACT.LEDGER_ONLY
       balanceImpactLabel = 'Ledger only'
     }
   }
@@ -87,8 +87,8 @@ export function getTakdaTransactionLifecycle(tx = {}, referenceDate = today()) {
     projected,
     paid,
     statusKey: projected
-      ? TAKDA_TRANSACTION_STATUS.FORECAST
-      : (paid ? TAKDA_TRANSACTION_STATUS.PAID : TAKDA_TRANSACTION_STATUS.UNPAID),
+      ? BUHAY_TRANSACTION_STATUS.FORECAST
+      : (paid ? BUHAY_TRANSACTION_STATUS.PAID : BUHAY_TRANSACTION_STATUS.UNPAID),
     statusLabel: projected ? 'Forecast' : (paid ? 'Paid' : 'Unpaid'),
     balanceState,
     balanceImpactKey,
@@ -115,7 +115,7 @@ function toLedgerEntry(tx, sign, anchorDateStr) {
 }
 
 export function getAccountSignedBalance(account = {}) {
-  // Takda stores credit card balances as negative values in the accounts collection.
+  // Buhay stores credit card balances as negative values in the accounts collection.
   // So the signed balance is just the raw balance itself.
   return Number(account?.balance) || 0
 }
@@ -166,7 +166,7 @@ export function getProjectedCcCharges(accounts = [], income = [], expenses = [],
   return Math.max(0, netCcCharges)
 }
 
-export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null, income = [], expenses = []) {
+export function getBuhayTotalDebts(accounts = [], debts = [], targetDate = null, income = [], expenses = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const safeDebts = Array.isArray(debts) ? debts.filter(Boolean) : []
   const targetKey = targetDate ? normalizeDate(targetDate) : null
@@ -205,12 +205,12 @@ export function getTakdaTotalDebts(accounts = [], debts = [], targetDate = null,
   return standaloneDebtSum + creditCardAccountSum + unlinkedCcDebts + futureCcCharges
 }
 
-export function getTakdaTotalSavings(savings = []) {
+export function getBuhayTotalSavings(savings = []) {
   const safeSavings = Array.isArray(savings) ? savings.filter(Boolean) : []
   return sumBy(safeSavings, s => s.balance)
 }
 
-export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = null, savings = []) {
+export function getBuhayTotalAssets(accounts = [], holdings = [], livePrices = null, savings = []) {
   const safeAccounts = Array.isArray(accounts) ? accounts.filter(Boolean) : []
   const accountsSum = sumBy(
     safeAccounts.filter(acc => acc?.type !== 'Credit Card'),
@@ -253,13 +253,13 @@ export function getTakdaTotalAssets(accounts = [], holdings = [], livePrices = n
     return sum + (qty * livePriceInPhp)
   }, 0)
 
-  const savingsSum = getTakdaTotalSavings(savings)
+  const savingsSum = getBuhayTotalSavings(savings)
 
   return accountsSum + holdingsSum + savingsSum
 }
 
-export function getTakdaNetWorth(accounts = [], debts = [], savings = [], holdings = [], targetDate = null) {
-  return getTakdaTotalAssets(accounts, holdings, null, savings) - getTakdaTotalDebts(accounts, debts, targetDate)
+export function getBuhayNetWorth(accounts = [], debts = [], savings = [], holdings = [], targetDate = null) {
+  return getBuhayTotalAssets(accounts, holdings, null, savings) - getBuhayTotalDebts(accounts, debts, targetDate)
 }
 
 export function getCurrentBalance(accounts = [], debts = []) {

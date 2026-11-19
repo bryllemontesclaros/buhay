@@ -127,7 +127,7 @@
   margin-left: 0;
 }
 
-.companionAvatarTakda {
+.companionAvatarBuhay {
   background: linear-gradient(180deg, color-mix(in srgb, #16b88a 28%, white 10%), color-mix(in srgb, #16b88a 80%, black 20%));
 }
 
@@ -267,12 +267,12 @@
   font-style: normal;
 }
 
-.previewSpaceTakda {
+.previewSpaceBuhay {
   border-color: color-mix(in srgb, #16b88a 34%, var(--border));
   background: var(--surface);
 }
 
-.previewSpaceTakda span { color: #16b88a; }
+.previewSpaceBuhay span { color: #16b88a; }
 
 .previewDay {
   min-height: 76px;

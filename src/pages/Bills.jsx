@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { deleteField } from 'firebase/firestore'
-import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
+import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo, getVirtualBills } from '../lib/bills'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick, displayValue, maskMoney } from '../lib/utils'
@@ -88,7 +88,6 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
   const [paymentForm, setPaymentForm] = useState({ amount: '', date: today(), accountId: '' })
   const [paymentSaving, setPaymentSaving] = useState(false)
   const [showDrawer, setShowDrawer] = useState(false)
-  const [activeSubTab, setActiveSubTab] = useState('bills')
   const accounts = Array.isArray(data?.accounts) ? data.accounts : []
 
   // Lock background body scroll when drawer or payment modal is open
@@ -104,63 +103,6 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
       }
     }
   }, [showDrawer, paymentBill])
-
-  const activeSubscriptions = useMemo(() => {
-    const allTx = [...(data?.income || []), ...(data?.expenses || [])]
-    const chains = {}
-    
-    allTx.forEach(tx => {
-      const chainId = tx.recurrenceSourceId || tx._id
-      if (!chains[chainId]) chains[chainId] = []
-      chains[chainId].push(tx)
-    })
-    
-    const active = []
-    Object.values(chains).forEach(chain => {
-      chain.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-      const latest = chain[0]
-      if (latest.recur) {
-        active.push(latest)
-      }
-    })
-    
-    active.sort((a, b) => {
-      const aType = a.type === 'income' ? 1 : 0
-      const bType = b.type === 'income' ? 1 : 0
-      if (aType !== bType) return bType - aType
-      return b.amount - a.amount
-    })
-    return active
-  }, [data?.income, data?.expenses])
-
-  async function handleStopRecurrence(tx) {
-    playTick()
-    const confirmed = await confirmApp({
-      title: 'Stop Subscriptions?',
-      message: `Stop the recurring rule for ${tx.desc || tx.cat}? This won't delete past records, but the auto-engine will stop generating future cycles.`,
-      confirmLabel: 'Stop recurring',
-      cancelLabel: 'Keep active',
-      tone: 'danger',
-    })
-    if (!confirmed) return
-
-    try {
-      const col = tx.type === 'income' ? 'income' : 'expenses'
-      await fsUpdateTransaction(user.uid, col, tx, { recur: '' }, data.accounts)
-      notifyApp({
-        title: 'Subscription stopped',
-        message: `${tx.desc || tx.cat} will no longer recur.`,
-        tone: 'success'
-      })
-    } catch (err) {
-      console.error(err)
-      notifyApp({
-        title: 'Error',
-        message: 'Could not update recurrence right now.',
-        tone: 'error'
-      })
-    }
-  }
 
   const accountNameById = useMemo(() => {
     const map = new Map()
@@ -261,7 +203,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
       autoDeduct: Boolean(form.autoDeduct),
     }
 
-    if (freq === 'yearly') {
+    if (freq === 'quarterly' || freq === 'yearly') {
       payload.dueMonth = parseInt(form.dueMonth || '0', 10)
     }
 
@@ -497,108 +439,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
           </div>
         </div>
 
-        {!embedded && (
-          <div style={{ display: 'flex', gap: 12, margin: '20px 0 16px', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
-          <button
-            type="button"
-            style={{
-              background: activeSubTab === 'bills' ? 'var(--accent-glow)' : 'transparent',
-              color: activeSubTab === 'bills' ? 'var(--accent)' : 'var(--text2)',
-              border: activeSubTab === 'bills' ? '1px solid var(--accent)' : '1px solid transparent',
-              borderRadius: 12,
-              padding: '6px 14px',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-            }}
-            onClick={() => setActiveSubTab('bills')}
-          >
-            Recurring Bills ({sortedBillsWithStatus.length})
-          </button>
-          <button
-            type="button"
-            style={{
-              background: activeSubTab === 'subscriptions' ? 'var(--accent-glow)' : 'transparent',
-              color: activeSubTab === 'subscriptions' ? 'var(--accent)' : 'var(--text2)',
-              border: activeSubTab === 'subscriptions' ? '1px solid var(--accent)' : '1px solid transparent',
-              borderRadius: 12,
-              padding: '6px 14px',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-            }}
-            onClick={() => setActiveSubTab('subscriptions')}
-          >
-            Active Subscriptions ({activeSubscriptions.length})
-          </button>
-          </div>
-        )}
-
-        {!embedded && activeSubTab === 'subscriptions' ? (
-          <div className={bStyles.prioritySections}>
-            {activeSubscriptions.length > 0 ? (
-              <div className={bStyles.billsGrid}>
-                {activeSubscriptions.map(tx => {
-                  const freqLabel = RECUR_OPTIONS.find(o => o.value === tx.recur)?.label || tx.recur
-                  const isIncome = tx.type === 'income'
-                  return (
-                    <div key={tx._id} className={bStyles.billCard}>
-                      <div className={bStyles.billCardHeader}>
-                        <div>
-                          <h4 className={bStyles.billCardTitle}>{tx.desc || tx.cat}</h4>
-                          <span className={bStyles.billCardSubcat}>{tx.subcat || tx.cat}</span>
-                        </div>
-                        <span style={{
-                          background: isIncome ? 'var(--accent-glow)' : 'var(--red-dim)',
-                          color: isIncome ? 'var(--accent)' : 'var(--red)',
-                          borderRadius: 20,
-                          padding: '4px 10px',
-                          fontSize: 10,
-                          fontWeight: 700,
-                        }}>
-                          {isIncome ? 'Income' : 'Expense'}
-                        </span>
-                      </div>
-                      <div className={bStyles.billCardBody}>
-                        <div className={bStyles.billCardDetail}>
-                          <span className={bStyles.detailLabel}>Frequency</span>
-                          <span className={bStyles.detailValue}>{freqLabel}</span>
-                        </div>
-                        <div className={bStyles.billCardDetail}>
-                          <span className={bStyles.detailLabel}>Date Recorded</span>
-                          <span className={bStyles.detailValue}>{formatDisplayDate(tx.date)}</span>
-                        </div>
-                      </div>
-                      <div className={bStyles.billCardFooter}>
-                        <div className={bStyles.billCardPrice}>
-                          <span className={bStyles.detailLabel}>Amount</span>
-                          <strong className={bStyles.billCardAmount} style={{ color: isIncome ? 'var(--accent)' : 'var(--text)' }}>
-                            {isIncome ? '+' : '-'}{money(tx.amount)}
-                          </strong>
-                        </div>
-                        <button
-                          type="button"
-                          className={bStyles.stopBtn}
-                          onClick={() => handleStopRecurrence(tx)}
-                        >
-                          Stop recurring
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className={bStyles.emptyState}>
-                <h4>No active recurring subscriptions found</h4>
-                <p style={{ color: 'var(--text2)', fontSize: 13, marginTop: 4 }}>
-                  Transactions marked as recurring in QuickAdd or History will automatically appear here.
-                </p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={bStyles.prioritySections}>
+        <div className={bStyles.prioritySections}>
             {overdueBills.length > 0 && (
               <div className={bStyles.prioritySection}>
                 <h3 className={bStyles.sectionHeader} style={{ color: 'var(--red)' }}>🔴 Overdue</h3>
@@ -643,8 +484,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                 </div>
               </div>
             )}
-          </div>
-        )}
+        </div>
       </div>
 
       {showDrawer && createPortal(
@@ -671,7 +511,7 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                   if (nextFreq === 'weekly' || nextFreq === 'bi-weekly') {
                     defaultDue = '5'
                   }
-                  setForm(current => ({ ...current, freq: nextFreq, due: defaultDue, dueMonth: nextFreq === 'yearly' ? '0' : '' }))
+                  setForm(current => ({ ...current, freq: nextFreq, due: defaultDue, dueMonth: nextFreq === 'quarterly' || nextFreq === 'yearly' ? String(new Date().getMonth()) : '' }))
                 }}>
                   {BILL_FREQS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
                 </select>
@@ -690,10 +530,10 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                       <option value="6">Saturday</option>
                     </select>
                   </>
-                ) : form.freq === 'yearly' ? (
+                ) : form.freq === 'quarterly' || form.freq === 'yearly' ? (
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <div style={{ flex: 1 }}>
-                      <label>Due Month</label>
+                      <label>{form.freq === 'quarterly' ? 'First month' : 'Due month'}</label>
                       <select value={form.dueMonth || '0'} onChange={e => set('dueMonth', e.target.value)}>
                         {MONTHS.map((m, idx) => (
                           <option key={m} value={String(idx)}>{m}</option>

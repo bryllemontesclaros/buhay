@@ -1,10 +1,10 @@
 import { today } from './utils'
 import {
   getCurrentBalance,
-  getTakdaNetWorth,
-  getTakdaTotalAssets,
-  getTakdaTotalDebts,
-  getTakdaTotalSavings,
+  getBuhayNetWorth,
+  getBuhayTotalAssets,
+  getBuhayTotalDebts,
+  getBuhayTotalSavings,
 } from './finance'
 
 /**
@@ -43,14 +43,14 @@ export function generateStructuredCSV(data = {}, profile = {}, symbol = '₱') {
   const debtsList = Array.isArray(data.debts) ? data.debts : []
   const holdingsList = Array.isArray(data.portfolioHoldings) ? data.portfolioHoldings : []
 
-  // High level financial metrics using Takda finance engine
+  // High level financial metrics using Buhay finance engine
   const totalIncome = incomeList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
   const totalExpenses = expenseList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
   const netCashflow = totalIncome - totalExpenses
   const liquidCash = getCurrentBalance(accountsList, debtsList)
-  const totalDebts = getTakdaTotalDebts(accountsList, debtsList)
-  const totalSavings = getTakdaTotalSavings(goalsList)
-  const netWorth = getTakdaNetWorth(accountsList, debtsList, goalsList, holdingsList)
+  const totalDebts = getBuhayTotalDebts(accountsList, debtsList)
+  const totalSavings = getBuhayTotalSavings(goalsList)
+  const netWorth = getBuhayNetWorth(accountsList, debtsList, goalsList, holdingsList)
 
   const lines = []
 

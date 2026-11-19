@@ -5,9 +5,9 @@ function assert(condition, message) {
 }
 
 assert(resolveFinancePage('bills').page === 'recurring', 'Bills must resolve to the recurring hub')
-assert(resolveFinancePage('bills').subTab === 'bills', 'Bills must preserve the bills tab')
+assert(resolveFinancePage('bills').subTab === 'expenses', 'Bills must resolve to the unified expenses tab')
 assert(resolveFinancePage('subscriptions').page === 'recurring', 'Subscriptions must resolve to the recurring hub')
-assert(resolveFinancePage('subscriptions').subTab === 'subscriptions', 'Subscriptions must preserve the recurring expenses tab')
+assert(resolveFinancePage('subscriptions').subTab === 'expenses', 'Subscriptions must resolve to the unified expenses tab')
 assert(resolveFinancePage('recurring').page === 'recurring', 'Recurring must remain the canonical schedule page')
 assert(resolveFinancePage('crypto').page === 'accounts', 'Crypto must resolve through the accounts hub')
 assert(resolveFinancePage('unknown').page === 'unknown', 'Unknown destinations must remain recoverable')

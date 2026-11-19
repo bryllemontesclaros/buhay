@@ -7,14 +7,14 @@ import {
   getBalanceOverrides,
   getMonthForecast,
   getMonthStartBalance,
-  getTakdaTransactionLifecycle,
-  getTakdaTotalAssets,
-  getTakdaTotalDebts,
-  getTakdaTotalSavings,
+  getBuhayTransactionLifecycle,
+  getBuhayTotalAssets,
+  getBuhayTotalDebts,
+  getBuhayTotalSavings,
   hasDailyBalanceOverride,
   isTransactionPaid,
-  TAKDA_BALANCE_IMPACT,
-  TAKDA_TRANSACTION_STATUS,
+  BUHAY_BALANCE_IMPACT,
+  BUHAY_TRANSACTION_STATUS,
 } from '../lib/finance'
 import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsDeleteTransfer, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction, fsTransferAccounts } from '../lib/firestore'
 import { applyBalanceOverridesToForecast, getTransactionImpact } from '../lib/forecast'
@@ -160,11 +160,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const [scheduleScope, setScheduleScope] = useState('upcoming')
   const [scheduleCategory, setScheduleCategory] = useState('all')
 
-  const totalSavings = useMemo(() => getTakdaTotalSavings(data?.savings), [data?.savings])
-  const totalDebts = useMemo(() => getTakdaTotalDebts(data?.accounts, data?.debts), [data?.accounts, data?.debts])
+  const totalSavings = useMemo(() => getBuhayTotalSavings(data?.savings), [data?.savings])
+  const totalDebts = useMemo(() => getBuhayTotalDebts(data?.accounts, data?.debts), [data?.accounts, data?.debts])
   const totalCryptoAssets = useMemo(() => {
     const holdings = Array.isArray(data?.portfolioHoldings) ? data.portfolioHoldings : []
-    return getTakdaTotalAssets([], holdings)
+    return getBuhayTotalAssets([], holdings)
   }, [data?.portfolioHoldings])
 
   const navLock = useRef(false)
@@ -212,7 +212,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const latestOverrideEvent = useMemo(() => {
     if (!selected) return null
     return balanceOverrideLog
-      .filter(event => event?.dateKey === selected && event?.scope === 'takda-closing-balance')
+      .filter(event => event?.dateKey === selected && event?.scope === 'buhay-closing-balance')
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0] || null
   }, [balanceOverrideLog, selected])
 
@@ -524,7 +524,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const ds = dateStr(d)
       const forecast = forecastMap[ds]
       const baseValue = forecast ? forecast.runningBalance : 0
-      const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
+      const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
       const displayValue = calendarViewMode === 'netWorth'
         ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
         : baseValue
@@ -728,7 +728,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       if (dayEntries.length > 0) {
         const forecast = forecastMap[ds]
         const baseValue = forecast ? forecast.runningBalance : 0
-        const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
+        const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
         const dayBalance = calendarViewMode === 'netWorth'
           ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
           : baseValue
@@ -1120,7 +1120,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     setDayBalanceSaving(true)
     try {
       await fsSetDailyBalanceOverrideAudited(user.uid, selected, value, {
-        scope: 'takda-closing-balance',
+        scope: 'buhay-closing-balance',
         source: 'calendar',
       })
       if (legacyMonthStartKeyForSelectedDay) {
@@ -1152,7 +1152,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     try {
       if (Object.prototype.hasOwnProperty.call(dailyBalanceOverrides, selected)) {
         await fsClearDailyBalanceOverrideAudited(user.uid, selected, {
-          scope: 'takda-closing-balance',
+          scope: 'buhay-closing-balance',
           source: 'calendar',
         })
       }
@@ -1571,7 +1571,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     : 0
 
 
-  const selectedDayTotalDebts = getTakdaTotalDebts(accountList, data?.debts, selected, incomeList, expenseList)
+  const selectedDayTotalDebts = getBuhayTotalDebts(accountList, data?.debts, selected, incomeList, expenseList)
   const selectedDayBalance = calendarViewMode === 'netWorth'
     ? (selectedDayRawBalance + (Number(totalSavings) || 0) + totalCryptoAssets - selectedDayTotalDebts)
     : selectedDayRawBalance
@@ -1589,7 +1589,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const baseFocusValue = balanceFocusDate
     ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, balanceFocusDate, balanceOverrides))
     : 0
-  const focusTotalDebts = getTakdaTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
+  const focusTotalDebts = getBuhayTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
   const balanceFocusValue = calendarViewMode === 'netWorth'
     ? (baseFocusValue + (Number(totalSavings) || 0) + totalCryptoAssets - focusTotalDebts)
     : baseFocusValue
@@ -2465,7 +2465,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         </div>
       )}
 
-      <div id="takda-calendar" className={calStyles.calendarCard}>
+      <div id="buhay-calendar" className={calStyles.calendarCard}>
         <div className={calStyles.calHeader}>
           <div className={calStyles.calHeaderTop}>
             <div className={calStyles.nav}>
@@ -2547,7 +2547,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const isToday = ds === todayStr
               const forecast = forecastMap[ds]
               const baseValue = forecast ? forecast.runningBalance : 0
-              const cellTotalDebts = getTakdaTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
+              const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts) : baseValue
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
               
@@ -2762,7 +2762,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   onClick={() => {
                     playTick()
                     setSelected(group.dateKey)
-                    const el = document.getElementById('takda-calendar')
+                    const el = document.getElementById('buhay-calendar')
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
                   }}
                   title="Click to focus this day on the calendar"
@@ -2804,7 +2804,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                       onClick={() => {
                         playTick()
                         setSelected(item.dateKey)
-                        const el = document.getElementById('takda-calendar')
+                        const el = document.getElementById('buhay-calendar')
                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
                       }}
                       role="button"
@@ -2963,7 +2963,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                   </div>
                 </div>
                 <div className={calStyles.balanceImpactMeta}>
-                  Choose the real payment date. Takda will save the entry on that day and still settle the scheduled recurring cycle.
+                  Choose the real payment date. Buhay will save the entry on that day and still settle the scheduled recurring cycle.
                 </div>
               </div>
 

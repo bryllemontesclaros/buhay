@@ -40,7 +40,7 @@ export default function AppFeedback() {
   }
 
   useEffect(() => {
-    window.__takdaFeedbackReady = true
+    window.__buhayFeedbackReady = true
 
     function handleNotify(event) {
       const detail = { ...DEFAULT_TOAST, ...(event.detail || {}) }
@@ -58,16 +58,16 @@ export default function AppFeedback() {
       setConfirmState({ ...DEFAULT_CONFIRM, ...(event.detail || {}) })
     }
 
-    window.addEventListener('takda:notify', handleNotify)
-    window.addEventListener('takda:confirm', handleConfirm)
+    window.addEventListener('buhay:notify', handleNotify)
+    window.addEventListener('buhay:confirm', handleConfirm)
 
     return () => {
-      window.__takdaFeedbackReady = false
+      window.__buhayFeedbackReady = false
       clearToastTimer()
       confirmResolveRef.current?.(false)
       confirmResolveRef.current = null
-      window.removeEventListener('takda:notify', handleNotify)
-      window.removeEventListener('takda:confirm', handleConfirm)
+      window.removeEventListener('buhay:notify', handleNotify)
+      window.removeEventListener('buhay:confirm', handleConfirm)
     }
   }, [])
 
@@ -107,8 +107,8 @@ export default function AppFeedback() {
             className={`${styles.confirmSheet} ${styles[`tone${capitalizeTone(confirmState.tone)}`] || ''}`}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="takda-confirm-title"
-            aria-describedby={confirmState.message ? 'takda-confirm-message' : undefined}
+            aria-labelledby="buhay-confirm-title"
+            aria-describedby={confirmState.message ? 'buhay-confirm-message' : undefined}
             onClick={event => event.stopPropagation()}
           >
             <div className={styles.confirmHandle} aria-hidden="true" />
@@ -126,9 +126,9 @@ export default function AppFeedback() {
                 </svg>
               )}
             </div>
-            <div className={styles.confirmTitle} id="takda-confirm-title">{confirmState.title}</div>
+            <div className={styles.confirmTitle} id="buhay-confirm-title">{confirmState.title}</div>
             {confirmState.message && (
-              <div className={styles.confirmMessage} id="takda-confirm-message">{confirmState.message}</div>
+              <div className={styles.confirmMessage} id="buhay-confirm-message">{confirmState.message}</div>
             )}
             <div className={styles.confirmActions}>
               <button type="button" className={styles.cancelBtn} onClick={() => resolveConfirm(false)}>

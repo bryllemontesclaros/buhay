@@ -28,6 +28,8 @@ export const RECUR_OPTIONS = [
   { value: 'quad-weekly', label: 'Every 4 weeks' },
   { value: 'semi-monthly', label: 'Semi-monthly (1st & 15th)' },
   { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'yearly', label: 'Yearly' },
 ]
 
 export function fmt(n, symbol = '₱') {
@@ -119,4 +121,3 @@ export function validateAmount(val, fieldName = 'Amount') {
 export function playTick() {
   // Disabled minimalist no-op
 }
-

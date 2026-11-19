@@ -25,7 +25,7 @@
   }
 }
 
-/* Takda redesign overrides */
+/* Buhay redesign overrides */
 .monthStory {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

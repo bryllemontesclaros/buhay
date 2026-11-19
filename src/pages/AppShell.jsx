@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
 import { getInitials, getCurrencySymbol, today, playTick } from '../lib/utils'
-import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
+import { getReferenceRates } from '../lib/currencyRates'
 import { notifyApp } from '../lib/appFeedback'
 import { isUnpaidBillBackedExpense } from '../lib/bills'
 import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
@@ -21,12 +21,7 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import AccountsAndDebts from './AccountsAndDebts'
 import SavingsAndBudget from './SavingsAndBudget'
 import HistoryAndInsights from './HistoryAndInsights'
-import Accounts from './Accounts'
-import Debts from './Debts'
 import { ChangelogModal } from '../components/modals/ChangelogModal'
-import Budget from './Budget'
-import Savings from './Savings'
-import Breakdown from './Breakdown'
 import Recurring from './Recurring'
 import { Button } from '../components/ui/Button'
 import {
@@ -310,157 +305,19 @@ const NAV_ICONS = {
 const STREAK_MILESTONES = [3, 7, 14]
 
 const APP_SPACES = [
-  { id: 'takda', label: 'Buhay', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
+  { id: 'buhay', label: 'Buhay', meta: 'Finance', iconKey: 'finance', cue: 'Money clarity' },
 ]
 
 const DEFAULT_SPACE_PAGES = {
-  takda: 'calendar',
+  buhay: 'calendar',
 }
-
-const MONEY_TOOLS = [
-  {
-    id: 'accounts',
-    label: 'Accounts',
-    meta: 'Balances and account setup',
-    Component: Accounts,
-  },
-  {
-    id: 'history',
-    label: 'History',
-    meta: 'Income, expenses, and edits',
-    Component: History,
-  },
-  {
-    id: 'breakdown',
-    label: 'Insights',
-    meta: 'Spending and category trends',
-    Component: Breakdown,
-  },
-]
-
-const PLAN_TOOLS = [
-  {
-    id: 'savings',
-    label: 'Savings',
-    meta: 'Targets and contributions',
-    Component: Savings,
-  },
-  {
-    id: 'recurring',
-    label: 'Recurring',
-    meta: 'Schedules and due dates',
-    Component: Recurring,
-  },
-  {
-    id: 'budget',
-    label: 'Budget',
-    meta: 'Monthly limits',
-    Component: Budget,
-  },
-  {
-    id: 'debts',
-    label: 'Debts',
-    meta: 'CC & loan payoff tracking',
-    Component: Debts,
-  },
-]
-
-function FinanceToolGroup({
-  tools,
-  activeTool,
-  onActiveToolChange,
-  eyebrow,
-  title,
-  description,
-  ...pageProps
-}) {
-  const selectedTool = tools.find(tool => tool.id === activeTool) || tools[0]
-  const ActiveComponent = selectedTool.Component
-  const contentRef = useRef(null)
-  const tabRefs = useRef({})
-  const previousToolRef = useRef(selectedTool.id)
-
-  useEffect(() => {
-    const activeTab = tabRefs.current[selectedTool.id]
-    safeScrollIntoView(activeTab, { inline: 'center', block: 'nearest', behavior: 'smooth' })
-
-    if (previousToolRef.current === selectedTool.id) return
-    previousToolRef.current = selectedTool.id
-
-    if (typeof window === 'undefined') return
-    if (!window.matchMedia('(max-width: 1024px)').matches) return
-
-    window.requestAnimationFrame(() => {
-      safeScrollIntoView(contentRef.current, { behavior: 'smooth', block: 'start' })
-    })
-  }, [selectedTool.id])
-
-  return (
-    <div className={styles.financeGroupPage}>
-      <section className={styles.financeGroupHero}>
-        <div className={styles.financeGroupSwitch} role="tablist" aria-label="Finance tools">
-          {tools.map(tool => (
-            <button
-              key={tool.id}
-              ref={node => {
-                if (node) tabRefs.current[tool.id] = node
-              }}
-              type="button"
-              className={`${styles.financeGroupTab} ${selectedTool.id === tool.id ? styles.financeGroupTabActive : ''}`}
-              onClick={() => onActiveToolChange?.(tool.id)}
-              role="tab"
-              aria-selected={selectedTool.id === tool.id}
-            >
-              <strong>{tool.label}</strong>
-              <span>{tool.meta}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-      <div ref={contentRef} className={styles.financeGroupContent}>
-        <ActiveComponent {...pageProps} />
-      </div>
-    </div>
-  )
-}
-
-function TakdaMoneyPage({ financeToolSelections = {}, onFinanceToolSelect, ...pageProps }) {
-  return (
-    <FinanceToolGroup
-      tools={MONEY_TOOLS}
-      activeTool={financeToolSelections.money}
-      onActiveToolChange={tool => onFinanceToolSelect?.('money', tool)}
-      eyebrow="Money"
-      title="Open the money view you need right now."
-      description="Balances, history, and insights stay on one surface so you can jump straight to the task instead of navigating deeper."
-      {...pageProps}
-    />
-  )
-}
-
-function TakdaPlanPage({ financeToolSelections = {}, onFinanceToolSelect, ...pageProps }) {
-  return (
-    <FinanceToolGroup
-      tools={PLAN_TOOLS}
-      activeTool={financeToolSelections.plan}
-      onActiveToolChange={tool => onFinanceToolSelect?.('plan', tool)}
-      eyebrow="Plan"
-      title="Open the planning view that needs attention."
-      description="Savings, bills, and budget stay together here so month planning feels like one surface instead of three separate detours."
-      {...pageProps}
-    />
-  )
-}
-
-
 
 export default function AppShell({ user }) {
-  const [activeSpace, setActiveSpace] = useState('takda')
+  const [activeSpace, setActiveSpace] = useState('buhay')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [page, setPage] = useState(DEFAULT_SPACE_PAGES.takda)
+  const [page, setPage] = useState(DEFAULT_SPACE_PAGES.buhay)
   const [routeSubTab, setRouteSubTab] = useState('')
 
-  const [financeToolSelections, setFinanceToolSelections] = useState({ money: 'accounts', plan: 'savings' })
   const [data, setData] = useState({
     income: [],
     expenses: [],
@@ -478,7 +335,7 @@ export default function AppShell({ user }) {
   const [profile, setProfile] = useState({})
   const [quickAddSheet, setQuickAddSheet] = useState({ open: false, mode: 'manual', type: 'expense', initialEntry: null })
   const [spaceActionRequest, setSpaceActionRequest] = useState(null)
-  const [takdaActionRequest, setTakdaActionRequest] = useState(null)
+  const [buhayActionRequest, setBuhayActionRequest] = useState(null)
 
   const [mobileNavMenuOpen, setMobileNavMenuOpen] = useState(false)
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false)
@@ -499,7 +356,7 @@ export default function AppShell({ user }) {
   const previousVisiblePageRef = useRef(null)
   const [changelogData, setChangelogData] = useState(null)
   const [activeTour, setActiveTour] = useState(null)
-  const autoTriggeredRef = useRef({ takda: false })
+  const autoTriggeredRef = useRef({ buhay: false })
 
 
   // Auto-trigger tour if user enters a space for the first time after registering
@@ -510,7 +367,7 @@ export default function AppShell({ user }) {
     const justRegistered = sessionStorage.getItem('just_registered') === 'true'
     if (!justRegistered) return
 
-    const completedFlag = profile.hasCompletedTakdaTour
+    const completedFlag = profile.hasCompletedBuhayTour
 
 
     if ((completedFlag === undefined || completedFlag === false) && !autoTriggeredRef.current[activeSpace]) {
@@ -520,7 +377,7 @@ export default function AppShell({ user }) {
   }, [activeSpace, profile])
 
   const handleFinishTour = async () => {
-    const field = 'hasCompletedTakdaTour'
+    const field = 'hasCompletedBuhayTour'
 
     
     try {
@@ -543,7 +400,7 @@ export default function AppShell({ user }) {
   useEffect(() => {
     try {
       if (typeof __COMMIT_HASH__ !== 'undefined' && __COMMIT_HASH__) {
-        const lastSeen = localStorage.getItem('takda_last_commit')
+        const lastSeen = localStorage.getItem('buhay_last_commit')
         if (lastSeen !== __COMMIT_HASH__) {
           setChangelogData({ hash: __COMMIT_HASH__, message: __COMMIT_MESSAGE__ })
         }
@@ -553,7 +410,7 @@ export default function AppShell({ user }) {
 
   function dismissChangelog() {
     if (changelogData) {
-      localStorage.setItem('takda_last_commit', changelogData.hash)
+      localStorage.setItem('buhay_last_commit', changelogData.hash)
       setChangelogData(null)
     }
   }
@@ -618,60 +475,18 @@ export default function AppShell({ user }) {
   useEffect(() => {
     if (!profile?.currency) return
     const base = String(profile.currency).toUpperCase()
-    let active = true
-
-    const DEFAULT_RATES = {
-      PHP: { PHP: 1, USD: 0.017, EUR: 0.016, SGD: 0.023, HKD: 0.13, GBP: 0.013, JPY: 2.7, AUD: 0.026, CAD: 0.023 },
-      USD: { USD: 1, PHP: 58.5, EUR: 0.92, SGD: 1.35, HKD: 7.8, GBP: 0.79, JPY: 158.2, AUD: 1.5, CAD: 1.37 },
-      EUR: { EUR: 1, USD: 1.09, PHP: 63.6, SGD: 1.47, HKD: 8.5, GBP: 0.86, JPY: 172.0, AUD: 1.63, CAD: 1.49 },
-    }
-
-    try {
-      const cached = localStorage.getItem(`buhay_exchange_rates_${base}`)
-      if (cached) {
-        const parsed = JSON.parse(cached)
-        if (active && parsed?.rates) {
-          setExchangeRates(parsed.rates)
-        }
-      } else {
-        const defaults = DEFAULT_RATES[base] || DEFAULT_RATES.PHP
-        if (active) {
-          setExchangeRates(defaults)
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to load cached exchange rates', e)
-    }
-
-    fetch(`https://api.exchangerate-api.com/v4/latest/${base}`)
-      .then(res => res.json())
-      .then(json => {
-        if (active && json?.rates) {
-          setExchangeRates(json.rates)
-          try {
-            localStorage.setItem(`buhay_exchange_rates_${base}`, JSON.stringify({
-              rates: json.rates,
-              timestamp: Date.now(),
-            }))
-          } catch (e) {}
-        }
-      })
-      .catch(() => {})
-
-    return () => {
-      active = false
-    }
+    setExchangeRates(getReferenceRates(base))
   }, [profile?.currency])
 
   useEffect(() => {
     if (preferredSpaceAppliedRef.current) return
     preferredSpaceAppliedRef.current = true
-    setActiveSpace('takda')
+    setActiveSpace('buhay')
   }, [profile?.preferredSpace])
 
   useEffect(() => {
     if (!user) return
-    setActiveSpace('takda')
+    setActiveSpace('buhay')
   }, [user])
 
 
@@ -739,37 +554,10 @@ export default function AppShell({ user }) {
     }
   }, [user, data.accounts, data.expenses, data.income])
 
-  const autoRecurRunRef = useRef(false)
-
-  useEffect(() => {
-    if (!user || autoRecurRunRef.current) return
-    if (!data.income || !data.expenses || !data.accounts) return
-    
-    // Prevent running immediately on empty arrays if we just haven't fetched yet,
-    // though listenCol generally fires with the cached snapshot quickly.
-    autoRecurRunRef.current = true
-    
-    runAutoRecurrenceEngine(user.uid, data.income, data.expenses, data.accounts, data.bills)
-      .then(addedCount => {
-        if (addedCount > 0) {
-          playTick()
-          notifyApp({
-            title: 'Auto-Payment Applied',
-            message: `${addedCount} scheduled bill${addedCount === 1 ? '' : 's'}/recurring item${addedCount === 1 ? '' : 's'} reached due date and auto-settled.`,
-            tone: 'success'
-          })
-          console.log(`Buhay AutoRecurEngine: ${addedCount} transactions automatically logged.`)
-        }
-      })
-      .catch(err => {
-        console.error('Buhay AutoRecurEngine Error:', err)
-      })
-  }, [user, data.income, data.expenses, data.accounts, data.bills])
-
   const symbol = getCurrencySymbol(profile.currency || 'PHP')
   const [privacyMode, setPrivacyMode] = useState(() => {
     try {
-      return localStorage.getItem('takda_privacy_mode') === 'true'
+      return localStorage.getItem('buhay_privacy_mode') === 'true'
     } catch {
       return false
     }
@@ -779,7 +567,7 @@ export default function AppShell({ user }) {
     setPrivacyMode(prev => {
       const next = !prev
       try {
-        localStorage.setItem('takda_privacy_mode', String(next))
+        localStorage.setItem('buhay_privacy_mode', String(next))
       } catch {}
       return next
     })
@@ -980,24 +768,20 @@ export default function AppShell({ user }) {
     { id: 'calendar', label: 'Calendar', iconKey: 'calendar', section: 'Finance' },
     { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: null },
     { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: null },
-    { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
-    { id: 'history', label: 'Insights', iconKey: 'history', section: null },
+    { id: 'history', label: 'History', iconKey: 'history', section: 'Review' },
   ]
-  const takdaMoreNav = [
-
-    { id: 'crypto', label: 'Crypto 🪙', iconKey: 'portfolio', section: 'Finance' },
-    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', section: 'Review' },
-    { id: 'recurring', label: 'Recurring', iconKey: 'bills', section: 'Review' },
-    { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Review' },
-    { id: 'history', label: 'Insights', iconKey: 'history', section: 'Review' },
+  const buhayMoreNav = [
+    { id: 'budget', label: 'Budgets', iconKey: 'budget', section: 'Planning' },
+    { id: 'savings', label: 'Savings goals', iconKey: 'savings', section: 'Planning' },
+    { id: 'debts', label: 'Debt & cards', iconKey: 'debts', section: 'Planning' },
+    { id: 'crypto', label: 'Crypto portfolio', iconKey: 'portfolio', section: 'Optional' },
+    { id: 'breakdown', label: 'Insights', iconKey: 'breakdown', section: 'Optional' },
   ]
 
   const financePages = {
     calendar: Calendar,
-    money: TakdaMoneyPage,
-    plan: TakdaPlanPage,
     settings: Settings,
-    history: HistoryAndInsights,
+    history: History,
     savings: SavingsAndBudget,
     debts: AccountsAndDebts,
     accounts: AccountsAndDebts,
@@ -1012,41 +796,35 @@ export default function AppShell({ user }) {
     : financePages[page] || Calendar
 
   const activeSpaceConfig = APP_SPACES.find(space => space.id === activeSpace) || APP_SPACES[0]
-  const selectedFinanceTool = page === 'money'
-    ? MONEY_TOOLS.find(tool => tool.id === financeToolSelections.money)
-    : page === 'plan'
-      ? PLAN_TOOLS.find(tool => tool.id === financeToolSelections.plan)
-      : null
-
   const isCalendarPage = page === 'calendar'
-  const pageBoundaryKey = `${page}:${selectedFinanceTool?.id || 'main'}`
+  const pageBoundaryKey = `${page}:main`
 
   const currentSidebarNav = nav
-  const currentNavItem = [...nav, ...takdaMoreNav].find(item => item.id === visiblePageKey) || nav[0]
+  const currentNavItem = [...nav, ...buhayMoreNav].find(item => item.id === visiblePageKey) || nav[0]
   const activeWorkspaceLabel = activeSpaceConfig.label
   const financeBottomNav = [
-    { id: 'calendar', label: 'Calendar', iconKey: 'calendar', space: 'takda' },
-    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', space: 'takda' },
-    { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'takda' },
-    { id: 'history', label: 'Insights', iconKey: 'history', space: 'takda' },
+    { id: 'calendar', label: 'Calendar', iconKey: 'calendar', space: 'buhay' },
+    { id: 'accounts', label: 'Accounts', iconKey: 'accounts', space: 'buhay' },
+    { id: 'recurring', label: 'Recurring', iconKey: 'bills', space: 'buhay' },
+    { id: 'history', label: 'History', iconKey: 'history', space: 'buhay' },
   ]
   const bottomNav = financeBottomNav
-  const financeMoreNav = takdaMoreNav.map(item => ({ ...item, space: 'takda' }))
+  const financeMoreNav = buhayMoreNav.map(item => ({ ...item, space: 'buhay' }))
   const mobileMoreNav = [
     ...financeMoreNav,
     { id: 'settings', label: 'Settings', iconKey: 'settings', section: 'System', space: 'system' }
   ]
   const mobileMoreTitle = 'More'
-  const mobileMoreMeta = 'Open savings, accounts, insights, and settings here.'
+  const mobileMoreMeta = 'Open planning tools, optional insights, and settings here.'
   const isMorePage = financeMoreNav.some(item => item.id === page)
   const shouldHideBottomNav = mobileNavMenuOpen || quickAddSheet.open
   const isBottomNavItemActive = item => (
-    activeSpace === 'takda' && page === item.id
+    activeSpace === 'buhay' && page === item.id
 
   )
 
-  // 1. Takda Financial Pulse Status
-  const takdaPulse = useMemo(() => {
+  // 1. Buhay Financial Pulse Status
+  const buhayPulse = useMemo(() => {
     const accounts = data.accounts || []
     const budgets = data.budgets || []
     const todayStr = today()
@@ -1119,17 +897,17 @@ export default function AppShell({ user }) {
     setMobileNavMenuOpen(false)
     setWorkspaceDropdownOpen(false)
     setSpaceActionRequest(null)
-    setTakdaActionRequest(null)
+    setBuhayActionRequest(null)
     setQuickAddSheet(current => current.open ? { ...current, open: false } : current)
-    setActiveSpace('takda')
+    setActiveSpace('buhay')
     setRouteSubTab('')
-    setPage(DEFAULT_SPACE_PAGES.takda)
+    setPage(DEFAULT_SPACE_PAGES.buhay)
   }
 
 
   function handleDashboardNavigate(space, subPage) {
     playTick()
-    setActiveSpace('takda')
+    setActiveSpace('buhay')
     setRouteSubTab('')
     setPage(subPage || 'calendar')
   }
@@ -1137,34 +915,22 @@ export default function AppShell({ user }) {
 
   function handleBadgeClick(spaceId) {
     playTick()
-    openSpace('takda')
+    openSpace('buhay')
     setRouteSubTab('')
     setPage('breakdown')
   }
 
 
-  function navigateToFinancePage(nextPage = DEFAULT_SPACE_PAGES.takda) {
-    const alias = resolveFinancePage(nextPage, DEFAULT_SPACE_PAGES.takda)
-    setActiveSpace('takda')
+  function navigateToFinancePage(nextPage = DEFAULT_SPACE_PAGES.buhay) {
+    const alias = resolveFinancePage(nextPage, DEFAULT_SPACE_PAGES.buhay)
+    setActiveSpace('buhay')
     if (alias.page !== nextPage || alias.subTab) {
       setRouteSubTab(alias.subTab || '')
       setPage(alias.page)
       return
     }
     setRouteSubTab('')
-    if (nextPage === 'money') {
-      setPage(financeToolSelections.money || 'accounts')
-      return
-    }
-    if (nextPage === 'plan') {
-      setPage(financeToolSelections.plan || 'savings')
-      return
-    }
-    setPage(nextPage || DEFAULT_SPACE_PAGES.takda)
-  }
-
-  function handleFinanceToolSelect(group, tool) {
-    setFinanceToolSelections(current => ({ ...current, [group]: tool }))
+    setPage(nextPage || DEFAULT_SPACE_PAGES.buhay)
   }
 
   function handleBottomNavSelect(item) {
@@ -1173,7 +939,7 @@ export default function AppShell({ user }) {
       return
     }
 
-    navigateToFinancePage(item.id || DEFAULT_SPACE_PAGES.takda)
+    navigateToFinancePage(item.id || DEFAULT_SPACE_PAGES.buhay)
   }
 
 
@@ -1191,10 +957,10 @@ export default function AppShell({ user }) {
     })
   }
 
-  function openTakdaAction(type, payload = {}) {
+  function openBuhayAction(type, payload = {}) {
     setMobileNavMenuOpen(false)
     setSpaceActionRequest(null)
-    setTakdaActionRequest(null)
+    setBuhayActionRequest(null)
     if (type === 'pay-bill' && payload.billId) {
       navigateToFinancePage('bills')
       setBillPaymentTarget({ billId: payload.billId, at: Date.now() })
@@ -1202,7 +968,7 @@ export default function AppShell({ user }) {
     }
     if (type === 'goal-contribution' && payload.goalId) {
       navigateToFinancePage('savings')
-      setTakdaActionRequest({ space: 'takda', type, goalId: payload.goalId, token: Date.now() })
+      setBuhayActionRequest({ space: 'buhay', type, goalId: payload.goalId, token: Date.now() })
       return
     }
   }
@@ -1212,9 +978,9 @@ export default function AppShell({ user }) {
     setSpaceActionRequest(current => (current?.token === token ? null : current))
   }
 
-  function handleTakdaActionHandled(token) {
+  function handleBuhayActionHandled(token) {
     if (!token) return
-    setTakdaActionRequest(current => (current?.token === token ? null : current))
+    setBuhayActionRequest(current => (current?.token === token ? null : current))
   }
 
 
@@ -1255,7 +1021,7 @@ export default function AppShell({ user }) {
   function handleNotificationAction(alert) {
     const action = alert?.action || {}
 
-    // Takda (financial) navigation
+    // Buhay (financial) navigation
     if (action.page) {
       navigateToFinancePage(action.page)
     }
@@ -1286,15 +1052,13 @@ export default function AppShell({ user }) {
     billPaymentTarget,
     debtPaymentTarget,
     activeTab: page,
-    financeToolSelections,
-    onFinanceToolSelect: handleFinanceToolSelect,
     onTogglePrivacy: togglePrivacy,
     onSelectedDateChange: setCalendarQuickAddDate,
     onPayBill: (billId) => handleNotificationAction({ action: { type: 'payBill', page: 'bills', billId } }),
     onPayDebt: (debtId) => handleNotificationAction({ action: { type: 'payDebt', page: 'debts', debtId } }),
-    actionRequest: takdaActionRequest?.space === 'takda' ? takdaActionRequest : null,
-    onActionHandled: handleTakdaActionHandled,
-    onTakdaAction: openTakdaAction,
+    actionRequest: buhayActionRequest?.space === 'buhay' ? buhayActionRequest : null,
+    onActionHandled: handleBuhayActionHandled,
+    onBuhayAction: openBuhayAction,
     onNavigate: handleDashboardNavigate,
   }
 
@@ -1307,7 +1071,7 @@ export default function AppShell({ user }) {
         : 'Track expense'
 
   return (
-    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${styles.shellTakda}`}>
+    <div className={`${styles.shell} ${neoEnabled ? 'neo' : ''} ${isCalendarPage ? styles.shellCalendar : ''} ${activeSpace === 'dashboard' ? styles.shellDashboard : ''} ${styles.shellBuhay}`}>
       <input ref={quickAddFocusProxyRef} type="text" inputMode="decimal" style={{ opacity: 0, position: 'absolute', top: -9999, pointerEvents: 'none' }} aria-hidden="true" tabIndex={-1} />
       <a href="#app-main" className="skipLink">Skip to main content</a>
       <aside className={styles.sidebar}>
@@ -1484,7 +1248,7 @@ export default function AppShell({ user }) {
           </div>
         )}
         <main ref={mainRef} id="app-main" className={`${styles.main} ${isCalendarPage ? styles.mainCalendar : ''}`}>
-          <PageErrorBoundary key={pageBoundaryKey} onRecover={() => navigateToFinancePage(DEFAULT_SPACE_PAGES.takda)}>
+          <PageErrorBoundary key={pageBoundaryKey} onRecover={() => navigateToFinancePage(DEFAULT_SPACE_PAGES.buhay)}>
             <Suspense fallback={<PageLoading />}>
               <PageComponent {...pageProps} />
             </Suspense>

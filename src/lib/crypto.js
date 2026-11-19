@@ -1,5 +1,5 @@
 /**
- * Fast, Accurate, User-Controlled Cryptocurrency Valuation Engine for Buhay / Takda.
+ * Fast, Accurate, User-Controlled Cryptocurrency Valuation Engine for Buhay / Buhay.
  * Gives full control over asset prices with zero API rate-limits, zero latency, and 100% exact math.
  */
 

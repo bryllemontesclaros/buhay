@@ -1,146 +1,121 @@
 # Buhay Architecture Map
 
-This is the canonical system map for Buhay.
+Buhay is a finance-only personal cashflow application. It has one product identity, one finance shell, and one shared projected ledger.
 
 ## Platform Layer
 
-- Identity and auth
-  - Email/password auth
-  - Email verification
-  - Password reset
-- Trust and privacy
-  - Privacy mode
-  - Legal pages
-  - Account deletion
-- Data portability
-  - Backup
-  - Restore
-  - Export
-- Shell
-  - Desktop sidebar
-  - Mobile bottom nav
-  - Shared header, overlays, and modals
+- Email/password authentication
+- Email verification and password reset
+- Owner-scoped Firestore access
+- Privacy mode and light/dark theme
+- CSV export and JSON backup/restore
+- Account deletion and financial-data reset
+- Desktop sidebar and mobile bottom navigation
+- Responsive error recovery and offline-friendly transaction handling
 
-## Domain Layer
+## Product Areas
 
-### Takda (Money)
+### Calendar
 
-- Calendar / day balance engine
-- Accounts
-- History
-- Bills
-- Savings
-- Budget
-- Breakdown / reporting
-- Receipts
-- Portfolio
-- Recurrence system
+- Monthly date grid
+- Actual and projected daily balances
+- Selected-day detail panel
+- Scheduled income, expenses, bills, transfers, and debt items
+- Actual transaction recording and editing
 
-Primary records:
-- income
-- expenses
-- accounts
-- savings goals
-- bills
-- budgets
-- receipts
-- balance overrides
-- holdings
+### Accounts
 
-### Lakas (Fitness)
+- Cash, bank, e-wallet, savings, investment, and credit-card accounts
+- Account reconciliation and adjustments
+- Account-to-account transfers
+- Current balance and net-worth summaries
 
-- Workout cockpit
-- Session logging
-- Routines
-- Body logs
-- Meals / nutrition
-- Progress and goals
-- Habits / activity
+### Recurring
 
-Primary records:
-- workouts
-- workout sessions
-- routines
-- body logs
-- meals
-- habits
-- goals
+- Recurring income
+- Recurring expenses
+- Bill schedules
+- Active and paused schedules
+- One occurrence identity per schedule and date
 
-### Tala (Reflection)
+Bills are expense schedules with bill metadata. They are not a second independent transaction system.
 
-- Journal
-- Track
-- Focus
-- Mood / check-ins
-- Tasks
-- Goals
-- Calendar / insights
+### History
 
-Primary records:
-- journal entries
-- check-ins
-- mood logs
-- tasks
-- goals
+- Posted income, expenses, transfers, and adjustments
+- Search, filtering, editing, and deletion
+- Actual transaction review without mixing virtual projections into the ledger
 
-## Shared Services Layer
+### Optional Tools
 
-- Firebase auth
-- Firestore persistence
-- Storage media helpers
-- Theme system
-- Notifications / command surfaces
-- Confirmation / feedback patterns
-- Recurrence helpers
-- Finance and balance helpers
+- Budgets
+- Savings goals
+- Debt and credit-card payoff tracking
+- Manual-price crypto portfolio
+- Insights and reports
 
-## System Flow
+## Primary Records
 
-1. User signs in once.
-2. Shared shell loads the current space and records.
-3. Domain logic computes the view state.
-4. User actions create or mutate real records.
-5. Shared services persist those changes.
-6. Screens recompute summaries from the saved records.
+- `income`
+- `expenses`
+- `transfers`
+- `accounts`
+- `bills`
+- `debts`
+- `budgets`
+- `goals`
+- `portfolioHoldings`
+- `calendarEvents`
+- `balanceOverrideLog`
+- `profile/main`
 
-## Takda Source Of Truth Map
+Existing collections are preserved for compatibility. The application adapts them into one logical finance model in memory.
 
-- Current balance:
-  - account balances now
-- Historical day balance:
-  - paid ledger entries
-  - account anchors / overrides
-- Forecast balance:
-  - historical rules
-  - projected recurring cycles
+## Shared Ledger Flow
 
-## Recurrence Responsibility Map
+1. Load actual records and account balances.
+2. Generate virtual occurrences from active recurring rules.
+3. Generate virtual bill occurrences.
+4. Generate scheduled transfers and optional debt projections.
+5. Deduplicate by schedule and occurrence identity.
+6. Calculate daily running balances.
+7. Mark each item as actual, projected, unpaid, or settled.
+8. Let every finance screen read the same result.
 
-- `src/lib/recurrence.js`
-  - recurring date generation
-  - cycle keys
-  - cycle-settlement checks
-  - projection generation
+The shared implementation lives in `src/lib/projectedLedger.js`. It is read-only and never creates Firestore records during calculation.
 
-- `src/pages/Calendar.jsx`
-  - user actions for settling/projecting cycles
-  - day-level recurrence UX
+## Occurrence Identity
 
-- `src/pages/History.jsx`
-  - review/edit/delete of real recurring settlements
+Recurring items use:
 
-## Design Responsibility Map
+```text
+sourceScheduleId + occurrenceDate
+```
 
-- Landing page:
-  - product explanation
-  - trust framing
-  - space overview
+Bill payments use:
 
-- App shell:
-  - shared navigation
-  - shared mobile/desktop rhythm
-  - shared theme behavior
+```text
+billId + billPeriodKey
+```
 
-- Space pages:
-  - domain-specific work
-  - domain-specific actions
+When an occurrence is recorded, the actual transaction links back to that identity. This prevents duplicate rows and duplicate payments.
+
+## Actual and Projected Rules
+
+- Actual balances use posted transactions and completed transfers.
+- Future schedules affect projected balances only.
+- Recording a payment creates one actual transaction.
+- Recording the same payment twice is idempotent.
+- A future schedule never requires a payment action to affect the forecast.
+- Future schedules do not reduce the current actual account balance.
+
+## Responsibility Map
+
+- `src/lib/projectedLedger.js`: shared actual/projected calculation
+- `src/lib/recurrence.js`: recurring dates and occurrence keys
+- `src/lib/bills.js`: bill periods and bill compatibility helpers
+- `src/lib/ledgerAdapter.js`: legacy Firestore data adaptation
+- `src/pages/Calendar.jsx`: daily forecast and selected-day actions
+- `src/pages/Recurring.jsx`: schedule management
+- `src/pages/History.jsx`: actual transaction review
+- `src/pages/Accounts.jsx`: account balances and reconciliation

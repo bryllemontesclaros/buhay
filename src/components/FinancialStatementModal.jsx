@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   getCurrentBalance,
-  getTakdaNetWorth,
-  getTakdaTotalAssets,
-  getTakdaTotalDebts,
-  getTakdaTotalSavings,
+  getBuhayNetWorth,
+  getBuhayTotalAssets,
+  getBuhayTotalDebts,
+  getBuhayTotalSavings,
 } from '../lib/finance'
 import styles from './FinancialStatementModal.module.css'
 
@@ -76,9 +76,9 @@ export default function FinancialStatementModal({ data = {}, profile = {}, symbo
   const holdingsList = Array.isArray(data.portfolioHoldings) ? data.portfolioHoldings : []
 
   const liquidCash = getCurrentBalance(accountsList, debtsList)
-  const totalDebts = getTakdaTotalDebts(accountsList, debtsList)
-  const totalSavings = getTakdaTotalSavings(goalsList)
-  const netWorth = getTakdaNetWorth(accountsList, debtsList, goalsList, holdingsList)
+  const totalDebts = getBuhayTotalDebts(accountsList, debtsList)
+  const totalSavings = getBuhayTotalSavings(goalsList)
+  const netWorth = getBuhayNetWorth(accountsList, debtsList, goalsList, holdingsList)
 
   // Category breakdown calculation
   const categoryBreakdown = useMemo(() => {

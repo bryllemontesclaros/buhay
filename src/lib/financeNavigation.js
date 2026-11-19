@@ -1,16 +1,18 @@
 // Keep legacy finance destinations pointed at the current canonical screens.
 export const FINANCE_PAGE_ALIASES = Object.freeze({
+  money: { page: 'accounts' },
+  plan: { page: 'savings' },
   accounts: { page: 'accounts' },
   crypto: { page: 'accounts', subTab: 'crypto' },
   portfolio: { page: 'accounts', subTab: 'crypto' },
   history: { page: 'history' },
   breakdown: { page: 'breakdown' },
   savings: { page: 'savings' },
-  bills: { page: 'recurring', subTab: 'bills' },
+  bills: { page: 'recurring', subTab: 'expenses' },
   recurring: { page: 'recurring' },
   budget: { page: 'budget' },
   debts: { page: 'debts' },
-  subscriptions: { page: 'recurring', subTab: 'subscriptions' },
+  subscriptions: { page: 'recurring', subTab: 'expenses' },
 })
 
 export function resolveFinancePage(nextPage, fallback = 'calendar') {

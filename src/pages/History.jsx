@@ -2,10 +2,10 @@ import { useMemo, useState, useEffect } from 'react'
 import ModalShell from '../components/ui/ModalShell'
 import { fsDeleteTransaction, fsDeleteTransfer, fsSetTransactionPaymentStatus, fsUpdateTransaction } from '../lib/firestore'
 import {
-  getTakdaTransactionLifecycle,
+  getBuhayTransactionLifecycle,
   isTransactionPaid,
-  TAKDA_BALANCE_IMPACT,
-  TAKDA_TRANSACTION_STATUS,
+  BUHAY_BALANCE_IMPACT,
+  BUHAY_TRANSACTION_STATUS,
 } from '../lib/finance'
 import {
   findPresetByLabel,

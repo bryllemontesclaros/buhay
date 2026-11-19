@@ -12,6 +12,13 @@ function clampDueDay(year, monthIndex, dueDay) {
   return Math.min(Math.max(Number(dueDay) || 1, 1), lastDay)
 }
 
+function getAnchorMonth(bill = {}, referenceDate = new Date()) {
+  const dueMonth = Number(bill.dueMonth)
+  if (Number.isInteger(dueMonth) && dueMonth >= 0 && dueMonth <= 11) return dueMonth
+  const startDate = bill.startDate || bill.date || bill.createdAt
+  return toLocalDate(startDate || referenceDate).getMonth()
+}
+
 export function getBillDueDate(bill = {}, referenceDate = new Date()) {
   if (bill.dueDateOverride) {
     return normalizeDate(bill.dueDateOverride)
@@ -27,8 +34,11 @@ export function getBillDueDate(bill = {}, referenceDate = new Date()) {
     return normalizeDate(targetDate)
   }
 
-  if (freq === 'yearly') {
-    const targetMonth = Number(bill.dueMonth) || 0
+  if (freq === 'quarterly' || freq === 'yearly') {
+    const targetMonth = getAnchorMonth(bill, base)
+    if (freq === 'quarterly' && base.getMonth() > targetMonth) {
+      base.setFullYear(base.getFullYear() + 1)
+    }
     const d = clampDueDay(base.getFullYear(), targetMonth, due)
     return normalizeDate(`${base.getFullYear()}-${String(targetMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`)
   }
@@ -61,9 +71,10 @@ export function getBillOccurrencesForMonth(bill = {}, year, month) {
         }
       }
     }
-  } else if (freq === 'yearly') {
-    const targetMonth = Number(bill.dueMonth) || 0
-    if (month === targetMonth) {
+  } else if (freq === 'quarterly' || freq === 'yearly') {
+    const targetMonth = getAnchorMonth(bill, new Date(year, month, 1))
+    if (freq === 'quarterly' && ((month - targetMonth + 12) % 3 !== 0)) return dates
+    if (freq === 'quarterly' || month === targetMonth) {
       const d = clampDueDay(year, month, due)
       dates.push(normalizeDate(new Date(year, month, d)))
     }
@@ -472,8 +483,10 @@ export function getVirtualBills(data = {}) {
   Object.values(chains).forEach(chain => {
     chain.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
     const latest = chain[0]
-    if (!latest || !latest.recur) return
-    if (latest.cat !== 'Bills') return
+    if (!latest || !latest.recur || latest.active === false || latest.paused === true) return
+    const isLegacyBill = latest.isBill === true
+      || (latest.cat === 'Bills' && latest.subcat !== 'Subscriptions')
+    if (!isLegacyBill) return
 
     const txNameLower = (latest.desc || latest.subcat || 'Recurring Bill').trim().toLowerCase()
     if (explicitBillNames.has(txNameLower)) return

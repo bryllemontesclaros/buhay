@@ -5,7 +5,7 @@ import CryptoPortfolio from './CryptoPortfolio'
 import styles from './Page.module.css'
 import tStyles from '../components/SharedTabs.module.css'
 import { fmt } from '../lib/utils'
-import { getTakdaTotalAssets, getTakdaTotalDebts, getTakdaNetWorth, getTakdaTotalSavings } from '../lib/finance'
+import { getBuhayTotalAssets, getBuhayTotalDebts, getBuhayNetWorth, getBuhayTotalSavings } from '../lib/finance'
 
 export default function AccountsAndDebts({ user, data, profile = {}, symbol, privacyMode = false, onTogglePrivacy = () => {}, subTab = 'accounts' }) {
   const [activeTab, setActiveTab] = useState(subTab)
@@ -46,11 +46,11 @@ export default function AccountsAndDebts({ user, data, profile = {}, symbol, pri
   }, [holdings])
 
   const savings = Array.isArray(data?.savings) ? data.savings : []
-  const totalSavings = getTakdaTotalSavings(savings)
-  const cashAssets = getTakdaTotalAssets(accounts, [])
-  const cryptoAssets = getTakdaTotalAssets([], holdings, cryptoPriceMap)
+  const totalSavings = getBuhayTotalSavings(savings)
+  const cashAssets = getBuhayTotalAssets(accounts, [])
+  const cryptoAssets = getBuhayTotalAssets([], holdings, cryptoPriceMap)
   const totalAssets = cashAssets + cryptoAssets + totalSavings
-  const totalDebts = getTakdaTotalDebts(accounts, debts)
+  const totalDebts = getBuhayTotalDebts(accounts, debts)
   const netWorth = totalAssets - totalDebts
 
   return (
