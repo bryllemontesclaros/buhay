@@ -39,7 +39,7 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
-import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses, isUnpaidBillBackedExpense } from '../lib/bills'
+import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses, getVirtualBills, isUnpaidBillBackedExpense } from '../lib/bills'
 import { getBillingCycleOptions, getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
@@ -220,20 +220,30 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const expenseList = useMemo(() => (Array.isArray(data?.expenses) ? data.expenses : []), [data?.expenses])
   const transferList = useMemo(() => (Array.isArray(data?.transfers) ? data.transfers : []), [data?.transfers])
   const goalsList = useMemo(() => (Array.isArray(data?.goals) ? data.goals : []), [data?.goals])
+  const calendarBills = useMemo(() => {
+    const persistedBills = Array.isArray(data?.bills) ? data.bills : []
+    const virtualBills = getVirtualBills({ ...data, bills: persistedBills })
+    const seen = new Set(persistedBills.map(bill => bill?._id).filter(Boolean))
+    return [...persistedBills, ...virtualBills.filter(bill => bill?._id && !seen.has(bill._id))]
+  }, [data])
 
   const projected = useMemo(() => getProjectedTransactions(incomeList, expenseList, year, month), [incomeList, expenseList, year, month])
   const projectedIncome = useMemo(() => projected.filter(t => t.type === 'income'), [projected])
-  const projectedBillExpenses = useMemo(() => getProjectedBillExpenses(data?.bills, year, month), [data?.bills, year, month])
+  const projectedBillExpenses = useMemo(() => getProjectedBillExpenses(calendarBills, year, month), [calendarBills, year, month])
   const projectedExpenses = useMemo(
-    () => [...projected.filter(t => t.type === 'expense'), ...projectedBillExpenses],
-    [projected, projectedBillExpenses]
+    () => [
+      ...projected
+        .filter(t => t.type === 'expense' && !isUnpaidBillBackedExpense(t, calendarBills)),
+      ...projectedBillExpenses,
+    ],
+    [projected, projectedBillExpenses, calendarBills]
   )
 
   const actualIncome = useMemo(() => getMonthTransactions(incomeList, year, month), [incomeList, year, month])
   const actualExpenses = useMemo(
     () => getMonthTransactions(expenseList, year, month)
-      .filter(tx => !isUnpaidBillBackedExpense(tx, data?.bills)),
-    [expenseList, data?.bills, year, month]
+      .filter(tx => !isUnpaidBillBackedExpense(tx, calendarBills)),
+    [expenseList, calendarBills, year, month]
   )
 
   const allIncome = useMemo(() => [...actualIncome, ...projectedIncome], [actualIncome, projectedIncome])
@@ -253,8 +263,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
   const unpaidBillsByDateKey = useMemo(() => {
     const map = {}
-    if (!data?.bills || !Array.isArray(data.bills)) return map
-    data.bills.forEach(bill => {
+    if (!calendarBills.length) return map
+    calendarBills.forEach(bill => {
       const dates = getBillOccurrencesForMonth(bill, year, month)
       dates.forEach(date => {
         const paid = isBillPaidForPeriod(bill, date)
@@ -267,7 +277,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       })
     })
     return map
-  }, [data?.bills, year, month])
+  }, [calendarBills, year, month])
 
   const dueDebtsByDateKey = useMemo(() => {
     const map = {}
