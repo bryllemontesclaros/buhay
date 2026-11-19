@@ -4,7 +4,6 @@ import { deleteField } from 'firebase/firestore'
 import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo, getVirtualBills } from '../lib/bills'
-import { getTransactionSubcategories } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick, displayValue, maskMoney } from '../lib/utils'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import { Button } from '../components/ui/Button'
@@ -21,7 +20,7 @@ function createBillForm() {
     due: '',
     dueMonth: '',
     cat: 'Bills',
-    subcat: getTransactionSubcategories('expense', 'Bills')[0],
+    subcat: '',
     presetKey: '',
     freq: 'monthly',
     accountId: '',
@@ -170,10 +169,6 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
     })
     return map
   }, [accounts])
-  const quickPresets = useMemo(() => getBillQuickItems(), [])
-  const presetGroups = useMemo(() => getBillPresetGroups(), [])
-  const subcategories = useMemo(() => getTransactionSubcategories('expense', 'Bills'), [])
-  const selectedPreset = useMemo(() => getBillPresetByKey(form.presetKey), [form.presetKey])
   const allBillsList = useMemo(() => [
     ...(data?.bills || []),
     ...getVirtualBills(data)
@@ -221,46 +216,8 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
 
   const billNameInputRef = useRef(null)
 
-  function applyPreset(preset) {
-    if (!preset || preset.isCustom) {
-      setForm(current => ({ ...current, name: '', presetKey: 'other', cat: 'Bills' }))
-      setTimeout(() => {
-        if (billNameInputRef.current) billNameInputRef.current.focus()
-      }, 50)
-      return
-    }
-    setForm(current => ({
-      ...current,
-      name: preset.desc || preset.label,
-      cat: 'Bills',
-      subcat: preset.subcat,
-      presetKey: preset.key,
-    }))
-  }
-
-  function handleSubcategoryChange(value) {
-    setForm(current => ({
-      ...current,
-      cat: 'Bills',
-      subcat: value,
-      presetKey: '',
-    }))
-  }
-
   function handleNameChange(value) {
-    const matchedPreset = findBillPresetByLabel(value)
-    setForm(current => {
-      if (!matchedPreset || matchedPreset.isCustom) {
-        return { ...current, name: value, presetKey: '' }
-      }
-      return {
-        ...current,
-        name: value,
-        cat: 'Bills',
-        subcat: matchedPreset.subcat,
-        presetKey: matchedPreset.key,
-      }
-    })
+    setForm(current => ({ ...current, name: value, presetKey: '' }))
   }
 
   async function handleAdd() {
