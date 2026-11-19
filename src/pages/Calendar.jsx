@@ -208,9 +208,17 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     () => getBalanceOverrides(dailyBalanceOverrides, monthStartBalances),
     [dailyBalanceOverrides, monthStartBalances],
   )
+  // The Accounts view is the source of truth for today's cash position. Keep
+  // old manual pins available for historical and future planning, but never
+  // let a stale current-day pin override the live account total.
+  const effectiveBalanceOverrides = useMemo(() => {
+    const next = { ...balanceOverrides }
+    delete next[todayStr]
+    return next
+  }, [balanceOverrides, todayStr])
   const balanceOverrideLog = Array.isArray(data.balanceOverrideLog) ? data.balanceOverrideLog : []
   const latestOverrideEvent = useMemo(() => {
-    if (!selected) return null
+    if (!selected || selected === todayStr) return null
     return balanceOverrideLog
       .filter(event => event?.dateKey === selected && event?.scope === 'buhay-closing-balance')
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0] || null
@@ -232,9 +240,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const ledger = useMemo(
     () => getProjectedLedgerForMonth(ledgerInput, year, month, {
       anchorDate: todayStr,
-      startingBalance: getMonthStartBalance(accountList, transferList, incomeList, expenseList, year, month, balanceOverrides),
+      startingBalance: getMonthStartBalance(accountList, transferList, incomeList, expenseList, year, month, effectiveBalanceOverrides),
     }),
-    [ledgerInput, year, month, todayStr, accountList, transferList, incomeList, expenseList, balanceOverrides],
+    [ledgerInput, year, month, todayStr, accountList, transferList, incomeList, expenseList, effectiveBalanceOverrides],
   )
   const ledgerIncome = useMemo(() => ledger.entries.filter(tx => tx.type === 'income'), [ledger.entries])
   const ledgerExpenses = useMemo(() => ledger.entries.filter(tx => tx.type === 'expense'), [ledger.entries])
@@ -257,8 +265,8 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [allIncome, allExpenses])
 
   const legacyForecastMap = useMemo(
-    () => getMonthForecast(accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, balanceOverrides),
-    [accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, balanceOverrides],
+    () => getMonthForecast(accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, effectiveBalanceOverrides),
+    [accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, effectiveBalanceOverrides],
   )
   const forecastMap = useMemo(() => {
     const nextForecast = Object.fromEntries(Object.entries(ledger.daily).map(([date, day]) => [date, {
@@ -266,10 +274,29 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       runningBalance: date < todayStr ? (legacyForecastMap[date]?.runningBalance ?? day.closingBalance) : day.closingBalance,
       expense: day.expenses,
       net: day.netCashflow,
-      status: legacyForecastMap[date]?.status || 'neutral',
-    }]))
-    return applyBalanceOverridesToForecast(nextForecast, year, month, balanceOverrides, ledger.summary.openingBalance)
-  }, [ledger.daily, ledger.summary.openingBalance, legacyForecastMap, todayStr, year, month, balanceOverrides])
+        status: legacyForecastMap[date]?.status || 'neutral',
+      }]))
+
+    // Account balances already include every paid transaction through today.
+    // Replaying today's actual entries from an older month opening balance
+    // would count them twice, so rebase today and future dates on live cash.
+    if (nextForecast[todayStr]) {
+      let runningBalance = getBalanceAtDate(accountList, transferList, incomeList, expenseList, todayStr)
+      const sortedDates = Object.keys(nextForecast).sort()
+      sortedDates.forEach(date => {
+        if (date === todayStr) {
+          nextForecast[date].runningBalance = runningBalance
+          return
+        }
+        if (date > todayStr) {
+          runningBalance += ledger.daily[date]?.netCashflow || 0
+          nextForecast[date].runningBalance = runningBalance
+        }
+      })
+    }
+
+    return applyBalanceOverridesToForecast(nextForecast, year, month, effectiveBalanceOverrides, ledger.summary.openingBalance)
+  }, [accountList, expenseList, incomeList, ledger.daily, ledger.summary.openingBalance, legacyForecastMap, todayStr, transferList, year, month, effectiveBalanceOverrides])
 
   const unpaidBillsByDateKey = useMemo(() => {
     const map = {}
@@ -1093,6 +1120,14 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   function openDayBalanceEditor() {
     playTick()
     if (!selected) return
+    if (selected === todayStr) {
+      notifyApp({
+        title: 'Today follows Accounts',
+        message: 'Update the linked account balance in Accounts. Calendar keeps today synced automatically.',
+        tone: 'info',
+      })
+      return
+    }
     const nextValue = Number.isFinite(Number(selectedDayBalance)) ? Number(selectedDayBalance).toFixed(2) : '0.00'
     setEditingDayBalance(true)
     setDayBalanceDraft(nextValue)
@@ -1565,9 +1600,12 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayExpense = selectedExpenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
   const selectedDayNet = selectedDayIncome - selectedDayExpense
   const selectedDayUnpaidCount = [...selectedIncome, ...selectedExpenses].filter(tx => !tx._projected && !isTransactionPaid(tx)).length
-  const selectedDayIsFuture = Boolean(selected && selected > today())
+  const selectedDayIsToday = Boolean(selected && selected === todayStr)
+  const selectedDayIsFuture = Boolean(selected && selected > todayStr)
   const selectedDayRawBalance = selected
-    ? (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, balanceOverrides))
+    ? (selectedDayIsToday
+      ? getBalanceAtDate(accountList, transferList, incomeList, expenseList, selected)
+      : (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, effectiveBalanceOverrides)))
     : 0
 
 
@@ -1587,7 +1625,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
   const baseFocusValue = balanceFocusDate
-    ? (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, balanceFocusDate, balanceOverrides))
+    ? (balanceFocusDate === todayStr
+      ? getBalanceAtDate(accountList, transferList, incomeList, expenseList, balanceFocusDate)
+      : (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, balanceFocusDate, effectiveBalanceOverrides)))
     : 0
   const focusTotalDebts = getBuhayTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
   const balanceFocusValue = calendarViewMode === 'netWorth'
@@ -1601,10 +1641,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const balanceRailLabel = formatBalanceDate(balanceFocusDate)
   const balanceRailCompactLabel = balanceRailMeta
 
+  // Today's transactions remain editable; only its manual balance pin is locked.
   const selectedDateLocked = false
   const legacyMonthStartKeyForSelectedDay = selected ? getLegacyMonthStartKeyForDate(selected, monthStartBalances) : ''
   const hasManualBalanceOnSelectedDay = Boolean(
-    selected
+    selected && !selectedDayIsToday
       && (
         Object.prototype.hasOwnProperty.call(dailyBalanceOverrides, selected)
         || Boolean(legacyMonthStartKeyForSelectedDay)
@@ -1941,17 +1982,25 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                           </span>
                         </span>
                       ) : (
-                        selectedDayIsFuture ? 'Projected balance' : 'Day balance'
+                        selectedDayIsToday
+                          ? (calendarViewMode === 'netWorth' ? 'Current net worth' : 'Current cash balance')
+                          : selectedDayIsFuture
+                            ? 'Projected balance'
+                            : 'Day balance'
                       )}
                     </span>
-                    <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit opening balance for ${selected}`} disabled={selectedDateLocked}>
+                    <Button type="button" variant="secondary" size="sm" onClick={openDayBalanceEditor} aria-label={`Edit opening balance for ${selected}`} disabled={selectedDayIsToday}>
                       Edit
                     </Button>
                   </div>
                   <div className={`${calStyles.dayBalanceValue} ${privacyMode ? calStyles.privacyValuePill : ''}`}>{balanceMoney(selectedDayBalance)}</div>
                   
                   <div className={calStyles.dayBalanceMeta}>
-                    {hasManualBalanceOnSelectedDay
+                    {selectedDayIsToday
+                      ? (calendarViewMode === 'netWorth'
+                        ? 'Based on current accounts, savings, crypto, and debts.'
+                        : 'Synced from your Cash, Bank, and E-wallet accounts.')
+                      : hasManualBalanceOnSelectedDay
                       ? 'Manual balance override active.'
                       : selectedDayIsFuture
                         ? 'Includes scheduled recurring income and expenses.'
