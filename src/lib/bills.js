@@ -571,18 +571,24 @@ export function getProjectedBillExpenses(bills = [], targetYear, targetMonth) {
 // Legacy recurring bill expenses can also produce a virtual bill. Until those
 // records are migrated, keep the unpaid bill as the single visible obligation.
 export function isUnpaidBillBackedExpense(tx = {}, bills = []) {
-  if (!tx?.recur || tx.cat !== 'Bills' || !Array.isArray(bills)) return false
+  if (!tx?.recur || String(tx.cat || '').toLowerCase() !== 'bills' || !Array.isArray(bills)) return false
 
-  const txName = String(tx.desc || '').trim().toLowerCase()
+  const normalizeBillName = value => String(value || '')
+    .toLowerCase()
+    .replace(/\b(payment|bill)\b/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+  const txName = normalizeBillName(tx.desc || tx.subcat)
   const txDate = normalizeDate(tx.date)
   const txAmount = Number(tx.amount) || 0
+  if (!txDate || !txName || !txAmount) return false
 
   return bills.some(bill => {
     if (!bill || isBillPaidForPeriod(bill, txDate || undefined)) return false
-    const billName = String(bill.name || '').trim().toLowerCase()
+    if (tx.billId && tx.billId !== bill._id) return false
+    const billName = normalizeBillName(bill.name || bill.subcat)
     if (!billName || !txName || billName !== txName) return false
     if (Math.abs((Number(bill.amount) || 0) - txAmount) > 0.01) return false
-    if (bill.accountId && tx.accountId && bill.accountId !== tx.accountId) return false
     return getBillOccurrencesForMonth(bill, Number(String(txDate).slice(0, 4)), Number(String(txDate).slice(5, 7)) - 1)
       .includes(txDate)
   })
