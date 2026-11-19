@@ -557,33 +557,8 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
             </div>
 
             <form onSubmit={handleSaveAdd} className={sStyles.modalBody}>
-              {/* Type Switcher */}
-              <div className={sStyles.segmentedTypeWrap}>
-                <button
-                  type="button"
-                  className={`${sStyles.segmentedTypeBtn} ${addForm.kind === 'bill' ? sStyles.segmentedTypeBtnActive : ''}`}
-                  onClick={() => setAddForm(f => ({ ...f, kind: 'bill' }))}
-                >
-                  📄 Bill
-                </button>
-                <button
-                  type="button"
-                  className={`${sStyles.segmentedTypeBtn} ${addForm.kind === 'subscription' ? sStyles.segmentedTypeBtnActive : ''}`}
-                  onClick={() => setAddForm(f => ({ ...f, kind: 'subscription' }))}
-                >
-                  🍿 Subscription
-                </button>
-                <button
-                  type="button"
-                  className={`${sStyles.segmentedTypeBtn} ${addForm.kind === 'income' ? sStyles.segmentedTypeBtnActive : ''}`}
-                  onClick={() => setAddForm(f => ({ ...f, kind: 'income' }))}
-                >
-                  💰 Income
-                </button>
-              </div>
-
               <div className={sStyles.field}>
-                <label className={sStyles.fieldLabel} htmlFor="recurring-name">Name / Description</label>
+                <label className={sStyles.fieldLabel} htmlFor="recurring-name">Name</label>
                 <input
                   id="recurring-name"
                   className={sStyles.fieldInput}
