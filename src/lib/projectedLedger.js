@@ -177,6 +177,7 @@ export function getProjectedLedger({
     const identity = tx.billId && tx.billPeriodKey
       ? `bill:${tx.billId}:${tx.billPeriodKey}`
       : getScheduleIdentity(tx, normalizeDate(tx.recurrenceOccurrenceKey || date))
+    if (identity && actualIdentitySet.has(identity)) return
     if (identity) actualIdentitySet.add(identity)
     entries.push(makeEntry({ ...tx, date }, type, isPaid(tx) ? PROJECTED_LEDGER_STATUS.ACTUAL : PROJECTED_LEDGER_STATUS.UNPAID, 'actual', accountLookup, {
       occurrenceIdentity: identity,

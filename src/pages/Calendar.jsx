@@ -6,7 +6,7 @@ import {
   getBalanceAtDateWithOverrides,
   getBalanceOverrides,
   getMonthForecast,
-  getMonthTransactions,
+  getMonthStartBalance,
   getTakdaTransactionLifecycle,
   getTakdaTotalAssets,
   getTakdaTotalDebts,
@@ -17,11 +17,10 @@ import {
   TAKDA_TRANSACTION_STATUS,
 } from '../lib/finance'
 import { fsAddTransaction, fsClearDailyBalanceOverrideAudited, fsClearMonthStartBalance, fsDeleteTransaction, fsDeleteTransfer, fsSetDailyBalanceOverrideAudited, fsSetTransactionPaymentStatus, fsUpdate, fsUpdateTransaction, fsTransferAccounts } from '../lib/firestore'
-import { getTransactionImpact } from '../lib/forecast'
+import { applyBalanceOverridesToForecast, getTransactionImpact } from '../lib/forecast'
 import { confirmApp, notifyApp } from '../lib/appFeedback'
 import {
   formatRecurringDateLabel,
-  getProjectedTransactions,
   getRecurringActionKey,
   getRecurringOccurrenceKey,
   isRecurringCycleSettled,
@@ -39,8 +38,10 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
-import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses, getVirtualBills, isUnpaidBillBackedExpense } from '../lib/bills'
+import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getVirtualBills, isUnpaidBillBackedExpense } from '../lib/bills'
 import { getBillingCycleOptions, getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
 import calStyles from './Calendar.module.css'
@@ -227,28 +228,27 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return [...persistedBills, ...virtualBills.filter(bill => bill?._id && !seen.has(bill._id))]
   }, [data])
 
-  const projected = useMemo(() => getProjectedTransactions(incomeList, expenseList, year, month), [incomeList, expenseList, year, month])
-  const projectedIncome = useMemo(() => projected.filter(t => t.type === 'income'), [projected])
-  const projectedBillExpenses = useMemo(() => getProjectedBillExpenses(calendarBills, year, month), [calendarBills, year, month])
-  const projectedExpenses = useMemo(
-    () => [
-      ...projected
-        .filter(t => t.type === 'expense' && !isUnpaidBillBackedExpense(t, calendarBills)),
-      ...projectedBillExpenses,
-    ],
-    [projected, projectedBillExpenses, calendarBills]
+  const ledgerInput = useMemo(() => adaptLegacyFinanceData(data), [data])
+  const ledger = useMemo(
+    () => getProjectedLedgerForMonth(ledgerInput, year, month, {
+      anchorDate: todayStr,
+      startingBalance: getMonthStartBalance(accountList, transferList, incomeList, expenseList, year, month, balanceOverrides),
+    }),
+    [ledgerInput, year, month, todayStr, accountList, transferList, incomeList, expenseList, balanceOverrides],
   )
-
-  const actualIncome = useMemo(() => getMonthTransactions(incomeList, year, month), [incomeList, year, month])
+  const ledgerIncome = useMemo(() => ledger.entries.filter(tx => tx.type === 'income'), [ledger.entries])
+  const ledgerExpenses = useMemo(() => ledger.entries.filter(tx => tx.type === 'expense'), [ledger.entries])
+  const ledgerTransfers = useMemo(() => ledger.entries.filter(tx => tx.type === 'transfer'), [ledger.entries])
+  const actualIncome = useMemo(() => ledgerIncome.filter(tx => !tx.isProjected), [ledgerIncome])
   const actualExpenses = useMemo(
-    () => getMonthTransactions(expenseList, year, month)
-      .filter(tx => !isUnpaidBillBackedExpense(tx, calendarBills)),
-    [expenseList, calendarBills, year, month]
+    () => ledgerExpenses.filter(tx => !tx.isProjected && !isUnpaidBillBackedExpense(tx, calendarBills)),
+    [ledgerExpenses, calendarBills],
   )
-
+  const projectedIncome = useMemo(() => ledgerIncome.filter(tx => tx.isProjected), [ledgerIncome])
+  const projectedExpenses = useMemo(() => ledgerExpenses.filter(tx => tx.isProjected), [ledgerExpenses])
   const allIncome = useMemo(() => [...actualIncome, ...projectedIncome], [actualIncome, projectedIncome])
   const allExpenses = useMemo(() => [...actualExpenses, ...projectedExpenses], [actualExpenses, projectedExpenses])
-  const allTransfers = useMemo(() => getMonthTransactions(transferList, year, month), [transferList, year, month])
+  const allTransfers = useMemo(() => ledgerTransfers, [ledgerTransfers])
 
   const monthSummaryTotals = useMemo(() => {
     const totalInc = (allIncome || []).reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
@@ -256,10 +256,20 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     return { totalInc, totalExp, net: totalInc - totalExp }
   }, [allIncome, allExpenses])
 
-  const forecastMap = useMemo(
+  const legacyForecastMap = useMemo(
     () => getMonthForecast(accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, balanceOverrides),
     [accountList, transferList, incomeList, expenseList, projectedIncome, projectedExpenses, year, month, balanceOverrides],
   )
+  const forecastMap = useMemo(() => {
+    const nextForecast = Object.fromEntries(Object.entries(ledger.daily).map(([date, day]) => [date, {
+      ...day,
+      runningBalance: date < todayStr ? (legacyForecastMap[date]?.runningBalance ?? day.closingBalance) : day.closingBalance,
+      expense: day.expenses,
+      net: day.netCashflow,
+      status: legacyForecastMap[date]?.status || 'neutral',
+    }]))
+    return applyBalanceOverridesToForecast(nextForecast, year, month, balanceOverrides, ledger.summary.openingBalance)
+  }, [ledger.daily, ledger.summary.openingBalance, legacyForecastMap, todayStr, year, month, balanceOverrides])
 
   const unpaidBillsByDateKey = useMemo(() => {
     const map = {}
@@ -604,8 +614,10 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
         })
       })
 
-      // 2. Bills
+      // 2. One-time bills only. Recurring bills are already represented once
+      // in the shared ledger as scheduled expense entries.
       const billList = (data?.bills || []).filter(b => {
+        if (b.freq) return false
         const dates = getBillOccurrencesForMonth(b, year, month)
         return dates.includes(ds)
       })
