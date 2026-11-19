@@ -304,104 +304,11 @@ export default function QuickAdd({ user, profile = {}, accounts = [], debts = []
           autoFocus
         />
       </div>
-      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
-        {[100, 500, 1000, 5000].map(v => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => setAmount(prev => String(Number(prev || 0) + v))}
-            style={{
-              flex: '1 1 0',
-              padding: '6px 0',
-              fontSize: '12px',
-              fontWeight: 600,
-              borderRadius: '999px',
-              border: '1px solid color-mix(in srgb, var(--text) 15%, transparent)',
-              background: 'color-mix(in srgb, var(--text) 6%, transparent)',
-              color: 'var(--text2)',
-              cursor: 'pointer',
-            }}
-          >
-            +{v.toLocaleString()}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => setAmount('')}
-          style={{
-            flex: '1 1 0',
-            padding: '6px 0',
-            fontSize: '12px',
-            fontWeight: 600,
-            borderRadius: '999px',
-            border: '1px solid color-mix(in srgb, var(--red, #ff453a) 30%, transparent)',
-            background: 'color-mix(in srgb, var(--red, #ff453a) 8%, transparent)',
-            color: 'var(--red, #ff453a)',
-            cursor: 'pointer',
-          }}
-        >
-          Clear
-        </button>
-      </div>
-
-      <div className={styles.utilityRow}>
-        <button
-          type="button"
-          className={`${styles.morePresetsBtn} ${showPresetBrowser ? styles.morePresetsBtnActive : ''}`}
-          onClick={() => setShowPresetBrowser(current => !current)}
-          aria-expanded={showPresetBrowser}
-        >
-          {showPresetBrowser ? 'Hide presets' : 'More presets'}
-        </button>
-      </div>
-
-      <div className={styles.sectionLabel}>{isIncome ? 'What did you receive?' : 'What did you pay for?'}</div>
-      <div className={styles.quickCats}>
-        {visibleQuickPresets.map(item => (
-          <button
-            key={item.key}
-            className={`${styles.quickCat} ${presetKey === item.key ? styles.quickCatActive : ''}`}
-            style={presetKey === item.key ? { borderColor: color, background: bgColor, color } : {}}
-            onClick={() => {
-              if (item.isCustom) clearPresetSelection(type, 'Other', 'Miscellaneous')
-              else applyPresetSelection(item.key)
-            }}
-            aria-pressed={presetKey === item.key}
-          >
-            <span>{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </div>
-      {showPresetBrowser && (
-        <label className={styles.metaField}>
-          <span className={styles.fieldLabel}>Browse presets</span>
-          <select
-            className={styles.fieldControl}
-            value={presetKey || 'other-custom'}
-            onChange={event => {
-              if (event.target.value === 'other-custom') clearPresetSelection(type, 'Other', 'Miscellaneous')
-              else applyPresetSelection(event.target.value)
-            }}
-          >
-            {presetGroups.map(group => (
-              <optgroup key={group.label} label={group.label}>
-                {group.items.map(option => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-            <option value="other-custom">Other / custom</option>
-          </select>
-        </label>
-      )}
       <div className={styles.sectionLabel}>Details</div>
       <div className={styles.descRow}>
         <input
           className={styles.descInput}
-          placeholder={isIncome ? 'Payer or note (optional)' : 'Merchant, biller, or note (optional)'}
+          placeholder="Name"
           value={desc}
           onChange={e => {
             setDesc(e.target.value)
@@ -469,7 +376,7 @@ export default function QuickAdd({ user, profile = {}, accounts = [], debts = []
       <details className={styles.advancedBox}>
         <summary className={styles.advancedSummary}>
           <span>More options</span>
-          <small>Payment status, category, subcategory, recurrence</small>
+          <small>Payment status and recurrence</small>
         </summary>
         <div className={styles.advancedGrid}>
           <label className={styles.metaField}>
@@ -484,26 +391,6 @@ export default function QuickAdd({ user, profile = {}, accounts = [], debts = []
             >
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
-            </select>
-          </label>
-          <label className={styles.metaField}>
-            <span className={styles.fieldLabel}>Category</span>
-            <select
-              className={styles.fieldControl}
-              value={cat}
-              onChange={handleCategoryChange}
-            >
-              {categories.map(option => <option key={option} value={option}>{option}</option>)}
-            </select>
-          </label>
-          <label className={styles.metaField}>
-            <span className={styles.fieldLabel}>Subcategory</span>
-            <select
-              className={styles.fieldControl}
-              value={subcat}
-              onChange={handleSubcategoryChange}
-            >
-              {subcategories.map(option => <option key={option} value={option}>{option}</option>)}
             </select>
           </label>
           <label className={`${styles.metaField} ${styles.metaFieldFull}`}>
