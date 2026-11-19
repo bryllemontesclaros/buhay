@@ -8,7 +8,7 @@ import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '..
 import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
 import { notifyApp } from '../lib/appFeedback'
 import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
-import { getBillPeriodInfo } from '../lib/bills'
+import { getBillPeriodInfo, isUnpaidBillBackedExpense } from '../lib/bills'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Bills from './Bills'
@@ -1144,7 +1144,11 @@ export default function AppShell({ user }) {
     const viewYear = todayStr.slice(0, 4)
     const viewMonth = todayStr.slice(5, 7)
 
-    const monthExpenses = expenses.filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const monthExpenses = expenses.filter(tx => (
+      isTransactionPaid(tx)
+      && isSameMonth(tx.date, viewYear, viewMonth)
+      && !isUnpaidBillBackedExpense(tx, bills)
+    ))
     const monthIncomes = (data.incomes || []).filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
     const incomeTotal = monthIncomes.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
     const expenseTotal = monthExpenses.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)

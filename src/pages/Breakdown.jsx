@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { getMonthTotal, getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getProjectedTransactions } from '../lib/recurrence'
+import { isUnpaidBillBackedExpense } from '../lib/bills'
 import { displayValue, fmt, maskMoney, playTick } from '../lib/utils'
 import DetailsModal from '../components/DetailsModal'
 import styles from './Page.module.css'
@@ -249,8 +250,12 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
     [data?.income, projectedIncome, viewYear, viewMonth],
   )
   const monthExpenses = useMemo(
-    () => [...getMonthTransactions(data?.expenses || [], viewYear, viewMonth).filter(isTransactionPaid), ...projectedExpenses],
-    [data?.expenses, projectedExpenses, viewYear, viewMonth],
+    () => [
+      ...getMonthTransactions(data?.expenses || [], viewYear, viewMonth)
+        .filter(tx => isTransactionPaid(tx) && !isUnpaidBillBackedExpense(tx, data?.bills)),
+      ...projectedExpenses.filter(tx => !isUnpaidBillBackedExpense(tx, data?.bills)),
+    ],
+    [data?.expenses, data?.bills, projectedExpenses, viewYear, viewMonth],
   )
 
   const expenseCats = useMemo(() => {
@@ -308,7 +313,9 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
         + projectedMonth
           .filter(tx => tx.type === 'income')
           .reduce((sum, tx) => sum + (tx.amount || 0), 0)
-      const exp = getMonthTotal(data?.expenses || [], year, month)
+    const exp = getMonthTransactions(data?.expenses || [], year, month)
+      .filter(tx => isTransactionPaid(tx) && !isUnpaidBillBackedExpense(tx, data?.bills))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
         + projectedMonth
           .filter(tx => tx.type === 'expense')
           .reduce((sum, tx) => sum + (tx.amount || 0), 0)
@@ -320,7 +327,7 @@ export default function Breakdown({ data, profile = {}, symbol, privacyMode = fa
         isCurrent: year === now.getFullYear() && month === now.getMonth()
       }
     })
-  }, [data?.expenses, data?.income, viewMonth, viewYear, now])
+  }, [data?.expenses, data?.bills, data?.income, viewMonth, viewYear, now])
 
   const maxTrendFlow = useMemo(() => {
     return Math.max(1, ...last6.map(m => Math.max(m.income, m.expenses)))

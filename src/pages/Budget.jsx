@@ -3,6 +3,7 @@ import ModalShell from '../components/ui/ModalShell'
 import { fsAdd, fsDel } from '../lib/firestore'
 import { notifyApp } from '../lib/appFeedback'
 import { isTransactionPaid } from '../lib/finance'
+import { isUnpaidBillBackedExpense } from '../lib/bills'
 import { displayValue, fmt, isSameMonth, maskMoney, playTick } from '../lib/utils'
 import styles from './Page.module.css'
 import bStyles from './Budget.module.css'
@@ -59,9 +60,9 @@ export default function Budget({ user, data, profile = {}, symbol, privacyMode =
   // Monthly Spending
   const monthExpensesList = useMemo(() => {
     return (data?.expenses || [])
-      .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+      .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth) && !isUnpaidBillBackedExpense(tx, data?.bills))
       .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-  }, [data?.expenses, viewMonth, viewYear])
+  }, [data?.expenses, data?.bills, viewMonth, viewYear])
 
   const totalExpenses = useMemo(() => {
     return monthExpensesList.reduce((sum, tx) => sum + (tx.amount || 0), 0)
