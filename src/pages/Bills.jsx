@@ -497,7 +497,8 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, margin: '20px 0 16px', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+        {!embedded && (
+          <div style={{ display: 'flex', gap: 12, margin: '20px 0 16px', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
           <button
             type="button"
             style={{
@@ -530,9 +531,10 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
           >
             Active Subscriptions ({activeSubscriptions.length})
           </button>
-        </div>
+          </div>
+        )}
 
-        {activeSubTab === 'subscriptions' ? (
+        {!embedded && activeSubTab === 'subscriptions' ? (
           <div className={bStyles.prioritySections}>
             {activeSubscriptions.length > 0 ? (
               <div className={bStyles.billsGrid}>

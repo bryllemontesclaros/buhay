@@ -4,16 +4,15 @@ import BrandLogo from '../components/BrandLogo'
 import { signOut } from 'firebase/auth'
 import { auth, getVerificationEmailErrorMessage, sendVerificationEmailSafe } from '../lib/firebase'
 import { fsSetProfile, fsSyncDueLinkedTransactions, listenCol, listenProfile } from '../lib/firestore'
-import { getInitials, getCurrencySymbol, today, isSameMonth, playTick } from '../lib/utils'
+import { getInitials, getCurrencySymbol, today, playTick } from '../lib/utils'
 import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
 import { notifyApp } from '../lib/appFeedback'
-import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
-import { getBillPeriodInfo, isUnpaidBillBackedExpense } from '../lib/bills'
+import { isUnpaidBillBackedExpense } from '../lib/bills'
 import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { resolveFinancePage } from '../lib/financeNavigation'
 import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
-import Bills from './Bills'
 import Settings from './Settings'
 import { QuickAddModal } from '../components/modals/QuickAddModal'
 import History from './History'
@@ -28,7 +27,6 @@ import { ChangelogModal } from '../components/modals/ChangelogModal'
 import Budget from './Budget'
 import Savings from './Savings'
 import Breakdown from './Breakdown'
-import Subscriptions from './Subscriptions'
 import Recurring from './Recurring'
 import { Button } from '../components/ui/Button'
 import {
@@ -319,19 +317,6 @@ const DEFAULT_SPACE_PAGES = {
   takda: 'calendar',
 }
 
-const FINANCE_PAGE_ALIASES = {
-  accounts: { page: 'accounts' },
-  crypto: { page: 'accounts', subTab: 'crypto' },
-  portfolio: { page: 'accounts', subTab: 'crypto' },
-  history: { page: 'history' },
-  breakdown: { page: 'breakdown' },
-  savings: { page: 'savings' },
-  bills: { page: 'recurring', subTab: 'bills' },
-  budget: { page: 'budget' },
-  debts: { page: 'debts' },
-  subscriptions: { page: 'recurring', subTab: 'subscriptions' },
-}
-
 const MONEY_TOOLS = [
   {
     id: 'accounts',
@@ -361,10 +346,10 @@ const PLAN_TOOLS = [
     Component: Savings,
   },
   {
-    id: 'bills',
-    label: 'Bills',
-    meta: 'Due dates and recurring services',
-    Component: Bills,
+    id: 'recurring',
+    label: 'Recurring',
+    meta: 'Schedules and due dates',
+    Component: Recurring,
   },
   {
     id: 'budget',
@@ -814,75 +799,6 @@ export default function AppShell({ user }) {
     }
   }
 
-  const netPosition = useMemo(() => {
-    const accounts = Array.isArray(data?.accounts) ? data.accounts : []
-    return accounts.reduce((sum, acc) => sum + (Number(acc.balance) || 0), 0)
-  }, [data?.accounts])
-
-  const monthNet = useMemo(() => {
-    const now = new Date()
-    const y = now.getFullYear()
-    const m = now.getMonth()
-    const income = getMonthTransactions(data.income || [], y, m)
-    const expenses = getMonthTransactions(data.expenses || [], y, m)
-    const incSum = income.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
-    const expSum = expenses.filter(isTransactionPaid).reduce((sum, tx) => sum + (tx.amount || 0), 0)
-    return incSum - expSum
-  }, [data.income, data.expenses])
-
-  const billWatchCount = useMemo(() => {
-    if (!data?.bills || !Array.isArray(data.bills)) return 0
-    let count = 0
-    const now = new Date()
-    data.bills.forEach(bill => {
-      const period = getBillPeriodInfo(bill, now)
-      if (period && !period.paid && (period.status === 'overdue' || period.status === 'due' || period.status === 'soon')) {
-        count++
-      }
-    })
-    return count
-  }, [data?.bills])
-
-  const budgetStatus = useMemo(() => {
-    const budgets = data?.budgets || []
-    const now = new Date()
-    const y = now.getFullYear()
-    const m = now.getMonth()
-    
-    const spending = {}
-    if (Array.isArray(data?.expenses)) {
-      data.expenses
-        .filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, y, m))
-        .forEach(tx => {
-          spending[tx.cat] = (spending[tx.cat] || 0) + (tx.amount || 0)
-        })
-    }
-    
-    let overCount = 0
-    let warningCount = 0
-    budgets.forEach(budget => {
-      const spent = spending[budget.cat] || 0
-      const pct = budget.limit > 0 ? (spent / budget.limit) * 100 : 0
-      if (pct >= 100) {
-        overCount++
-      } else if (pct >= 80) {
-        warningCount++
-      }
-    })
-    
-    return { overCount, warningCount, totalBudgets: budgets.length }
-  }, [data?.budgets, data?.expenses])
-
-  const savingsProgress = useMemo(() => {
-    const goals = data?.goals || []
-    const totalSaved = goals.reduce((sum, goal) => sum + (Number(goal.current) || 0), 0)
-    const totalTarget = goals.reduce((sum, goal) => sum + (Number(goal.target) || 0), 0)
-    const pct = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0
-    return { totalSaved, totalTarget, pct, totalGoals: goals.length }
-  }, [data?.goals])
-
-
-
   useEffect(() => {
     function handleKeydown(event) {
       if (event.key !== 'Escape') return
@@ -1088,8 +1004,8 @@ export default function AppShell({ user }) {
     breakdown: HistoryAndInsights,
     budget: SavingsAndBudget,
     recurring: Recurring,
-    bills: Bills,
-    subscriptions: Subscriptions,
+    bills: Recurring,
+    subscriptions: Recurring,
   }
   const PageComponent = page === 'settings'
     ? Settings
@@ -1228,9 +1144,9 @@ export default function AppShell({ user }) {
 
 
   function navigateToFinancePage(nextPage = DEFAULT_SPACE_PAGES.takda) {
-    const alias = FINANCE_PAGE_ALIASES[nextPage]
+    const alias = resolveFinancePage(nextPage, DEFAULT_SPACE_PAGES.takda)
     setActiveSpace('takda')
-    if (alias?.page) {
+    if (alias.page !== nextPage || alias.subTab) {
       setRouteSubTab(alias.subTab || '')
       setPage(alias.page)
       return
@@ -1365,7 +1281,7 @@ export default function AppShell({ user }) {
     symbol,
     privacyMode,
     exchangeRates,
-    subTab: routeSubTab || (page === 'breakdown' ? 'insights' : page),
+    subTab: routeSubTab || (page === 'breakdown' ? 'insights' : page === 'recurring' ? '' : page),
 
     billPaymentTarget,
     debtPaymentTarget,

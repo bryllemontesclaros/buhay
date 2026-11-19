@@ -9,6 +9,8 @@ import { getVirtualBills } from '../lib/bills'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import Bills from './Bills'
 
+const RECURRING_TABS = new Set(['bills', 'subscriptions', 'income'])
+
 function getMonthlyEquivalent(amount, freq = 'monthly') {
   const numericAmount = Number(amount) || 0
   if (!numericAmount) return 0
@@ -34,12 +36,13 @@ export default function Recurring({ user, data, symbol, privacyMode = false, bil
   const money = value => displayValue(privacyMode, fmt(value, s), maskMoney(s))
   
   // Default to bills tab if arriving via a bill payment deep-link, otherwise check localStorage or default to bills
-  const initialTab = subTab || (billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills'))
+  const requestedTab = RECURRING_TABS.has(subTab) ? subTab : ''
+  const initialTab = requestedTab || (billPaymentTarget ? 'bills' : (localStorage.getItem('takda_recurring_tab') || 'bills'))
   const [activeTab, setActiveTab] = useState(initialTab)
 
   useEffect(() => {
-    if (subTab) setActiveTab(subTab)
-  }, [subTab])
+    if (requestedTab) setActiveTab(requestedTab)
+  }, [requestedTab])
 
   const handleTabChange = (tab) => {
     playTick()

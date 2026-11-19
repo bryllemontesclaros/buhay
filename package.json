@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:ledger": "esbuild test_projected_ledger.js --bundle --platform=node --format=esm --outfile=/tmp/buhay-ledger-test.mjs && node /tmp/buhay-ledger-test.mjs"
+    "test:ledger": "esbuild test_projected_ledger.js --bundle --platform=node --format=esm --outfile=/tmp/buhay-ledger-test.mjs && node /tmp/buhay-ledger-test.mjs",
+    "test:navigation": "esbuild test_finance_navigation.js --bundle --platform=node --format=esm --outfile=/tmp/buhay-navigation-test.mjs && node /tmp/buhay-navigation-test.mjs"
   },
   "dependencies": {
     "firebase": "^10.12.2",
