@@ -62,23 +62,34 @@ export async function fsMarkBillPaid(uid, bill = {}, payment = {}, accounts = []
   
   let expenseId = ''
   if (!payment.skipExpense) {
-    const txRef = await fsAddTransaction(uid, 'expenses', {
-      desc: `${bill.name || 'Bill'} payment`,
-      amount,
-      date,
-      cat: 'Bills',
-      subcat: bill.subcat || 'Other',
-      presetKey: bill.presetKey || '',
-      recur: '',
-      type: 'expense',
-      paymentStatus: 'paid',
-      accountId,
-      accountBalanceLinked: Boolean(accountId),
-      billId: bill._id,
-      billPeriodKey: period.key,
-      source: payment.source || 'bill-payment',
-    }, accounts)
-    expenseId = txRef.id
+    // A stale bill document or an interrupted payment can otherwise create
+    // two expenses for the same bill occurrence. Reuse the linked payment.
+    const expenseSnap = await getDocs(userCol(uid, 'expenses'))
+    const existingPayment = expenseSnap.docs
+      .map(expenseDoc => ({ ...expenseDoc.data(), _id: expenseDoc.id }))
+      .find(tx => tx.billId === bill._id && tx.billPeriodKey === period.key)
+
+    if (existingPayment) {
+      expenseId = existingPayment._id
+    } else {
+      const txRef = await fsAddTransaction(uid, 'expenses', {
+        desc: `${bill.name || 'Bill'} payment`,
+        amount,
+        date,
+        cat: 'Bills',
+        subcat: bill.subcat || 'Other',
+        presetKey: bill.presetKey || '',
+        recur: '',
+        type: 'expense',
+        paymentStatus: 'paid',
+        accountId,
+        accountBalanceLinked: Boolean(accountId),
+        billId: bill._id,
+        billPeriodKey: period.key,
+        source: payment.source || 'bill-payment',
+      }, accounts)
+      expenseId = txRef.id
+    }
   }
 
   const paidAt = Date.now()
@@ -240,7 +251,6 @@ export async function fsSyncDueLinkedTransactions(uid, transactions = [], accoun
   await batch.commit()
   return dueTransactions.length
 }
-
 
 
 

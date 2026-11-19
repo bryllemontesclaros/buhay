@@ -39,7 +39,7 @@ import {
   sanitizeTransactionSubcategory,
 } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, normalizeDate, RECUR_OPTIONS, today, playTick } from '../lib/utils'
-import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses } from '../lib/bills'
+import { getBillOccurrencesForMonth, getBillPeriodInfo, isBillPaidForPeriod, getProjectedBillExpenses, isUnpaidBillBackedExpense } from '../lib/bills'
 import { getBillingCycleOptions, getCreditCardCycleDetails, parseDayOfMonth } from '../lib/billingCycles'
 import { createPortal, flushSync } from 'react-dom'
 import styles from './Page.module.css'
@@ -230,7 +230,11 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   )
 
   const actualIncome = useMemo(() => getMonthTransactions(incomeList, year, month), [incomeList, year, month])
-  const actualExpenses = useMemo(() => getMonthTransactions(expenseList, year, month), [expenseList, year, month])
+  const actualExpenses = useMemo(
+    () => getMonthTransactions(expenseList, year, month)
+      .filter(tx => !isUnpaidBillBackedExpense(tx, data?.bills)),
+    [expenseList, data?.bills, year, month]
+  )
 
   const allIncome = useMemo(() => [...actualIncome, ...projectedIncome], [actualIncome, projectedIncome])
   const allExpenses = useMemo(() => [...actualExpenses, ...projectedExpenses], [actualExpenses, projectedExpenses])
