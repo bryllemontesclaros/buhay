@@ -4,7 +4,7 @@ import { deleteField } from 'firebase/firestore'
 import { fsAdd, fsDel, fsDeleteTransaction, fsMarkBillPaid, fsUpdate, fsUpdateTransaction } from '../lib/firestore'
 import { confirmApp, confirmDeleteApp, notifyApp } from '../lib/appFeedback'
 import { getBillPeriodInfo, getVirtualBills } from '../lib/bills'
-import { findBillPresetByLabel, getBillPresetByKey, getBillPresetGroups, getBillQuickItems, getTransactionSubcategories } from '../lib/transactionOptions'
+import { getTransactionSubcategories } from '../lib/transactionOptions'
 import { fmt, formatDisplayDate, RECUR_OPTIONS, today, playTick, displayValue, maskMoney } from '../lib/utils'
 import { getRecurringOccurrenceKey } from '../lib/recurrence'
 import { Button } from '../components/ui/Button'
@@ -697,25 +697,6 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
             </div>
             <div className={bStyles.drawerBody}>
               <div className={styles.formGroup}>
-                <label>What bill is this for?</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
-                  {quickPresets.map(item => {
-                    const isSelected = form.presetKey === item.key || (item.isCustom && form.presetKey === 'other')
-                    return (
-                      <button
-                        key={item.key}
-                        type="button"
-                        className={styles.chip}
-                        onClick={() => item.isCustom ? applyPreset(null) : applyPreset(item)}
-                        style={isSelected ? { borderColor: 'var(--amber)', background: 'var(--amber-glow)', color: 'var(--amber)' } : {}}
-                      >
-                        {item.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-              <div className={styles.formGroup}>
                 <label>Bill name</label>
                 <input ref={billNameInputRef} placeholder="e.g. Meralco" value={form.name} onChange={e => handleNameChange(e.target.value)} />
               </div>
@@ -771,33 +752,6 @@ export default function Bills({ user, data, symbol, privacyMode = false, billPay
                     <input type="number" min={1} max={31} placeholder="e.g. 15" value={form.due} onChange={e => set('due', e.target.value)} />
                   </>
                 )}
-              </div>
-              <div className={styles.formGroup}>
-                <label>Browse presets</label>
-                <select
-                  value={form.presetKey || 'other-custom'}
-                  onChange={event => {
-                    const preset = getBillPresetByKey(event.target.value)
-                    if (!preset || preset.isCustom) {
-                      applyPreset(null)
-                      return
-                    }
-                    applyPreset(preset)
-                  }}
-                >
-                  <option value="other-custom">Custom bill</option>
-                  {presetGroups.map(group => (
-                    <optgroup key={group.label} label={group.label}>
-                      {group.items.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
-                    </optgroup>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Bill type</label>
-                <select value={form.subcat} onChange={e => handleSubcategoryChange(e.target.value)}>
-                  {subcategories.map(option => <option key={option}>{option}</option>)}
-                </select>
               </div>
               <div className={styles.formGroup}>
                 <label>Default pay-from account</label>
