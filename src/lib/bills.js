@@ -584,7 +584,11 @@ export function isUnpaidBillBackedExpense(tx = {}, bills = []) {
   if (!txDate || !txName || !txAmount) return false
 
   return bills.some(bill => {
-    if (!bill || isBillPaidForPeriod(bill, txDate || undefined)) return false
+    if (!bill) return false
+    // A projected recurring bill is a schedule placeholder, not a payment.
+    // Let the bill occurrence own that row even if the source chain contains
+    // an older transaction for the same recurring schedule.
+    if (!tx._projected && isBillPaidForPeriod(bill, txDate || undefined)) return false
     if (tx.billId && tx.billId !== bill._id) return false
     const billName = normalizeBillName(bill.name || bill.subcat)
     if (!billName || !txName || billName !== txName) return false
