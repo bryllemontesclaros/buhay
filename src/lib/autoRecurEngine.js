@@ -62,6 +62,9 @@ export async function runAutoRecurrenceEngine(uid, allIncome = [], allExpenses =
   const seenKeys = new Set()
   const dueProjected = allProjected.filter(tx => {
     if (!tx || tx.date > nowStr) return false
+    // Bills are settled through the bill-payment flow. Auto-logging the
+    // recurring source here would create an expense before the bill is paid.
+    if (tx.type === 'expense' && tx.cat === 'Bills') return false
     const key = `${tx._sourceId || tx.recurrenceSourceId}_${tx._occurrenceKey || tx.date}`
     if (seenKeys.has(key)) return false
     seenKeys.add(key)
