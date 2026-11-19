@@ -339,15 +339,13 @@ export function applyTransactionPreset(type, presetOrKey) {
 
 export function getDefaultTransactionDraft(type = 'expense') {
   const resolvedType = resolveType(type)
-  const cat = DEFAULT_CATEGORY_BY_TYPE[resolvedType]
-  const subcat = sanitizeTransactionSubcategory(resolvedType, cat, DEFAULT_SUBCATEGORY_BY_TYPE[resolvedType])
 
   return {
-    desc: DEFAULT_LABEL_BY_TYPE[resolvedType],
+    desc: '',
     amount: '',
     type: resolvedType,
-    cat,
-    subcat,
+    cat: '',
+    subcat: '',
     presetKey: '',
     recur: '',
   }

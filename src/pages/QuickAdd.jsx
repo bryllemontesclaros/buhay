@@ -35,8 +35,8 @@ export default function QuickAdd({ user, profile = {}, accounts = [], debts = []
   const s = symbol || '₱'
   const initialType = initialEntry?.type || defaultType
   const initialDraft = getDefaultTransactionDraft(initialType)
-  const initialCat = sanitizeTransactionCategory(initialType, initialEntry?.cat || initialDraft.cat)
-  const initialSubcat = sanitizeTransactionSubcategory(initialType, initialCat, initialEntry?.subcat || initialDraft.subcat)
+  const initialCat = initialEntry?.cat || ''
+  const initialSubcat = initialEntry?.subcat || ''
   const initialMatchedPreset =
     getPresetByKey(initialType, initialEntry?.presetKey || '')
     || findPresetByLabel(initialType, initialEntry?.desc || '')
