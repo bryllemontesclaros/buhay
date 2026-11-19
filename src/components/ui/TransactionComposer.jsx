@@ -90,105 +90,10 @@ export function TransactionComposer({
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px', marginBottom: '16px' }}>
-              {[100, 500, 1000, 5000].map(v => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => set('amount', String(Number(form.amount || 0) + v))}
-                  style={{
-                    flex: '1 1 0',
-                    padding: '6px 0',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    borderRadius: '999px',
-                    border: '1px solid color-mix(in srgb, var(--text) 15%, transparent)',
-                    background: 'color-mix(in srgb, var(--text) 6%, transparent)',
-                    color: 'var(--text2)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  +{v.toLocaleString()}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => set('amount', '')}
-                style={{
-                  flex: '1 1 0',
-                  padding: '6px 0',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  borderRadius: '999px',
-                  border: '1px solid color-mix(in srgb, var(--red, #ff453a) 30%, transparent)',
-                  background: 'color-mix(in srgb, var(--red, #ff453a) 8%, transparent)',
-                  color: 'var(--red, #ff453a)',
-                  cursor: 'pointer',
-                }}
-              >
-                Clear
-              </button>
-            </div>
-
-            <div className={calStyles.modalSectionLabel}>{isIncome ? 'What did you receive?' : 'What did you pay for?'}</div>
-            <div className={calStyles.quickCats}>
-              {visibleQuickPresets.map(item => (
-                <button
-                  key={item.key}
-                  className={`${calStyles.quickCat} ${form.presetKey === item.key ? calStyles.quickCatActive : ''}`}
-                  style={form.presetKey === item.key ? {
-                    borderColor: isIncome ? 'var(--income)' : 'var(--red)',
-                    background: isIncome ? 'var(--income-dim)' : 'var(--red-dim)',
-                    color: isIncome ? 'var(--income)' : 'var(--red)',
-                  } : {}}
-                  disabled={formSaving}
-                  onClick={() => {
-                    if (item.isCustom) clearComposerPreset(modalType, 'Other', 'Miscellaneous')
-                    else applyComposerPreset(item.key)
-                  }}
-                  aria-pressed={form.presetKey === item.key}
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className={calStyles.presetActions}>
-              <button
-                type="button"
-                className={`${calStyles.presetToggle} ${showPresetBrowser ? calStyles.presetToggleActive : ''}`}
-                onClick={() => setShowPresetBrowser(current => !current)}
-                disabled={formSaving}
-                aria-expanded={showPresetBrowser}
-              >
-                {showPresetBrowser ? 'Hide presets' : 'More presets'}
-              </button>
-            </div>
-
             <div className={calStyles.modalFields}>
-              {showPresetBrowser && (
-                <div className={`${styles.formGroup} ${calStyles.modalFieldFull}`}>
-                  <label>Browse presets</label>
-                  <select
-                    value={form.presetKey || 'other-custom'}
-                    onChange={event => {
-                      if (event.target.value === 'other-custom') clearComposerPreset(modalType, 'Other', 'Miscellaneous')
-                      else applyComposerPreset(event.target.value)
-                    }}
-                    disabled={formSaving}
-                  >
-                    {presetGroups.map(group => (
-                      <optgroup key={group.label} label={group.label}>
-                        {group.items.map(option => <option key={option.key} value={option.key}>{option.label}</option>)}
-                      </optgroup>
-                    ))}
-                    <option value="other-custom">Other / custom</option>
-                  </select>
-                </div>
-              )}
               <div className={styles.formGroup}>
-                <label>{selectedPreset ? 'Description' : (isIncome ? 'Payer or note' : 'Merchant, biller, or note')}</label>
-                <input placeholder="Merchant, payer, or note (optional)" value={form.desc} onChange={event => set('desc', event.target.value)} disabled={formSaving} />
+                <label>{isIncome ? 'Name' : 'Name'}</label>
+                <input placeholder="Name" value={form.desc} onChange={event => set('desc', event.target.value)} disabled={formSaving} required />
               </div>
               <div className={styles.formGroup}>
                 <label>Account</label>
@@ -226,32 +131,9 @@ export function TransactionComposer({
               )}
             </div>
 
-            <div className={calStyles.presetHint}>
-              {selectedPreset
-                ? `${selectedPreset.label} auto-fills ${selectedPreset.cat} → ${selectedPreset.subcat}.`
-                : isIncome
-                  ? 'No preset selected. Choose a familiar income source, or keep this as a custom entry.'
-                  : 'No preset selected. Choose a familiar biller or merchant, or keep this as a custom entry.'}
-            </div>
-
             <details className={calStyles.advancedBox}>
-              <summary className={calStyles.advancedSummary}>
-                <span>More options</span>
-                <small>Payment status, category, subcategory, recurrence</small>
-              </summary>
+              <summary className={calStyles.advancedSummary}><span>More options</span><small>Account, payment status, recurrence</small></summary>
               <div className={calStyles.advancedGrid}>
-                <div className={styles.formGroup}>
-                  <label>Category</label>
-                  <select value={form.cat} onChange={event => applyComposerCategory(event.target.value)} disabled={formSaving}>
-                    {cats.map(option => <option key={option}>{option}</option>)}
-                  </select>
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Subcategory</label>
-                  <select value={form.subcat} onChange={event => applyComposerSubcategory(event.target.value)} disabled={formSaving}>
-                    {subcats.map(option => <option key={option}>{option}</option>)}
-                  </select>
-                </div>
                 <div className={`${styles.formGroup} ${calStyles.advancedFull}`}>
                   <label>Recurrence</label>
                   <div className={calStyles.recurGrid}>
