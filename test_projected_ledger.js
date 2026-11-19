@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { getProjectedLedger } from './src/lib/projectedLedger.js'
+import { getCalendarCashBalance } from './src/lib/finance.js'
 import { getBillOccurrencesForMonth, getBillPeriodKey } from './src/lib/bills.js'
 import { getRecurringDates } from './src/lib/recurrence.js'
 
@@ -42,6 +43,17 @@ const baseData = {
   transfers: [],
   bills: [bill],
 }
+
+const liveCashBalance = getCalendarCashBalance({
+  targetDate: '2026-11-19',
+  todayDate: '2026-11-19',
+  accounts: [{ _id: 'cash', type: 'Bank', balance: 373000 }],
+  income: [{ _id: 'today-income', amount: 3000, date: '2026-11-19', accountId: 'cash' }],
+  expenses: [{ _id: 'today-expense', amount: 3125.67, date: '2026-11-19', accountId: 'cash' }],
+  forecastMap: { '2026-11-19': { runningBalance: 360800 } },
+})
+
+assert.equal(liveCashBalance, 373000)
 
 const projected = getProjectedLedger({
   data: baseData,

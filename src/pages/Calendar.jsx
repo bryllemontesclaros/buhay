@@ -3,8 +3,8 @@ import { DayTxRow } from '../components/ui/DayTxRow'
 import { TransactionComposer } from '../components/ui/TransactionComposer'
 import {
   getBalanceAtDate,
-  getBalanceAtDateWithOverrides,
   getBalanceOverrides,
+  getCalendarCashBalance,
   getMonthForecast,
   getMonthStartBalance,
   getBuhayTransactionLifecycle,
@@ -549,8 +549,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
 
     for (let d = 1; d <= daysInMonth; d++) {
       const ds = dateStr(d)
-      const forecast = forecastMap[ds]
-      const baseValue = forecast ? forecast.runningBalance : 0
+      const baseValue = getCalendarCashBalance({
+        targetDate: ds,
+        todayDate: todayStr,
+        forecastMap,
+        accounts: accountList,
+        transfers: transferList,
+        income: incomeList,
+        expenses: expenseList,
+        balanceOverrides: effectiveBalanceOverrides,
+      })
       const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
       const displayValue = calendarViewMode === 'netWorth'
         ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
@@ -571,7 +579,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       peakVal: peakVal === -Infinity ? 0 : peakVal,
       peakDate,
     }
-  }, [daysInMonth, year, month, forecastMap, accountList, data?.debts, incomeList, expenseList, calendarViewMode, totalSavings, totalCryptoAssets])
+  }, [daysInMonth, year, month, forecastMap, accountList, transferList, data?.debts, incomeList, expenseList, effectiveBalanceOverrides, todayStr, calendarViewMode, totalSavings, totalCryptoAssets])
 
   const upcomingMonthDeadlines = useMemo(() => {
     const list = []
@@ -753,8 +761,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       })
 
       if (dayEntries.length > 0) {
-        const forecast = forecastMap[ds]
-        const baseValue = forecast ? forecast.runningBalance : 0
+        const baseValue = getCalendarCashBalance({
+          targetDate: ds,
+          todayDate: todayStr,
+          forecastMap,
+          accounts: accountList,
+          transfers: transferList,
+          income: incomeList,
+          expenses: expenseList,
+          balanceOverrides: effectiveBalanceOverrides,
+        })
         const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
         const dayBalance = calendarViewMode === 'netWorth'
           ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts)
@@ -840,6 +856,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     dueDebtsByDateKey,
     statementDebtsByDateKey,
     forecastMap,
+    transferList,
     calendarViewMode,
     totalSavings,
     totalCryptoAssets,
@@ -847,6 +864,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
     data?.debts,
     incomeList,
     expenseList,
+    effectiveBalanceOverrides,
     accountLookup,
     scheduleScope,
     scheduleCategory,
@@ -1603,9 +1621,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   const selectedDayIsToday = Boolean(selected && selected === todayStr)
   const selectedDayIsFuture = Boolean(selected && selected > todayStr)
   const selectedDayRawBalance = selected
-    ? (selectedDayIsToday
-      ? getBalanceAtDate(accountList, transferList, incomeList, expenseList, selected)
-      : (forecastMap[selected]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, selected, effectiveBalanceOverrides)))
+    ? getCalendarCashBalance({
+      targetDate: selected,
+      todayDate: todayStr,
+      forecastMap,
+      accounts: accountList,
+      transfers: transferList,
+      income: incomeList,
+      expenses: expenseList,
+      balanceOverrides: effectiveBalanceOverrides,
+    })
     : 0
 
 
@@ -1625,9 +1650,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
   }, [currentDay, daysInMonth, isCurrentMonthView])
   const balanceFocusDate = selected || defaultBalanceDate
   const baseFocusValue = balanceFocusDate
-    ? (balanceFocusDate === todayStr
-      ? getBalanceAtDate(accountList, transferList, incomeList, expenseList, balanceFocusDate)
-      : (forecastMap[balanceFocusDate]?.runningBalance ?? getBalanceAtDateWithOverrides(accountList, transferList, incomeList, expenseList, balanceFocusDate, effectiveBalanceOverrides)))
+    ? getCalendarCashBalance({
+      targetDate: balanceFocusDate,
+      todayDate: todayStr,
+      forecastMap,
+      accounts: accountList,
+      transfers: transferList,
+      income: incomeList,
+      expenses: expenseList,
+      balanceOverrides: effectiveBalanceOverrides,
+    })
     : 0
   const focusTotalDebts = getBuhayTotalDebts(accountList, data?.debts, balanceFocusDate, incomeList, expenseList)
   const balanceFocusValue = calendarViewMode === 'netWorth'
@@ -2594,8 +2626,16 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
               const hasManualBalance = Object.prototype.hasOwnProperty.call(balanceOverrides, ds)
               const isSelected = selected === ds
               const isToday = ds === todayStr
-              const forecast = forecastMap[ds]
-              const baseValue = forecast ? forecast.runningBalance : 0
+              const baseValue = getCalendarCashBalance({
+                targetDate: ds,
+                todayDate: todayStr,
+                forecastMap,
+                accounts: accountList,
+                transfers: transferList,
+                income: incomeList,
+                expenses: expenseList,
+                balanceOverrides: effectiveBalanceOverrides,
+              })
               const cellTotalDebts = getBuhayTotalDebts(accountList, data?.debts, ds, incomeList, expenseList)
               const displayValue = calendarViewMode === 'netWorth' ? (baseValue + (Number(totalSavings) || 0) + totalCryptoAssets - cellTotalDebts) : baseValue
               const dayAriaLabel = buildDayAriaLabel({ ds, day, displayValue, hasIncome, hasExpense, hasManualBalance, isToday, isSelected, privacyMode, s })
@@ -2659,7 +2699,7 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
                     <div className={calStyles.activityDotsSpacer} />
                   )}
 
-                  {!privacyMode && forecast && (
+                  {!privacyMode && forecastMap[ds] && (
                     <div
                       className={calStyles.cellBalance}
                       title={formatRoundedBalance(displayValue, s)}

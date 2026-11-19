@@ -569,6 +569,35 @@ export function getBalanceAtDateWithOverrides(accounts = [], transfers = [], inc
   return getBalanceAtDate(accounts, transfers, income, expenses, target)
 }
 
+// Calendar uses the live account total for today and the generated forecast
+// for other dates. Keeping that choice in one helper prevents the grid and
+// selected-day panel from showing different balances for the same date.
+export function getCalendarCashBalance({
+  targetDate,
+  todayDate = today(),
+  forecastMap = {},
+  accounts = [],
+  transfers = [],
+  income = [],
+  expenses = [],
+  balanceOverrides = {},
+} = {}) {
+  const target = normalizeDate(targetDate)
+  const current = normalizeDate(todayDate) || today()
+  if (!target) return getLiquidBalance(accounts)
+
+  if (target === current) {
+    return getBalanceAtDate(accounts, transfers, income, expenses, target, current)
+  }
+
+  const forecastValue = forecastMap?.[target]?.runningBalance
+  if (forecastValue !== undefined && Number.isFinite(Number(forecastValue))) {
+    return Number(forecastValue)
+  }
+
+  return getBalanceAtDateWithOverrides(accounts, transfers, income, expenses, target, balanceOverrides)
+}
+
 export function getMonthStartBalance(accounts = [], transfers = [], income = [], expenses = [], year, month, balanceOverrides = {}) {
   const mKey = toMonthKey(year, month)
   if (balanceOverrides[mKey] !== undefined) {
