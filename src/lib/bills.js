@@ -593,7 +593,14 @@ export function isUnpaidBillBackedExpense(tx = {}, bills = []) {
     const billName = normalizeBillName(bill.name || bill.subcat)
     if (!billName || !txName || billName !== txName) return false
     if (Math.abs((Number(bill.amount) || 0) - txAmount) > 0.01) return false
-    return getBillOccurrencesForMonth(bill, Number(String(txDate).slice(0, 4)), Number(String(txDate).slice(5, 7)) - 1)
-      .includes(txDate)
+    const occurrenceDates = getBillOccurrencesForMonth(
+      bill,
+      Number(String(txDate).slice(0, 4)),
+      Number(String(txDate).slice(5, 7)) - 1,
+    )
+    // Legacy recurring schedules can carry a source date that differs from
+    // the bill due date. For projected bill-shaped entries, the normalized
+    // name and amount are sufficient to let the bill occurrence own the row.
+    return occurrenceDates.includes(txDate) || Boolean(tx._projected)
   })
 }
