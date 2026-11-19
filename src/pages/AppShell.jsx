@@ -9,6 +9,8 @@ import { runAutoRecurrenceEngine } from '../lib/autoRecurEngine'
 import { notifyApp } from '../lib/appFeedback'
 import { getMonthTransactions, isTransactionPaid } from '../lib/finance'
 import { getBillPeriodInfo, isUnpaidBillBackedExpense } from '../lib/bills'
+import { adaptLegacyFinanceData } from '../lib/ledgerAdapter'
+import { getProjectedLedgerForMonth } from '../lib/projectedLedger'
 import { safeScrollIntoView } from '../lib/ui'
 import Calendar from './Calendar'
 import Bills from './Bills'
@@ -1129,28 +1131,19 @@ export default function AppShell({ user }) {
 
   // 1. Takda Financial Pulse Status
   const takdaPulse = useMemo(() => {
-    const transactions = data.transactions || []
-    const expenses = data.expenses || []
-    const bills = data.bills || []
     const accounts = data.accounts || []
     const budgets = data.budgets || []
-
-    const isSameMonth = (dStr, yr, mo) => {
-      if (!dStr) return false
-      const [y, m] = dStr.split('-')
-      return y === yr && m === mo
-    }
-    const isTransactionPaid = tx => tx.status !== 'unpaid'
     const todayStr = today()
-    const viewYear = todayStr.slice(0, 4)
-    const viewMonth = todayStr.slice(5, 7)
+    const viewYear = Number(todayStr.slice(0, 4))
+    const viewMonth = Number(todayStr.slice(5, 7)) - 1
+    const monthLedger = getProjectedLedgerForMonth(adaptLegacyFinanceData(data), viewYear, viewMonth, { anchorDate: todayStr })
 
-    const monthExpenses = expenses.filter(tx => (
-      isTransactionPaid(tx)
-      && isSameMonth(tx.date, viewYear, viewMonth)
-      && !isUnpaidBillBackedExpense(tx, bills)
+    const monthExpenses = monthLedger.entries.filter(tx => (
+      tx.type === 'expense'
+      && tx.status === 'actual'
+      && !isUnpaidBillBackedExpense(tx, data.bills || [])
     ))
-    const monthIncomes = (data.incomes || []).filter(tx => isTransactionPaid(tx) && isSameMonth(tx.date, viewYear, viewMonth))
+    const monthIncomes = monthLedger.entries.filter(tx => tx.type === 'income' && tx.status === 'actual')
     const incomeTotal = monthIncomes.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
     const expenseTotal = monthExpenses.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
     const monthNet = incomeTotal - expenseTotal
@@ -1170,38 +1163,7 @@ export default function AppShell({ user }) {
       else if (pct >= 80) warningBudgetsCount++
     })
 
-    const getBillPeriodInfo = (bill) => {
-      const scheds = Array.isArray(bill.schedules) ? bill.schedules : []
-      const dueSoonDate = (() => {
-        const d = new Date()
-        d.setDate(d.getDate() + 14)
-        const y = d.getFullYear()
-        const m = String(d.getMonth() + 1).padStart(2, '0')
-        const day = String(d.getDate()).padStart(2, '0')
-        return `${y}-${m}-${day}`
-      })()
-      const list = scheds.map(s => {
-        const isPaid = (bill.payments || []).some(p => p.date === s.date)
-        const isOverdue = s.date < todayStr && !isPaid
-        const isDue = s.date === todayStr && !isPaid
-        const isSoon = s.date > todayStr && s.date <= dueSoonDate && !isPaid
-        let status = 'future'
-        if (isOverdue) status = 'overdue'
-        else if (isDue) status = 'due'
-        else if (isSoon) status = 'soon'
-        else if (isPaid) status = 'paid'
-        return { date: s.date, status, paid: isPaid }
-      })
-      const activePeriod = list.find(p => !p.paid && ['overdue', 'due', 'soon'].includes(p.status))
-      return activePeriod || list[0] || null
-    }
-
-    const unpaidBillsTotal = bills.map(bill => ({
-      ...bill,
-      period: getBillPeriodInfo(bill),
-    }))
-    .filter(bill => bill.period && !bill.period.paid && ['overdue', 'due', 'soon'].includes(bill.period.status))
-    .reduce((sum, bill) => sum + (Number(bill.amount) || 0), 0)
+    const unpaidBillsTotal = 0
 
     const liquidTotal = accounts
       .filter(account => ['Cash', 'Bank', 'E-wallet'].includes(account.type))
