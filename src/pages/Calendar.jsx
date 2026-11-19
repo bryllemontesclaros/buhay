@@ -268,7 +268,9 @@ export default function Calendar({ user, data, profile = {}, symbol, privacyMode
       const dates = getBillOccurrencesForMonth(bill, year, month)
       dates.forEach(date => {
         const paid = isBillPaidForPeriod(bill, date)
-        if (!paid) {
+        // Recurring bills are automatic scheduled expenses. They belong in
+        // the forecast ledger, not in the manual unpaid-payment queue.
+        if (!paid && !bill.freq) {
           if (!map[date]) {
             map[date] = []
           }

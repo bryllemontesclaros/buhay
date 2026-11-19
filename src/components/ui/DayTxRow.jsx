@@ -23,6 +23,7 @@ export function DayTxRow({
   const lifecycle = getTakdaTransactionLifecycle(t || {}, today())
   const isPaid = lifecycle.paid
   const isProjected = lifecycle.projected
+  const isAutoPaidBill = Boolean(t._autoPaidBill)
   const classification = [t.cat, t.subcat].filter(Boolean).join(' · ')
   const metaParts = [
     classification || t.cat,
@@ -49,7 +50,7 @@ export function DayTxRow({
         <div className={calStyles.txInfoBlock}>
           <div className={calStyles.txDesc}>
             {t.desc || t.cat}
-            {t._projected && <span className={calStyles.projBadge}>recurring</span>}
+            {t._projected && <span className={calStyles.projBadge}>{isAutoPaidBill ? 'scheduled' : 'recurring'}</span>}
           </div>
           <div className={calStyles.txMeta} title={metaSubtitle}>
             {metaSubtitle}
@@ -60,7 +61,7 @@ export function DayTxRow({
         <div className={`${calStyles.txAmount} ${privacyMode ? calStyles.privacyValueInline : ''} ${isProjected ? calStyles.projectedTxAmount : ''}`} style={{ color: privacyMode ? 'var(--text3)' : (isIncome ? '#30d158' : '#ff453a') }}>
           {privacyMode ? 'Hidden' : `${isIncome ? '+' : '−'}${fmt(t.amount, s)}`}
         </div>
-        {t._projected ? (
+        {t._projected && !isAutoPaidBill ? (
           <div className={calStyles.projectedActionStack}>
             <div className={calStyles.projectedActionRowPrimary}>
               <button

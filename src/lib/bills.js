@@ -560,6 +560,7 @@ export function getProjectedBillExpenses(bills = [], targetYear, targetMonth) {
         isProjected: true,
         _projected: true,
         _isBill: true,
+        _autoPaidBill: true,
         type: 'expense',
       })
     })
